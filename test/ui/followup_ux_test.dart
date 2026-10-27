@@ -85,16 +85,36 @@ void main() {
   });
 
   test('a ready version opens while discovery is still running', () async {
+    ui.dispose();
+    app.dispose();
+    final provider = _DeferredProvider();
+    app = AppController(
+      repository: repository,
+      discovery: SourceDiscoveryService([provider]),
+    );
+    await app.initialize();
+    ui = AppControllerAdapter(app);
+
+    final discovery = app.selectCandidate(
+      _reference,
+      cachedResults: [_savedSource],
+    );
+    expect(app.discovering, isTrue);
     app.selection = _reference;
-    app.results = [_savedSource];
-    app.combined = combineSources(_reference, app.results);
-    app.discovering = true;
     ui.selectVersion(_savedSource.id);
     await ui.saveSelectedVersion();
     expect(ui.state.route, VerseRoute.reader);
     expect(ui.state.song?.durationSeconds, 247);
     expect(app.discovering, isTrue);
     expect(app.songs.single.body, _savedSource.body);
+    provider.ready.complete(
+      const SourceResult(
+        candidate: _reference,
+        body: 'Another available version',
+        matchKind: MatchKind.sameRecording,
+      ),
+    );
+    await discovery;
   });
 
   test(

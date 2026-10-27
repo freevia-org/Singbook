@@ -136,7 +136,7 @@
       "id": "song-004",
       "title": "Wonderwall",
       "artist": "Oasis",
-      "recordingEdition": null,
+      "recordingEdition": "1995 original studio album performance on (What’s the Story) Morning Glory?",
       "language": "English",
       "genre": "unspecified",
       "expected": {
@@ -144,14 +144,27 @@
         "evidence": [],
         "fields": {
           "lyrics": {
-            "status": "unverified",
-            "value": null,
-            "evidence": []
+            "status": "verified",
+            "value": "2afd87b1f0d085fd4c2a52c4ba6325c048dddbbfc4115000beabaec2aa727a5f",
+            "evidence": [
+              "https://www.google.com/search?q=Oasis+Wonderwall+lyrics"
+            ],
+            "reviewRecord": "tool/metadata_reference_evidence/wonderwall_lyrics_practical_review.json",
+            "practicalEvidence": {
+              "status": "verified_against_licensed_provider_and_official_artist_reference",
+              "reviewRecord": "tool/metadata_reference_evidence/wonderwall_lyrics_practical_review.json",
+              "notes": "The exact selected text hash matches Google's panel attributed to Musixmatch, which displays Oasis, Wonderwall, and 1995. The official Oasis page's full 276-token sequence appears in order in the selected 283-token sequence; the seven extra selected tokens align as repetitions, with no substitutions. The catalog-bound reference supports the lyric text for the 1995 Morning Glory album performance. Exact-master identity and independent upstream lineage are not claimed."
+            }
           },
           "key": {
-            "status": "unverified",
-            "value": null,
-            "evidence": []
+            "status": "verified",
+            "value": "F#m",
+            "evidence": [
+              "https://apps.musicnotes.com/sheetmusic/oasis/wonderwall/MN0053372",
+              "https://www.musicradar.com/artists/just-because-some-of-your-university-friends-defaulted-to-it-doesnt-act-as-a-strike-against-it-a-music-professor-breaks-down-the-theory-behind-oasiss-wonderwall"
+            ],
+            "reviewRecord": "tool/metadata_reference_evidence/wonderwall_key.json",
+            "notes": "Recording home key F# minor. Licensed Musicnotes PVG listing identifies F# minor and the Morning Glory album; MusicRadar cites the capo-2 performance sounding in F# minor. These sources agree on the target key; the app currently selects F#m."
           },
           "chords": {
             "status": "unverified",
@@ -163,12 +176,31 @@
           "recordingKey": "F#m"
         },
         "recordingReference": {
-          "status": "unverified",
-          "providerId": null,
-          "candidateId": null,
+          "status": "verified",
+          "providerId": "genius",
+          "candidateId": "76654",
           "isrc": null,
-          "evidence": []
+          "recordingEdition": "1995 original studio album performance on (What’s the Story) Morning Glory?",
+          "evidence": [
+            "https://genius.com/Oasis-wonderwall-lyrics",
+            "https://music.apple.com/us/song/1517447333",
+            "https://oasisinet.com/music/whats-the-story-morning-glory/"
+          ],
+          "notes": "Genius record 76654 records Oasis Wonderwall, release date 1995-10-02 and Rockfield recording location. Apple Music track 1517447333 identifies Wonderwall on the 1995 Morning Glory album; Oasis official catalog lists Wonderwall on that album. Genius metadata's historical Apple Music ID 373957838 no longer resolves. Binding is by matching title, artist, release, album and recording location; no exact ISRC/master claim."
         }
+      },
+      "recordingEditionStatus": "verified",
+      "catalogSelection": {
+        "providerId": "genius",
+        "candidateId": "76654",
+        "title": "Wonderwall",
+        "artist": "Oasis",
+        "evidence": [
+          "https://genius.com/Oasis-wonderwall-lyrics",
+          "https://music.apple.com/us/song/1517447333",
+          "https://oasisinet.com/music/whats-the-story-morning-glory/"
+        ],
+        "notes": "Genius candidate 76654 and the official Oasis/Apple catalogs align on title, artist, 1995 release and Morning Glory album. This is album-performance identity, not exact-master identity."
       }
     },
     {
@@ -1566,7 +1598,7 @@
       "id": "song-037",
       "title": "Hurt",
       "artist": "Johnny Cash",
-      "recordingEdition": null,
+      "recordingEdition": "Johnny Cash album performance of Hurt on American IV: The Man Comes Around (released November 5, 2002)",
       "language": "English",
       "genre": "unspecified",
       "expected": {
@@ -1574,9 +1606,17 @@
         "evidence": [],
         "fields": {
           "lyrics": {
-            "status": "unverified",
-            "value": null,
-            "evidence": []
+            "status": "verified",
+            "value": "e4f2a6d686d7903e82f3747b49dcd28e0fcebe12bd0d24a46db06ed65d1156f6",
+            "evidence": [
+              "https://www.johnnycash.com/track/hurt-2/"
+            ],
+            "reviewRecord": "tool/metadata_reference_evidence/hurt_lyrics.json",
+            "practicalEvidence": {
+              "status": "exact_normalized_match_to_official_artist_lyrics",
+              "reviewRecord": "tool/metadata_reference_evidence/hurt_lyrics.json",
+              "notes": "Official Johnny Cash Hurt page yields the same normalized 161-word hash as the selected Genius text; artist catalog metadata binds the page to American IV."
+            }
           },
           "key": {
             "status": "unverified",
@@ -1593,12 +1633,33 @@
           "recordingKey": "Am"
         },
         "recordingReference": {
-          "status": "unverified",
-          "providerId": null,
-          "candidateId": null,
+          "status": "verified",
+          "providerId": "genius",
+          "candidateId": "85072",
           "isrc": null,
-          "evidence": []
+          "recordingEdition": "Johnny Cash album performance of Hurt on American IV: The Man Comes Around (released November 5, 2002)",
+          "evidence": [
+            "https://genius.com/Johnny-cash-hurt-lyrics",
+            "https://www.johnnycash.com/track/hurt-2/",
+            "https://www.johnnycash.com/music/american-iv-the-man-comes-around/"
+          ],
+          "notes": "Genius metadata identifies the 2002 American IV album candidate; the official Johnny Cash track and album pages corroborate title, artist, and album. Exact master identity is not claimed."
         }
+      },
+      "recordingEditionStatus": "verified",
+      "catalogSelection": {
+        "providerId": "genius",
+        "candidateId": "85072",
+        "title": "Hurt",
+        "artist": "Johnny Cash",
+        "album": "American IV: The Man Comes Around",
+        "releaseDate": "2002-11-05",
+        "evidence": [
+          "https://genius.com/Johnny-cash-hurt-lyrics",
+          "https://www.johnnycash.com/track/hurt-2/",
+          "https://www.johnnycash.com/music/american-iv-the-man-comes-around/"
+        ],
+        "notes": "Genius candidate 85072 identifies Johnny Cash, Hurt, and American IV, dated 2002-11-05; the official Johnny Cash track and album pages bind Hurt to the album. Album-performance scope; exact mastering/ISRC not claimed."
       }
     },
     {
@@ -3034,7 +3095,7 @@
       "id": "song-074",
       "title": "Stairway to Heaven",
       "artist": "Led Zeppelin",
-      "recordingEdition": null,
+      "recordingEdition": "1971 Led Zeppelin IV original studio performance, represented by the official Led Zeppelin IV (Remastered) track",
       "language": "English",
       "genre": "unspecified",
       "expected": {
@@ -3047,9 +3108,14 @@
             "evidence": []
           },
           "key": {
-            "status": "unverified",
-            "value": null,
-            "evidence": []
+            "status": "verified",
+            "value": "Am",
+            "evidence": [
+              "https://apps.musicnotes.com/sheetmusic/led-zeppelin/stairway-to-heaven/MN0158500",
+              "https://www.fabermusic.com/shop/stairway-to-heaven-d52760"
+            ],
+            "reviewRecord": "tool/metadata_reference_evidence/stairway_to_heaven_key.json",
+            "notes": "Album-performance home key is A minor. A separate licensed leadsheet writes the relative-major key signature as C major; see the scope caveat in the review record."
           },
           "chords": {
             "status": "unverified",
@@ -3061,12 +3127,29 @@
           "recordingKey": "Am"
         },
         "recordingReference": {
-          "status": "unverified",
-          "providerId": null,
-          "candidateId": null,
+          "status": "verified",
+          "providerId": "genius",
+          "candidateId": "1061",
           "isrc": null,
-          "evidence": []
+          "recordingEdition": "1971 Led Zeppelin IV original studio performance, represented by the official Led Zeppelin IV (Remastered) track",
+          "evidence": [
+            "https://genius.com/Led-zeppelin-stairway-to-heaven-lyrics",
+            "https://music.apple.com/ag/song/stairway-to-heaven/580708180"
+          ],
+          "notes": "Genius record 1061 cross-links Apple Music track 580708180; Apple identifies Led Zeppelin IV (Remastered)."
         }
+      },
+      "recordingEditionStatus": "verified",
+      "catalogSelection": {
+        "providerId": "genius",
+        "candidateId": "1061",
+        "title": "Stairway to Heaven",
+        "artist": "Led Zeppelin",
+        "evidence": [
+          "https://genius.com/Led-zeppelin-stairway-to-heaven-lyrics",
+          "https://music.apple.com/ag/song/stairway-to-heaven/580708180"
+        ],
+        "notes": "Exact Genius record is linked to Apple Music track 580708180; Apple identifies the Led Zeppelin IV (Remastered) album track dated 1971-11-08."
       }
     },
     {

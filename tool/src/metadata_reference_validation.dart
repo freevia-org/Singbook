@@ -61,7 +61,14 @@ List<String> reviewedReferenceErrors(
     }
   }
   final sources = review['independentSources'];
-  require(sources is List && sources.isNotEmpty, 'independent sources missing');
+  final trustedReferences = review['trustedReferences'];
+  final hasIndependentSources = sources is List && sources.isNotEmpty;
+  final hasTrustedReferences =
+      trustedReferences is List && trustedReferences.isNotEmpty;
+  require(
+    hasIndependentSources || hasTrustedReferences,
+    'reviewed field references missing',
+  );
   final supportedUrls = <String>{};
   final independentUrls = <String>{};
   if (sources is List) {
@@ -79,15 +86,47 @@ List<String> reviewedReferenceErrors(
       }
     }
   }
+  final trustedUrls = <String>{};
+  if (trustedReferences is List) {
+    for (final reference in trustedReferences) {
+      final validLyricsReference =
+          field == 'lyrics' &&
+          reference is Map &&
+          reference['sourceClass'] == 'licensed_lyrics_provider' &&
+          text(reference['provider']) &&
+          reference['exactNormalizedTextMatch'] == true &&
+          reference['referenceTextSha256'] == claim['value'] &&
+          reference['selectedTextSha256'] == claim['value'] &&
+          reference['scopeCompatibility'] == 'compatible' &&
+          text(reference['lineageStatus']);
+      require(
+        reference is Map &&
+            text(reference['url']) &&
+            text(reference['role']) &&
+            text(reference['finding']) &&
+            validLyricsReference,
+        'trusted reference is incomplete or incompatible',
+      );
+      if (reference is Map && reference['url'] is String) {
+        trustedUrls.add(reference['url'] as String);
+      }
+    }
+  }
   if (binding is Map && binding['evidence'] is List) {
     supportedUrls.addAll((binding['evidence'] as List).whereType<String>());
   }
+  supportedUrls.addAll(trustedUrls);
   final evidence = claim['evidence'];
   require(evidence is List && evidence.isNotEmpty, 'field evidence missing');
   if (evidence is List) {
     require(
-      evidence.any(independentUrls.contains),
-      'field has no cited independent musical evidence',
+      field == 'lyrics'
+          ? evidence.any(trustedUrls.contains) ||
+                evidence.any(independentUrls.contains)
+          : evidence.any(independentUrls.contains),
+      field == 'lyrics'
+          ? 'field has no cited trusted lyric comparison'
+          : 'field has no cited independent musical evidence',
     );
     require(
       evidence.every((url) => url is String && supportedUrls.contains(url)),

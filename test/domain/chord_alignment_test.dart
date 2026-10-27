@@ -349,6 +349,423 @@ void main() {
     expect(doc.metadata.containsKey('capo'), isFalse);
   });
 
+  test('explicitly scoped capo charts transpose into the primary shapes', () {
+    const selectedEb = SongCandidate(
+      providerId: 'catalog',
+      id: 'harbor-eb',
+      title: 'Harbor Song',
+      artist: 'Test Artist',
+      metadata: {'key': 'Eb', 'capo': 0},
+    );
+    final lyrics = [..._verse, _chorus, ..._tail].join('\n');
+    final primary = [
+      '[Eb]Someone hums a tune along the [Bb]winding river road',
+      _verse[1],
+      _chorus,
+      _tail[0],
+      _tail[1],
+    ].join('\n');
+    final document = combineSources(selectedEb, [
+      SourceResult(
+        candidate: selectedEb,
+        body: lyrics,
+        matchKind: MatchKind.sameRecording,
+      ),
+      SourceResult(
+        candidate: selectedEb,
+        body: primary,
+        matchKind: MatchKind.sameRecording,
+        metadata: const {'key': 'Eb', 'capo': 0},
+        extra: const {'keyConsensus': true},
+      ),
+      SourceResult(
+        candidate: const SongCandidate(
+          providerId: 'ug',
+          id: 'harbor-c-capo3',
+          title: 'Harbor Song',
+          artist: 'Test Artist',
+        ),
+        body: [
+          '[C]Paper lanterns drifting over the [G]quiet harbor water',
+          '[Am]Morning carries salt and cedar [F]through the open door',
+          '[C]Little boats are waiting where the [G]gulls begin to call',
+        ].join('\n'),
+        matchKind: MatchKind.sameSong,
+        metadata: const {'key': 'Eb', 'capo': 3},
+        extra: const {'partialLyrics': true, 'keyConsensus': true},
+      ),
+    ]);
+
+    expect(_chordsByLine(document.body)[_verse[0]], ['Eb', 'Bb']);
+    expect(_chordsByLine(document.body)[_chorus], ['Eb', 'Bb']);
+    expect(_chordsByLine(document.body)[_tail[0]], ['Cm', 'Ab']);
+    expect(_chordsByLine(document.body)[_tail[1]], ['Eb', 'Bb']);
+    expect(document.metadata['key'], 'Eb');
+    expect(document.metadata['capo'], 0);
+    expect(document.extra['chordSourceIds'], contains('ug:harbor-c-capo3'));
+  });
+
+  test(
+    'capo difference is not merged without checked sounding-key evidence',
+    () {
+      const selectedEb = SongCandidate(
+        providerId: 'catalog',
+        id: 'harbor-eb',
+        title: 'Harbor Song',
+        artist: 'Test Artist',
+        metadata: {'key': 'Eb', 'capo': 0},
+      );
+      final lyrics = [..._verse, _chorus, ..._tail].join('\n');
+      final primary = [
+        '[Eb]${_verse[0]}',
+        _verse[1],
+        _chorus,
+        ..._tail,
+      ].join('\n');
+      final document = combineSources(selectedEb, [
+        SourceResult(
+          candidate: selectedEb,
+          body: lyrics,
+          matchKind: MatchKind.sameRecording,
+        ),
+        SourceResult(
+          candidate: selectedEb,
+          body: primary,
+          matchKind: MatchKind.sameRecording,
+          metadata: const {'key': 'Eb', 'capo': 0},
+          extra: const {'keyConsensus': true},
+        ),
+        SourceResult(
+          candidate: const SongCandidate(
+            providerId: 'ug',
+            id: 'harbor-c-capo3',
+            title: 'Harbor Song',
+            artist: 'Test Artist',
+          ),
+          body: '[C]Paper lanterns drifting over the [G]quiet harbor water',
+          matchKind: MatchKind.sameSong,
+          metadata: const {'key': 'Eb', 'capo': 3},
+        ),
+      ]);
+
+      expect(_chordsByLine(document.body)[_verse[0]], ['Eb']);
+      expect(_chordsByLine(document.body)[_chorus], isEmpty);
+      expect(document.metadata['capo'], 0);
+    },
+  );
+
+  test('an incomplete rejected chart may add chords on shared lyric phrases', () {
+    const selected = SongCandidate(
+      providerId: 'genius',
+      id: 'three-little-birds',
+      title: 'Three Little Birds',
+      artist: 'Bob Marley & The Wailers',
+    );
+    const lyrics = '''Rise up this mornin'
+Smile with the rising sun
+Three little birds sit by my doorstep
+Singin' sweet songs
+Of melodies pure and true
+Singin', this is my message to you-ou-ou''';
+    const chart = '''[A]Rise up this mornin'
+[E]Smile with the rising sun
+[A]Three little birds sit by my doorstep
+[D]Singin' sweet songs
+[E]Of melodies pure and true
+[D]Singin', this is my message to [A]you-ou-ou''';
+    final document = combineSources(selected, [
+      SourceResult(
+        candidate: selected,
+        body: lyrics,
+        matchKind: MatchKind.sameRecording,
+      ),
+      SourceResult(
+        candidate: const SongCandidate(
+          providerId: 'ug',
+          id: 'three-little-birds-chart',
+          title: 'Three Little Birds',
+          artist: 'Bob Marley',
+        ),
+        body: chart,
+        metadata: const {
+          'key': 'A',
+          'capo': 0,
+          'tuning': ['E', 'A', 'D', 'G', 'B', 'E'],
+        },
+        matchKind: MatchKind.rejected,
+        matchReason: 'incomplete_or_different_lyrics',
+        extra: const {'requiresLyricsAgreement': true},
+      ),
+    ]);
+
+    expect(_chordsByLine(document.body)["Rise up this mornin'"], ['A']);
+    expect(_chordsByLine(document.body)['Smile with the rising sun'], ['E']);
+    expect(
+      _chordsByLine(document.body)['Three little birds sit by my doorstep'],
+      ['A'],
+    );
+    expect(document.metadata['key'], 'A');
+    expect(document.extra['keySourceIds'], contains('ug:three-little-birds-chart'));
+    expect(document.extra['selectedSourceId'], 'genius:three-little-birds');
+  });
+
+  test('a rejected chart with only one phrase or pending identity stays out', () {
+    const selected = SongCandidate(
+      providerId: 'genius',
+      id: 'three-little-birds',
+      title: 'Three Little Birds',
+      artist: 'Bob Marley & The Wailers',
+    );
+    const lyrics = '''Rise up this mornin'
+Smile with the rising sun
+Three little birds sit by my doorstep''';
+    const onePhrase = '''[A]Rise up this mornin'
+[E]Some unrelated phrase''';
+    final onePhraseDocument = combineSources(selected, [
+      SourceResult(
+        candidate: selected,
+        body: lyrics,
+        matchKind: MatchKind.sameRecording,
+      ),
+      SourceResult(
+        candidate: const SongCandidate(
+          providerId: 'ug',
+          id: 'one-phrase-chart',
+          title: 'Three Little Birds',
+          artist: 'Bob Marley',
+        ),
+        body: onePhrase,
+        metadata: const {'key': 'A', 'capo': 0},
+        matchKind: MatchKind.rejected,
+        matchReason: 'incomplete_or_different_lyrics',
+        extra: const {'requiresLyricsAgreement': true},
+      ),
+    ]);
+    expect(
+      _chordsByLine(onePhraseDocument.body).values.every((c) => c.isEmpty),
+      isTrue,
+    );
+    expect(onePhraseDocument.metadata['key'], isNull);
+
+    const chart = '''[A]Rise up this mornin'
+[E]Smile with the rising sun
+[A]Three little birds sit by my doorstep''';
+    final pendingDocument = combineSources(selected, [
+      SourceResult(
+        candidate: selected,
+        body: lyrics,
+        matchKind: MatchKind.sameRecording,
+      ),
+      SourceResult(
+        candidate: const SongCandidate(
+          providerId: 'ug',
+          id: 'pending-chart',
+          title: 'Three Little Birds',
+          artist: 'Bob Marley & The Wailers',
+        ),
+        body: chart,
+        metadata: const {'key': 'A', 'capo': 0},
+        matchKind: MatchKind.rejected,
+        matchReason: 'incomplete_or_different_lyrics',
+        extra: const {'pendingMatchCheck': true},
+      ),
+    ]);
+    expect(
+      _chordsByLine(pendingDocument.body).values.every((c) => c.isEmpty),
+      isTrue,
+    );
+    expect(pendingDocument.metadata['key'], isNull);
+  });
+
+  test('a rejected alternate-tuning chart does not donate guitar shapes', () {
+    const selected = SongCandidate(
+      providerId: 'genius',
+      id: 'three-little-birds',
+      title: 'Three Little Birds',
+      artist: 'Bob Marley & The Wailers',
+    );
+    const lyrics = '''Rise up this mornin'
+Smile with the rising sun
+Three little birds sit by my doorstep''';
+    const chart = '''[A]Rise up this mornin'
+[E]Smile with the rising sun
+[A]Three little birds sit by my doorstep''';
+    final document = combineSources(selected, [
+      SourceResult(
+        candidate: selected,
+        body: lyrics,
+        matchKind: MatchKind.sameRecording,
+      ),
+      SourceResult(
+        candidate: const SongCandidate(
+          providerId: 'ug',
+          id: 'alternate-tuning-chart',
+          title: 'Three Little Birds',
+          artist: 'Bob Marley',
+        ),
+        body: chart,
+        metadata: const {
+          'key': 'A',
+          'capo': 0,
+          'tuning': ['D', 'A', 'D', 'G', 'B', 'E'],
+        },
+        matchKind: MatchKind.rejected,
+        matchReason: 'incomplete_or_different_lyrics',
+        extra: const {'requiresLyricsAgreement': true},
+      ),
+    ]);
+
+    expect(
+      _chordsByLine(document.body).values.every((chords) => chords.isEmpty),
+      isTrue,
+    );
+    expect(document.metadata['key'], isNull);
+  });
+
+  test('phrase overlap cannot bypass recording-specific chart identity', () {
+    const selected = SongCandidate(
+      providerId: 'genius',
+      id: 'three-little-birds',
+      title: 'Three Little Birds',
+      artist: 'Bob Marley & The Wailers',
+    );
+    const lyrics = '''Rise up this mornin'
+Smile with the rising sun
+Three little birds sit by my doorstep''';
+    const chart = '''[A]Rise up this mornin'
+[E]Smile with the rising sun
+[A]Three little birds sit by my doorstep''';
+    final document = combineSources(selected, [
+      SourceResult(
+        candidate: selected,
+        body: lyrics,
+        matchKind: MatchKind.sameRecording,
+      ),
+      SourceResult(
+        candidate: const SongCandidate(
+          providerId: 'ug',
+          id: 'recording-scoped-chart',
+          title: 'Three Little Birds',
+          artist: 'Bob Marley',
+        ),
+        body: chart,
+        metadata: const {'key': 'A', 'capo': 0},
+        matchKind: MatchKind.rejected,
+        matchReason: 'incomplete_or_different_lyrics',
+        extra: const {
+          'requiresLyricsAgreement': true,
+          'requiresRecordingLyricsAgreement': true,
+        },
+      ),
+    ]);
+
+    expect(
+      _chordsByLine(document.body).values.every((chords) => chords.isEmpty),
+      isTrue,
+    );
+    expect(document.metadata['key'], isNull);
+  });
+
+  test('a rejected chart cannot import unconverted capo or failed key consensus', () {
+    const selected = SongCandidate(
+      providerId: 'genius',
+      id: 'lantern-song',
+      title: 'Lantern Song',
+      artist: 'Test Artist',
+    );
+    const lyrics = '''Lanterns drift above the quiet harbor
+Moonlight follows boats across the water
+Morning finds the nets along the shore''';
+    final capoed = combineSources(selected, [
+      SourceResult(
+        candidate: selected,
+        body: lyrics,
+        matchKind: MatchKind.sameRecording,
+      ),
+      SourceResult(
+        candidate: const SongCandidate(
+          providerId: 'ug',
+          id: 'capoed-lantern-chart',
+          title: 'Lantern Song',
+          artist: 'Test Artist',
+        ),
+        body: '[Am]Lanterns drift above the quiet harbor\n'
+            '[F]Moonlight follows boats across the water\n'
+            '[C]Morning finds the nets along the shore [G]',
+        metadata: const {'key': 'Em', 'capo': 7},
+        matchKind: MatchKind.rejected,
+        matchReason: 'incomplete_or_different_lyrics',
+        extra: const {'keyConsensus': true},
+      ),
+    ]);
+    expect(_chordsByLine(capoed.body).values.every((c) => c.isEmpty), isTrue);
+    expect(capoed.metadata['key'], isNull);
+
+    final nonconsensus = combineSources(selected, [
+      SourceResult(
+        candidate: selected,
+        body: lyrics,
+        matchKind: MatchKind.sameRecording,
+      ),
+      SourceResult(
+        candidate: const SongCandidate(
+          providerId: 'ug',
+          id: 'nonconsensus-lantern-chart',
+          title: 'Lantern Song',
+          artist: 'Test Artist',
+        ),
+        body: '[G]Lanterns drift above the quiet harbor\n'
+            '[D]Moonlight follows boats across the water\n'
+            '[C]Morning finds the nets along the shore',
+        metadata: const {'key': 'G', 'capo': 0},
+        matchKind: MatchKind.rejected,
+        matchReason: 'incomplete_or_different_lyrics',
+        extra: const {'keyConsensus': false},
+      ),
+    ]);
+    expect(
+      _chordsByLine(nonconsensus.body).values.every((c) => c.isEmpty),
+      isTrue,
+    );
+    expect(nonconsensus.metadata['key'], isNull);
+  });
+
+  test('unscoped same-song donor cannot add uncorroborated anchors', () {
+    const selected = SongCandidate(
+      providerId: 'catalog',
+      id: 'lantern-song',
+      title: 'Lantern Song',
+      artist: 'Test Artist',
+    );
+    const first = 'Lanterns drift over the harbor tonight';
+    const second = 'Moonlight follows boats across the water';
+    const third = 'Quiet waves return beneath the bridge';
+    final document = combineSources(selected, [
+      SourceResult(
+        candidate: selected,
+        body: '[G]Lanterns drift over the [D]harbor tonight\n'
+            '[D]Moonlight follows [C]boats across the water\n$third',
+        matchKind: MatchKind.sameRecording,
+      ),
+      SourceResult(
+        candidate: const SongCandidate(
+          providerId: 'chordie',
+          id: 'lantern-song-donor',
+          title: 'Lantern Song',
+          artist: 'Test Artist',
+        ),
+        body: '[G]Lanterns drift over the [D]harbor tonight\n'
+            '[D]Moonlight follows [C]boats across the water\n[C]$third',
+        matchKind: MatchKind.sameSong,
+      ),
+    ]);
+
+    expect(_chordsByLine(document.body)[first], ['G', 'D']);
+    expect(_chordsByLine(document.body)[second], ['D', 'C']);
+    expect(_chordsByLine(document.body)[third], isEmpty);
+    expect(document.extra['chordSourceIds'], ['catalog:lantern-song']);
+  });
+
   test('overlapping readings of a repeated phrase do not interleave', () {
     const line = 'la la la la la la la la';
     final doc = _combine(

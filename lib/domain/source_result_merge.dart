@@ -214,13 +214,7 @@ bool _compatibleScopes(SourceResult previous, SourceResult incoming) {
   return true;
 }
 
-int _authority(SourceResult source) =>
-    [
-      source.extra,
-      source.metadata,
-      source.candidate.extra,
-      source.candidate.metadata,
-    ].any((map) => map['pendingMatchCheck'] == true)
+int _authority(SourceResult source) => source.hasPendingMatchCheck
     ? 0
     : switch (source.matchKind) {
         MatchKind.sameRecording => 3,

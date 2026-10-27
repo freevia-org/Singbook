@@ -1,0 +1,1394 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-27",
+  "scope": "Private text comparison summary; no lyric text retained",
+  "benchmark": {
+    "corpusSize": 100,
+    "mode": "offline-cache-first",
+    "networkAttempts": 0,
+    "cacheHits": 3100,
+    "uncachedOffline": 1030,
+    "coverage": 99,
+    "unavailable": 1,
+    "accuracy": {
+      "lyrics": {
+        "verifiedCorrect": 1,
+        "verifiedIncorrect": 0,
+        "scopeMismatch": 0,
+        "unverified": 98,
+        "unavailable": 1,
+        "denominator": 100,
+        "percent": null,
+        "strictCorpusAccuracyPercent": null,
+        "evaluationStatus": "partial_adjudicated_comparisons",
+        "accuracyAmongEvaluatedPercent": 100.0,
+        "referenceCoverage": 1,
+        "evaluatedReferences": 1,
+        "referenceCoveragePercent": 1.0,
+        "adjudicatedGoldReferenceCoverage": 1,
+        "adjudicatedGoldReferenceCoveragePercent": 1.0,
+        "correctnessBasis": "Only reviewed field-level gold references with comparable output scope count here. A mismatching arrangement-scoped key is reported separately as scopeMismatch, not as a wrong recording key. Observed source pages and provider candidates are evidence coverage, not correctness comparisons.",
+        "scopeMismatchMeaning": null,
+        "scopeMismatchesExcludedFromEvaluatedDenominator": 0,
+        "referenceCoverageMeaning": "Adjudicated field-level gold rows only; source-page observations are reported separately."
+      },
+      "key": {
+        "verifiedCorrect": 8,
+        "verifiedIncorrect": 0,
+        "scopeMismatch": 1,
+        "unverified": 66,
+        "unavailable": 25,
+        "denominator": 100,
+        "percent": null,
+        "strictCorpusAccuracyPercent": null,
+        "evaluationStatus": "partial_adjudicated_comparisons",
+        "accuracyAmongEvaluatedPercent": 100.0,
+        "referenceCoverage": 10,
+        "evaluatedReferences": 8,
+        "referenceCoveragePercent": 10.0,
+        "adjudicatedGoldReferenceCoverage": 10,
+        "adjudicatedGoldReferenceCoveragePercent": 10.0,
+        "correctnessBasis": "Only reviewed field-level gold references with comparable output scope count here. A mismatching arrangement-scoped key is reported separately as scopeMismatch, not as a wrong recording key. Observed source pages and provider candidates are evidence coverage, not correctness comparisons.",
+        "scopeMismatchMeaning": "The selected key is supported as a chart/arrangement key, while the reviewed reference is the recording home key; the values are retained but not compared as like-scoped claims.",
+        "scopeMismatchesExcludedFromEvaluatedDenominator": 1,
+        "referenceCoverageMeaning": "Adjudicated field-level gold rows only; source-page observations are reported separately."
+      },
+      "chords": {
+        "verifiedCorrect": 0,
+        "verifiedIncorrect": 0,
+        "scopeMismatch": 0,
+        "unverified": 95,
+        "unavailable": 5,
+        "denominator": 100,
+        "percent": null,
+        "strictCorpusAccuracyPercent": null,
+        "evaluationStatus": "no_adjudicated_correctness_comparisons",
+        "accuracyAmongEvaluatedPercent": null,
+        "referenceCoverage": 0,
+        "evaluatedReferences": 0,
+        "referenceCoveragePercent": 0.0,
+        "adjudicatedGoldReferenceCoverage": 0,
+        "adjudicatedGoldReferenceCoveragePercent": 0.0,
+        "correctnessBasis": "Only reviewed field-level gold references with comparable output scope count here. A mismatching arrangement-scoped key is reported separately as scopeMismatch, not as a wrong recording key. Observed source pages and provider candidates are evidence coverage, not correctness comparisons.",
+        "scopeMismatchMeaning": null,
+        "scopeMismatchesExcludedFromEvaluatedDenominator": 0,
+        "referenceCoverageMeaning": "Adjudicated field-level gold rows only; source-page observations are reported separately."
+      }
+    },
+    "reportSha256": "8de6ba6b2df4b4dd668aa16b7b604b08d17da9fdf3f4cf062207ac6e41426eb2",
+    "runtimeCodeHead": "271753d4f613cf642f04e2c3f9af496435595a65",
+    "benchmarkLogicHead": "36e6211e2ae0ebf0eec90cc01ab1af6212b05aa8",
+    "referenceCoverage": {
+      "lyrics": 1,
+      "key": 10,
+      "chords": 0
+    },
+    "strictComparisonsEvaluated": {
+      "lyrics": 1,
+      "key": 8,
+      "chords": 0
+    },
+    "latestReport": {
+      "path": "artifacts/integration-coordinator/metadata-accuracy-100-20261027/replay-c125d1e/report.json",
+      "sha256": "8de6ba6b2df4b4dd668aa16b7b604b08d17da9fdf3f4cf062207ac6e41426eb2"
+    },
+    "googleObservationArtifact": {
+      "path": "tool/metadata_reference_evidence/google_lyrics_panel_observations_20261026.json",
+      "sha256": "ca2ad2603aa342da58a1e2e38702dff2f46e53c606f05c3a02f3bff5b46eabd8",
+      "lyricHashesRevalidatedAgainstReportSha256": "c5d76f488efe63cd4a3f386c165675ab17ca9147e15742abb26e09cb5bed0326",
+      "unchangedLyricRows": 100
+    },
+    "maxNetworkRequests": 0,
+    "unavailableCount": 1,
+    "cache": {
+      "hits": 3100,
+      "networkAttempts": 0,
+      "uncachedOffline": 1030
+    },
+    "corpusSha256": "e07d8790467de689f2d5181e9c571b784c54c503a432e290cf943783ee2f9d48",
+    "sourceCoverage": {
+      "lyrics": {
+        "songsWithCandidateData": 99,
+        "candidateProviderCount": 8,
+        "songsWithRecordingCompatibleCandidateData": 97,
+        "recordingCompatibleProviderCount": 1,
+        "songsWithSelectedValue": 99,
+        "songsWithSelectedBaseLyricsContribution": 99,
+        "songsWithChordChartContribution": null,
+        "songsWithSectionContribution": 84,
+        "contributingProviderCount": 3,
+        "corpusRowsWithVerifiedClaim": 1,
+        "rowsWithAdjudicatedCorrectnessReference": 1,
+        "comparisonsEvaluated": 1,
+        "compatibilityBasis": "Programmatic recordingCompatible(selected, source) result; this is not independent proof of exact master identity or field correctness.",
+        "referenceCoverageMeaning": "Count of corpus rows with reviewed field-level correctness gold; this is not a count of source pages discovered or checked."
+      },
+      "key": {
+        "songsWithCandidateData": 59,
+        "candidateProviderCount": 1,
+        "songsWithRecordingCompatibleCandidateData": 0,
+        "recordingCompatibleProviderCount": 0,
+        "songsWithSelectedValue": 75,
+        "songsWithSelectedBaseLyricsContribution": null,
+        "songsWithChordChartContribution": null,
+        "songsWithSectionContribution": null,
+        "contributingProviderCount": 3,
+        "corpusRowsWithVerifiedClaim": 10,
+        "rowsWithAdjudicatedCorrectnessReference": 10,
+        "comparisonsEvaluated": 8,
+        "compatibilityBasis": "Programmatic recordingCompatible(selected, source) result; this is not independent proof of exact master identity or field correctness.",
+        "referenceCoverageMeaning": "Count of corpus rows with reviewed field-level correctness gold; this is not a count of source pages discovered or checked."
+      },
+      "chords": {
+        "songsWithCandidateData": 96,
+        "candidateProviderCount": 3,
+        "songsWithRecordingCompatibleCandidateData": 0,
+        "recordingCompatibleProviderCount": 0,
+        "songsWithSelectedValue": 95,
+        "songsWithSelectedBaseLyricsContribution": null,
+        "songsWithChordChartContribution": 95,
+        "songsWithSectionContribution": null,
+        "contributingProviderCount": 3,
+        "corpusRowsWithVerifiedClaim": 0,
+        "rowsWithAdjudicatedCorrectnessReference": 0,
+        "comparisonsEvaluated": 0,
+        "compatibilityBasis": "Programmatic recordingCompatible(selected, source) result; this is not independent proof of exact master identity or field correctness.",
+        "referenceCoverageMeaning": "Count of corpus rows with reviewed field-level correctness gold; this is not a count of source pages discovered or checked."
+      }
+    }
+  },
+  "sourceCoverage": {
+    "lyrics": {
+      "songsWithCandidateData": 99,
+      "candidateProviderCount": 8,
+      "songsWithRecordingCompatibleCandidateData": 97,
+      "recordingCompatibleProviderCount": 1,
+      "songsWithSelectedValue": 99,
+      "songsWithSelectedBaseLyricsContribution": 99,
+      "songsWithChordChartContribution": null,
+      "songsWithSectionContribution": 84,
+      "contributingProviderCount": 3,
+      "corpusRowsWithVerifiedClaim": 2,
+      "rowsWithAdjudicatedCorrectnessReference": 2,
+      "comparisonsEvaluated": 2,
+      "compatibilityBasis": "Programmatic recordingCompatible(selected, source) result; this is not independent proof of exact master identity or field correctness.",
+      "referenceCoverageMeaning": "Count of corpus rows with reviewed field-level correctness gold; this is not a count of source pages discovered or checked."
+    },
+    "key": {
+      "songsWithCandidateData": 59,
+      "candidateProviderCount": 1,
+      "songsWithRecordingCompatibleCandidateData": 0,
+      "recordingCompatibleProviderCount": 0,
+      "songsWithSelectedValue": 75,
+      "songsWithSelectedBaseLyricsContribution": null,
+      "songsWithChordChartContribution": null,
+      "songsWithSectionContribution": null,
+      "contributingProviderCount": 3,
+      "corpusRowsWithVerifiedClaim": 10,
+      "rowsWithAdjudicatedCorrectnessReference": 10,
+      "comparisonsEvaluated": 8,
+      "compatibilityBasis": "Programmatic recordingCompatible(selected, source) result; this is not independent proof of exact master identity or field correctness.",
+      "referenceCoverageMeaning": "Count of corpus rows with reviewed field-level correctness gold; this is not a count of source pages discovered or checked."
+    },
+    "chords": {
+      "songsWithCandidateData": 96,
+      "candidateProviderCount": 3,
+      "songsWithRecordingCompatibleCandidateData": 0,
+      "recordingCompatibleProviderCount": 0,
+      "songsWithSelectedValue": 95,
+      "songsWithSelectedBaseLyricsContribution": null,
+      "songsWithChordChartContribution": 95,
+      "songsWithSectionContribution": null,
+      "contributingProviderCount": 3,
+      "corpusRowsWithVerifiedClaim": 0,
+      "rowsWithAdjudicatedCorrectnessReference": 0,
+      "comparisonsEvaluated": 0,
+      "compatibilityBasis": "Programmatic recordingCompatible(selected, source) result; this is not independent proof of exact master identity or field correctness.",
+      "referenceCoverageMeaning": "Count of corpus rows with reviewed field-level correctness gold; this is not a count of source pages discovered or checked."
+    }
+  },
+  "manualLyricComparisons": [
+    {
+      "songId": "song-004",
+      "title": "Wonderwall",
+      "reference": "https://oasisinet.com/lyrics/wonderwall-2/",
+      "source": "Oasis official",
+      "result": "Official Oasis sequence fully aligns in order; seven selected-only repeated tokens, no substitutions. Google/Musixmatch-attributed panel hash exactly matches selected text.",
+      "editionNote": "Corpus bound to 1995 Morning Glory album performance; official Oasis lyric page is composition-level and the panel identifies year but not exact master.",
+      "comparisonStatus": "reviewed_licensed_reference_exact_hash_match; official-page repeat-only difference documented",
+      "accuracyDisposition": "verifiedCorrect against the licensed Musixmatch-attributed panel hash for the catalog-bound 1995 album performance; exact master and independent upstream lineage are not claimed",
+      "differenceClass": "selected_only_repeated_material",
+      "reviewArtifact": "tool/metadata_reference_evidence/wonderwall_lyrics_practical_review.json",
+      "officialNormalizedWordCount": 276,
+      "officialNormalizedSha256": "d0d0f15f50f9626fafa8326cbc5545dd88f01d8f26b41513a5bc5bc1cd0c7626",
+      "selectedNormalizedWordCount": 283,
+      "selectedNormalizedSha256": "2afd87b1f0d085fd4c2a52c4ba6325c048dddbbfc4115000beabaec2aa727a5f",
+      "tokenSequenceEditDistance": 7,
+      "tokenEditShape": {
+        "substitutions": 0,
+        "officialOnlyInsertions": 0,
+        "selectedOnlyDeletions": 7
+      },
+      "tokenAlignmentReviewed": {
+        "officialTokensMatchedInOrder": 276,
+        "selectedOnlyTokens": 7,
+        "officialOnlyTokens": 0,
+        "substitutions": 0,
+        "allSelectedOnlyTokensAlignAsRepeatedMaterial": true
+      },
+      "referenceTier": "reviewed_licensed_provider_reference"
+    },
+    {
+      "songId": "song-006",
+      "title": "Let It Be",
+      "reference": "https://www.thebeatles.com/let-it-be-1",
+      "source": "The Beatles official",
+      "result": "normalized text differs",
+      "editionNote": "Corpus names the 1970 album performance; source page text was not proven to be master-specific",
+      "comparisonStatus": "official_page_hash_difference_reviewed; not correctness-gold",
+      "accuracyDisposition": "neither correct nor incorrect until the text difference and version scope are reviewed",
+      "referenceNormalizedWordCount": 202,
+      "referenceNormalizedSha256": "20786cb1b9768b65e578f81b5b36ff260f3438fbe8f7aec711054446154601ca",
+      "selectedNormalizedWordCount": 308,
+      "selectedNormalizedSha256": "ae1bfe9f4f6858473cbf30c5126022d7279ebb1afc4602589ea56548be4c8f3d",
+      "tokenSequenceEditDistance": 106,
+      "officialPageSha256": "9ba7a717d582fd56c297f94d84c55c9c5cbb1e169907281248e70b4cf1987621",
+      "editionRelation": "Page presents the song alongside both the 3:50 single and 4:03 album-version context; displayed lyric text is not explicitly bound to the corpus album mix.",
+      "reviewArtifact": "tool/metadata_reference_evidence/official_lyrics_page_comparisons_20261026.json"
+    },
+    {
+      "songId": "song-007",
+      "title": "Hey Jude",
+      "reference": "https://www.thebeatles.com/hey-jude",
+      "source": "The Beatles official",
+      "result": "normalized text differs",
+      "editionNote": "Corpus names the 1968 long single performance; source page text was not proven to be master-specific",
+      "comparisonStatus": "official_page_hash_difference_reviewed; not correctness-gold",
+      "accuracyDisposition": "neither correct nor incorrect until the text difference and version scope are reviewed",
+      "referenceNormalizedWordCount": 226,
+      "referenceNormalizedSha256": "d687897f73835e2d5b418a462b04b4a7764b33d01543c6019f5d9d0ecc06afd1",
+      "selectedNormalizedWordCount": 563,
+      "selectedNormalizedSha256": "6058a7352a847892b1541bfd7e5120450a183bb11a49f13519c95f74a75b141c",
+      "tokenSequenceEditDistance": 339,
+      "officialPageSha256": "83a7b643a629876e60108456a7169c68da5838cf2ed2cbc9f556c8ece46a510b",
+      "editionRelation": "Official page identifies the original 1968 single and its 7:11 duration, matching the corpus performance scope; displayed lyric text appears to abbreviate the long coda/repetitions.",
+      "reviewArtifact": "tool/metadata_reference_evidence/official_lyrics_page_comparisons_20261026.json"
+    },
+    {
+      "songId": "song-008",
+      "title": "Yesterday",
+      "reference": "https://www.thebeatles.com/yesterday",
+      "source": "The Beatles official",
+      "result": "Official displayed lyrics differ from the selected Genius text by three token-level edits; localized transcription variant classified.",
+      "editionNote": "Corpus edition is the 1965 original Help! studio album performance. The official page identifies the Help! album and recording date, but does not bind the displayed text to an exact digital master.",
+      "comparisonStatus": "official_page_hash_difference_reviewed; not correctness-gold",
+      "accuracyDisposition": "The selected text differs from the official displayed sequence by a small localized token edit distance. This is a classified source variant, not proof that either sequence is wrong for the vocal performance; neither is promoted as exact performance-level gold.",
+      "differenceClass": "localized_transcription_variant",
+      "selectedSource": "Genius; selected output reproduced from cached song-page extraction",
+      "selectedNormalizedWordCount": 133,
+      "selectedNormalizedSha256": "054ea2afab9218f4475d234bc533d7c21a246c9695157b978213838e364dd9b9",
+      "referenceNormalizedWordCount": 131,
+      "referenceNormalizedSha256": "00bd4bc81c882df2f388c743b005fa1dcc10418e8f85d83362bde3017f03e657",
+      "tokenSequenceEditDistance": 3,
+      "editionAssessment": "Artist page ties the lyric display to the 1965 Help! song and recording context; exact source-master transcription was not verified.",
+      "officialPageSha256": "81378911ac592d1b32387d42315a951364ccaf41b1bb3dfa2af7f749b157661d",
+      "editionRelation": "Official page is consistent with the corpus 1965 Help! album performance scope; a 3-token transcription difference remains.",
+      "reviewArtifact": "tool/metadata_reference_evidence/official_lyrics_page_comparisons_20261026.json"
+    },
+    {
+      "songId": "song-009",
+      "title": "Here Comes the Sun",
+      "reference": "https://www.thebeatles.com/here-comes-sun",
+      "source": "The Beatles official",
+      "result": "normalized text differs",
+      "editionNote": "Corpus edition unspecified",
+      "comparisonStatus": "full_text_hash_diff_unadjudicated",
+      "accuracyDisposition": "neither correct nor incorrect until the text difference and version scope are reviewed"
+    },
+    {
+      "songId": "song-024",
+      "title": "Knockin’ on Heaven’s Door",
+      "reference": "https://www.bobdylan.com/songs/knockin-heavens-door/",
+      "source": "Bob Dylan official",
+      "result": "normalized text differs",
+      "editionNote": "Corpus edition unspecified",
+      "comparisonStatus": "full_text_hash_diff_unadjudicated",
+      "accuracyDisposition": "neither correct nor incorrect until the text difference and version scope are reviewed",
+      "referenceNormalizedWordCount": 104,
+      "referenceNormalizedSha256": "ed1de29e0a2080923e31b2546956693aa4db98d7ad630970e299b4b8e03d670f",
+      "selectedNormalizedWordCount": 108,
+      "selectedNormalizedSha256": "75298ec9db5afa40ef9e52d172df2b58bae7adb1feffbd69f91410a5f04377f2",
+      "hashComparison": "Normalized official-page lyric text hash independently recomputed and compared with the selected-candidate hash from the 100-song benchmark; hashes differ.",
+      "adjudication": "unresolved; corpus edition is unspecified and the text difference has not been adjudicated. Hash mismatch is not automatically scored incorrect."
+    },
+    {
+      "songId": "song-025",
+      "title": "Blowin’ in the Wind",
+      "reference": "https://www.bobdylan.com/songs/blowin-wind/",
+      "source": "Bob Dylan official",
+      "result": "normalized text differs",
+      "editionNote": "Corpus edition unspecified",
+      "comparisonStatus": "full_text_hash_diff_unadjudicated",
+      "accuracyDisposition": "neither correct nor incorrect until the text difference and version scope are reviewed",
+      "referenceNormalizedWordCount": 181,
+      "referenceNormalizedSha256": "0385fc18887db58c80fa4ae2a8a7dd0165973bf189c8a4673d58eb60ec168a1d",
+      "selectedNormalizedWordCount": 186,
+      "selectedNormalizedSha256": "5df8b925cbc493c9209490ef88d7b58cdb3e277d1d01457e203ed955a4074dfe",
+      "hashComparison": "Normalized official-page lyric text hash independently recomputed and compared with the selected-candidate hash from the 100-song benchmark; hashes differ.",
+      "adjudication": "unresolved; corpus edition is unspecified and the text difference has not been adjudicated. Hash mismatch is not automatically scored incorrect."
+    },
+    {
+      "songId": "song-031",
+      "title": "Take Me Home, Country Roads",
+      "reference": "https://johndenver.com/tracks/take-me-home-country-roads/",
+      "source": "John Denver official",
+      "result": "normalized text differs",
+      "editionNote": "Corpus edition unspecified",
+      "comparisonStatus": "full_text_hash_diff_unadjudicated",
+      "accuracyDisposition": "neither correct nor incorrect until the text difference and version scope are reviewed",
+      "referenceNormalizedWordCount": 188,
+      "referenceNormalizedSha256": "4e9630efe8bef79ae97dbf23c45bd3f7f2d246db517e34f8bbd79e5a685a798f",
+      "selectedNormalizedWordCount": 176,
+      "selectedNormalizedSha256": "ff1a24b9c3e22e42512bd39d89cd2372dd5a249239f2d7899fc7e5486002a43b",
+      "hashComparison": "Normalized official-page lyric text hash independently recomputed and compared with the selected-candidate hash from the 100-song benchmark; hashes differ.",
+      "adjudication": "unresolved; corpus edition is unspecified and the text difference has not been adjudicated. Hash mismatch is not automatically scored incorrect."
+    },
+    {
+      "songId": "song-071",
+      "title": "99 Luftballons",
+      "reference": "https://www.nena.de/songs/99-luftballons",
+      "source": "Nena official",
+      "result": "normalized text differs",
+      "editionNote": "Corpus edition unspecified",
+      "comparisonStatus": "full_text_hash_diff_unadjudicated",
+      "accuracyDisposition": "neither correct nor incorrect until the text difference and version scope are reviewed",
+      "referenceNormalizedWordCount": 183,
+      "referenceNormalizedSha256": "2a692862102c1e113eda4a7f1a8ad0e4f5f43f9b3d8218e892270b2a7bf80bc7",
+      "selectedNormalizedWordCount": 189,
+      "selectedNormalizedSha256": "8a3a76fafa316288be12ef998fd4e5fc25376139ea6d025154c92c791b59dfa9",
+      "hashComparison": "Independently recomputed from the official artist-page rich-text block and matched against the benchmark selected-candidate report; normalized hashes differ.",
+      "adjudication": "unresolved; corpus edition remains unspecified and the wording/repeat difference has not been adjudicated."
+    },
+    {
+      "songId": "song-040",
+      "title": "Yellow",
+      "reference": "https://www.coldplay.com/song/yellow/",
+      "source": "Coldplay official artist lyric page",
+      "result": "Normalized full-text hash differs: official 201-word text versus selected Genius 210-word text.",
+      "editionNote": "Official page associates the text with Parachutes; corpus edition is unspecified. Companion official release page dates Yellow to 2000-06-26 but does not bind the displayed text to an exact master.",
+      "comparisonStatus": "full_text_hash_diff_unadjudicated",
+      "accuracyDisposition": "Primary-source observation; do not score either transcript correct or incorrect until the wording difference and corpus edition are reviewed.",
+      "referenceNormalizedSha256": "86d7d3a043310a10bb1b81559d51912d0718a7caf09a87e0632b68af15a53843",
+      "selectedNormalizedSha256": "24e68fb6b8304b8c870bacf0512c0633df6d97ab499ea5a198c258f6e84fa7ad",
+      "referenceWordCount": 201,
+      "selectedWordCount": 210
+    },
+    {
+      "songId": "song-077",
+      "title": "Yellow Submarine",
+      "reference": "https://www.thebeatles.com/yellow-submarine-0",
+      "source": "The Beatles official",
+      "result": "normalized text differs",
+      "editionNote": "Corpus names the 1966 Revolver performance; source page text was not proven to be master-specific",
+      "comparisonStatus": "official_page_hash_difference_reviewed; not correctness-gold",
+      "accuracyDisposition": "neither correct nor incorrect until the text difference and version scope are reviewed",
+      "referenceNormalizedWordCount": 160,
+      "referenceNormalizedSha256": "2daadd21875cecf104aa8616b6afcda5e16b825f11959d60b9cb29642508d6c4",
+      "selectedNormalizedWordCount": 230,
+      "selectedNormalizedSha256": "5fa0891923f9af1874901cebe561c6f4a8dab2df1f52b174332b8de5f5582e3b",
+      "tokenSequenceEditDistance": 72,
+      "officialPageSha256": "0e2b8a3c83b5c3efbf077808e3da1e69268c2e669d1b0cfffe5afdf787a7a48a",
+      "editionRelation": "Official page identifies the Revolver-era single/album song matching the corpus performance; source display contracts repeated chorus material.",
+      "reviewArtifact": "tool/metadata_reference_evidence/official_lyrics_page_comparisons_20261026.json"
+    },
+    {
+      "songId": "song-086",
+      "title": "Vienna",
+      "reference": "https://www.billyjoel.com/song/vienna-2/",
+      "source": "Billy Joel official",
+      "result": "normalized text differs",
+      "editionNote": "Corpus edition unspecified",
+      "comparisonStatus": "full_text_hash_diff_unadjudicated",
+      "accuracyDisposition": "neither correct nor incorrect until the text difference and version scope are reviewed"
+    },
+    {
+      "songId": "song-087",
+      "title": "Tennessee Whiskey",
+      "reference": "https://chrisstapleton.com/song/tennessee-whiskey/",
+      "source": "Chris Stapleton official",
+      "result": "normalized text differs",
+      "editionNote": "Corpus edition unspecified",
+      "comparisonStatus": "full_text_hash_diff_unadjudicated",
+      "accuracyDisposition": "neither correct nor incorrect until the text difference and version scope are reviewed"
+    },
+    {
+      "songId": "song-093",
+      "title": "99 Red Balloons",
+      "reference": "https://www.nena.de/songs/99-red-balloons",
+      "source": "Nena official",
+      "result": "normalized text differs",
+      "editionNote": "Corpus specifies English-language version; source text version binding needs review",
+      "comparisonStatus": "full_text_hash_diff_unadjudicated",
+      "accuracyDisposition": "neither correct nor incorrect until the text difference and version scope are reviewed",
+      "referenceNormalizedWordCount": 247,
+      "referenceNormalizedSha256": "a7080b1d60a13f62ba6fc97cadd9a0b21bc09359ca3b6dc7758bd8b024167efc",
+      "selectedNormalizedWordCount": 250,
+      "selectedNormalizedSha256": "45a9d8f7b237a6b4e038762d939e505a9868940afdaae64b5a375f9fb3f5815e",
+      "hashComparison": "Independently recomputed from the official English-version page rich-text block and matched against the benchmark selected-candidate report; normalized hashes differ.",
+      "editionAssessment": "The official page is the English-language version named in the corpus; exact recording-master binding is not established.",
+      "adjudication": "The normalized sequences differ materially (29 token edits; 88.4% similarity). The official page matches the corpus English language, but exact recording/edition binding is unproven; review before assigning correctness.",
+      "selectedSourcePage": "https://genius.com/Nena-99-red-balloons-lyrics",
+      "differenceClass": "material_text_difference_unadjudicated",
+      "tokenSequenceEditDistance": 29,
+      "sequenceSimilarityPercent": 88.4
+    },
+    {
+      "songId": "song-098",
+      "title": "Dragostea Din Tei",
+      "reference": "https://www.shazam.com/song/1231051240/dragostea-din-tei",
+      "source": "Shazam",
+      "result": "normalized text differs",
+      "editionNote": "Corpus specifies Romanian studio recording; exact source recording binding needs review",
+      "comparisonStatus": "full_text_hash_diff_unadjudicated",
+      "accuracyDisposition": "neither correct nor incorrect until the text difference and version scope are reviewed"
+    },
+    {
+      "songId": "song-100",
+      "title": "Hallelujah",
+      "reference": "https://www.shazam.com/song/1476890067/hallelujah",
+      "source": "Shazam",
+      "result": "normalized text differs",
+      "editionNote": "Corpus specifies Jeff Buckley’s Grace recording; exact source recording binding needs review",
+      "comparisonStatus": "full_text_hash_diff_unadjudicated",
+      "accuracyDisposition": "neither correct nor incorrect until the text difference and version scope are reviewed"
+    },
+    {
+      "songId": "song-076",
+      "title": "Blackbird",
+      "reference": "https://www.thebeatles.com/blackbird",
+      "source": "The Beatles official",
+      "editionNote": "Official artist page and album track listing support the 1968 White Album performance scope; exact audio asset or mastering was not checked.",
+      "result": "Official Beatles text differs from selected Genius text; localized wording/tokenization diff classified.",
+      "comparisonStatus": "full_text_diff_adjudicated",
+      "differenceClass": "localized_wording_and_compound_tokenization_variant",
+      "selectedSource": "Genius song 1556",
+      "selectedNormalizedWordCount": 124,
+      "selectedNormalizedSha256": "67fbf90037de77d333062eaa89ac4c639959cf0ae82e1d5f4e6e16dfde121872",
+      "referenceNormalizedWordCount": 128,
+      "referenceNormalizedSha256": "7a6b93130bc42747fdd27909c1ec8a2e9c7816ee05b3397d9974a75fa60487b3",
+      "wordSequenceEditDistance": 12,
+      "accuracyDisposition": "Selected Genius text does not exactly match the official displayed lyric sequence. The localized wording and compound-token differences are classified, but neither sequence is promoted as exact performance-level gold."
+    },
+    {
+      "songId": "song-081",
+      "title": "Iris",
+      "reference": "https://www.googoodolls.com/album/dizzy-girl",
+      "source": "Goo Goo Dolls official album page",
+      "editionNote": "Artist album page identifies the track on Dizzy Up The Girl; official album audio independently confirms album identity.",
+      "result": "Official album lyric text differs from selected Genius text; localized three-token wording diff classified.",
+      "comparisonStatus": "full_text_diff_adjudicated",
+      "differenceClass": "localized_wording_variant",
+      "selectedSource": "Genius song page; exact selected output reproduced from cache",
+      "selectedNormalizedWordCount": 244,
+      "selectedNormalizedSha256": "4a4abab320c46d63343bc89e64e83277d6dec78390d25d80c8fa56cca935ccf9",
+      "referenceNormalizedWordCount": 244,
+      "referenceNormalizedSha256": "9730af186d72b4cb1e9428903cad25e4d6d5d81d336a6859a9633b49453dfc70",
+      "sequenceMatcherRatio": 0.9877,
+      "changedTokenCounts": {
+        "selectedOnly": 3,
+        "referenceOnly": 3
+      },
+      "changedRegions": 3,
+      "editionAssessment": "Album-specific official lyric section for Dizzy Up The Girl; Warner-delivered official album audio separately identifies the 1998 album track. Audio was not played or transcribed.",
+      "providerConvergence": {
+        "sameNormalizedHashProviderLabels": [
+          "genius",
+          "lyricsovh"
+        ],
+        "otherObservedVariant": [
+          "lrclib"
+        ],
+        "independentProvenanceEstablished": false
+      },
+      "accuracyDisposition": "Selected text is close to, but not identical with, the official album lyric text. Three localized wording differences are classified; source-label convergence does not establish independent lineage or exact performed wording."
+    },
+    {
+      "songId": "song-037",
+      "title": "Hurt",
+      "reference": "https://www.johnnycash.com/track/hurt-2/",
+      "source": "Official Johnny Cash track page",
+      "result": "Exact normalized 161-word hash match to selected Genius candidate 85072; official artist track and album pages corroborate American IV context.",
+      "editionNote": "Johnny Cash American IV album performance, released November 5, 2002; exact master/ISRC not claimed.",
+      "comparisonStatus": "reviewed_exact_normalized_match_correctness_gold",
+      "accuracyDisposition": "verifiedCorrect for the scoped album performance; exact digital master and independent upstream provider lineage are not claimed.",
+      "reviewArtifact": "tool/metadata_reference_evidence/hurt_lyrics.json",
+      "referenceNormalizedSha256": "e4f2a6d686d7903e82f3747b49dcd28e0fcebe12bd0d24a46db06ed65d1156f6",
+      "selectedNormalizedSha256": "e4f2a6d686d7903e82f3747b49dcd28e0fcebe12bd0d24a46db06ed65d1156f6",
+      "referenceWordCount": 161,
+      "selectedWordCount": 161,
+      "tokenSequenceEditDistance": 0
+    }
+  ],
+  "existingAuditsNotRepeated": [
+    {
+      "songId": "song-076",
+      "title": "Blackbird",
+      "result": "official Beatles text differs from selected Genius text"
+    },
+    {
+      "songId": "song-081",
+      "title": "Iris",
+      "result": "official album text differs from selected Genius text"
+    }
+  ],
+  "interpretation": "The offline replay found lyric candidates for 99/100 songs. Strict lyric verifiedCorrect remains zero because no row is adjudicated against a reviewed field-level correctness reference; this is not a measure of source discovery. Practical exact selected-text support is separately reported: 15 songs have eligible matching text under multiple provider labels and 84 under one label, with upstream independence unconfirmed. Eight Google searches yielded six attributed panel text hashes (one exact selected hash, five differing hashes) and two searches without a panel; panel differences await review and are not correctness judgments. Public lyric-page comparisons remain a separate review queue.",
+  "referenceEvaluation": {
+    "sourceCandidateComparisons": 19,
+    "sourceCandidateComparisonPercent": 19.0,
+    "exactNormalizedFullTextMatches": 1,
+    "exactRecordingLevelGoldClaims": 0,
+    "strictAccuracyPercent": null,
+    "interpretation": "Public pages, licensed provider panels, and candidate consensus are useful references. Exact normalized matches from an attributed licensed lyrics provider count when a reviewer binds the reference to a compatible corpus recording scope. Provider lineage and exact-master identity remain separate claims. Hash differences still require review.",
+    "futureDiffClasses": [
+      "formatting_only",
+      "minor_wording_or_transcription_variant",
+      "repeat_or_section_variant",
+      "edition_or_language_mismatch",
+      "source_or_song_match_failure",
+      "unresolved"
+    ],
+    "sourcePagesObservedAndCompared": 19,
+    "sourcePageCoveragePercent": 19.0,
+    "fullTextHashDifferencesAwaitingAdjudication": 15,
+    "fullTextDifferencesAdjudicated": 3,
+    "correctnessClaimsFromTheseComparisons": 2,
+    "accuracyStatus": "partial_reviewed_reference_comparisons",
+    "practicalLevels": [
+      {
+        "level": "source_observed",
+        "countsAs": "A traceable page for the matched song/artist was inspected; reports reference coverage only.",
+        "doesNotClaim": "That the selected text is correct."
+      },
+      {
+        "level": "cross_source_corroborated",
+        "countsAs": "At least two sources with distinct provenance agree on substantive lyric content after known version and transcription differences are classified.",
+        "doesNotClaim": "Bit-identical master transcription."
+      },
+      {
+        "level": "performance_checked",
+        "countsAs": "The intended recording edition is bound and the selected words, repeats, and vocalized ending agree with an authorized recording-specific reference or a documented listening review.",
+        "doesNotClaim": "Exact digital master identity unless separately established."
+      }
+    ],
+    "countingRule": "Report source-page observations and exact candidate consensus across provider labels as practical support evidence. A shared normalized hash is useful corroboration but provider labels are not assumed independent when upstream lineage may overlap. Hash inequality triggers diff review; it is not automatically an incorrect result. Keep performance-level adjudication separate.",
+    "adjudicatedNonmatchingSourceComparisons": 3,
+    "practicalEvidence": {
+      "selectedLyricsWithCandidate": 99,
+      "songsWithAnyExactCandidateHashSharedAcrossProviderLabels": 30,
+      "selectedLyricsWithExactHashSupportAcrossProviderLabels": 15,
+      "songsWithPublicLyricPageCompared": 19,
+      "classifiedTextDifferences": 3,
+      "textDifferencesAwaitingReview": 15,
+      "independentSourceLineageConfirmed": 0,
+      "interpretation": "Two reviewed lyric correctness references are available: Wonderwall matched a licensed Musixmatch-attributed Google panel, and Hurt exactly matched Johnny Cash’s official track lyric page for the catalog-bound American IV album performance. Neither asserts exact master identity or independent upstream lineage. Other mismatches remain unadjudicated.",
+      "attributedExternalPanelExactSelectedHashMatches": 1,
+      "googlePanelIndependentLineageConfirmed": false,
+      "attributedExternalPanelDifferentHashComparisons": 5,
+      "attributedExternalPanelSearches": 8,
+      "attributedExternalPanelPayloadsHashed": 6,
+      "attributedExternalPanelNoPanel": 2,
+      "selectedLyricsWithRecordingCompatibleSource": 97,
+      "selectedLyricsWithOnlySameSongSupport": 2,
+      "onlySameSongRows": [
+        {
+          "songId": "song-073",
+          "title": "Californication",
+          "selectedLyricsProvider": "ultimateguitar",
+          "match": "sameSong"
+        },
+        {
+          "songId": "song-074",
+          "title": "Stairway to Heaven",
+          "selectedLyricsProvider": "lrclib",
+          "match": "sameSong"
+        }
+      ],
+      "reviewedLicensedLyricsReferenceCount": 2,
+      "independentLineageConfirmed": false
+    },
+    "independentlyRecomputedSourceTextHashes": 5,
+    "selectedHashComparisonsIndependentlyConfirmed": 5,
+    "readerInterpretation": {
+      "strictVerifiedMeans": "The current reviewed evidence overlay has two verified-correct lyric rows (Wonderwall and Hurt); the other 97 selected lyric rows remain unverified and one song has no selected lyrics. This is partial coverage, not a 100-song accuracy claim.",
+      "practicalEvidenceAlreadyAvailable": {
+        "selectedLyricsWithExactTextAgreementAcrossProviderLabels": 15,
+        "songsWithAnyCandidateHashSharedAcrossProviderLabels": 30,
+        "selectedLyricsWithOneProviderLabel": 84,
+        "publicLyricPagesCompared": 19,
+        "sourcePageDifferencesClassified": 3,
+        "sourcePageDifferencesAwaitingReview": 14,
+        "lyricsVerifiedAgainstReviewedReference": 2
+      },
+      "nextStep": "Use attributed Google/Musixmatch/LyricFind panels and public lyric pages as practical reference evidence; adjudicate hash differences at the intended recording/edition level, and keep those results distinct from provider-label agreement and performance-specific correctness."
+    },
+    "strictAccuracy": {
+      "verifiedCorrect": 2,
+      "verifiedIncorrect": 0,
+      "scopeMismatch": 0,
+      "unverified": 97,
+      "unavailable": 1,
+      "denominator": 100,
+      "percent": null,
+      "strictCorpusAccuracyPercent": null,
+      "evaluationStatus": "partial_adjudicated_comparisons",
+      "accuracyAmongEvaluatedPercent": 100.0,
+      "referenceCoverage": 2,
+      "evaluatedReferences": 2,
+      "referenceCoveragePercent": 2.0,
+      "adjudicatedGoldReferenceCoverage": 2,
+      "adjudicatedGoldReferenceCoveragePercent": 2.0,
+      "correctnessBasis": "Only reviewed field-level gold references with comparable output scope count here. A mismatching arrangement-scoped key is reported separately as scopeMismatch, not as a wrong recording key. Observed source pages and provider candidates are evidence coverage, not correctness comparisons.",
+      "scopeMismatchMeaning": null,
+      "scopeMismatchesExcludedFromEvaluatedDenominator": 0,
+      "referenceCoverageMeaning": "Adjudicated field-level gold rows only; source-page observations are reported separately."
+    },
+    "practicalCoverage": {
+      "selectedLyrics": 99,
+      "multiProviderExactTextSupport": 15,
+      "singleProviderExactTextSupport": 84,
+      "googleLyricsPanelSearches": 8,
+      "googlePanelsHashed": 6,
+      "googleExactSelectedHashMatches": 1,
+      "googleDifferentHashesForReview": 5,
+      "recordingBoundExactPanelMatches": 1,
+      "interpretation": "One Google panel exact hash now also has an album-performance catalog binding; it is practical text corroboration attributed to Musixmatch, not counted as a separate independent Google lineage.",
+      "songsWithPublicPageCompared": 19,
+      "reviewedLicensedLyricsReferenceCount": 2,
+      "lyricsVerifiedAgainstReviewedReference": 2
+    },
+    "reviewedFieldReferenceClaims": 2
+  },
+  "sourceContributions": {
+    "selectedBaseLyricsSongs": 99,
+    "mergedSectionSongs": 84,
+    "actualChordContributionSongs": 95,
+    "selectedValues": {
+      "lyrics": 99,
+      "keys": 75,
+      "chords": 95
+    },
+    "contributingProviderCountByField": {
+      "lyrics": 3,
+      "key": 3,
+      "chords": 3
+    },
+    "method": "SHA-256 source identity joins each discovered result to combineSources provenance. Candidate use is reported without raw candidate IDs or lyrics.",
+    "interpretation": "Candidate availability is distinct from actual use. Contribution counts are distinct songs. Agreement among provider labels is not proof of independent sourcing or correctness."
+  },
+  "next": "Review the five Google-panel hash differences and remaining public lyric-source differences by recording/edition. Expand attributed panel coverage across the 100-song corpus; report source observations and practical corroboration separately from recording-specific correctness.",
+  "sourceAgreement": {
+    "lyrics": {
+      "songsWithSourceData": 99,
+      "songsWithOneHashVariant": 6,
+      "songsWithMultipleHashVariants": 93,
+      "songsWithAtLeastOneHashSharedAcrossProviderLabels": 30,
+      "songsWithOneProviderLabelOnly": 5,
+      "hashVariantCountDistribution": {
+        "3": 19,
+        "5": 21,
+        "6": 17,
+        "4": 28,
+        "7": 1,
+        "8": 1,
+        "2": 6,
+        "1": 6
+      },
+      "rawCandidateAgreement": {
+        "songsWithAnyCrossProviderHashAgreement": 30,
+        "selectedOutputHashProviderSupportCounts": {
+          "3": 2,
+          "1": 84,
+          "2": 13
+        },
+        "selectedOutputHashHasCrossProviderSupport": 15,
+        "interpretation": "Raw discovered-candidate agreement includes rejected, pending, and edition-incompatible rows; use the eligibility-filtered counts above for practical support claims."
+      },
+      "selectedOutputRows": 99,
+      "selectedOutputHashProviderSupportCounts": {
+        "3": 2,
+        "1": 84,
+        "2": 13
+      },
+      "selectedOutputHashHasCrossProviderSupport": 15,
+      "selectedOutputHashHasOnlyOneProviderLabel": 84,
+      "selectedOutputHasSharedAlternativeButChosenHashHasOneProvider": 15,
+      "selectedOutputReviewCandidates": [
+        {
+          "songId": "song-008",
+          "title": "Yesterday",
+          "artist": "The Beatles",
+          "recordingEditionStatus": "verified",
+          "selectedProviderLabels": [
+            "genius"
+          ],
+          "alternativeSharedHashGroups": [
+            {
+              "normalizedHashSha256": "48513688f7c71ee2396e5b4f67e9db29401bcd0d463d9273aeb8455bb0dcfea6",
+              "providerLabels": [
+                "lrclib",
+                "lyricsovh"
+              ],
+              "providerLabelCount": 2
+            }
+          ]
+        },
+        {
+          "songId": "song-022",
+          "title": "Creep",
+          "artist": "Radiohead",
+          "recordingEditionStatus": "unspecified",
+          "selectedProviderLabels": [
+            "genius"
+          ],
+          "alternativeSharedHashGroups": [
+            {
+              "normalizedHashSha256": "ec30024b506d3893c0c3b50010585ae62d0c0957c2aaea9ecd71adceacdcf0cf",
+              "providerLabels": [
+                "lrclib",
+                "synclrc"
+              ],
+              "providerLabelCount": 2
+            }
+          ]
+        },
+        {
+          "songId": "song-024",
+          "title": "Knockin’ on Heaven’s Door",
+          "artist": "Bob Dylan",
+          "recordingEditionStatus": "unspecified",
+          "selectedProviderLabels": [
+            "genius"
+          ],
+          "alternativeSharedHashGroups": [
+            {
+              "normalizedHashSha256": "886e59b8d39838729bb38b84de1037424afda2a89e40a4525ab8811391174794",
+              "providerLabels": [
+                "lrclib",
+                "synclrc"
+              ],
+              "providerLabelCount": 2
+            }
+          ]
+        },
+        {
+          "songId": "song-027",
+          "title": "Losing My Religion",
+          "artist": "R.E.M.",
+          "recordingEditionStatus": "unspecified",
+          "selectedProviderLabels": [
+            "genius"
+          ],
+          "alternativeSharedHashGroups": [
+            {
+              "normalizedHashSha256": "c86321a0389140b263ccd56b6b860bccba0d2d391d88e9a1388fc78fc7fd8479",
+              "providerLabels": [
+                "lyricsovh",
+                "synclrc"
+              ],
+              "providerLabelCount": 2
+            }
+          ]
+        },
+        {
+          "songId": "song-031",
+          "title": "Take Me Home, Country Roads",
+          "artist": "John Denver",
+          "recordingEditionStatus": "unspecified",
+          "selectedProviderLabels": [
+            "genius"
+          ],
+          "alternativeSharedHashGroups": [
+            {
+              "normalizedHashSha256": "d0a044b207d01e7398f04d8f52b97dc23225dbf4cd0a6a82882b1003646eaac4",
+              "providerLabels": [
+                "betterlyrics",
+                "lrclib"
+              ],
+              "providerLabelCount": 2
+            }
+          ]
+        },
+        {
+          "songId": "song-040",
+          "title": "Yellow",
+          "artist": "Coldplay",
+          "recordingEditionStatus": "unspecified",
+          "selectedProviderLabels": [
+            "genius"
+          ],
+          "alternativeSharedHashGroups": [
+            {
+              "normalizedHashSha256": "c6b9ffded297970a5c8816a13b0ec4f9c88135b99ca2c07e9bc15d6c621cc777",
+              "providerLabels": [
+                "lrclib",
+                "synclrc"
+              ],
+              "providerLabelCount": 2
+            }
+          ]
+        },
+        {
+          "songId": "song-042",
+          "title": "Chasing Cars",
+          "artist": "Snow Patrol",
+          "recordingEditionStatus": "unspecified",
+          "selectedProviderLabels": [
+            "genius"
+          ],
+          "alternativeSharedHashGroups": [
+            {
+              "normalizedHashSha256": "ec612644561c109e0d253eebccbd46351d764bf92a8448e52aac6a9c2589732d",
+              "providerLabels": [
+                "lrclib",
+                "lyricsovh"
+              ],
+              "providerLabelCount": 2
+            }
+          ]
+        },
+        {
+          "songId": "song-044",
+          "title": "Good Riddance (Time of Your Life)",
+          "artist": "Green Day",
+          "recordingEditionStatus": "unspecified",
+          "selectedProviderLabels": [
+            "genius"
+          ],
+          "alternativeSharedHashGroups": [
+            {
+              "normalizedHashSha256": "7f7224c8f57c2086a44dae1cd0a5a3de9fb8ecf28a0b27317052546394803697",
+              "providerLabels": [
+                "synclrc",
+                "ultimateguitar"
+              ],
+              "providerLabelCount": 2
+            }
+          ]
+        },
+        {
+          "songId": "song-048",
+          "title": "Take Me to Church",
+          "artist": "Hozier",
+          "recordingEditionStatus": "unspecified",
+          "selectedProviderLabels": [
+            "genius"
+          ],
+          "alternativeSharedHashGroups": [
+            {
+              "normalizedHashSha256": "b702ea9dfdf3b88b1d34587325c9686c2286cc56a11a0982294395a8cfb15745",
+              "providerLabels": [
+                "lrclib",
+                "synclrc"
+              ],
+              "providerLabelCount": 2
+            }
+          ]
+        },
+        {
+          "songId": "song-056",
+          "title": "Rolling in the Deep",
+          "artist": "Adele",
+          "recordingEditionStatus": "unspecified",
+          "selectedProviderLabels": [
+            "genius"
+          ],
+          "alternativeSharedHashGroups": [
+            {
+              "normalizedHashSha256": "fd4b121da720672de30327721de08c082d1cd3a2f753208b97f9d34e126692aa",
+              "providerLabels": [
+                "lrclib",
+                "synclrc"
+              ],
+              "providerLabelCount": 2
+            }
+          ]
+        },
+        {
+          "songId": "song-061",
+          "title": "Dreams",
+          "artist": "Fleetwood Mac",
+          "recordingEditionStatus": "unspecified",
+          "selectedProviderLabels": [
+            "genius"
+          ],
+          "alternativeSharedHashGroups": [
+            {
+              "normalizedHashSha256": "762724e752bff294f447c98e86a35ad22ee388bd2228eb4247352b712badfe85",
+              "providerLabels": [
+                "lrclib",
+                "lyricsovh"
+              ],
+              "providerLabelCount": 2
+            }
+          ]
+        },
+        {
+          "songId": "song-068",
+          "title": "How Great Thou Art",
+          "artist": "Carrie Underwood",
+          "recordingEditionStatus": "unspecified",
+          "selectedProviderLabels": [
+            "genius"
+          ],
+          "alternativeSharedHashGroups": [
+            {
+              "normalizedHashSha256": "2ccc7a0196ad61e7eda2399a4a93a909858cbb71cfd30ed03b6add3c4edf49b4",
+              "providerLabels": [
+                "lrclib",
+                "synclrc"
+              ],
+              "providerLabelCount": 2
+            }
+          ]
+        },
+        {
+          "songId": "song-075",
+          "title": "Dust in the Wind",
+          "artist": "Kansas",
+          "recordingEditionStatus": "unspecified",
+          "selectedProviderLabels": [
+            "genius"
+          ],
+          "alternativeSharedHashGroups": [
+            {
+              "normalizedHashSha256": "224a8bc8b0e039100a35c52374111ed83ea30ad510fd4e1a5a0bf11e8970773c",
+              "providerLabels": [
+                "lrclib",
+                "synclrc"
+              ],
+              "providerLabelCount": 2
+            },
+            {
+              "normalizedHashSha256": "e8d67423254ff2dd3a9df8235fa2c2d18332dbb626457d099c9c84c5efe2d873",
+              "providerLabels": [
+                "lyricsovh",
+                "synclrc"
+              ],
+              "providerLabelCount": 2
+            }
+          ]
+        },
+        {
+          "songId": "song-092",
+          "title": "Ai Se Eu Te Pego",
+          "artist": "Michel Teló",
+          "recordingEditionStatus": "unverified",
+          "selectedProviderLabels": [
+            "genius"
+          ],
+          "alternativeSharedHashGroups": [
+            {
+              "normalizedHashSha256": "230bcf3a4623cc30d935dcc34bd3c435d03a9efc0e37c45d23056a3cd909e116",
+              "providerLabels": [
+                "lrclib",
+                "synclrc"
+              ],
+              "providerLabelCount": 2
+            },
+            {
+              "normalizedHashSha256": "64a6c50a4a7230f4395a2f78d205b92cde40bc65b0e74166273a518e5cc68287",
+              "providerLabels": [
+                "lrclib",
+                "synclrc"
+              ],
+              "providerLabelCount": 2
+            }
+          ]
+        },
+        {
+          "songId": "song-098",
+          "title": "Dragostea din tei",
+          "artist": "O-Zone",
+          "recordingEditionStatus": "unverified",
+          "selectedProviderLabels": [
+            "genius"
+          ],
+          "alternativeSharedHashGroups": [
+            {
+              "normalizedHashSha256": "c6ea15edaab30ca4b4a0fbaec7156d3cdf79b983e1fa4706b17158be31e108f5",
+              "providerLabels": [
+                "lrclib",
+                "synclrc"
+              ],
+              "providerLabelCount": 2
+            }
+          ]
+        }
+      ],
+      "selectedOutputHashHasMaximumProviderLabelSupport": 84,
+      "interpretation": "Exact normalized lyric or raw chord-sequence hash agreement, including a shared hash within a conflicting group, is a consolidation signal, not proof of independent provenance or correctness."
+    },
+    "chords": {
+      "songsWithSourceData": 95,
+      "songsWithOneHashVariant": 91,
+      "songsWithMultipleHashVariants": 4,
+      "songsWithAtLeastOneHashSharedAcrossProviderLabels": 0,
+      "songsWithOneProviderLabelOnly": 91,
+      "hashVariantCountDistribution": {
+        "1": 91,
+        "2": 4
+      },
+      "rawCandidateAgreement": {
+        "songsWithAnyCrossProviderHashAgreement": 2,
+        "selectedOutputHashProviderSupportCounts": {
+          "0": 93,
+          "1": 2
+        },
+        "selectedOutputHashHasCrossProviderSupport": 0,
+        "interpretation": "Raw discovered-candidate agreement includes rejected, pending, and edition-incompatible rows; use the eligibility-filtered counts above for practical support claims."
+      },
+      "selectedOutputRows": 95,
+      "selectedOutputHashProviderSupportCounts": {
+        "0": 93,
+        "1": 2
+      },
+      "selectedOutputHashHasCrossProviderSupport": 0,
+      "selectedOutputHashHasOnlyOneProviderLabel": 2,
+      "selectedOutputHasSharedAlternativeButChosenHashHasOneProvider": 0,
+      "selectedOutputReviewCandidates": [],
+      "selectedOutputHashHasMaximumProviderLabelSupport": 2,
+      "interpretation": "Exact normalized lyric or raw chord-sequence hash agreement, including a shared hash within a conflicting group, is a consolidation signal, not proof of independent provenance or correctness."
+    },
+    "chordAlignment": {
+      "songsWithSourceData": 95,
+      "songsWithOneHashVariant": 91,
+      "songsWithMultipleHashVariants": 4,
+      "songsWithAtLeastOneHashSharedAcrossProviderLabels": 0,
+      "songsWithOneProviderLabelOnly": 91,
+      "hashVariantCountDistribution": {
+        "1": 91,
+        "2": 4
+      },
+      "rawCandidateAgreement": {
+        "songsWithAnyCrossProviderHashAgreement": 0,
+        "selectedOutputHashProviderSupportCounts": {
+          "0": 94,
+          "1": 1
+        },
+        "selectedOutputHashHasCrossProviderSupport": 0,
+        "interpretation": "Raw discovered-candidate agreement includes rejected, pending, and edition-incompatible rows; use the eligibility-filtered counts above for practical support claims."
+      },
+      "selectedOutputRows": 95,
+      "selectedOutputHashProviderSupportCounts": {
+        "0": 94,
+        "1": 1
+      },
+      "selectedOutputHashHasCrossProviderSupport": 0,
+      "selectedOutputHashHasOnlyOneProviderLabel": 1,
+      "selectedOutputHasSharedAlternativeButChosenHashHasOneProvider": 0,
+      "selectedOutputReviewCandidates": [],
+      "selectedOutputHashHasMaximumProviderLabelSupport": 1,
+      "interpretation": "Exact lyric-anchor and capo-normalized chart agreement is a consolidation signal, not proof of independent provenance or correctness."
+    },
+    "transpositionInvariantChordProgression": {
+      "songsWithSourceData": 95,
+      "songsWithOneHashVariant": 91,
+      "songsWithMultipleHashVariants": 4,
+      "songsWithAtLeastOneHashSharedAcrossProviderLabels": 0,
+      "songsWithOneProviderLabelOnly": 91,
+      "hashVariantCountDistribution": {
+        "1": 91,
+        "2": 4
+      },
+      "rawCandidateAgreement": {
+        "songsWithAnyCrossProviderHashAgreement": 2,
+        "selectedOutputHashProviderSupportCounts": {
+          "0": 92,
+          "1": 3
+        },
+        "selectedOutputHashHasCrossProviderSupport": 0,
+        "interpretation": "Raw discovered-candidate agreement includes rejected, pending, and edition-incompatible rows; use the eligibility-filtered counts above for practical support claims."
+      },
+      "selectedOutputRows": 95,
+      "selectedOutputHashProviderSupportCounts": {
+        "0": 92,
+        "1": 3
+      },
+      "selectedOutputHashHasCrossProviderSupport": 0,
+      "selectedOutputHashHasOnlyOneProviderLabel": 3,
+      "selectedOutputHasSharedAlternativeButChosenHashHasOneProvider": 0,
+      "selectedOutputReviewCandidates": [],
+      "selectedOutputHashHasMaximumProviderLabelSupport": 3,
+      "interpretation": "An exact ordered progression hash after transposition normalization corroborates chord quality and bass structure only. It does not establish sounding key, lyric placement, recording identity, independent provenance, or correctness."
+    }
+  },
+  "crossProviderCandidateIdReuse": {
+    "songsWithCrossProviderIdReuse": 9,
+    "crossProviderIdGroups": 9,
+    "groupsWithDifferentLyricsHashes": 8,
+    "groupsWithSameLyricsHash": 1,
+    "providerPairGroupCounts": {
+      "betterlyrics+lrclib": 9
+    },
+    "betterLyricsAdapterNote": "BetterLyrics uses LRCLIB as its catalog and then resolves lyric content through the Better Lyrics API; a shared catalog ID does not guarantee identical lyric payloads.",
+    "interpretation": "Candidate-ID reuse across provider adapters is not enough to merge or count evidence as independent; compare field payload hashes and provider provenance."
+  },
+  "keyReferenceScopeEvaluation": {
+    "offlineReplaySongs": 100,
+    "recordingKeyReferences": 10,
+    "comparableRecordingKeyClaims": 8,
+    "verifiedCorrect": 8,
+    "verifiedIncorrect": 0,
+    "arrangementScopeMismatches": 1,
+    "scopeMismatchExample": {
+      "songId": "song-094",
+      "selectedKey": "F",
+      "selectedClaimScope": "arrangement",
+      "recordingHomeKeyReference": "Db",
+      "reason": "The selected key is from a same-song Ultimate Guitar chart that is not recordingCompatible with the selected Getz/Gilberto recording. Preserve the chart key; do not score it as a wrong recording-home key."
+    },
+    "corpusAccuracyPercent": null,
+    "note": "8/8 comparable recording-key outputs match across 10 reviewed reference rows; one arrangement-scoped claim is a scope mismatch and one reference has no selected output. This is not 100-song key accuracy.",
+    "latestReviewedReference": {
+      "songId": "song-074",
+      "title": "Stairway to Heaven",
+      "recordingEdition": "1971 Led Zeppelin IV album performance",
+      "expectedHomeKey": "Am",
+      "currentApplicationKey": null,
+      "result": "reference added; output unavailable; not counted correct",
+      "evidenceRecord": "tool/metadata_reference_evidence/stairway_to_heaven_key.json"
+    },
+    "latestReviewedReferences": [
+      {
+        "songId": "song-004",
+        "title": "Wonderwall",
+        "recordingEdition": "1995 original studio album performance on (What’s the Story) Morning Glory?",
+        "expectedKey": "F#m",
+        "selectedKey": "F#m",
+        "result": "verifiedCorrect",
+        "evidenceRecord": "tool/metadata_reference_evidence/wonderwall_key.json"
+      },
+      {
+        "songId": "song-074",
+        "title": "Stairway to Heaven",
+        "recordingEdition": "1971 Led Zeppelin IV album performance",
+        "expectedKey": "Am",
+        "selectedKey": null,
+        "result": "unavailable; not counted correct",
+        "evidenceRecord": "tool/metadata_reference_evidence/stairway_to_heaven_key.json"
+      }
+    ],
+    "unavailableOutputs": 1
+  },
+  "perSongSupportTiers": {
+    "reportField": "build/metadata_accuracy/report.json:songs[].practicalLyricsSupport",
+    "cacheReplay": {
+      "songs": 100,
+      "selectedLyrics": 99,
+      "multiProviderExactTextSupport": 15,
+      "singleProviderExactTextSupport": 84,
+      "noSelectedLyrics": 1,
+      "networkAttempts": 0,
+      "cacheHits": 3100,
+      "uncachedOffline": 1030
+    },
+    "interpretation": "Exact selected-text support counts only sameSong/sameRecording candidates explicitly compatible with the edition, not pending, and without an unmet lyric-agreement requirement. Chord support is chart-scoped and requires a candidate that contributed the selected chart value. These are practical source signals, not correctness scores. Provider labels do not prove independent upstream lineage; strict correctness requires a reviewed field-level reference and compatible claim scope.",
+    "levels": {
+      "multi_provider_exact_text_support": "At least two eligible provider labels carry the selected normalized text hash; this is practical corroboration, not proof of independent lineage or correctness.",
+      "single_provider_exact_text_support": "One eligible provider label carries the selected normalized text hash.",
+      "no_exact_candidate_text_support": "A selected text exists but no eligible candidate summary has its hash.",
+      "no_selected_lyrics": "No selected lyric value."
+    }
+  },
+  "perSongSupportScorecard": {
+    "file": "metadata-accuracy-work/metadata-practical-support-100-20261026.json",
+    "sha256": "1da735e79fbb39655613e2529d32ed1d3738b2d0c957df37888be43532eb6e0b",
+    "rows": 100,
+    "containsLyricBodies": false,
+    "sourceReport": "artifacts/integration-coordinator/metadata-accuracy-100-20261026/progress-29-key-scope-precedence/report.json",
+    "sourceReportSha256": "45c40da8d0a13b0cd60503886eb029edeb266fd8d982b0736318f7014648d939",
+    "includesSelectedKeySourceClaims": true,
+    "includesChordSequenceAndAlignmentSupport": true,
+    "includesLyricHashVariants": true,
+    "songsWithSharedMultiProviderAlternativeNotSelected": 16,
+    "suchRowsWithSelectedRecordingCompatibleSupportAndUncompatibleSameSongAlternatives": 16,
+    "independentlyRecomputedSourceTextHashes": 5,
+    "includesNormalizedContentHashes": true,
+    "includesSourceChordVariantHashes": true,
+    "normalizedLyricHashVariants": 467,
+    "chordChartVariants": 204,
+    "selectedChordMultiProviderTranspositionInvariantSupport": 0,
+    "songsWithCrossProviderProgressionAgreement": 2,
+    "sourceProgressionHashVariants": 202,
+    "officialBeatlesPagesWithReproducibleTextComparison": 5,
+    "officialLyricPagesMatchedAnyCachedCandidate": 0,
+    "officialLyricSourceCandidateRowsCompared": 36,
+    "googleLyricsPanelObservations": 8,
+    "googleLyricsPanelsHashCompared": 6,
+    "benchmarkLogicHead": "e9c36f96adf6ea66cb55d0868af21c01b0b7f024",
+    "googleLyricsPanelSelectedHashMatches": 1,
+    "googleLyricsPanelDifferentHashes": 5,
+    "googleLyricsSearchesWithoutPanel": 2,
+    "googleLyricsPanelAttributedProviders": {
+      "musixmatch": 4,
+      "lyricfind": 2
+    },
+    "selectedLyricsProviderCorrections": 2,
+    "selectedHashWithRecordingCompatibleSource": 97,
+    "selectedHashWithOnlySameSongSupport": 2,
+    "lyricReferenceReviewArtifact": "tool/metadata_reference_evidence/wonderwall_lyrics_practical_review.json",
+    "lyricReferenceReviewArtifactSha256": "bc00030d9789e4a207fbc161fe8e73eaec5ca1e8867f3922ef2f38dad03b5813",
+    "corpusSha256": "ad7c9f02aad2134cce5b59544055c60b0bb9f0ef157eee015d0806eec311d3f6",
+    "sha256Scope": "complete metadata-practical-support scorecard file bytes"
+  },
+  "chordProgressionEvidence": {
+    "sourceHashVariants": 202,
+    "songsWithSourceData": 95,
+    "songsWithAnyCrossProviderAgreement": 0,
+    "selectedOutputRows": 95,
+    "selectedRowsWithCrossProviderAgreement": 0,
+    "selectedProgressionProviderSupportCounts": {
+      "0": 92,
+      "1": 3
+    },
+    "normalization": "Progressions compared after removing absolute root transposition while retaining chord quality and slash-bass structure.",
+    "interpretation": "An exact ordered progression hash after transposition normalization corroborates chord quality and bass structure only. It does not establish sounding key, lyric placement, recording identity, independent provenance, or correctness."
+  },
+  "manualLyricComparisonArtifact": "tool/metadata_reference_evidence/official_lyrics_page_comparisons_20261026.json",
+  "officialLyricSourceCoverageInterpretation": "In addition to selected-text comparison, each official page hash was compared with every cached provider lyric candidate summary for its song. None of the five official hashes exactly matches any candidate in the current offline result set; this is a reference/source coverage gap, not proof that any one transcript is incorrect.",
+  "googleLyricsPanelInterpretation": "Google Search panels were hashed for six songs: one exact selected-text match (Wonderwall, attributed to Musixmatch) and five differing hashes (Let It Be, Hey Jude, Here Comes the Sun, Imagine, Blowin’ in the Wind); two additional searches (Yesterday and Knockin’ on Heaven’s Door) exposed no lyrics panel. These are attributed-source observations, not six independent Google sources. Differences remain pending review and do not establish which transcription is correct. No lyric bodies are retained.",
+  "practicalEvidenceSummary": {
+    "label": "practical source corroboration, not recording-specific correctness",
+    "interpretation": "Practical source support remains distinct from verified comparisons. Wonderwall is now 1 reviewed correct lyric reference out of 1 evaluated row, with 98 other selected lyrics unverified and one unavailable. Fifteen outputs have exact-text support across multiple provider labels and 84 have one provider label; these support counts alone do not establish accuracy.",
+    "lyrics": {
+      "selectedExactTextSupportedByMultipleProviderLabels": 15,
+      "selectedExactTextSupportedByOneProviderLabel": 84,
+      "noSelectedLyrics": 1,
+      "songsWithAnyExactHashSharedAcrossProviderLabels": 30,
+      "publicLyricPagesCompared": 18,
+      "publicPageDifferencesClassified": 4,
+      "publicPageDifferencesAwaitingReview": 14,
+      "lineageConfirmedIndependentProviderPairs": 0,
+      "googleLyricsPanel": {
+        "observedSongs": 8,
+        "panelPayloadsHashed": 6,
+        "attributedProviders": {
+          "Musixmatch": 4,
+          "LyricFind": 2
+        },
+        "exactSelectedHashMatches": 1,
+        "differentSelectedHashComparisons": 5,
+        "searchesWithoutPanel": 2,
+        "independentLineageConfirmed": false,
+        "lyricBodiesRetained": false,
+        "treatment": "Google panels are practical reference evidence and differences trigger review. Exact text matches are corroboration; Google is attributed to Musixmatch or LyricFind and is not double-counted as an independent lineage.",
+        "observedSongsWithPanel": 6,
+        "searches": 8,
+        "displayedResult": "Wonderwall exact hash; five differing hashes across four additional songs",
+        "corpusEditionStatus": "two searches specify edition context; remaining panel comparisons unspecified",
+        "hashCompared": 6,
+        "evidenceArtifact": "tool/metadata_reference_evidence/google_lyrics_panel_observations_20261026.json",
+        "evidenceArtifactSha256": "ca2ad2603aa342da58a1e2e38702dff2f46e53c606f05c3a02f3bff5b46eabd8",
+        "linkedBenchmarkReportSha256": "c5d76f488efe63cd4a3f386c165675ab17ca9147e15742abb26e09cb5bed0326",
+        "lyricHashesUnchangedAcrossReports": 100,
+        "recordingBoundExactPanelMatches": 1
+      },
+      "attributedExternalPanelExactSelectedHashMatches": 1,
+      "googlePanelIndependentLineageConfirmed": false,
+      "attributedExternalPanelDifferentHashComparisons": 5,
+      "googleLyricsPanelPayloadHashCompared": true,
+      "googleLyricsPanelsHashCompared": 6,
+      "googleLyricsPanelSelectedHashMatches": 1,
+      "googleLyricsPanelDifferentHashes": 5,
+      "googleLyricsPanelAttributedProviders": {
+        "musixmatch": 4,
+        "lyricfind": 2
+      },
+      "practicalRowsReviewedWithRepeatOnlyVariance": 1,
+      "strictGoldRowsAdded": 0,
+      "reviewedLicensedReferenceCount": 1,
+      "reviewedReferenceCorrect": 1
+    },
+    "keys": {
+      "comparableAdjudicatedReferences": 7,
+      "correctAmongComparable": 7,
+      "scopeMismatch": 1,
+      "referenceRowsIncludingScopeMismatch": 8,
+      "correctAmongComparablePercent": 100.0,
+      "latestReviewedReference": {
+        "songId": "song-074",
+        "expectedHomeKey": "Am",
+        "currentApplicationKey": null,
+        "status": "not passed: output unavailable",
+        "evidenceRecord": "tool/metadata_reference_evidence/stairway_to_heaven_key.json"
+      },
+      "reviewedRecordingScopedReferences": 10,
+      "comparableCorrect": 8,
+      "comparableEvaluated": 8,
+      "latestReviewedReferences": [
+        {
+          "songId": "song-004",
+          "title": "Wonderwall",
+          "recordingEdition": "1995 original studio album performance on (What’s the Story) Morning Glory?",
+          "expectedKey": "F#m",
+          "selectedKey": "F#m",
+          "result": "verifiedCorrect",
+          "evidenceRecord": "tool/metadata_reference_evidence/wonderwall_key.json"
+        },
+        {
+          "songId": "song-074",
+          "title": "Stairway to Heaven",
+          "recordingEdition": "1971 Led Zeppelin IV album performance",
+          "expectedKey": "Am",
+          "selectedKey": null,
+          "result": "unavailable; not counted correct",
+          "evidenceRecord": "tool/metadata_reference_evidence/stairway_to_heaven_key.json"
+        }
+      ]
+    },
+    "chords": {
+      "selectedChartsAvailable": 95,
+      "selectedRawExactMultiLabelSupport": 0,
+      "selectedRawExactOneLabelSupport": 2,
+      "selectedAlignedExactMultiLabelSupport": 0,
+      "selectedAlignedExactOneLabelSupport": 1,
+      "eligibleSourceProgressionsWithCrossLabelAgreement": 0,
+      "rawSourceProgressionsWithCrossLabelAgreement": 2,
+      "selectedProgressionsWithCrossLabelSupport": 0
+    },
+    "doNotInterpretAs": "Do not read strict verifiedCorrect=0 as a claim that the 99 selected lyrics are wrong or unsupported."
+  },
+  "providerAttributionAudit": {
+    "rowsWhereMetadataAndLyricsProviderDiffer": 2,
+    "rowsWithSelectedLyricsButOnlySameSongSupport": 2,
+    "onlySameSongRows": [
+      {
+        "songId": "song-073",
+        "title": "Californication",
+        "selectedLyricsProvider": "ultimateguitar",
+        "match": "sameSong"
+      },
+      {
+        "songId": "song-074",
+        "title": "Stairway to Heaven",
+        "selectedLyricsProvider": "lrclib",
+        "match": "sameSong"
+      }
+    ],
+    "interpretation": "The actual base lyric contributor is reported separately from the selected metadata provider. Same-song-only sources remain usable fallback content but are flagged as lower identity confidence."
+  },
+  "practicalReferenceLinks": {
+    "googlePanelExactMatchSongIds": [
+      "song-004"
+    ],
+    "interpretation": "An exact attributed Google panel hash match is linked to the Wonderwall row as source corroboration, not independent Google lineage or recording-edition gold."
+  },
+  "updatedAtUtc": "2026-10-26T22:48:08Z",
+  "overlayLineage": {
+    "appliedAfterReplay": true,
+    "replayWasRerun": false,
+    "referenceEvidence": "tool/metadata_reference_evidence/hurt_lyrics.json",
+    "currentCorpusSha256": "869c55d0829fe6fd195b9b393f02629b49ee1fda479cdc4693db3357f1b4a9b5",
+    "offlineReplayReportSha256": "8de6ba6b2df4b4dd668aa16b7b604b08d17da9fdf3f4cf062207ac6e41426eb2"
+  }
+}

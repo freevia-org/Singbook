@@ -1,0 +1,255 @@
+{
+  "schemaVersion": 1,
+  "reviewedOn": "2026-10-27",
+  "purpose": "Practical licensed-chart key comparisons. These product listings support chart-level comparison and do not automatically establish a particular recording's tonic.",
+  "sources": [
+    {
+      "songId": "song-001",
+      "title": "Tears in Heaven",
+      "product": "Musicnotes MN0019083",
+      "url": "https://apps.musicnotes.com/sheetmusic/eric-clapton/tears-in-heaven/MN0019083",
+      "publisherClaimedKey": "A",
+      "format": "Piano/Vocal/Guitar",
+      "scope": "artist song arrangement",
+      "scopeNote": "The listing says A major is the original published key; it does not identify a particular Eric Clapton master."
+    },
+    {
+      "songId": "song-004",
+      "title": "Wonderwall",
+      "product": "Musicnotes MN0143527",
+      "url": "https://www.musicnotes.com/sheetmusic/oasis/wonderwall/MN0143527",
+      "publisherClaimedKey": "F#m",
+      "format": "Oasis leadsheet with lyrics, melody, and chords",
+      "scope": "artist song arrangement",
+      "scopeNote": "The page describes a 3-page Oasis leadsheet in F-sharp minor; no exact album performance/master is named."
+    },
+    {
+      "songId": "song-006",
+      "title": "Let It Be",
+      "product": "Musicnotes MN0274887",
+      "url": "https://www.musicnotes.com/sheetmusic/the-beatles/let-it-be/MN0274887",
+      "publisherClaimedKey": "C",
+      "format": "Official Beatles guitar chord chart and lyric sheet",
+      "scope": "artist song arrangement",
+      "scopeNote": "Sony/ATV listing, two pages, C major; no particular album take or duration is bound."
+    },
+    {
+      "songId": "song-008",
+      "title": "Yesterday",
+      "product": "Musicnotes MN0274886",
+      "url": "https://www.musicnotes.com/sheetmusic/the-beatles/yesterday/MN0274886",
+      "publisherClaimedKey": "G",
+      "format": "Official Beatles guitar chord chart and lyric sheet",
+      "scope": "artist song arrangement",
+      "scopeNote": "The app output is recording-scoped F while this listing is an arrangement in G; these claims are not like-scoped."
+    },
+    {
+      "songId": "song-009",
+      "title": "Here Comes the Sun",
+      "product": "Musicnotes MN0274888",
+      "url": "https://www.musicnotes.com/sheetmusic/the-beatles/here-comes-the-sun/MN0274888",
+      "publisherClaimedKey": "D",
+      "format": "Official Beatles guitar chord chart and lyric sheet",
+      "scope": "artist song arrangement",
+      "scopeNote": "The listing identifies a two-page chord chart in D major; it does not bind the chart to an album master or disclose whether the guitar part is transposed."
+    },
+    {
+      "songId": "song-014",
+      "title": "Free Fallin'",
+      "product": "Musicnotes MN0283347",
+      "url": "https://www.musicnotes.com/sheetmusic/tom-petty/free-fallin/MN0283347",
+      "publisherClaimedKey": "D",
+      "format": "Tom Petty guitar tab and chord chart",
+      "scope": "artist arrangement with Full Moon Fever catalog association",
+      "scopeNote": "The product page associates the arrangement with Full Moon Fever but describes it as this particular arrangement; its D-major label needs capo/notation-scope review before comparing to a sounding recording key."
+    },
+    {
+      "songId": "song-017",
+      "title": "Sweet Home Alabama",
+      "product": "Musicnotes MN0277054",
+      "url": "https://www.musicnotes.com/sheetmusic/lynyrd-skynyrd/sweet-home-alabama/MN0277054",
+      "publisherClaimedKey": "D",
+      "format": "Lynyrd Skynyrd guitar tab and chord chart",
+      "scope": "artist song arrangement",
+      "scopeNote": "The listing says D major for the guitar chart but does not identify the recording edition or clarify capo/sounding-key treatment."
+    },
+    {
+      "songId": "song-018",
+      "title": "Perfect",
+      "product": "Musicnotes MN0284650",
+      "url": "https://www.musicnotes.com/sheetmusic/ed-sheeran/perfect/MN0284650",
+      "publisherClaimedKey": "G",
+      "format": "Ed Sheeran guitar chord chart and lyric sheet",
+      "scope": "artist song arrangement",
+      "scopeNote": "The listing gives G major for this arrangement; it does not identify the recording version or state whether a capo/transposition is involved."
+    },
+    {
+      "songId": "song-031",
+      "title": "Take Me Home, Country Roads",
+      "product": "Cherry Lane HL.2504214",
+      "url": "https://www.sheetmusicplus.com/en/product/take-me-home-country-roads-2990523.html",
+      "publisherClaimedKey": "A",
+      "format": "John Denver piano/vocal/guitar single with chord names and guitar chord diagrams",
+      "scope": "artist arrangement",
+      "scopeNote": "The licensed Cherry Lane listing identifies John Denver and A major, but does not name an album performance."
+    },
+    {
+      "songId": "song-035",
+      "title": "Jolene",
+      "product": "Dr. Tom's Charts via Sheet Music Plus",
+      "url": "https://www.sheetmusicplus.com/en/product/jolene-23894647.html",
+      "publisherClaimedKey": "C#m",
+      "format": "Dolly Parton guitar chart with transposed Am, original C#m, and capo-5 options",
+      "scope": "artist arrangement with 1973 album Jolene association",
+      "scopeNote": "The listing explicitly calls C-sharp minor the original key, includes that chart and a capo-5 version that sounds in C-sharp minor; this is a useful but secondary chart source, not exact-master proof."
+    },
+    {
+      "songId": "song-036",
+      "title": "Ring of Fire",
+      "product": "Musicnotes MN0280463",
+      "url": "https://www.musicnotes.com/sheetmusic/johnny-cash/ring-of-fire/MN0280463",
+      "publisherClaimedKey": "G",
+      "format": "Johnny Cash guitar chord chart / TAB",
+      "scope": "artist song arrangement",
+      "scopeNote": "Musicnotes lists G major as the original published key for this Johnny Cash guitar chart. It does not identify an exact album master."
+    },
+    {
+      "songId": "song-037",
+      "title": "Hurt",
+      "product": "Musicnotes MN0072578",
+      "url": "https://www.musicnotes.com/sheetmusic/johnny-cash/hurt/MN0072578",
+      "publisherClaimedKey": "Am",
+      "format": "Johnny Cash Piano/Vocal/Guitar Singer Pro",
+      "scope": "Johnny Cash arrangement associated with American IV",
+      "scopeNote": "Musicnotes lists A minor as the original published key, and its appearances section associates the product with American IV. The Johnny Cash official track page confirms Hurt is from American IV. The sheet arrangement is not claimed to reproduce the exact master; current app key is unavailable.",
+      "recordingIdentityEvidence": [
+        "https://www.johnnycash.com/track/hurt-2/",
+        "https://www.johnnycash.com/music/american-iv-the-man-comes-around/"
+      ]
+    },
+    {
+      "songId": "song-038",
+      "title": "Shallow",
+      "product": "Musicnotes MN0189819",
+      "url": "https://www.musicnotes.com/sheetmusic/a-star-is-born-2018/shallow/MN0189819",
+      "publisherClaimedKey": "G",
+      "format": "A Star Is Born [2018] Piano/Vocal/Chords Singer Pro",
+      "scope": "2018 film-song arrangement performed by Lady Gaga & Bradley Cooper",
+      "scopeNote": "Musicnotes identifies the 2018 film, lists Lady Gaga & Bradley Cooper as performers, and gives G major as the original published key. This supports the arrangement key, not an exact master transcription."
+    },
+    {
+      "songId": "song-039",
+      "title": "Someone Like You",
+      "product": "Musicnotes MN0100903",
+      "url": "https://www.musicnotes.com/sheetmusic/adele/someone-like-you/MN0100903",
+      "publisherClaimedKey": "A",
+      "format": "Adele Piano/Vocal/Guitar",
+      "scope": "artist song arrangement",
+      "scopeNote": "Musicnotes gives A major as the original published key for its Adele arrangement; the page does not bind the arrangement to a particular album master."
+    },
+    {
+      "songId": "song-041",
+      "title": "Fix You",
+      "product": "Musicnotes MN0049625_U2",
+      "url": "https://www.musicnotes.com/sheetmusic/coldplay/fix-you/MN0049625_U2",
+      "publisherClaimedKey": "Eb",
+      "format": "Official Coldplay Piano/Vocal/Guitar arrangement",
+      "scope": "artist arrangement associated with X&Y",
+      "scopeNote": "Musicnotes lists E-flat major as the original published key and associates the arrangement with Coldplay's X&Y. The selected D-sharp pitch class is enharmonically equivalent, but the app claim is recording-scoped while this listing is arrangement-scoped; count this as a scope mismatch, not a same-scope match or recording gold."
+    },
+    {
+      "songId": "song-042",
+      "title": "Chasing Cars",
+      "product": "Musicnotes MN0056560 / Faber D211",
+      "url": "https://www.musicnotes.com/sheetmusic/snow-patrol/chasing-cars/MN0056560",
+      "publisherClaimedKey": "A",
+      "format": "Official Faber guitar TAB / voice arrangement",
+      "scope": "artist arrangement; Faber describes it as recorded by Snow Patrol, Musicnotes associates it with Eyes Open",
+      "scopeNote": "Faber identifies the transcription as 'as recorded by Snow Patrol'; Musicnotes lists A major as the original published key and associates this product with Eyes Open. The corpus edition is unspecified, so the A/A agreement remains practical chart support rather than a strict recording-specific correctness claim.",
+      "recordingIdentityEvidence": [
+        "https://www.fabermusic.com/shop/chasing-cars-d211",
+        "https://www.musicnotes.com/sheetmusic/snow-patrol/chasing-cars/MN0056560"
+      ]
+    },
+    {
+      "songId": "song-046",
+      "title": "Nothing Else Matters",
+      "product": "Musicnotes MN0253739",
+      "url": "https://www.musicnotes.com/sheetmusic/metallica/nothing-else-matters/MN0253739",
+      "publisherClaimedKey": "Em",
+      "format": "Official Metallica leadsheet with lyrics, melody, and chords",
+      "scope": "artist arrangement associated with Metallica (1991)",
+      "scopeNote": "Musicnotes lists E minor as the original published key and associates the leadsheet with Metallica (1991). The selected application key is unavailable, so this adds a reference but does not count as a key match or correctness result."
+    },
+    {
+      "songId": "song-065",
+      "title": "Piano Man",
+      "product": "Musicnotes MN0136667",
+      "url": "https://www.musicnotes.com/sheetmusic/billy-joel/piano-man/MN0136667",
+      "publisherClaimedKey": "C",
+      "format": "Official Billy Joel Piano/Vocal/Chords Singer Pro arrangement",
+      "scope": "artist arrangement associated with Piano Man",
+      "scopeNote": "Musicnotes lists C major as the original published key, identifies voice/piano/accordion scoring, and associates it with the Piano Man catalog. The selected output C agrees at arrangement level; no exact master transcription is claimed."
+    },
+    {
+      "songId": "song-074",
+      "title": "Stairway to Heaven",
+      "product": "Musicnotes MN0108941",
+      "url": "https://www.musicnotes.com/sheetmusic/led-zeppelin/stairway-to-heaven/MN0108941",
+      "publisherClaimedKey": "Am",
+      "format": "Official Led Zeppelin guitar TAB transcription arrangement",
+      "scope": "artist arrangement appearing on Led Zeppelin IV",
+      "scopeNote": "Musicnotes identifies this as an A-minor Guitar TAB transcription arrangement and lists it on Led Zeppelin IV. It corroborates the existing album-performance home-key reference; application output is unavailable, so it adds no output match.",
+      "recordingIdentityEvidence": [
+        "https://www.musicnotes.com/sheetmusic/led-zeppelin/stairway-to-heaven/MN0108941",
+        "https://music.apple.com/ag/song/stairway-to-heaven/580708180"
+      ]
+    },
+    {
+      "songId": "song-051",
+      "title": "Despacito",
+      "product": "Musicnotes MN0173584",
+      "url": "https://www.musicnotes.com/sheetmusic/luis-fonsi-feat-daddy-yankee/despacito/MN0173584",
+      "publisherClaimedKey": "Bm",
+      "format": "Official Luis Fonsi feat. Daddy Yankee Piano/Vocal/Guitar Singer Pro arrangement",
+      "scope": "artist arrangement",
+      "scopeNote": "Musicnotes lists B minor as the original published key for the Luis Fonsi feat. Daddy Yankee PVG chart. The selected key B minor matches at arrangement level. The corpus credits only Luis Fonsi, so the co-performer credit requires separate catalog review; no exact recording-key gold is claimed."
+    },
+    {
+      "songId": "song-052",
+      "title": "Someone You Loved",
+      "product": "Musicnotes MN0191129",
+      "url": "https://www.musicnotes.com/sheetmusic/lewis-capaldi/someone-you-loved/MN0191129",
+      "publisherClaimedKey": "Db",
+      "format": "Official Lewis Capaldi Piano/Vocal/Guitar Singer Pro arrangement",
+      "scope": "artist arrangement",
+      "scopeNote": "Musicnotes lists D-flat major as the original published key for a Lewis Capaldi PVG arrangement. The selected C-sharp major is enharmonically equivalent, giving practical chart-key support only."
+    },
+    {
+      "songId": "song-053",
+      "title": "Shake It Off",
+      "product": "Musicnotes MN0138575",
+      "url": "https://www.musicnotes.com/sheetmusic/taylor-swift/shake-it-off/MN0138575",
+      "publisherClaimedKey": "G",
+      "format": "Official Taylor Swift Piano/Vocal/Chords Singer Pro arrangement",
+      "scope": "artist arrangement",
+      "scopeNote": "Musicnotes identifies this as a Taylor Swift Piano/Vocal/Chords arrangement and lists G major as the original published key. The selected G major matches at arrangement level; no album-version or exact-master link is claimed."
+    },
+    {
+      "songId": "song-054",
+      "title": "Love Story",
+      "product": "Musicnotes MN0095377",
+      "url": "https://www.musicnotes.com/sheetmusic/taylor-swift/love-story/MN0095377",
+      "publisherClaimedKey": "D",
+      "format": "Official Taylor Swift Lyrics/Melody/Chords leadsheet",
+      "scope": "artist arrangement",
+      "scopeNote": "Musicnotes lists D major as the original published key for this licensed Taylor Swift leadsheet. The selected D major matches at arrangement level; no exact performance-master binding is claimed."
+    }
+  ],
+  "interpretationPolicy": {
+    "equalKeys": "A matching key is practical corroboration for the chart claim, not strict recording-specific gold.",
+    "differentKeys": "A difference is a review lead, not an automatic error; inspect edition, capo, transposition, and sounding-key scope.",
+    "scopeDifference": "Do not compare arrangement-key claims to recording-home-key claims as like-scoped values.",
+    "copyright": "No score images, lyric text, or chord-chart bodies are retained."
+  }
+}

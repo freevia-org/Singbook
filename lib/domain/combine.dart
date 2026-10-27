@@ -311,6 +311,32 @@ int _capoOf(Object? capo) {
   return value == null || value < 0 ? 0 : value % 12;
 }
 
+bool _isExplicitZeroCapo(Object? capo) =>
+    capo is num ? capo.isFinite && capo == 0 : capo is String && capo.trim() == '0';
+
+bool _isStandardTuning(Object? tuning) {
+  final text = tuning is List ? tuning.join(' ') : tuning?.toString();
+  if (text == null) return false;
+  return text
+          .toLowerCase()
+          .split(RegExp(r'[\s,\[\]]+'))
+          .where((note) => note.isNotEmpty)
+          .join(' ') ==
+      'e a d g b e';
+}
+
+bool _compatibleChartTuning(Object? selected, Object? donor) {
+  if (!_hasMetadata(selected) && !_hasMetadata(donor)) return true;
+  if (!_hasMetadata(selected)) return _isStandardTuning(donor);
+  if (!_hasMetadata(donor)) return _isStandardTuning(selected);
+  String normalize(Object? value) => (value is List ? value.join(' ') : '$value')
+      .toLowerCase()
+      .split(RegExp(r'[\s,\[\]]+'))
+      .where((note) => note.isNotEmpty)
+      .join(' ');
+  return normalize(selected) == normalize(donor);
+}
+
 /// Whether a chart's declared (sounding) key fits its own chords played with
 /// [capo]. A chart whose chords give no key estimate is not contradicted.
 bool declaredKeyFitsChords(String chart, String declared, Object? capo) {
@@ -518,12 +544,25 @@ bool recordingCompatible(SongCandidate selected, SourceResult result) {
   )) {
     return false;
   }
+  const nonRecordingScopes = {
+    'composition',
+    'work',
+    'artist',
+    'image',
+    'arrangement',
+    'historicalText',
+  };
+  final scopes = [
+    selected.metadata['identityScope'],
+    selected.extra['identityScope'],
+    result.candidate.metadata['identityScope'],
+    result.candidate.extra['identityScope'],
+    result.metadata['identityScope'],
+    result.extra['identityScope'],
+  ];
   if (selected.providerId == 'wikisource' ||
       result.candidate.providerId == 'wikisource' ||
-      selected.metadata['identityScope'] == 'historicalText' ||
-      result.candidate.metadata['identityScope'] == 'historicalText' ||
-      result.metadata['identityScope'] == 'historicalText' ||
-      result.extra['identityScope'] == 'historicalText') {
+      scopes.any((scope) => scope == 'historicalText')) {
     return false;
   }
   if (result.matchKind == MatchKind.rejected ||
@@ -546,18 +585,8 @@ bool recordingCompatible(SongCandidate selected, SourceResult result) {
   // Provider identity can name a composition, work, artist, or image. Only
   // treat identical candidate IDs as recording evidence when that identity
   // is explicitly scoped to a recording (or is a legacy unscoped ID).
-  final selectedScope = selected.metadata['identityScope'];
-  final foundScope = found.metadata['identityScope'];
-  const nonRecordingScopes = {
-    'composition',
-    'work',
-    'artist',
-    'image',
-    'historicalText',
-  };
   if (selected.identity == found.identity &&
-      !nonRecordingScopes.contains(selectedScope) &&
-      !nonRecordingScopes.contains(foundScope)) {
+      !scopes.any(nonRecordingScopes.contains)) {
     return true;
   }
   if (selected.recordingIds.entries.any(
@@ -565,6 +594,9 @@ bool recordingCompatible(SongCandidate selected, SourceResult result) {
   )) {
     return true;
   }
+  // Album and duration can associate ordinary recording search results, but
+  // they cannot turn a composition/arrangement-level source into a recording.
+  if (scopes.any(nonRecordingScopes.contains)) return false;
   return result.matchKind == MatchKind.sameRecording &&
       selected.album != null &&
       found.album != null &&
@@ -1257,7 +1289,15 @@ bool _compatibleMetadataKeySource(SongDocument song, SourceResult source) {
       ArrangementLine(line.text, const [], directive: line.directive),
   ];
   final claims = <String, ({String key, List<String> sourceIds})>{};
+  final chordSourceIds = (song.extra['chordSourceIds'] as List?)
+      ?.whereType<String>()
+      .toSet() ??
+      const <String>{};
   for (final source in song.sources) {
+    final contributingChartCreditMatches =
+        source.extra['requiresLyricsAgreement'] == true &&
+        chordSourceIds.contains(source.id) &&
+        _sameArrangedSong(source.candidate, selected);
     if (!source.hasChords ||
         !(const {
               MatchKind.sameSong,
@@ -1267,8 +1307,9 @@ bool _compatibleMetadataKeySource(SongDocument song, SourceResult source) {
             // while still supplying a key corroborated against chosen chords.
             (source.matchKind == MatchKind.rejected &&
                 source.matchReason == 'incomplete_or_different_lyrics')) ||
-        source.extra['pendingMatchCheck'] == true ||
-        !_sameSong(source.candidate, selected) ||
+        source.hasPendingMatchCheck ||
+        !(_sameSong(source.candidate, selected) ||
+            contributingChartCreditMatches) ||
         _version(source.candidate.title) != _version(selected.title)) {
       continue;
     }
@@ -1303,6 +1344,23 @@ bool _compatibleMetadataKeySource(SongDocument song, SourceResult source) {
       final baseValue = song.metadata[field];
       final donorValue =
           source.metadata[field] ?? source.candidate.metadata[field];
+      // An absent capo claim means the displayed chart defaults to zero.
+      // Treat an explicit capo 0 claim as compatible after its chord anchors
+      // have been corroborated against that unchanged chart.
+      if (field == 'capo' &&
+          !_hasMetadata(baseValue) &&
+          _hasMetadata(donorValue) &&
+          _isExplicitZeroCapo(donorValue)) {
+        continue;
+      }
+      // A contributing chart with ordinary guitar tuning contributes the
+      // same displayed shapes when the selected document has no tuning header.
+      if (field == 'tuning' &&
+          contributingChartCreditMatches &&
+          !_hasMetadata(baseValue) &&
+          _isStandardTuning(donorValue)) {
+        continue;
+      }
       String normalize(Object? value) {
         // ChordPro headers serialize list tuning as "[E, A, ...]". Compare
         // those saved headers with the provider's equivalent string array.
@@ -1326,10 +1384,16 @@ bool _compatibleMetadataKeySource(SongDocument song, SourceResult source) {
       }
     }
     if (!compatible) continue;
-    final aligned = _phraseChords(
-      plain,
-      shifted ? transposeBody(source.body, shift) : source.body,
-    );
+    final keyEvidenceBody = shifted
+        ? transposeBody(source.body, shift)
+        : source.body;
+    // Rejected main-artist chart aliases reach this branch only when that
+    // exact chart supplied the saved chord anchors. Reuse the fuzzy line
+    // aligner that admitted those anchors; requiring exact phrase alignment
+    // here would discard a key whose chord placements were already checked.
+    final aligned = contributingChartCreditMatches
+        ? _fuzzyLineChords(plain, keyEvidenceBody)
+        : _phraseChords(plain, keyEvidenceBody);
     var agreements = 0, contradicts = false;
     final roots = <String>{}, matchedLines = <int>{};
     for (final entry in aligned.entries) {
@@ -1390,7 +1454,7 @@ bool _compatibleMetadataKeySource(SongDocument song, SourceResult source) {
           MatchKind.sameSong,
           MatchKind.sameRecording,
         }.contains(source.matchKind) ||
-        source.extra['pendingMatchCheck'] == true ||
+        source.hasPendingMatchCheck ||
         !_compatibleMetadataKeySource(song, source)) {
       continue;
     }
@@ -1426,8 +1490,9 @@ Object? _setupValue(SourceResult source, SongCandidate selected, String key) =>
 bool _compatibleArrangementSetup(
   SourceResult base,
   SourceResult donor,
-  SongCandidate selected,
-) {
+  SongCandidate selected, {
+  bool allowCapoDifference = false,
+}) {
   if (!explicitEditionsCompatible(
     selected,
     donor.candidate,
@@ -1437,6 +1502,7 @@ bool _compatibleArrangementSetup(
     return false;
   }
   for (final key in const ['key', 'capo', 'tuning', 'timeSignature']) {
+    if (key == 'capo' && allowCapoDifference) continue;
     final baseValue = _setupValue(base, selected, key);
     final donorValue = _setupValue(donor, selected, key);
     if (baseValue == null || donorValue == null) continue;
@@ -1705,8 +1771,9 @@ List<(int?, int, String)> _mapChordWords(
   ArrangementLine line,
   _Words from,
   _Words to,
-  List<(int, int)> pairs,
-) {
+  List<(int, int)> pairs, {
+  Map<int, int> trailingWordOverrides = const {},
+}) {
   final aligned = {for (final (a, b) in pairs) a: b};
   final anchors = <(int?, int, String)>[];
   // Chords keep their order: a chord never lands before the previous one,
@@ -1714,7 +1781,9 @@ List<(int?, int, String)> _mapChordWords(
   int? previous, previousWord;
   var ended = false;
   for (final chord in line.chords) {
-    final index = from.indexWhere((word) => chord.offset < word.end);
+    final override = trailingWordOverrides[chord.offset];
+    final index =
+        override ?? from.indexWhere((word) => chord.offset < word.end);
     if (index < 0 || ended) {
       ended = true;
       anchors.add((null, 0, chord.chord));
@@ -1749,7 +1818,10 @@ List<(int?, int, String)> _mapChordWords(
     }
     final target = to[aligned[probe]!];
     final inWord = probe == index
-        ? (chord.offset - from[index].start).clamp(0, target.end - target.start)
+        ? (override == null
+                  ? chord.offset - from[index].start
+                  : from[index].end - from[index].start)
+              .clamp(0, target.end - target.start)
         : 0;
     previous = aligned[probe]!;
     previousWord = index;
@@ -1792,15 +1864,150 @@ Map<int, List<ChordAnchor>> _fuzzyLineChords(
   String chart,
 ) {
   bool plainText(String text) => text.characters.length == text.length;
-  final donors = [
-    for (final line in parseArrangement(chart))
-      if (!line.directive &&
-          line.chords.isNotEmpty &&
-          plainText(line.text) &&
-          _lineWords(line.text).length >= 3 &&
-          _lineWords(line.text).length <= 40)
-        (line: line, words: _lineWords(line.text)),
+  final parsedDonors = parseArrangement(chart);
+  final donors =
+      <
+        ({
+          ArrangementLine line,
+          _Words words,
+          Map<int, int> trailingWordOverrides,
+        })
+      >[
+        for (final line in parsedDonors)
+          if (!line.directive &&
+              line.chords.isNotEmpty &&
+              plainText(line.text) &&
+              _lineWords(line.text).length >= 3 &&
+              _lineWords(line.text).length <= 40)
+            (
+              line: line,
+              words: _lineWords(line.text),
+              trailingWordOverrides: const {},
+            ),
+      ];
+  final donorRanges = <(int, int)>[
+    for (var i = 0; i < parsedDonors.length; i++)
+      if (!parsedDonors[i].directive &&
+          parsedDonors[i].chords.isNotEmpty &&
+          plainText(parsedDonors[i].text) &&
+          _lineWords(parsedDonors[i].text).length >= 3 &&
+          _lineWords(parsedDonors[i].text).length <= 40)
+        (i, i + 1),
   ];
+  final targetLineCount = target.where((line) {
+    if (line.directive || !plainText(line.text)) return false;
+    final words = _lineWords(line.text);
+    return words.isNotEmpty && words.length <= 40;
+  }).length;
+  if (targetLineCount == 0) return const {};
+  final donorLimit = 40000 ~/ targetLineCount;
+  if (donors.length > donorLimit) return const {};
+  final contextDonors =
+      <
+        ({
+          ArrangementLine line,
+          _Words words,
+          Map<int, int> trailingWordOverrides,
+        })
+      >[];
+  final contextRanges = <(int, int)>[];
+  // Chord charts often split one lyric paragraph into several very short
+  // rows. Compare bounded adjacent runs as one word stream, retaining each
+  // chord's offset within that stream. Only short, chorded rows participate;
+  // blank lines, directives, long rows, and non-plain grapheme offsets break
+  // the context so unrelated sections cannot lend placement evidence.
+  for (var start = 0; start < parsedDonors.length; start++) {
+    final first = parsedDonors[start];
+    if (first.directive ||
+        first.chords.isEmpty ||
+        !plainText(first.text) ||
+        _lineWords(first.text).length > 6 ||
+        _lineWords(first.text).isEmpty) {
+      continue;
+    }
+    final text = StringBuffer();
+    final chords = <ChordAnchor>[];
+    var joinedLength = 0;
+    var wordCount = 0;
+    final internalTrailingWordOverrides = <int, int>{};
+    var previousTrailingWordOverrides = <int, int>{};
+    for (var end = start; end < parsedDonors.length && end < start + 8; end++) {
+      final line = parsedDonors[end];
+      final words = _lineWords(line.text);
+      if (line.directive ||
+          line.chords.isEmpty ||
+          !plainText(line.text) ||
+          words.isEmpty ||
+          words.length > 6) {
+        break;
+      }
+      if (end > start) {
+        text.write(' ');
+        joinedLength++;
+        internalTrailingWordOverrides.addAll(previousTrailingWordOverrides);
+      }
+      final lineStart = joinedLength;
+      final firstWordIndex = wordCount;
+      text.write(line.text);
+      joinedLength += line.text.length;
+      wordCount += words.length;
+      chords.addAll(
+        line.chords.map(
+          (chord) => ChordAnchor(lineStart + chord.offset, chord.chord),
+        ),
+      );
+      previousTrailingWordOverrides = {
+        for (final chord in line.chords)
+          if (chord.offset == line.text.length)
+            lineStart + chord.offset: firstWordIndex + words.length - 1,
+      };
+      if (end > start && wordCount >= 3) {
+        final combined = ArrangementLine(
+          text.toString(),
+          List.unmodifiable(chords),
+        );
+        contextDonors.add((
+          line: combined,
+          words: _lineWords(combined.text),
+          trailingWordOverrides: Map.unmodifiable(
+            internalTrailingWordOverrides,
+          ),
+        ));
+        contextRanges.add((start, end + 1));
+      }
+    }
+  }
+  // Keep context candidates from the whole chart when the DP work budget is
+  // tight. Taking only the first candidates biases chord coverage toward the
+  // start of a long song. The even sample preserves a spread across the full
+  // source order while keeping donors × target lines within the old budget.
+  final availableContexts = donorLimit - donors.length;
+  if (contextDonors.length <= availableContexts) {
+    donors.addAll(contextDonors);
+    donorRanges.addAll(contextRanges);
+  } else if (availableContexts > 0) {
+    for (var i = 0; i < availableContexts; i++) {
+      final index = ((i + .5) * contextDonors.length / availableContexts)
+          .floor();
+      donors.add(contextDonors[index]);
+      donorRanges.add(contextRanges[index]);
+    }
+  }
+  final donorOrder = [for (var i = 0; i < donors.length; i++) i]
+    ..sort((a, b) {
+      final byStart = donorRanges[a].$1.compareTo(donorRanges[b].$1);
+      if (byStart != 0) return byStart;
+      final byEnd = donorRanges[a].$2.compareTo(donorRanges[b].$2);
+      return byEnd != 0 ? byEnd : a.compareTo(b);
+    });
+  final orderedDonors = [for (final i in donorOrder) donors[i]];
+  final orderedRanges = [for (final i in donorOrder) donorRanges[i]];
+  donors
+    ..clear()
+    ..addAll(orderedDonors);
+  donorRanges
+    ..clear()
+    ..addAll(orderedRanges);
   final vocabulary = {
     for (final donor in donors)
       for (final word in donor.words) word.word,
@@ -1835,13 +2042,16 @@ Map<int, List<ChordAnchor>> _fuzzyLineChords(
       donors.length * lyrics.length > 40000) {
     return const {};
   }
-  // A match covers one lyric line, or two adjacent ones ([span] 2) whose
-  // words are compared as one line.
-  bool joinable(int l) =>
-      l + 1 < lyrics.length && lyrics[l + 1].index == lyrics[l].index + 1;
-  _Words wordsOf(int l, int span) => span == 1
-      ? lyrics[l].words
-      : [...lyrics[l].words, ...lyrics[l + 1].words];
+  // A context can span up to three adjacent target lines.
+  bool joinable(int l, int span) =>
+      l + span <= lyrics.length &&
+      List.generate(
+        span - 1,
+        (i) => i,
+      ).every((i) => lyrics[l + i + 1].index == lyrics[l + i].index + 1);
+  _Words wordsOf(int l, int span) => [
+    for (var i = 0; i < span; i++) ...lyrics[l + i].words,
+  ];
   final pairsOf = <(int, int, int), List<(int, int)>>{};
   List<(int, int)> pairs(int d, int l, int span) => pairsOf.putIfAbsent((
     d,
@@ -1849,7 +2059,7 @@ Map<int, List<ChordAnchor>> _fuzzyLineChords(
     span,
   ), () => _alignWords(donors[d].words, wordsOf(l, span)));
   double similarity(int d, int l, [int span = 1]) {
-    if (span == 2 && !joinable(l)) return 0;
+    if (span > 1 && !joinable(l, span)) return 0;
     if (wordsOf(l, span).length < 3) return 0;
     final value = _lineSimilarity(
       donors[d].words,
@@ -1873,29 +2083,30 @@ Map<int, List<ChordAnchor>> _fuzzyLineChords(
   // lines. Joining two lines counts for both, but only when it fits better
   // than either line alone and is not a containment match.
   final rows = donors.length, columns = lyrics.length;
-  double joined(int d, int l) {
-    final value = similarity(d, l, 2);
-    return value > 0 &&
-            !contained(d, l, 2) &&
-            value > similarity(d, l) &&
-            (!joinable(l) || value > similarity(d, l + 1))
-        ? value
-        : 0;
+  double joined(int d, int l, int span) {
+    final value = similarity(d, l, span);
+    if (span < 2 || value == 0 || contained(d, l, span)) return 0;
+    for (var part = 0; part < span; part++) {
+      if (value <= similarity(d, l + part)) return 0;
+    }
+    return value;
   }
 
   final score = List.generate(rows + 1, (_) => List.filled(columns + 2, 0.0));
   for (var d = rows - 1; d >= 0; d--) {
     for (var l = columns - 1; l >= 0; l--) {
       final match = similarity(d, l);
-      final pair = joined(d, l);
       var best = score[d + 1][l] > score[d][l + 1]
           ? score[d + 1][l]
           : score[d][l + 1];
       if (match > 0 && match + score[d + 1][l + 1] > best) {
         best = match + score[d + 1][l + 1];
       }
-      if (pair > 0 && 2 * pair + score[d + 1][l + 2] > best) {
-        best = 2 * pair + score[d + 1][l + 2];
+      for (var span = 2; span <= 3 && l + span <= columns; span++) {
+        final context = joined(d, l, span);
+        if (context > 0 && span * context + score[d + 1][l + span] > best) {
+          best = span * context + score[d + 1][l + span];
+        }
       }
       score[d][l] = best;
     }
@@ -1910,7 +2121,7 @@ Map<int, List<ChordAnchor>> _fuzzyLineChords(
   }
   bool ambiguousDonor(int d) =>
       signatures[_repeatKey(donors[d].line.text)]!.length > 1;
-  final matched = <(int, int, int)>[];
+  var matched = <(int, int, int)>[];
   // The same lyric text left uncovered elsewhere makes the place where a
   // match lands as arbitrary as an ambiguous chart line.
   final covered = <int>{};
@@ -1920,8 +2131,11 @@ Map<int, List<ChordAnchor>> _fuzzyLineChords(
     final text = textOf(l, span);
     for (var other = 0; other < columns; other++) {
       if (other == l ||
-          covered.contains(other) ||
-          (span == 2 && (!joinable(other) || covered.contains(other + 1)))) {
+          !joinable(other, span) ||
+          List.generate(
+            span,
+            (i) => i,
+          ).any((i) => covered.contains(other + i))) {
         continue;
       }
       if (textOf(other, span) == text) return true;
@@ -1936,12 +2150,26 @@ Map<int, List<ChordAnchor>> _fuzzyLineChords(
   var d = 0, l = 0;
   while (d < rows && l < columns) {
     final match = similarity(d, l);
-    final pair = joined(d, l);
-    if (pair > 0 && score[d][l] == 2 * pair + score[d + 1][l + 2]) {
-      matched.add((d, l, 2));
+    var span = 1;
+    var contextScore = match > 0 ? match + score[d + 1][l + 1] : -1.0;
+    for (
+      var candidateSpan = 2;
+      candidateSpan <= 3 && l + candidateSpan <= columns;
+      candidateSpan++
+    ) {
+      final candidate = joined(d, l, candidateSpan);
+      final candidateScore =
+          candidateSpan * candidate + score[d + 1][l + candidateSpan];
+      if (candidate > 0 && candidateScore > contextScore) {
+        span = candidateSpan;
+        contextScore = candidateScore;
+      }
+    }
+    if (span > 1 && score[d][l] == contextScore) {
+      matched.add((d, l, span));
       d++;
-      l += 2;
-    } else if (match > 0 && score[d][l] == match + score[d + 1][l + 1]) {
+      l += span;
+    } else if (match > 0 && score[d][l] == contextScore) {
       matched.add((d, l, 1));
       d++;
       l++;
@@ -1951,29 +2179,71 @@ Map<int, List<ChordAnchor>> _fuzzyLineChords(
       l++;
     }
   }
+  // Original chart rows and their combined contexts can describe the same
+  // source passage. Keep ownership of each source interval with one match so
+  // an overlapping virtual row cannot lend the same chord evidence twice.
+  final owned = <(int, int, int)>[];
+  for (final match in matched) {
+    final range = donorRanges[match.$1];
+    final overlap = owned.where((other) {
+      final prior = donorRanges[other.$1];
+      return range.$1 < prior.$2 && prior.$1 < range.$2;
+    }).toList();
+    if (overlap.isEmpty) {
+      owned.add(match);
+      continue;
+    }
+    double scoreFor((int, int, int) value) =>
+        similarity(value.$1, value.$2, value.$3);
+    final best = overlap
+        .map(scoreFor)
+        .fold(scoreFor(match), (a, b) => a > b ? a : b);
+    if (scoreFor(match) != best) continue;
+    if (overlap.any((other) => scoreFor(other) == best)) {
+      owned.removeWhere(overlap.contains);
+      continue;
+    }
+    owned.removeWhere(overlap.contains);
+    owned.add(match);
+  }
+  matched = owned;
+  matched.sort((a, b) {
+    final source = donorRanges[a.$1].$1.compareTo(donorRanges[b.$1].$1);
+    return source != 0 ? source : a.$2.compareTo(b.$2);
+  });
   for (final (_, l, span) in matched) {
-    covered.addAll([l, if (span == 2) l + 1]);
+    covered.addAll(List.generate(span, (i) => l + i));
   }
   final result = <int, List<ChordAnchor>>{};
   void place(int d, int l, int span) {
     final words = wordsOf(l, span);
-    final split = lyrics[l].words.length;
+    final boundaries = <int>[];
+    var count = 0;
+    for (var part = 0; part < span; part++) {
+      count += lyrics[l + part].words.length;
+      boundaries.add(count);
+    }
     for (final (word, inWord, chord) in _mapChordWords(
       donors[d].line,
       donors[d].words,
       words,
       pairs(d, l, span),
+      trailingWordOverrides: donors[d].trailingWordOverrides,
     )) {
       // Chords after the last word stay at the end of the last line.
-      final second = word == null ? span == 2 : word >= split;
-      final line = lyrics[second ? l + 1 : l].index;
+      final localWord = word ?? words.length - 1;
+      var part = boundaries.indexWhere((boundary) => localWord < boundary);
+      if (part < 0) part = span - 1;
+      final priorBoundary = part == 0 ? 0 : boundaries[part - 1];
+      final line = lyrics[l + part].index;
       final offset = word == null
           ? target[line].text.length
-          : words[word].start + inWord;
+          : lyrics[l + part].words[word - priorBoundary].start + inWord;
       result.putIfAbsent(line, () => []).add(ChordAnchor(offset, chord));
     }
   }
 
+  final abstainedLyrics = <int>{};
   for (var m = 0; m < matched.length; m++) {
     final (d, l, span) = matched[m];
     // Another chart line between the neighbouring matches that fits this
@@ -1989,21 +2259,40 @@ Map<int, List<ChordAnchor>> _fuzzyLineChords(
           _chordSignature(donors[other].line) !=
               _chordSignature(donors[d].line);
     }
-    if (tied) continue;
+    if (tied) {
+      abstainedLyrics.addAll(List.generate(span, (i) => lyrics[l + i].index));
+      continue;
+    }
     if (weak((d, l, span)) &&
         (!matched.take(m).any((match) => !weak(match)) ||
             !matched.skip(m + 1).any((match) => !weak(match)))) {
+      abstainedLyrics.addAll(List.generate(span, (i) => lyrics[l + i].index));
       continue;
     }
     place(d, l, span);
   }
   // Leftover lyric lines: the single closest chart line, if unambiguous.
+  // A source interval selected by the ordered alignment is never recycled for
+  // a leftover line, even when placement abstains because that match is weak
+  // or ambiguous. Otherwise one chord phrase could be reused elsewhere.
+  final placedRanges = <(int, int)>[
+    for (final (d, _, _) in matched) donorRanges[d],
+  ];
   for (var l = 0; l < columns; l++) {
-    if (result.containsKey(lyrics[l].index)) continue;
+    if (result.containsKey(lyrics[l].index) ||
+        abstainedLyrics.contains(lyrics[l].index)) {
+      continue;
+    }
     var best = -1;
     var bestScore = 0.0;
     var ambiguous = false;
     for (var d = 0; d < rows; d++) {
+      final range = donorRanges[d];
+      if (placedRanges.any(
+        (used) => range.$1 < used.$2 && used.$1 < range.$2,
+      )) {
+        continue;
+      }
       final value = similarity(d, l);
       if (value == 0 || contained(d, l)) continue;
       if (value > bestScore) {
@@ -2018,6 +2307,7 @@ Map<int, List<ChordAnchor>> _fuzzyLineChords(
     }
     if (best < 0 || ambiguous) continue;
     place(best, l, 1);
+    placedRanges.add(donorRanges[best]);
   }
   result.removeWhere((_, anchors) => anchors.isEmpty);
   return result;
@@ -2290,7 +2580,12 @@ _overlayChords(
   final contextSources = <String>{};
   for (final source in sources) {
     if (!source.hasChords ||
-        !_compatibleArrangementSetup(base, source, selected)) {
+        !_compatibleArrangementSetup(
+          base,
+          source,
+          selected,
+          allowCapoDifference: true,
+        )) {
       continue;
     }
     final donorBody = _keyCorrectedBody(source);
@@ -2307,6 +2602,19 @@ _overlayChords(
     final chords = {...fuzzy, ...contexts};
     for (final entry in phrases.entries) {
       if (entry.value.isEmpty) continue;
+      final fuzzyConflicts = entry.value.any(
+        (anchor) => (fuzzy[entry.key] ?? const <ChordAnchor>[]).any(
+          (existing) =>
+              existing.offset == anchor.offset &&
+              existing.chord != anchor.chord,
+        ),
+      );
+      if (fuzzyConflicts) {
+        // Two matchers selected different chords at the same lyric onset.
+        // Without a source-level confidence ranking, leave this line unplaced.
+        chords.remove(entry.key);
+        continue;
+      }
       final context = contexts[entry.key];
       // Keep every exact phrase placement. A complete exact context may add
       // anchors only when it preserves all of those positions and symbols.
@@ -2381,7 +2689,33 @@ _overlayChords(
           (_capoOf(_setupValue(candidate.source, selected, 'capo')) -
               _capoOf(_setupValue(primary, selected, 'capo'))) %
           12;
-      if (move != 0 && _keyConsensusRank(candidate.source) > 0) {
+      if (move != 0) {
+        final primaryKey = _setupValue(primary, selected, 'key');
+        final donorKey = _setupValue(candidate.source, selected, 'key');
+        final primaryCapo = _setupValue(primary, selected, 'capo');
+        final donorCapo = _setupValue(candidate.source, selected, 'capo');
+        // A capo move needs an affirmative discovery check. When both capo
+        // values are explicit, also require matching sounding-key claims that
+        // fit each chart's shapes. Older charts with an unspecified primary
+        // capo retain the established keyConsensus-based conversion path.
+        final explicitCapos = primaryCapo != null && donorCapo != null;
+        if (candidate.source.extra['keyConsensus'] != true ||
+            (explicitCapos &&
+                (primaryKey is! String ||
+                    donorKey is! String ||
+                    _keyIdentity(primaryKey) != _keyIdentity(donorKey) ||
+                    !declaredKeyFitsChords(
+                      _keyCorrectedBody(primary),
+                      primaryKey,
+                      primaryCapo,
+                    ) ||
+                    !declaredKeyFitsChords(
+                      _keyCorrectedBody(candidate.source),
+                      donorKey,
+                      donorCapo,
+                    )))) {
+          continue;
+        }
         final flats = _chartSpelling(_keyCorrectedBody(primary));
         candidate = (
           source: candidate.source,
@@ -2400,7 +2734,12 @@ _overlayChords(
         );
         movedIds.add(candidate.source.id);
       }
-      if (!_compatibleArrangementSetup(primary, candidate.source, selected)) {
+      if (!_compatibleArrangementSetup(
+        primary,
+        candidate.source,
+        selected,
+        allowCapoDifference: true,
+      )) {
         continue;
       }
       var agrees = false, contradicts = false;
@@ -2436,8 +2775,44 @@ _overlayChords(
           candidate.source.extra.containsKey('keyConsensus') &&
           _keyConsensusRank(primary) > 0 &&
           _keyConsensusRank(candidate.source) > 0;
-      if (contradicts || (!agrees && !explicitSetup && !checkedSameKey)) {
+      // Sources carrying this flag reached _overlayChords only after the
+      // selected-recording lyric-context gate accepted them in combineSources.
+      final contextualLyricsChecked =
+          candidate.source.extra['requiresRecordingLyricsAgreement'] == true;
+      if (contradicts ||
+          (!agrees &&
+              !explicitSetup &&
+              !checkedSameKey &&
+              !contextualLyricsChecked)) {
         continue;
+      }
+      // A same-song chart without a compatible explicit arrangement setup or
+      // affirmative key consensus may confirm overlapping anchors, but those
+      // agreements cannot validate its otherwise unmatched changes. Keep only
+      // exact agreements in that case; repeated-line alignment must not let
+      // one matching chorus chord authorize new chords elsewhere in the song.
+      if (candidate.confidence < 2 &&
+          !explicitSetup &&
+          !checkedSameKey &&
+          !contextualLyricsChecked) {
+        candidate = (
+          source: candidate.source,
+          chords: {
+            for (final entry in candidate.chords.entries)
+              if (chartChords[entry.key] case final previous?)
+                entry.key: [
+                  for (final anchor in entry.value)
+                    if (previous.any(
+                      (known) =>
+                          known.offset == anchor.offset &&
+                          known.chord == anchor.chord,
+                    ))
+                      anchor,
+                ],
+          },
+          coverage: candidate.coverage,
+          confidence: candidate.confidence,
+        );
       }
     }
     var added = false;
@@ -2568,6 +2943,7 @@ SongDocument combineSources(
             !source.hasChords &&
             source.matchKind != MatchKind.rejected &&
             source.matchKind != MatchKind.unverified &&
+            !source.hasPendingMatchCheck &&
             source.extra['requiresLyricsAgreement'] != true &&
             source.extra['requiresRecordingLyricsAgreement'] != true &&
             recordingCompatible(selected, source) &&
@@ -2579,7 +2955,7 @@ SongDocument combineSources(
         source.extra['metadataOnly'] != true ||
         source.body.trim().isNotEmpty ||
         source.hasChords ||
-        source.extra['pendingMatchCheck'] == true ||
+        source.hasPendingMatchCheck ||
         !const {
           MatchKind.sameSong,
           MatchKind.sameRecording,
@@ -2808,10 +3184,87 @@ SongDocument combineSources(
     );
   }
   final best = preferred.isEmpty ? rankedEligible.first : preferred.first;
+  final chordOverlaySources = <SourceResult>[
+    ...accepted.where((source) => source.id != best.id),
+  ];
+  // A chart rejected only for incomplete/different lyric coverage can still
+  // supply chords when multiple chart lines align clearly with the selected
+  // lyrics. It never becomes a lyric, section, or general-metadata donor.
+  // Limit this path to a lyric-only selected base with no accepted chord
+  // chart, so it cannot compete with a qualified arrangement.
+  if (!best.hasChords && !accepted.any((source) => source.hasChords)) {
+    final plain = [
+      for (final line in parseArrangement(best.body))
+        ArrangementLine(line.text, const [], directive: line.directive),
+    ];
+    for (final source in results) {
+      final chartCreditMatches =
+          source.extra['requiresLyricsAgreement'] == true &&
+          _sameArrangedSong(source.candidate, selected);
+      if (source.matchKind != MatchKind.rejected ||
+          source.matchReason != 'incomplete_or_different_lyrics' ||
+          !source.hasChords ||
+          source.hasPendingMatchCheck ||
+          source.extra['requiresRecordingLyricsAgreement'] == true ||
+          !(_sameSong(source.candidate, selected) || chartCreditMatches) ||
+          _version(source.candidate.title) != _version(selected.title) ||
+          !explicitEditionsCompatible(
+            selected,
+            source.candidate,
+            metadata: source.metadata,
+            extra: source.extra,
+          )) {
+        continue;
+      }
+      if (shortRecordingReferences.isNotEmpty &&
+          !shortRecordingReferences.any(
+            (reference) => shortRecordingLyricAgreement(
+              source.body,
+              reference.body,
+            ),
+          )) {
+        continue;
+      }
+      final selectedCapo = _setupValue(best, selected, 'capo');
+      final donorCapo =
+          source.metadata['capo'] ?? source.candidate.metadata['capo'];
+      final donorKey =
+          source.metadata['key'] ?? source.candidate.metadata['key'];
+      final selectedTuning = _setupValue(best, selected, 'tuning');
+      final donorTuning =
+          source.metadata['tuning'] ?? source.candidate.metadata['tuning'];
+      // This chord-only fallback does not have a primary chart to establish
+      // a transposition target. Keep the donor in the selected shape/capo
+      // system and reject a known key-consensus failure instead of silently
+      // importing capoed or shifted shapes as if they were untransposed.
+      if (_capoOf(selectedCapo) != _capoOf(donorCapo) ||
+          !_compatibleChartTuning(selectedTuning, donorTuning) ||
+          source.extra['keyConsensus'] == false ||
+          (donorKey is String &&
+              donorKey.trim().isNotEmpty &&
+              !declaredKeyFitsChords(source.body, donorKey, donorCapo))) {
+        continue;
+      }
+      final anchored = _fuzzyLineChords(plain, _keyCorrectedBody(source));
+      // Phrase anchors can satisfy ordinary lyrics-agreement requirements
+      // for this chord-only overlay. Recording-specific agreement remains a
+      // separate identity gate above and is never waived by text overlap.
+      final matchedLines = anchored.entries
+          .where((entry) => entry.value.isNotEmpty)
+          .length;
+      final matchedAnchors = anchored.values.fold<int>(
+        0,
+        (total, chords) => total + chords.length,
+      );
+      if (matchedLines >= 2 && matchedAnchors >= 3) {
+        chordOverlaySources.add(source);
+      }
+    }
+  }
   final merged = preferredSourceId == null
       ? _overlayChords(
           _keyCorrectedBody(best),
-          accepted.where((source) => source.id != best.id).toList(),
+          chordOverlaySources,
           selected,
           best,
         )
@@ -3395,12 +3848,11 @@ SongDocument combineSources(
             'hint': 'chart',
           },
       if (chordSourceIds.any(
-        (sourceId) => sourcesById[sourceId]?.extra['pendingMatchCheck'] == true,
+        (sourceId) => sourcesById[sourceId]?.hasPendingMatchCheck == true,
       ))
         'pendingChordSourceIds': chordSourceIds
             .where(
-              (sourceId) =>
-                  sourcesById[sourceId]?.extra['pendingMatchCheck'] == true,
+              (sourceId) => sourcesById[sourceId]?.hasPendingMatchCheck == true,
             )
             .toList(),
       'excludedIncompleteSourceIds': accepted

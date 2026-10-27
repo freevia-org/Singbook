@@ -1,0 +1,54 @@
+{
+  "songId": "song-004",
+  "reviewedOn": "2026-10-26",
+  "field": "key",
+  "status": "verified",
+  "value": "F#m",
+  "scope": "1995 original studio album performance on (What’s the Story) Morning Glory?",
+  "recordingBinding": {
+    "status": "verified",
+    "providerId": "genius",
+    "candidateId": "76654",
+    "isrc": null,
+    "recordingEdition": "1995 original studio album performance on (What’s the Story) Morning Glory?",
+    "evidence": [
+      "https://genius.com/Oasis-wonderwall-lyrics",
+      "https://music.apple.com/us/song/1517447333",
+      "https://oasisinet.com/music/whats-the-story-morning-glory/"
+    ],
+    "notes": "Genius song 76654 records Oasis, Wonderwall, 1995-10-02, Rockfield Studios, and Apple Music ID 373957838. Apple Music song 1517447333 identifies Wonderwall on the 1995 Morning Glory album; Oasis's official album page lists Wonderwall as track 3. Binding is to the album performance, not an exact ISRC/master."
+  },
+  "independentSources": [
+    {
+      "url": "https://apps.musicnotes.com/sheetmusic/oasis/wonderwall/MN0053372",
+      "role": "Licensed Sony/ATV Music Publishing piano/vocal/guitar arrangement",
+      "finding": "Lists F-sharp minor as the original published key, dated 1995, and identifies the Morning Glory album."
+    },
+    {
+      "url": "https://www.musicradar.com/artists/just-because-some-of-your-university-friends-defaulted-to-it-doesnt-act-as-a-strike-against-it-a-music-professor-breaks-down-the-theory-behind-oasiss-wonderwall",
+      "role": "Music theory analysis with recording-performance capo explanation",
+      "finding": "Explains that the familiar E-minor guitar shapes use capo 2, so the sounding recording key is F-sharp minor."
+    }
+  ],
+  "applicationComparison": {
+    "selectedKey": "F#m",
+    "selectedKeyScope": "arrangement",
+    "selectedCapo": 2,
+    "result": "exact tonic and mode match",
+    "accuracyStatus": "verifiedCorrect"
+  },
+  "lyricObservation": {
+    "googlePanelArtifact": "tool/metadata_reference_evidence/google_lyrics_panel_observations_20261026.json",
+    "attributedProvider": "Musixmatch",
+    "selectedTextHashMatch": true,
+    "editionStatus": "1995 album performance catalog-bound",
+    "interpretation": "Practical exact-text corroboration. The selected Genius text and the Google-attributed Musixmatch panel have the same normalized hash. Google is attributed to Musixmatch and is not counted as an additional independent Google lineage. The official Oasis lyric page differs by seven selected-only tokens without substitutions; it is treated as an edition/transcription review lead, not a correctness rejection."
+  },
+  "caveats": [
+    "Key verification does not establish all chord symbols or their lyric placement.",
+    "Lyrics are not strict gold solely from provider hash agreement; exact recording word/repetition audit remains incomplete.",
+    "No lyric body or audio is included in this evidence record."
+  ],
+  "rawLyricsOrAudioIncluded": false,
+  "notDerivedFromActualBenchmarkKey": true
+}

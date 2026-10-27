@@ -24,6 +24,7 @@ SourceResult _source(
   double? duration = 120,
   JsonMap metadata = const {},
   JsonMap candidateMetadata = const {'identityScope': 'recording'},
+  JsonMap candidateExtra = const {},
   JsonMap extra = const {},
   Map<String, String> recordingIds = const {},
   MatchKind kind = MatchKind.sameSong,
@@ -38,6 +39,7 @@ SourceResult _source(
     album: album,
     durationSeconds: duration,
     metadata: candidateMetadata,
+    extra: candidateExtra,
     recordingIds: recordingIds,
   ),
   body: body,
@@ -911,15 +913,55 @@ void main() {
     },
   );
 
-  test('pending rejected and unverified sources do not corroborate', () {
+  test('pending evidence in any source map cannot corroborate', () {
+    final pending = <String, dynamic>{'pendingMatchCheck': true};
     for (final donor in [
-      _source('a', extra: {'pendingMatchCheck': true}),
+      _source('a', extra: pending),
+      _source('a', metadata: pending),
+      _source('a', candidateExtra: pending),
+      _source('a', candidateMetadata: pending),
+    ]) {
+      expect(_enrich(_document([donor, _source('b')])).metadata, isEmpty);
+    }
+  });
+
+  test('rejected and unverified sources do not corroborate', () {
+    for (final donor in [
       _source('a', kind: MatchKind.rejected),
       _source('a', kind: MatchKind.unverified),
     ]) {
       expect(_enrich(_document([donor, _source('b')])).metadata, isEmpty);
     }
   });
+
+  test(
+    'pending selected-candidate evidence in either map blocks enrichment',
+    () {
+      for (final selected in [
+        SongCandidate(
+          providerId: _selected.providerId,
+          id: _selected.id,
+          title: _selected.title,
+          artist: _selected.artist,
+          metadata: const {'pendingMatchCheck': true},
+        ),
+        SongCandidate(
+          providerId: _selected.providerId,
+          id: _selected.id,
+          title: _selected.title,
+          artist: _selected.artist,
+          extra: const {'pendingMatchCheck': true},
+        ),
+      ]) {
+        expect(
+          _enrich(
+            _document([_source('a'), _source('b')], selected: selected),
+          ).metadata,
+          isEmpty,
+        );
+      }
+    },
+  );
 
   test('inconsistent raw album or duration aliases cannot donate', () {
     for (final donor in [
