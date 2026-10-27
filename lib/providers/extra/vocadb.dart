@@ -6,16 +6,50 @@ import '../provider.dart';
 import 'common.dart'
     show normalized, queryText, remoteChordPro, sanitizeExtraMetadata;
 
-/// Public HTTPS API: https://wiki.vocadb.net/docs/public-api.
-/// A VocaDB entry identifies a source song/version, not a confirmed recording.
-/// Database metadata is CC BY 4.0; lyrics and artwork are explicitly excluded.
-class VocaDbProvider implements LyricsProvider, ContextualLyricsSearch {
-  VocaDbProvider(
+/// Fixed first-party provider identities for the VocaDB family APIs.
+/// A database entry identifies a source song/version, not a confirmed
+/// recording. Database metadata is CC BY 4.0; lyrics and artwork are excluded.
+enum _Database {
+  vocadb('vocadb', 'VocaDB', 'vocadb.net', 'vocadbSongId', 'vocadb'),
+  touhoudb(
+    'touhoudb',
+    'TouhouDB',
+    'touhoudb.com',
+    'touhoudbSongId',
+    'touhoudb',
+  ),
+  utaitedb(
+    'utaitedb',
+    'UtaiteDB',
+    'utaitedb.net',
+    'utaitedbSongId',
+    'utaitedb',
+  );
+
+  const _Database(this.id, this.name, this.host, this.factKey, this.extraKey);
+  final String id;
+  final String name;
+  final String host;
+  final String factKey;
+  final String extraKey;
+}
+
+abstract class _VocaDbFamilyProvider
+    implements
+        LyricsProvider,
+        ContextualLyricsSearch,
+        PublishedTitleAliasEvidence {
+  _VocaDbFamilyProvider._(
+    this._database,
     this.transport, {
     this.requestInterval = const Duration(seconds: 1),
     this.cacheLifetime = const Duration(minutes: 15),
   });
 
+  final _Database _database;
+
+  /// Public HTTPS API: https://wiki.vocadb.net/docs/public-api.
+  /// A VocaDB-family entry identifies a source song/version, not a recording.
   final ProviderTransport transport;
   final Duration requestInterval;
   final Duration cacheLifetime;
@@ -24,19 +58,20 @@ class VocaDbProvider implements LyricsProvider, ContextualLyricsSearch {
   final _documents =
       <String, ({String raw, DateTime retrievedAt, DateTime expiresAt})>{};
 
-  static const _host = 'vocadb.net';
   static const _fields =
       'Names,Artists,Albums,Bpm,CultureCodes,Lyrics,WebLinks';
   static const _maxBytes = 2 * 1024 * 1024;
 
   @override
-  final definition = const ProviderDefinition(
-    id: 'vocadb',
-    name: 'VocaDB',
-    capabilities: {'catalog', 'lyrics', 'metadata'},
+  late final ProviderDefinition definition = ProviderDefinition(
+    id: _database.id,
+    name: _database.name,
+    capabilities: const {'catalog', 'lyrics', 'metadata'},
     accessMode: 'publicApi',
-    website: 'https://vocadb.net/',
+    website: 'https://${_database.host}/',
   );
+
+  String get _host => _database.host;
 
   Future<String> _get(Uri uri, CancellationToken? cancel) {
     final result = _queue.then((_) async {
@@ -48,7 +83,7 @@ class VocaDbProvider implements LyricsProvider, ContextualLyricsSearch {
         return await transport.getText(
           uri,
           maxBytes: _maxBytes,
-          allowedHosts: const {_host},
+          allowedHosts: {_host},
           cancel: cancel,
         );
       } finally {
@@ -137,7 +172,7 @@ class VocaDbProvider implements LyricsProvider, ContextualLyricsSearch {
         minimum <= 500000;
     final metadata = sanitizeExtraMetadata({
       'identityScope': 'arrangement',
-      'vocadbSongId': id,
+      _database.factKey: id,
       'sourceSongType': _text(data['songType'], max: 50),
       if (albumNames.length == 1) 'album': albumNames.single,
       if (length is int && length > 0) 'durationSeconds': length,
@@ -189,6 +224,13 @@ class VocaDbProvider implements LyricsProvider, ContextualLyricsSearch {
   Future<List<SongCandidate>> search(
     String query, {
     CancellationToken? cancel,
+  }) => _search(query, matchMode: 'Auto', sort: 'RatingScore', cancel: cancel);
+
+  Future<List<SongCandidate>> _search(
+    String query, {
+    required String matchMode,
+    required String sort,
+    CancellationToken? cancel,
   }) async {
     final text = queryText(query);
     if (text.isEmpty) return [];
@@ -198,8 +240,8 @@ class VocaDbProvider implements LyricsProvider, ContextualLyricsSearch {
           'query': text,
           'fields': 'Names,Artists,Albums,Bpm,CultureCodes',
           'lang': 'English',
-          'nameMatchMode': 'Auto',
-          'sort': 'RatingScore',
+          'nameMatchMode': matchMode,
+          'sort': sort,
           'maxResults': '12',
           'getTotalCount': 'false',
         }),
@@ -241,6 +283,26 @@ class VocaDbProvider implements LyricsProvider, ContextualLyricsSearch {
   }
 
   @override
+  String? publishedTitleAliasForSelection(
+    SongCandidate selection,
+    SongCandidate candidate,
+  ) {
+    if (candidate.providerId != definition.id ||
+        !_sameSelection(selection, candidate)) {
+      return null;
+    }
+    final aliases = candidate.extra['sourceTitleAliases'];
+    if (aliases is! List) return null;
+    for (final alias in aliases.whereType<String>()) {
+      if (normalized(alias) == normalized(selection.title) &&
+          normalized(alias) != normalized(candidate.title)) {
+        return alias;
+      }
+    }
+    return null;
+  }
+
+  @override
   bool canReuseSearchForSelection(
     SongCandidate selection,
     List<SongCandidate> candidates,
@@ -258,11 +320,28 @@ class VocaDbProvider implements LyricsProvider, ContextualLyricsSearch {
     // Apply artist/album/duration checks to the complete structured rows, then
     // leave the normal service's independent identity checks in place.
     final title = queryText(selection.title);
-    final rows = await search(
-      title.isEmpty ? fallbackQuery : title,
+    final query = title.isEmpty ? fallbackQuery : title;
+    final rows = await _search(
+      query,
+      matchMode: 'Auto',
+      sort: 'RatingScore',
       cancel: cancel,
     );
-    return rows.where((row) => _sameSelection(selection, row)).toList();
+    final matches = rows
+        .where((row) => _sameSelection(selection, row))
+        .toList();
+    if (matches.isNotEmpty) return matches;
+
+    // RatingScore can crowd an exact arrangement out of a popular title's
+    // first page. Try one bounded name-sorted exact query, then apply the same
+    // complete title, artist, album and duration checks before returning it.
+    final exactRows = await _search(
+      query,
+      matchMode: 'Exact',
+      sort: 'Name',
+      cancel: cancel,
+    );
+    return exactRows.where((row) => _sameSelection(selection, row)).toList();
   }
 
   @override
@@ -311,7 +390,7 @@ class VocaDbProvider implements LyricsProvider, ContextualLyricsSearch {
     final text = _text(original['value'], max: 256 * 1024, multiline: true);
     final body = remoteChordPro(plainToChordPro(meaningfulLyrics(text)));
     if (body.trim().isEmpty) throw const ProviderException('unavailable');
-    final attribution = 'VocaDB — ${found.url}';
+    final attribution = '${_database.name} — ${found.url}';
     final result = SourceResult(
       candidate: found,
       body: body,
@@ -319,7 +398,7 @@ class VocaDbProvider implements LyricsProvider, ContextualLyricsSearch {
       attribution: attribution,
       retrievedAt: retrievedAt,
       extra: {
-        'parserVersion': 'vocadb-native-1',
+        'parserVersion': '${_database.id}-native-1',
         'sourceDocumentId': '${found.identity}:lyrics:$lyricId',
         'rights': {
           'source': definition.id,
@@ -335,14 +414,14 @@ class VocaDbProvider implements LyricsProvider, ContextualLyricsSearch {
             'artwork': 'unknown',
           },
           'provenanceNote':
-              'VocaDB database metadata is CC BY 4.0; third-party lyrics and images are expressly excluded. Metadata normalized for Singbook; original response and lyric source credits retained.',
+              '${_database.name} database metadata is CC BY 4.0; third-party lyrics and images are expressly excluded. Metadata normalized for Singbook; original response and lyric source credits retained.',
         },
         'originalPayload': {
           'contentType': 'application/json',
           'encoding': 'utf-8',
           'base64': base64Encode(utf8.encode(raw)),
         },
-        'vocadb': {
+        _database.extraKey: {
           'id': id,
           'version': data['version'],
           'publishDate': data['publishDate'],
@@ -370,4 +449,46 @@ class VocaDbProvider implements LyricsProvider, ContextualLyricsSearch {
     }
     return result;
   }
+}
+
+/// Native lyrics provider for VocaDB.
+class VocaDbProvider extends _VocaDbFamilyProvider {
+  VocaDbProvider(
+    ProviderTransport transport, {
+    Duration requestInterval = const Duration(seconds: 1),
+    Duration cacheLifetime = const Duration(minutes: 15),
+  }) : super._(
+         _Database.vocadb,
+         transport,
+         requestInterval: requestInterval,
+         cacheLifetime: cacheLifetime,
+       );
+}
+
+/// Native lyrics provider for TouhouDB.
+class TouhouDbProvider extends _VocaDbFamilyProvider {
+  TouhouDbProvider(
+    ProviderTransport transport, {
+    Duration requestInterval = const Duration(seconds: 1),
+    Duration cacheLifetime = const Duration(minutes: 15),
+  }) : super._(
+         _Database.touhoudb,
+         transport,
+         requestInterval: requestInterval,
+         cacheLifetime: cacheLifetime,
+       );
+}
+
+/// Native lyrics provider for UtaiteDB.
+class UtaiteDbProvider extends _VocaDbFamilyProvider {
+  UtaiteDbProvider(
+    ProviderTransport transport, {
+    Duration requestInterval = const Duration(seconds: 1),
+    Duration cacheLifetime = const Duration(minutes: 15),
+  }) : super._(
+         _Database.utaitedb,
+         transport,
+         requestInterval: requestInterval,
+         cacheLifetime: cacheLifetime,
+       );
 }

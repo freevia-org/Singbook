@@ -29,3 +29,14 @@ abstract interface class ContextualLyricsSearch {
     CancellationToken? cancel,
   });
 }
+
+/// Optional evidence that a publisher's own alternate title names a selection.
+/// Implementations revalidate the source title/artist and supplied album/duration
+/// context. Callers retain all recording-ID and edition checks; returning an
+/// alias does not authorize recording identity or rewrite canonical source facts.
+abstract interface class PublishedTitleAliasEvidence {
+  String? publishedTitleAliasForSelection(
+    SongCandidate selection,
+    SongCandidate candidate,
+  );
+}
