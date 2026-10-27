@@ -433,12 +433,33 @@ TimingTrack parseTtml(
         'The lrc.red timing profile marker is missing or invalid.',
       );
     }
+    final amllProfile =
+        profile == 'amll-ttml' &&
+        root.name.local == 'tt' &&
+        root.name.namespaceUri == 'http://www.w3.org/ns/ttml' &&
+        root.attributes
+            .where((a) => a.name.local == 'timing')
+            .every(
+              (a) =>
+                  a.name.namespaceUri ==
+                      'http://music.apple.com/lyric-ttml-internal' &&
+                  const {'Word', 'Line'}.contains(a.value),
+            );
+    if (profile == 'amll-ttml' && !amllProfile) {
+      throw const FormatException(
+        'The AMLL root namespace or declared timing mode is invalid.',
+      );
+    }
+    // Older AMLL files omit the marker. Only this explicitly selected source
+    // profile opts those documents into absolute media clocks.
+    final explicitWordClockProfile = lrcRedProfile || amllProfile;
     final appleProfile =
         profile == 'apple-lyrics' ||
         root.attributes.any(
           (a) => a.value == 'http://itunes.apple.com/lyric-ttml-extensions',
         );
-    final absoluteClockProfile = appleProfile || unisonProfile || lrcRedProfile;
+    final absoluteClockProfile =
+        appleProfile || unisonProfile || explicitWordClockProfile;
     text = root.descendants
         .whereType<XmlElement>()
         .where((e) => e.name.local == 'p')
@@ -509,7 +530,8 @@ TimingTrack parseTtml(
         r'^([+-]?\d+(?:\.\d+)?)(h|m|s|ms|f|t)$',
       ).firstMatch(expr);
       if (offset == null) {
-        if (lrcRedProfile && RegExp(r'^\d+(?:\.\d+)?$').hasMatch(expr)) {
+        if (explicitWordClockProfile &&
+            RegExp(r'^\d+(?:\.\d+)?$').hasMatch(expr)) {
           final seconds = double.tryParse(expr);
           if (seconds == null ||
               !seconds.isFinite ||
@@ -535,9 +557,32 @@ TimingTrack parseTtml(
     final cues = <TimingCue>[];
     final lyrics = <String>[];
     var unsupported = false;
+    var unsupportedRuby = false;
     var wordTiming = false;
     final ranges = <XmlElement, (int, int?)>{};
     final timed = <XmlElement, bool>{};
+    bool auxiliary(XmlElement node) =>
+        amllProfile &&
+        const {'x-translation', 'x-roman'}.contains(
+          node.getAttribute(
+            'role',
+            namespaceUri: 'http://www.w3.org/ns/ttml#metadata',
+          ),
+        );
+    bool withinAuxiliary(XmlElement node) =>
+        auxiliary(node) ||
+        node.ancestors.whereType<XmlElement>().any(auxiliary);
+    bool background(XmlElement node) =>
+        amllProfile &&
+        node.getAttribute(
+              'role',
+              namespaceUri: 'http://www.w3.org/ns/ttml#metadata',
+            ) ==
+            'x-bg';
+    String? voice(XmlElement node) => [
+      node,
+      ...node.ancestors.whereType<XmlElement>(),
+    ].map((e) => attr(e, 'agent')).nonNulls.firstOrNull;
     void resolve(
       XmlElement node,
       int parentStart,
@@ -545,13 +590,32 @@ TimingTrack parseTtml(
       int depth, [
       bool? parentTimed,
     ]) {
+      if (auxiliary(node)) return;
+      if (background(node)) {
+        // AMLL represents background vocals as separate lyric lines with their
+        // own absolute intervals, which can outlast the foreground paragraph.
+        // Retain enclosing media bounds and all ordinary child bounds.
+        final body = node.ancestors
+            .whereType<XmlElement>()
+            .where((e) => e.name.local == 'body')
+            .firstOrNull;
+        parentEnd = body == null ? parentEnd : ranges[body]?.$2;
+      }
       if (depth > 64) {
         throw const FormatException('XML timing nesting exceeds 64 levels.');
       }
       if (attr(node, 'timeContainer') == 'seq') unsupported = true;
+      final ruby = node.getAttribute(
+        'ruby',
+        namespaceUri: 'http://www.w3.org/ns/ttml#styling',
+      );
+      if (amllProfile && ruby != null && ruby != 'none') {
+        unsupported = true;
+        unsupportedRuby = true;
+      }
       final begin = attr(node, 'begin');
-      // Apple's published lyric profile and Unison's declared media-clock
-      // profile use absolute child clocks. Generic TTML retains W3C
+      // Apple's lyric profile, Unison, and the explicitly selected lrc.red
+      // and AMLL profiles use absolute child clocks. Generic TTML retains W3C
       // parent-relative timing semantics.
       final base = absoluteClockProfile ? 0 : parentStart;
       var start = begin == null ? parentStart : base + time(begin);
@@ -564,7 +628,7 @@ TimingTrack parseTtml(
       // A child that begins after its parent has ended can never be active;
       // clamp it to the parent's end instead of rejecting the whole document.
       if (parentEnd != null && start > parentEnd) {
-        if (lrcRedProfile) {
+        if (explicitWordClockProfile) {
           throw const FormatException(
             'Child cue begins after its parent ends.',
           );
@@ -573,7 +637,7 @@ TimingTrack parseTtml(
         end = parentEnd;
       }
       if (parentEnd != null && end != null && end > parentEnd) {
-        if (lrcRedProfile) {
+        if (explicitWordClockProfile) {
           throw const FormatException('Child cue ends after its parent ends.');
         }
         end = parentEnd;
@@ -601,6 +665,8 @@ TimingTrack parseTtml(
     String content(XmlElement e) {
       final buffer = StringBuffer();
       void walk(XmlNode n) {
+        if (n is XmlElement && auxiliary(n)) return;
+        if (n is XmlElement && n != e && background(n)) return;
         if (n is XmlText) buffer.write(n.value);
         if (n is XmlElement && n.name.local == 'br') {
           buffer.write('\n');
@@ -616,7 +682,13 @@ TimingTrack parseTtml(
     }
 
     for (final p in root.descendants.whereType<XmlElement>().where(
-      (e) => e.name.local == 'p',
+      (e) =>
+          (e.name.local == 'p' || background(e)) &&
+          (!amllProfile ||
+              !withinAuxiliary(e) &&
+                  e.ancestors.whereType<XmlElement>().any(
+                    (a) => a.name.local == 'body',
+                  )),
     )) {
       final line = content(p);
       if (line.isEmpty) continue;
@@ -627,6 +699,13 @@ TimingTrack parseTtml(
           .where(
             (e) =>
                 e.name.local == 'span' &&
+                (!amllProfile ||
+                    !withinAuxiliary(e) &&
+                        !background(e) &&
+                        e.ancestors.whereType<XmlElement>().firstWhere(
+                              (a) => a.name.local == 'p' || background(a),
+                            ) ==
+                            p) &&
                 (attr(e, 'begin') != null ||
                     attr(e, 'end') != null ||
                     attr(e, 'dur') != null),
@@ -636,6 +715,12 @@ TimingTrack parseTtml(
       // A paragraph with no timing of its own or inherited must not invent a
       // 0s start: derive it from its timed spans, or leave the line untimed.
       var lineTimed = timed[p] ?? false;
+      if (background(p) &&
+          attr(p, 'begin') == null &&
+          attr(p, 'end') == null &&
+          attr(p, 'dur') == null) {
+        lineTimed = false;
+      }
       if (!lineTimed && timedSpans.isNotEmpty) {
         final spanRanges = timedSpans.map((e) => ranges[e]!).toList();
         final ends = spanRanges.map((r) => r.$2).toList();
@@ -653,15 +738,24 @@ TimingTrack parseTtml(
             text: line,
             startUs: range.$1,
             endUs: range.$2,
-            voice: attr(p, 'agent'),
+            voice: amllProfile ? voice(p) : attr(p, 'agent'),
             originalBegin: attr(p, 'begin'),
             originalEnd: attr(p, 'end'),
+            extra: background(p) ? const {'voiceRole': 'background'} : const {},
           ),
         );
       }
       var cursor = 0;
       final prefix = timedSpans.isEmpty ? const <int>[] : _graphemePrefix(line);
       for (final span in timedSpans) {
+        // A timed background container and its words describe the same text.
+        // Preserve its range in the raw document without duplicating word cues.
+        if (amllProfile &&
+            span.descendants.whereType<XmlElement>().any(
+              (e) => timedSpans.contains(e),
+            )) {
+          continue;
+        }
         if (cues.length > _maxCues) {
           throw const FormatException('Too many timing cues.');
         }
@@ -685,9 +779,12 @@ TimingTrack parseTtml(
             endUs: spanRange.$2,
             graphemeStart: prefix[index],
             graphemeEnd: prefix[index + word.length],
-            voice: attr(span, 'agent') ?? attr(p, 'agent'),
+            voice: amllProfile
+                ? voice(span)
+                : attr(span, 'agent') ?? attr(p, 'agent'),
             originalBegin: attr(span, 'begin'),
             originalEnd: attr(span, 'end'),
+            extra: background(p) ? const {'voiceRole': 'background'} : const {},
           ),
         );
         cursor = index + word.length;
@@ -722,13 +819,16 @@ TimingTrack parseTtml(
             ? 'unison-ttml'
             : lrcRedProfile
             ? 'lrc-red-ttml'
+            : amllProfile
+            ? 'amll-ttml'
             : 'w3c-ttml',
         'frameRate': effectiveFrames,
         'tickRate': tickRate,
         'subFrameRate': subFrameRate,
         if (unsupported)
-          'parseError':
-              'Sequential TTML containers are retained but not activated.',
+          'parseError': unsupportedRuby
+              ? 'AMLL Ruby annotations are retained but not activated.'
+              : 'Sequential TTML containers are retained but not activated.',
         if (!hasTiming)
           'parseError':
               'This TTML document contains lyrics without cue timestamps.',
