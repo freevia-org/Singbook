@@ -433,7 +433,7 @@ void main() {
   );
 
   test(
-    'a partly chorded base can gain missing chords after harmonic agreement',
+    'an unscoped same-song chart cannot fill a line after one overlap',
     () {
       const lyrics =
           '[C]Amber lanterns glow\nSilver rain returns\n'
@@ -442,8 +442,12 @@ void main() {
         source('base', lyrics),
         source('donor', '[C]Amber lanterns glow\n[F]Silver rain returns'),
       ]);
-      expect(song.body, contains('[C]Amber lanterns glow\n[F]Silver'));
-      expect(song.extra['chordSourceIds'], ['base:song', 'donor:song']);
+      expect(
+        song.body,
+        contains('[C]Amber lanterns glow\nSilver rain returns'),
+      );
+      expect(song.body, isNot(contains('[F]Silver rain returns')));
+      expect(song.extra['chordSourceIds'], ['base:song']);
     },
   );
 
