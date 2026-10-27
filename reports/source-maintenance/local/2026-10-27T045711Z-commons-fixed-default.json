@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "catalogRevision": 12,
+  "measuredAt": "2026-10-27T04:57:11.210488Z",
+  "offline": false,
+  "summary": {
+    "healthy": 1
+  },
+  "sources": [
+    {
+      "id": "wikimediacommons",
+      "name": "Wikimedia Commons",
+      "status": "healthy",
+      "coverage": {
+        "status": "complete",
+        "verifiedCapabilities": [
+          "artwork",
+          "metadata"
+        ],
+        "unverifiedCapabilities": []
+      },
+      "probes": [
+        {
+          "id": "bach-portrait",
+          "status": "healthy",
+          "candidateId": "File:Johann Sebastian Bach.jpg",
+          "providerId": "wikimediacommons",
+          "bodyCharacters": 0,
+          "metadataFields": [
+            "licensedImages"
+          ],
+          "verifiedCapabilities": [
+            "artwork",
+            "metadata"
+          ],
+          "timingTrackCount": 0,
+          "timingGranularities": [],
+          "timingRawRetained": false,
+          "hasChords": false,
+          "measurementProvenance": {
+            "runtime": "local-windows",
+            "measuredAt": "2026-10-27T04:57:11.210488Z",
+            "catalogPath": "config/source-catalog-v2.json",
+            "catalogRevision": 12,
+            "codeReference": "f21afb4208e42d01fb57d47028b702804f36b3db",
+            "codeReferenceStatus": "working-tree patch subsequently committed unchanged",
+            "contactConfiguration": "default, no contact compile define",
+            "scope": "targeted source re-probe",
+            "probeId": "bach-portrait"
+          }
+        }
+      ],
+      "measurementProvenance": {
+        "runtime": "local-windows",
+        "measuredAt": "2026-10-27T04:57:11.210488Z",
+        "catalogPath": "config/source-catalog-v2.json",
+        "catalogRevision": 12,
+        "codeReference": "f21afb4208e42d01fb57d47028b702804f36b3db",
+        "codeReferenceStatus": "working-tree patch subsequently committed unchanged",
+        "contactConfiguration": "default, no contact compile define",
+        "scope": "targeted source re-probe"
+      }
+    }
+  ],
+  "httpDiagnostics": {
+    "networkFailures": 0,
+    "hosts": {
+      "commons.wikimedia.org": {
+        "requests": 1,
+        "statuses": {
+          "200": 1
+        },
+        "retryAfterSeconds": {},
+        "databaseLag": {}
+      }
+    }
+  },
+  "measurementProvenance": {
+    "runtime": "local-windows",
+    "measuredAt": "2026-10-27T04:57:11.210488Z",
+    "catalogPath": "config/source-catalog-v2.json",
+    "catalogRevision": 12,
+    "codeReference": "f21afb4208e42d01fb57d47028b702804f36b3db",
+    "codeReferenceStatus": "working-tree patch subsequently committed unchanged",
+    "contactConfiguration": "default, no contact compile define",
+    "scope": "targeted source re-probe"
+  }
+}

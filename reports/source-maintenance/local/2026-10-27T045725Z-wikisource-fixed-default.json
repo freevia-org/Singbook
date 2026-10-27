@@ -1,0 +1,130 @@
+{
+  "schemaVersion": 1,
+  "catalogRevision": 12,
+  "measuredAt": "2026-10-27T04:57:25.539632Z",
+  "offline": false,
+  "summary": {
+    "partial_coverage": 1
+  },
+  "sources": [
+    {
+      "id": "wikisource",
+      "name": "Wikisource",
+      "status": "partial_coverage",
+      "coverage": {
+        "status": "partial",
+        "verifiedCapabilities": [
+          "catalog",
+          "lyrics",
+          "metadata"
+        ],
+        "unverifiedCapabilities": [
+          "fileImport"
+        ]
+      },
+      "probes": [
+        {
+          "id": "cleansing-wave-palmer",
+          "status": "healthy",
+          "candidateId": "sha256:e915a1ba387e3dd0",
+          "providerId": "wikisource",
+          "bodyCharacters": 664,
+          "metadataFields": [
+            "copyrightTags",
+            "identityScope",
+            "resolvedPageId",
+            "resolvedTitle",
+            "revision"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "lyrics",
+            "metadata"
+          ],
+          "timingTrackCount": 0,
+          "timingGranularities": [],
+          "timingRawRetained": false,
+          "hasChords": false,
+          "measurementProvenance": {
+            "runtime": "local-windows",
+            "measuredAt": "2026-10-27T04:57:25.539632Z",
+            "catalogPath": "config/source-catalog-v2.json",
+            "catalogRevision": 12,
+            "codeReference": "f21afb4208e42d01fb57d47028b702804f36b3db",
+            "codeReferenceStatus": "working-tree patch subsequently committed unchanged",
+            "contactConfiguration": "default, no contact compile define",
+            "scope": "targeted source re-probe",
+            "probeId": "cleansing-wave-palmer"
+          }
+        },
+        {
+          "id": "dunbar-hymn-1",
+          "status": "healthy",
+          "candidateId": "sha256:9395d47d4cb4346c",
+          "providerId": "wikisource",
+          "bodyCharacters": 496,
+          "metadataFields": [
+            "copyrightTags",
+            "identityScope",
+            "resolvedPageId",
+            "resolvedTitle",
+            "revision"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "lyrics",
+            "metadata"
+          ],
+          "timingTrackCount": 0,
+          "timingGranularities": [],
+          "timingRawRetained": false,
+          "hasChords": false,
+          "measurementProvenance": {
+            "runtime": "local-windows",
+            "measuredAt": "2026-10-27T04:57:25.539632Z",
+            "catalogPath": "config/source-catalog-v2.json",
+            "catalogRevision": 12,
+            "codeReference": "f21afb4208e42d01fb57d47028b702804f36b3db",
+            "codeReferenceStatus": "working-tree patch subsequently committed unchanged",
+            "contactConfiguration": "default, no contact compile define",
+            "scope": "targeted source re-probe",
+            "probeId": "dunbar-hymn-1"
+          }
+        }
+      ],
+      "measurementProvenance": {
+        "runtime": "local-windows",
+        "measuredAt": "2026-10-27T04:57:25.539632Z",
+        "catalogPath": "config/source-catalog-v2.json",
+        "catalogRevision": 12,
+        "codeReference": "f21afb4208e42d01fb57d47028b702804f36b3db",
+        "codeReferenceStatus": "working-tree patch subsequently committed unchanged",
+        "contactConfiguration": "default, no contact compile define",
+        "scope": "targeted source re-probe"
+      }
+    }
+  ],
+  "httpDiagnostics": {
+    "networkFailures": 0,
+    "hosts": {
+      "en.wikisource.org": {
+        "requests": 4,
+        "statuses": {
+          "200": 4
+        },
+        "retryAfterSeconds": {},
+        "databaseLag": {}
+      }
+    }
+  },
+  "measurementProvenance": {
+    "runtime": "local-windows",
+    "measuredAt": "2026-10-27T04:57:25.539632Z",
+    "catalogPath": "config/source-catalog-v2.json",
+    "catalogRevision": 12,
+    "codeReference": "f21afb4208e42d01fb57d47028b702804f36b3db",
+    "codeReferenceStatus": "working-tree patch subsequently committed unchanged",
+    "contactConfiguration": "default, no contact compile define",
+    "scope": "targeted source re-probe"
+  }
+}

@@ -1,0 +1,2082 @@
+{
+  "schemaVersion": 1,
+  "catalogRevision": 12,
+  "measuredAt": "2026-10-27T04:54:00.175659Z",
+  "offline": false,
+  "summary": {
+    "healthy": 16,
+    "unavailable": 2,
+    "import_only": 1,
+    "partial_coverage": 2,
+    "retired": 1
+  },
+  "sources": [
+    {
+      "id": "genius",
+      "name": "Genius",
+      "status": "healthy",
+      "coverage": {
+        "status": "complete",
+        "verifiedCapabilities": [
+          "catalog",
+          "lyrics",
+          "metadata"
+        ],
+        "unverifiedCapabilities": []
+      },
+      "probes": [
+        {
+          "id": "wonderwall-oasis",
+          "status": "healthy",
+          "candidateId": "76654",
+          "providerId": "genius",
+          "bodyCharacters": 1549,
+          "metadataFields": [
+            "album",
+            "artworkUrl",
+            "credits",
+            "language",
+            "mediaLinks",
+            "recordingLocation",
+            "releaseDate",
+            "releaseDateDisplay",
+            "year"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "lyrics",
+            "metadata"
+          ],
+          "timingTrackCount": 0,
+          "timingGranularities": [],
+          "timingRawRetained": false,
+          "hasChords": false,
+          "measurementProvenance": {
+            "runtime": "local-windows",
+            "measuredAt": "2026-10-27T04:54:00.175659Z",
+            "catalogPath": "config/source-catalog-v2.json",
+            "catalogRevision": 12,
+            "codeReference": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+            "codeReferenceStatus": "committed HEAD at measurement",
+            "contactConfiguration": "default, no contact compile define",
+            "scope": "full registered roster",
+            "probeId": "wonderwall-oasis"
+          }
+        }
+      ],
+      "measurementProvenance": {
+        "runtime": "local-windows",
+        "measuredAt": "2026-10-27T04:54:00.175659Z",
+        "catalogPath": "config/source-catalog-v2.json",
+        "catalogRevision": 12,
+        "codeReference": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+        "codeReferenceStatus": "committed HEAD at measurement",
+        "contactConfiguration": "default, no contact compile define",
+        "scope": "full registered roster"
+      }
+    },
+    {
+      "id": "songsterr",
+      "name": "Songsterr",
+      "status": "healthy",
+      "coverage": {
+        "status": "complete",
+        "verifiedCapabilities": [
+          "catalog",
+          "chords",
+          "lyrics",
+          "metadata"
+        ],
+        "unverifiedCapabilities": []
+      },
+      "probes": [
+        {
+          "id": "wonderwall",
+          "status": "healthy",
+          "candidateId": "/a/wsa/oasis-wonderwall-chords-s2",
+          "providerId": "songsterr",
+          "bodyCharacters": 2210,
+          "metadataFields": [
+            "capo",
+            "mediaLinks",
+            "tuning"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "chords",
+            "lyrics",
+            "metadata"
+          ],
+          "timingTrackCount": 0,
+          "timingGranularities": [],
+          "timingRawRetained": false,
+          "hasChords": true,
+          "measurementProvenance": {
+            "runtime": "local-windows",
+            "measuredAt": "2026-10-27T04:54:00.175659Z",
+            "catalogPath": "config/source-catalog-v2.json",
+            "catalogRevision": 12,
+            "codeReference": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+            "codeReferenceStatus": "committed HEAD at measurement",
+            "contactConfiguration": "default, no contact compile define",
+            "scope": "full registered roster",
+            "probeId": "wonderwall"
+          }
+        }
+      ],
+      "measurementProvenance": {
+        "runtime": "local-windows",
+        "measuredAt": "2026-10-27T04:54:00.175659Z",
+        "catalogPath": "config/source-catalog-v2.json",
+        "catalogRevision": 12,
+        "codeReference": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+        "codeReferenceStatus": "committed HEAD at measurement",
+        "contactConfiguration": "default, no contact compile define",
+        "scope": "full registered roster"
+      }
+    },
+    {
+      "id": "ultimateguitar",
+      "name": "Ultimate Guitar",
+      "status": "healthy",
+      "coverage": {
+        "status": "complete",
+        "verifiedCapabilities": [
+          "catalog",
+          "chords",
+          "lyrics",
+          "metadata"
+        ],
+        "unverifiedCapabilities": []
+      },
+      "probes": [
+        {
+          "id": "wonderwall-oasis-chords",
+          "status": "healthy",
+          "candidateId": "/tab/oasis/wonderwall-chords-6125",
+          "providerId": "ultimateguitar",
+          "bodyCharacters": 2834,
+          "metadataFields": [
+            "artworkUrl",
+            "credits",
+            "difficulty",
+            "key",
+            "mediaLinks",
+            "tuning"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "chords",
+            "lyrics",
+            "metadata"
+          ],
+          "timingTrackCount": 0,
+          "timingGranularities": [],
+          "timingRawRetained": false,
+          "hasChords": true,
+          "measurementProvenance": {
+            "runtime": "local-windows",
+            "measuredAt": "2026-10-27T04:54:00.175659Z",
+            "catalogPath": "config/source-catalog-v2.json",
+            "catalogRevision": 12,
+            "codeReference": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+            "codeReferenceStatus": "committed HEAD at measurement",
+            "contactConfiguration": "default, no contact compile define",
+            "scope": "full registered roster",
+            "probeId": "wonderwall-oasis-chords"
+          }
+        }
+      ],
+      "measurementProvenance": {
+        "runtime": "local-windows",
+        "measuredAt": "2026-10-27T04:54:00.175659Z",
+        "catalogPath": "config/source-catalog-v2.json",
+        "catalogRevision": 12,
+        "codeReference": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+        "codeReferenceStatus": "committed HEAD at measurement",
+        "contactConfiguration": "default, no contact compile define",
+        "scope": "full registered roster"
+      }
+    },
+    {
+      "id": "lrclib",
+      "name": "LRCLIB",
+      "status": "healthy",
+      "coverage": {
+        "status": "complete",
+        "verifiedCapabilities": [
+          "catalog",
+          "lineTiming",
+          "lyrics",
+          "metadata"
+        ],
+        "unverifiedCapabilities": []
+      },
+      "probes": [
+        {
+          "id": "sound-of-silence-studio-recording",
+          "status": "healthy",
+          "candidateId": "14961166",
+          "providerId": "lrclib",
+          "bodyCharacters": 1157,
+          "metadataFields": [
+            "album",
+            "duration",
+            "hasLyrics",
+            "instrumental"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "lineTiming",
+            "lyrics",
+            "metadata"
+          ],
+          "timingTrackCount": 1,
+          "timingGranularities": [
+            "line"
+          ],
+          "timingRawRetained": true,
+          "hasChords": false,
+          "measurementProvenance": {
+            "runtime": "local-windows",
+            "measuredAt": "2026-10-27T04:54:00.175659Z",
+            "catalogPath": "config/source-catalog-v2.json",
+            "catalogRevision": 12,
+            "codeReference": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+            "codeReferenceStatus": "committed HEAD at measurement",
+            "contactConfiguration": "default, no contact compile define",
+            "scope": "full registered roster",
+            "probeId": "sound-of-silence-studio-recording"
+          }
+        }
+      ],
+      "measurementProvenance": {
+        "runtime": "local-windows",
+        "measuredAt": "2026-10-27T04:54:00.175659Z",
+        "catalogPath": "config/source-catalog-v2.json",
+        "catalogRevision": 12,
+        "codeReference": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+        "codeReferenceStatus": "committed HEAD at measurement",
+        "contactConfiguration": "default, no contact compile define",
+        "scope": "full registered roster"
+      }
+    },
+    {
+      "id": "youtubemusic",
+      "name": "YouTube Music",
+      "status": "healthy",
+      "coverage": {
+        "status": "complete",
+        "verifiedCapabilities": [
+          "catalog",
+          "lyrics",
+          "metadata"
+        ],
+        "unverifiedCapabilities": []
+      },
+      "probes": [
+        {
+          "id": "never-gonna-give-you-up",
+          "status": "healthy",
+          "candidateId": "sha256:39ded7cae43f7238",
+          "providerId": "youtubemusic",
+          "bodyCharacters": 1877,
+          "metadataFields": [
+            "album",
+            "artworkUrl",
+            "duration",
+            "mediaLinks"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "lyrics",
+            "metadata"
+          ],
+          "timingTrackCount": 0,
+          "timingGranularities": [],
+          "timingRawRetained": false,
+          "hasChords": false,
+          "measurementProvenance": {
+            "runtime": "local-windows",
+            "measuredAt": "2026-10-27T04:54:00.175659Z",
+            "catalogPath": "config/source-catalog-v2.json",
+            "catalogRevision": 12,
+            "codeReference": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+            "codeReferenceStatus": "committed HEAD at measurement",
+            "contactConfiguration": "default, no contact compile define",
+            "scope": "full registered roster",
+            "probeId": "never-gonna-give-you-up"
+          }
+        }
+      ],
+      "measurementProvenance": {
+        "runtime": "local-windows",
+        "measuredAt": "2026-10-27T04:54:00.175659Z",
+        "catalogPath": "config/source-catalog-v2.json",
+        "catalogRevision": 12,
+        "codeReference": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+        "codeReferenceStatus": "committed HEAD at measurement",
+        "contactConfiguration": "default, no contact compile define",
+        "scope": "full registered roster"
+      }
+    },
+    {
+      "id": "lyricsovh",
+      "name": "Lyrics.ovh",
+      "status": "healthy",
+      "coverage": {
+        "status": "complete",
+        "verifiedCapabilities": [
+          "catalog",
+          "lyrics",
+          "metadata"
+        ],
+        "unverifiedCapabilities": []
+      },
+      "probes": [
+        {
+          "id": "wonderwall-oasis-studio",
+          "status": "healthy",
+          "candidateId": "sha256:2988d8d55a67fe5f",
+          "providerId": "lyricsovh",
+          "bodyCharacters": 1307,
+          "metadataFields": [
+            "album",
+            "artworkUrl",
+            "duration",
+            "mediaLinks"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "lyrics",
+            "metadata"
+          ],
+          "timingTrackCount": 0,
+          "timingGranularities": [],
+          "timingRawRetained": false,
+          "hasChords": false,
+          "measurementProvenance": {
+            "runtime": "local-windows",
+            "measuredAt": "2026-10-27T04:54:00.175659Z",
+            "catalogPath": "config/source-catalog-v2.json",
+            "catalogRevision": 12,
+            "codeReference": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+            "codeReferenceStatus": "committed HEAD at measurement",
+            "contactConfiguration": "default, no contact compile define",
+            "scope": "full registered roster",
+            "probeId": "wonderwall-oasis-studio"
+          }
+        }
+      ],
+      "measurementProvenance": {
+        "runtime": "local-windows",
+        "measuredAt": "2026-10-27T04:54:00.175659Z",
+        "catalogPath": "config/source-catalog-v2.json",
+        "catalogRevision": 12,
+        "codeReference": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+        "codeReferenceStatus": "committed HEAD at measurement",
+        "contactConfiguration": "default, no contact compile define",
+        "scope": "full registered roster"
+      }
+    },
+    {
+      "id": "synclrc",
+      "name": "SyncLRC",
+      "status": "unavailable",
+      "coverage": {
+        "status": "partial",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
+          "catalog",
+          "lineTiming",
+          "lyrics",
+          "metadata",
+          "wordTiming"
+        ]
+      },
+      "probes": [
+        {
+          "id": "never-gonna-give-you-up-studio",
+          "status": "unavailable",
+          "reason": "empty_search_results",
+          "measurementProvenance": {
+            "runtime": "local-windows",
+            "measuredAt": "2026-10-27T04:54:00.175659Z",
+            "catalogPath": "config/source-catalog-v2.json",
+            "catalogRevision": 12,
+            "codeReference": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+            "codeReferenceStatus": "committed HEAD at measurement",
+            "contactConfiguration": "default, no contact compile define",
+            "scope": "full registered roster",
+            "probeId": "never-gonna-give-you-up-studio"
+          }
+        },
+        {
+          "id": "wonderwall-oasis-timed-version",
+          "status": "unavailable",
+          "reason": "empty_search_results",
+          "measurementProvenance": {
+            "runtime": "local-windows",
+            "measuredAt": "2026-10-27T04:54:00.175659Z",
+            "catalogPath": "config/source-catalog-v2.json",
+            "catalogRevision": 12,
+            "codeReference": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+            "codeReferenceStatus": "committed HEAD at measurement",
+            "contactConfiguration": "default, no contact compile define",
+            "scope": "full registered roster",
+            "probeId": "wonderwall-oasis-timed-version"
+          }
+        }
+      ],
+      "measurementProvenance": {
+        "runtime": "local-windows",
+        "measuredAt": "2026-10-27T04:54:00.175659Z",
+        "catalogPath": "config/source-catalog-v2.json",
+        "catalogRevision": 12,
+        "codeReference": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+        "codeReferenceStatus": "committed HEAD at measurement",
+        "contactConfiguration": "default, no contact compile define",
+        "scope": "full registered roster"
+      }
+    },
+    {
+      "id": "betterlyrics",
+      "name": "Better Lyrics",
+      "status": "unavailable",
+      "coverage": {
+        "status": "partial",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
+          "catalog",
+          "lineTiming",
+          "lyrics",
+          "metadata",
+          "wordTiming"
+        ]
+      },
+      "probes": [
+        {
+          "id": "never-gonna-give-you-up-studio-recording",
+          "status": "unavailable",
+          "reason": "unavailable",
+          "measurementProvenance": {
+            "runtime": "local-windows",
+            "measuredAt": "2026-10-27T04:54:00.175659Z",
+            "catalogPath": "config/source-catalog-v2.json",
+            "catalogRevision": 12,
+            "codeReference": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+            "codeReferenceStatus": "committed HEAD at measurement",
+            "contactConfiguration": "default, no contact compile define",
+            "scope": "full registered roster",
+            "probeId": "never-gonna-give-you-up-studio-recording"
+          }
+        }
+      ],
+      "measurementProvenance": {
+        "runtime": "local-windows",
+        "measuredAt": "2026-10-27T04:54:00.175659Z",
+        "catalogPath": "config/source-catalog-v2.json",
+        "catalogRevision": 12,
+        "codeReference": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+        "codeReferenceStatus": "committed HEAD at measurement",
+        "contactConfiguration": "default, no contact compile define",
+        "scope": "full registered roster"
+      }
+    },
+    {
+      "id": "unison",
+      "name": "Unison",
+      "status": "healthy",
+      "coverage": {
+        "status": "complete",
+        "verifiedCapabilities": [
+          "catalog",
+          "lineTiming",
+          "lyrics",
+          "wordTiming"
+        ],
+        "unverifiedCapabilities": []
+      },
+      "probes": [
+        {
+          "id": "search-give-it-up-don-toliver",
+          "status": "healthy",
+          "candidateId": "31",
+          "providerId": "unison",
+          "bodyCharacters": 1420,
+          "metadataFields": [],
+          "verifiedCapabilities": [
+            "catalog",
+            "lineTiming",
+            "lyrics",
+            "wordTiming"
+          ],
+          "timingTrackCount": 1,
+          "timingGranularities": [
+            "word"
+          ],
+          "timingRawRetained": true,
+          "hasChords": false,
+          "measurementProvenance": {
+            "runtime": "local-windows",
+            "measuredAt": "2026-10-27T04:54:00.175659Z",
+            "catalogPath": "config/source-catalog-v2.json",
+            "catalogRevision": 12,
+            "codeReference": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+            "codeReferenceStatus": "committed HEAD at measurement",
+            "contactConfiguration": "default, no contact compile define",
+            "scope": "full registered roster",
+            "probeId": "search-give-it-up-don-toliver"
+          }
+        },
+        {
+          "id": "give-it-up-don-toliver",
+          "status": "healthy",
+          "candidateId": "31",
+          "providerId": "unison",
+          "bodyCharacters": 1420,
+          "metadataFields": [],
+          "verifiedCapabilities": [
+            "lineTiming",
+            "lyrics",
+            "wordTiming"
+          ],
+          "timingTrackCount": 1,
+          "timingGranularities": [
+            "word"
+          ],
+          "timingRawRetained": true,
+          "hasChords": false,
+          "measurementProvenance": {
+            "runtime": "local-windows",
+            "measuredAt": "2026-10-27T04:54:00.175659Z",
+            "catalogPath": "config/source-catalog-v2.json",
+            "catalogRevision": 12,
+            "codeReference": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+            "codeReferenceStatus": "committed HEAD at measurement",
+            "contactConfiguration": "default, no contact compile define",
+            "scope": "full registered roster",
+            "probeId": "give-it-up-don-toliver"
+          }
+        },
+        {
+          "id": "love-never-felt-so-good-michael-jackson",
+          "status": "healthy",
+          "candidateId": "1494",
+          "providerId": "unison",
+          "bodyCharacters": 1727,
+          "metadataFields": [],
+          "verifiedCapabilities": [
+            "lineTiming",
+            "lyrics",
+            "wordTiming"
+          ],
+          "timingTrackCount": 1,
+          "timingGranularities": [
+            "word"
+          ],
+          "timingRawRetained": true,
+          "hasChords": false,
+          "measurementProvenance": {
+            "runtime": "local-windows",
+            "measuredAt": "2026-10-27T04:54:00.175659Z",
+            "catalogPath": "config/source-catalog-v2.json",
+            "catalogRevision": 12,
+            "codeReference": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+            "codeReferenceStatus": "committed HEAD at measurement",
+            "contactConfiguration": "default, no contact compile define",
+            "scope": "full registered roster",
+            "probeId": "love-never-felt-so-good-michael-jackson"
+          }
+        }
+      ],
+      "measurementProvenance": {
+        "runtime": "local-windows",
+        "measuredAt": "2026-10-27T04:54:00.175659Z",
+        "catalogPath": "config/source-catalog-v2.json",
+        "catalogRevision": 12,
+        "codeReference": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+        "codeReferenceStatus": "committed HEAD at measurement",
+        "contactConfiguration": "default, no contact compile define",
+        "scope": "full registered roster"
+      }
+    },
+    {
+      "id": "ozbcoz",
+      "name": "Ozbcoz",
+      "status": "import_only",
+      "coverage": {
+        "status": "unverified",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
+          "chords",
+          "fileImport",
+          "lyrics",
+          "metadata"
+        ]
+      },
+      "probes": [
+        {
+          "id": "import-only",
+          "status": "import_only",
+          "measurementProvenance": {
+            "runtime": "local-windows",
+            "measuredAt": "2026-10-27T04:54:00.175659Z",
+            "catalogPath": "config/source-catalog-v2.json",
+            "catalogRevision": 12,
+            "codeReference": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+            "codeReferenceStatus": "committed HEAD at measurement",
+            "contactConfiguration": "default, no contact compile define",
+            "scope": "full registered roster",
+            "probeId": "import-only"
+          }
+        }
+      ],
+      "measurementProvenance": {
+        "runtime": "local-windows",
+        "measuredAt": "2026-10-27T04:54:00.175659Z",
+        "catalogPath": "config/source-catalog-v2.json",
+        "catalogRevision": 12,
+        "codeReference": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+        "codeReferenceStatus": "committed HEAD at measurement",
+        "contactConfiguration": "default, no contact compile define",
+        "scope": "full registered roster"
+      }
+    },
+    {
+      "id": "chordie",
+      "name": "Chordie",
+      "status": "partial_coverage",
+      "coverage": {
+        "status": "partial",
+        "verifiedCapabilities": [
+          "catalog",
+          "chords",
+          "lyrics",
+          "metadata"
+        ],
+        "unverifiedCapabilities": [
+          "fileImport"
+        ]
+      },
+      "probes": [
+        {
+          "id": "seventh-stranger-duran-duran",
+          "status": "healthy",
+          "candidateId": "/chord.pere/tabfu.thudspace.net/d/duran_duran/the_seventh_stranger.pro",
+          "providerId": "chordie",
+          "bodyCharacters": 2573,
+          "metadataFields": [
+            "identityScope"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "chords",
+            "lyrics",
+            "metadata"
+          ],
+          "timingTrackCount": 0,
+          "timingGranularities": [],
+          "timingRawRetained": false,
+          "hasChords": true,
+          "measurementProvenance": {
+            "runtime": "local-windows",
+            "measuredAt": "2026-10-27T04:54:00.175659Z",
+            "catalogPath": "config/source-catalog-v2.json",
+            "catalogRevision": 12,
+            "codeReference": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+            "codeReferenceStatus": "committed HEAD at measurement",
+            "contactConfiguration": "default, no contact compile define",
+            "scope": "full registered roster",
+            "probeId": "seventh-stranger-duran-duran"
+          }
+        }
+      ],
+      "measurementProvenance": {
+        "runtime": "local-windows",
+        "measuredAt": "2026-10-27T04:54:00.175659Z",
+        "catalogPath": "config/source-catalog-v2.json",
+        "catalogRevision": 12,
+        "codeReference": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+        "codeReferenceStatus": "committed HEAD at measurement",
+        "contactConfiguration": "default, no contact compile define",
+        "scope": "full registered roster"
+      }
+    },
+    {
+      "id": "worshipcommons",
+      "name": "WorshipCommons",
+      "status": "healthy",
+      "coverage": {
+        "status": "complete",
+        "verifiedCapabilities": [
+          "catalog",
+          "chords",
+          "lyrics",
+          "metadata",
+          "timing"
+        ],
+        "unverifiedCapabilities": []
+      },
+      "probes": [
+        {
+          "id": "amazing-grace",
+          "status": "healthy",
+          "candidateId": "sha256:f5da43f37143d55d",
+          "providerId": "worshipcommons",
+          "bodyCharacters": 884,
+          "metadataFields": [
+            "ccli",
+            "compositionYear",
+            "identityScope",
+            "key",
+            "language",
+            "mediaLinks",
+            "meter",
+            "scripture",
+            "sourceIllustrationUrl",
+            "tempo",
+            "themes",
+            "timeSignature",
+            "writer"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "chords",
+            "lyrics",
+            "metadata",
+            "timing"
+          ],
+          "timingTrackCount": 1,
+          "timingGranularities": [
+            "word"
+          ],
+          "timingRawRetained": true,
+          "hasChords": true,
+          "measurementProvenance": {
+            "runtime": "local-windows",
+            "measuredAt": "2026-10-27T04:54:00.175659Z",
+            "catalogPath": "config/source-catalog-v2.json",
+            "catalogRevision": 12,
+            "codeReference": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+            "codeReferenceStatus": "committed HEAD at measurement",
+            "contactConfiguration": "default, no contact compile define",
+            "scope": "full registered roster",
+            "probeId": "amazing-grace"
+          }
+        }
+      ],
+      "measurementProvenance": {
+        "runtime": "local-windows",
+        "measuredAt": "2026-10-27T04:54:00.175659Z",
+        "catalogPath": "config/source-catalog-v2.json",
+        "catalogRevision": 12,
+        "codeReference": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+        "codeReferenceStatus": "committed HEAD at measurement",
+        "contactConfiguration": "default, no contact compile define",
+        "scope": "full registered roster"
+      }
+    },
+    {
+      "id": "openfilksongbook",
+      "name": "Open Filk Songbook",
+      "status": "healthy",
+      "coverage": {
+        "status": "complete",
+        "verifiedCapabilities": [
+          "catalog",
+          "chords",
+          "lyrics",
+          "metadata"
+        ],
+        "unverifiedCapabilities": []
+      },
+      "probes": [
+        {
+          "id": "everything-lastalda",
+          "status": "healthy",
+          "candidateId": "sha256:c35679db6e5fa143",
+          "providerId": "openfilksongbook",
+          "bodyCharacters": 3302,
+          "metadataFields": [
+            "identityScope",
+            "sourcePageUrl",
+            "timeSignature"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "chords",
+            "lyrics",
+            "metadata"
+          ],
+          "timingTrackCount": 0,
+          "timingGranularities": [],
+          "timingRawRetained": false,
+          "hasChords": true,
+          "measurementProvenance": {
+            "runtime": "local-windows",
+            "measuredAt": "2026-10-27T04:54:00.175659Z",
+            "catalogPath": "config/source-catalog-v2.json",
+            "catalogRevision": 12,
+            "codeReference": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+            "codeReferenceStatus": "committed HEAD at measurement",
+            "contactConfiguration": "default, no contact compile define",
+            "scope": "full registered roster",
+            "probeId": "everything-lastalda"
+          }
+        }
+      ],
+      "measurementProvenance": {
+        "runtime": "local-windows",
+        "measuredAt": "2026-10-27T04:54:00.175659Z",
+        "catalogPath": "config/source-catalog-v2.json",
+        "catalogRevision": 12,
+        "codeReference": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+        "codeReferenceStatus": "committed HEAD at measurement",
+        "contactConfiguration": "default, no contact compile define",
+        "scope": "full registered roster"
+      }
+    },
+    {
+      "id": "seanmcgrathmusic",
+      "name": "Sean McGrath Music",
+      "status": "healthy",
+      "coverage": {
+        "status": "complete",
+        "verifiedCapabilities": [
+          "catalog",
+          "chords",
+          "lyrics",
+          "metadata"
+        ],
+        "unverifiedCapabilities": []
+      },
+      "probes": [
+        {
+          "id": "be-here-soon",
+          "status": "healthy",
+          "candidateId": "/songs/be-here-soon/",
+          "providerId": "seanmcgrathmusic",
+          "bodyCharacters": 1295,
+          "metadataFields": [
+            "identityScope",
+            "key",
+            "mediaLinks"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "chords",
+            "lyrics",
+            "metadata"
+          ],
+          "timingTrackCount": 0,
+          "timingGranularities": [],
+          "timingRawRetained": false,
+          "hasChords": true,
+          "measurementProvenance": {
+            "runtime": "local-windows",
+            "measuredAt": "2026-10-27T04:54:00.175659Z",
+            "catalogPath": "config/source-catalog-v2.json",
+            "catalogRevision": 12,
+            "codeReference": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+            "codeReferenceStatus": "committed HEAD at measurement",
+            "contactConfiguration": "default, no contact compile define",
+            "scope": "full registered roster",
+            "probeId": "be-here-soon"
+          }
+        },
+        {
+          "id": "black-dog",
+          "status": "healthy",
+          "candidateId": "/songs/black-dog/",
+          "providerId": "seanmcgrathmusic",
+          "bodyCharacters": 855,
+          "metadataFields": [
+            "identityScope",
+            "key",
+            "mediaLinks"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "chords",
+            "lyrics",
+            "metadata"
+          ],
+          "timingTrackCount": 0,
+          "timingGranularities": [],
+          "timingRawRetained": false,
+          "hasChords": true,
+          "measurementProvenance": {
+            "runtime": "local-windows",
+            "measuredAt": "2026-10-27T04:54:00.175659Z",
+            "catalogPath": "config/source-catalog-v2.json",
+            "catalogRevision": 12,
+            "codeReference": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+            "codeReferenceStatus": "committed HEAD at measurement",
+            "contactConfiguration": "default, no contact compile define",
+            "scope": "full registered roster",
+            "probeId": "black-dog"
+          }
+        }
+      ],
+      "measurementProvenance": {
+        "runtime": "local-windows",
+        "measuredAt": "2026-10-27T04:54:00.175659Z",
+        "catalogPath": "config/source-catalog-v2.json",
+        "catalogRevision": 12,
+        "codeReference": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+        "codeReferenceStatus": "committed HEAD at measurement",
+        "contactConfiguration": "default, no contact compile define",
+        "scope": "full registered roster"
+      }
+    },
+    {
+      "id": "worshiptogether",
+      "name": "Worship Together",
+      "status": "retired",
+      "coverage": {
+        "status": "unverified",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
+          "chords",
+          "fileImport",
+          "lyrics",
+          "metadata"
+        ]
+      },
+      "probes": [
+        {
+          "id": "import-only",
+          "status": "retired",
+          "measurementProvenance": {
+            "runtime": "local-windows",
+            "measuredAt": "2026-10-27T04:54:00.175659Z",
+            "catalogPath": "config/source-catalog-v2.json",
+            "catalogRevision": 12,
+            "codeReference": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+            "codeReferenceStatus": "committed HEAD at measurement",
+            "contactConfiguration": "default, no contact compile define",
+            "scope": "full registered roster",
+            "probeId": "import-only"
+          }
+        }
+      ],
+      "measurementProvenance": {
+        "runtime": "local-windows",
+        "measuredAt": "2026-10-27T04:54:00.175659Z",
+        "catalogPath": "config/source-catalog-v2.json",
+        "catalogRevision": 12,
+        "codeReference": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+        "codeReferenceStatus": "committed HEAD at measurement",
+        "contactConfiguration": "default, no contact compile define",
+        "scope": "full registered roster"
+      }
+    },
+    {
+      "id": "musicbrainz",
+      "name": "MusicBrainz",
+      "status": "healthy",
+      "coverage": {
+        "status": "complete",
+        "verifiedCapabilities": [
+          "catalog",
+          "metadata"
+        ],
+        "unverifiedCapabilities": []
+      },
+      "probes": [
+        {
+          "id": "wonderwall-oasis-recording",
+          "status": "healthy",
+          "candidateId": "9de3f212-2121-4c48-9240-96a52b512733",
+          "providerId": "musicbrainz",
+          "bodyCharacters": 0,
+          "metadataFields": [
+            "artistCredits",
+            "durationSeconds",
+            "identityScope",
+            "isrcs",
+            "musicbrainzRecordingId",
+            "relationships",
+            "releases",
+            "version"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "metadata"
+          ],
+          "timingTrackCount": 0,
+          "timingGranularities": [],
+          "timingRawRetained": false,
+          "hasChords": false,
+          "measurementProvenance": {
+            "runtime": "local-windows",
+            "measuredAt": "2026-10-27T04:54:00.175659Z",
+            "catalogPath": "config/source-catalog-v2.json",
+            "catalogRevision": 12,
+            "codeReference": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+            "codeReferenceStatus": "committed HEAD at measurement",
+            "contactConfiguration": "default, no contact compile define",
+            "scope": "full registered roster",
+            "probeId": "wonderwall-oasis-recording"
+          }
+        }
+      ],
+      "measurementProvenance": {
+        "runtime": "local-windows",
+        "measuredAt": "2026-10-27T04:54:00.175659Z",
+        "catalogPath": "config/source-catalog-v2.json",
+        "catalogRevision": 12,
+        "codeReference": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+        "codeReferenceStatus": "committed HEAD at measurement",
+        "contactConfiguration": "default, no contact compile define",
+        "scope": "full registered roster"
+      }
+    },
+    {
+      "id": "wikidata",
+      "name": "Wikidata",
+      "status": "healthy",
+      "coverage": {
+        "status": "complete",
+        "verifiedCapabilities": [
+          "catalog",
+          "metadata"
+        ],
+        "unverifiedCapabilities": []
+      },
+      "probes": [
+        {
+          "id": "imagine-composition",
+          "status": "healthy",
+          "candidateId": "Q1971",
+          "providerId": "wikidata",
+          "bodyCharacters": 0,
+          "metadataFields": [
+            "composers",
+            "description",
+            "durationClaims",
+            "externalIdentifiers",
+            "identityScope",
+            "lyricists",
+            "partOf",
+            "performerIds",
+            "performers",
+            "publicationDates",
+            "types",
+            "wikidataId"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "metadata"
+          ],
+          "timingTrackCount": 0,
+          "timingGranularities": [],
+          "timingRawRetained": false,
+          "hasChords": false,
+          "measurementProvenance": {
+            "runtime": "local-windows",
+            "measuredAt": "2026-10-27T04:54:00.175659Z",
+            "catalogPath": "config/source-catalog-v2.json",
+            "catalogRevision": 12,
+            "codeReference": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+            "codeReferenceStatus": "committed HEAD at measurement",
+            "contactConfiguration": "default, no contact compile define",
+            "scope": "full registered roster",
+            "probeId": "imagine-composition"
+          }
+        },
+        {
+          "id": "wonderwall-composition",
+          "status": "healthy",
+          "candidateId": "Q1045517",
+          "providerId": "wikidata",
+          "bodyCharacters": 0,
+          "metadataFields": [
+            "composers",
+            "description",
+            "durationClaims",
+            "externalIdentifiers",
+            "identityScope",
+            "lyricists",
+            "partOf",
+            "performerIds",
+            "performers",
+            "publicationDates",
+            "types",
+            "wikidataId",
+            "wikimediaCommonsFile"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "metadata"
+          ],
+          "timingTrackCount": 0,
+          "timingGranularities": [],
+          "timingRawRetained": false,
+          "hasChords": false,
+          "measurementProvenance": {
+            "runtime": "local-windows",
+            "measuredAt": "2026-10-27T04:54:00.175659Z",
+            "catalogPath": "config/source-catalog-v2.json",
+            "catalogRevision": 12,
+            "codeReference": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+            "codeReferenceStatus": "committed HEAD at measurement",
+            "contactConfiguration": "default, no contact compile define",
+            "scope": "full registered roster",
+            "probeId": "wonderwall-composition"
+          }
+        }
+      ],
+      "measurementProvenance": {
+        "runtime": "local-windows",
+        "measuredAt": "2026-10-27T04:54:00.175659Z",
+        "catalogPath": "config/source-catalog-v2.json",
+        "catalogRevision": 12,
+        "codeReference": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+        "codeReferenceStatus": "committed HEAD at measurement",
+        "contactConfiguration": "default, no contact compile define",
+        "scope": "full registered roster"
+      }
+    },
+    {
+      "id": "wikimediacommons",
+      "name": "Wikimedia Commons",
+      "status": "healthy",
+      "coverage": {
+        "status": "complete",
+        "verifiedCapabilities": [
+          "artwork",
+          "metadata"
+        ],
+        "unverifiedCapabilities": []
+      },
+      "probes": [
+        {
+          "id": "bach-portrait",
+          "status": "healthy",
+          "candidateId": "File:Johann Sebastian Bach.jpg",
+          "providerId": "wikimediacommons",
+          "bodyCharacters": 0,
+          "metadataFields": [
+            "licensedImages"
+          ],
+          "verifiedCapabilities": [
+            "artwork",
+            "metadata"
+          ],
+          "timingTrackCount": 0,
+          "timingGranularities": [],
+          "timingRawRetained": false,
+          "hasChords": false,
+          "measurementProvenance": {
+            "runtime": "local-windows",
+            "measuredAt": "2026-10-27T04:57:11.210488Z",
+            "catalogPath": "config/source-catalog-v2.json",
+            "catalogRevision": 12,
+            "codeReference": "f21afb4208e42d01fb57d47028b702804f36b3db",
+            "codeReferenceStatus": "working-tree patch subsequently committed unchanged",
+            "contactConfiguration": "default, no contact compile define",
+            "scope": "targeted source re-probe",
+            "probeId": "bach-portrait"
+          }
+        }
+      ],
+      "measurementProvenance": {
+        "runtime": "local-windows",
+        "measuredAt": "2026-10-27T04:57:11.210488Z",
+        "catalogPath": "config/source-catalog-v2.json",
+        "catalogRevision": 12,
+        "codeReference": "f21afb4208e42d01fb57d47028b702804f36b3db",
+        "codeReferenceStatus": "working-tree patch subsequently committed unchanged",
+        "contactConfiguration": "default, no contact compile define",
+        "scope": "targeted source re-probe"
+      }
+    },
+    {
+      "id": "wikisource",
+      "name": "Wikisource",
+      "status": "partial_coverage",
+      "coverage": {
+        "status": "partial",
+        "verifiedCapabilities": [
+          "catalog",
+          "lyrics",
+          "metadata"
+        ],
+        "unverifiedCapabilities": [
+          "fileImport"
+        ]
+      },
+      "probes": [
+        {
+          "id": "cleansing-wave-palmer",
+          "status": "healthy",
+          "candidateId": "sha256:e915a1ba387e3dd0",
+          "providerId": "wikisource",
+          "bodyCharacters": 664,
+          "metadataFields": [
+            "copyrightTags",
+            "identityScope",
+            "resolvedPageId",
+            "resolvedTitle",
+            "revision"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "lyrics",
+            "metadata"
+          ],
+          "timingTrackCount": 0,
+          "timingGranularities": [],
+          "timingRawRetained": false,
+          "hasChords": false,
+          "measurementProvenance": {
+            "runtime": "local-windows",
+            "measuredAt": "2026-10-27T04:57:25.539632Z",
+            "catalogPath": "config/source-catalog-v2.json",
+            "catalogRevision": 12,
+            "codeReference": "f21afb4208e42d01fb57d47028b702804f36b3db",
+            "codeReferenceStatus": "working-tree patch subsequently committed unchanged",
+            "contactConfiguration": "default, no contact compile define",
+            "scope": "targeted source re-probe",
+            "probeId": "cleansing-wave-palmer"
+          }
+        },
+        {
+          "id": "dunbar-hymn-1",
+          "status": "healthy",
+          "candidateId": "sha256:9395d47d4cb4346c",
+          "providerId": "wikisource",
+          "bodyCharacters": 496,
+          "metadataFields": [
+            "copyrightTags",
+            "identityScope",
+            "resolvedPageId",
+            "resolvedTitle",
+            "revision"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "lyrics",
+            "metadata"
+          ],
+          "timingTrackCount": 0,
+          "timingGranularities": [],
+          "timingRawRetained": false,
+          "hasChords": false,
+          "measurementProvenance": {
+            "runtime": "local-windows",
+            "measuredAt": "2026-10-27T04:57:25.539632Z",
+            "catalogPath": "config/source-catalog-v2.json",
+            "catalogRevision": 12,
+            "codeReference": "f21afb4208e42d01fb57d47028b702804f36b3db",
+            "codeReferenceStatus": "working-tree patch subsequently committed unchanged",
+            "contactConfiguration": "default, no contact compile define",
+            "scope": "targeted source re-probe",
+            "probeId": "dunbar-hymn-1"
+          }
+        }
+      ],
+      "measurementProvenance": {
+        "runtime": "local-windows",
+        "measuredAt": "2026-10-27T04:57:25.539632Z",
+        "catalogPath": "config/source-catalog-v2.json",
+        "catalogRevision": 12,
+        "codeReference": "f21afb4208e42d01fb57d47028b702804f36b3db",
+        "codeReferenceStatus": "working-tree patch subsequently committed unchanged",
+        "contactConfiguration": "default, no contact compile define",
+        "scope": "targeted source re-probe"
+      }
+    },
+    {
+      "id": "lrcred",
+      "name": "lrc.red",
+      "status": "healthy",
+      "coverage": {
+        "status": "complete",
+        "verifiedCapabilities": [
+          "catalog",
+          "lineTiming",
+          "lyrics",
+          "metadata",
+          "wordTiming"
+        ],
+        "unverifiedCapabilities": []
+      },
+      "probes": [
+        {
+          "id": "creep-radiohead",
+          "status": "healthy",
+          "candidateId": "sha256:c298c2cd87f1364d",
+          "providerId": "lrcred",
+          "bodyCharacters": 803,
+          "metadataFields": [
+            "album",
+            "artworkUrl",
+            "credits",
+            "durationSeconds",
+            "featuredArtists",
+            "genres",
+            "identityScope",
+            "isrcs",
+            "language",
+            "mediaLinks",
+            "releaseDate"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "lineTiming",
+            "lyrics",
+            "metadata",
+            "wordTiming"
+          ],
+          "timingTrackCount": 1,
+          "timingGranularities": [
+            "word"
+          ],
+          "timingRawRetained": true,
+          "hasChords": false,
+          "measurementProvenance": {
+            "runtime": "local-windows",
+            "measuredAt": "2026-10-27T04:54:00.175659Z",
+            "catalogPath": "config/source-catalog-v2.json",
+            "catalogRevision": 12,
+            "codeReference": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+            "codeReferenceStatus": "committed HEAD at measurement",
+            "contactConfiguration": "default, no contact compile define",
+            "scope": "full registered roster",
+            "probeId": "creep-radiohead"
+          }
+        },
+        {
+          "id": "bohemian-rhapsody-queen",
+          "status": "healthy",
+          "candidateId": "sha256:4ec2eb6e7941a013",
+          "providerId": "lrcred",
+          "bodyCharacters": 1890,
+          "metadataFields": [
+            "album",
+            "artworkUrl",
+            "credits",
+            "durationSeconds",
+            "featuredArtists",
+            "genres",
+            "identityScope",
+            "isrcs",
+            "language",
+            "mediaLinks",
+            "releaseDate"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "lineTiming",
+            "lyrics",
+            "metadata",
+            "wordTiming"
+          ],
+          "timingTrackCount": 1,
+          "timingGranularities": [
+            "word"
+          ],
+          "timingRawRetained": true,
+          "hasChords": false,
+          "measurementProvenance": {
+            "runtime": "local-windows",
+            "measuredAt": "2026-10-27T04:54:00.175659Z",
+            "catalogPath": "config/source-catalog-v2.json",
+            "catalogRevision": 12,
+            "codeReference": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+            "codeReferenceStatus": "committed HEAD at measurement",
+            "contactConfiguration": "default, no contact compile define",
+            "scope": "full registered roster",
+            "probeId": "bohemian-rhapsody-queen"
+          }
+        }
+      ],
+      "measurementProvenance": {
+        "runtime": "local-windows",
+        "measuredAt": "2026-10-27T04:54:00.175659Z",
+        "catalogPath": "config/source-catalog-v2.json",
+        "catalogRevision": 12,
+        "codeReference": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+        "codeReferenceStatus": "committed HEAD at measurement",
+        "contactConfiguration": "default, no contact compile define",
+        "scope": "full registered roster"
+      }
+    },
+    {
+      "id": "roswellmusicjam",
+      "name": "Roswell Music Jam",
+      "status": "healthy",
+      "coverage": {
+        "status": "complete",
+        "verifiedCapabilities": [
+          "catalog",
+          "chords",
+          "lyrics",
+          "metadata"
+        ],
+        "unverifiedCapabilities": []
+      },
+      "probes": [
+        {
+          "id": "if-not-for-you-dylan",
+          "status": "healthy",
+          "candidateId": "sha256:1280d34f4f88f92c",
+          "providerId": "roswellmusicjam",
+          "bodyCharacters": 1923,
+          "metadataFields": [
+            "credits",
+            "identityScope",
+            "key",
+            "sourceArchiveFile",
+            "sourceArchiveSha256",
+            "sourceArchiveUrl",
+            "sourceCollections"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "chords",
+            "lyrics",
+            "metadata"
+          ],
+          "timingTrackCount": 0,
+          "timingGranularities": [],
+          "timingRawRetained": false,
+          "hasChords": true,
+          "measurementProvenance": {
+            "runtime": "local-windows",
+            "measuredAt": "2026-10-27T04:54:00.175659Z",
+            "catalogPath": "config/source-catalog-v2.json",
+            "catalogRevision": 12,
+            "codeReference": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+            "codeReferenceStatus": "committed HEAD at measurement",
+            "contactConfiguration": "default, no contact compile define",
+            "scope": "full registered roster",
+            "probeId": "if-not-for-you-dylan"
+          }
+        },
+        {
+          "id": "breakdown-petty",
+          "status": "healthy",
+          "candidateId": "sha256:626adafb7fd033d4",
+          "providerId": "roswellmusicjam",
+          "bodyCharacters": 1194,
+          "metadataFields": [
+            "credits",
+            "identityScope",
+            "key",
+            "sourceArchiveFile",
+            "sourceArchiveSha256",
+            "sourceArchiveUrl",
+            "sourceCollections",
+            "tempo"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "chords",
+            "lyrics",
+            "metadata"
+          ],
+          "timingTrackCount": 0,
+          "timingGranularities": [],
+          "timingRawRetained": false,
+          "hasChords": true,
+          "measurementProvenance": {
+            "runtime": "local-windows",
+            "measuredAt": "2026-10-27T04:54:00.175659Z",
+            "catalogPath": "config/source-catalog-v2.json",
+            "catalogRevision": 12,
+            "codeReference": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+            "codeReferenceStatus": "committed HEAD at measurement",
+            "contactConfiguration": "default, no contact compile define",
+            "scope": "full registered roster",
+            "probeId": "breakdown-petty"
+          }
+        }
+      ],
+      "measurementProvenance": {
+        "runtime": "local-windows",
+        "measuredAt": "2026-10-27T04:54:00.175659Z",
+        "catalogPath": "config/source-catalog-v2.json",
+        "catalogRevision": 12,
+        "codeReference": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+        "codeReferenceStatus": "committed HEAD at measurement",
+        "contactConfiguration": "default, no contact compile define",
+        "scope": "full registered roster"
+      }
+    },
+    {
+      "id": "karamoe",
+      "name": "kara.moe",
+      "status": "healthy",
+      "coverage": {
+        "status": "complete",
+        "verifiedCapabilities": [
+          "catalog",
+          "lineTiming",
+          "lyrics",
+          "metadata"
+        ],
+        "unverifiedCapabilities": []
+      },
+      "probes": [
+        {
+          "id": "man-of-war-radiohead",
+          "status": "healthy",
+          "candidateId": "sha256:863efdaa08011dbc",
+          "providerId": "karamoe",
+          "bodyCharacters": 599,
+          "metadataFields": [
+            "credits",
+            "identityScope",
+            "karaokeAuthors",
+            "karaokeMugenId",
+            "language",
+            "languages",
+            "mediaLinks",
+            "performers",
+            "songwriters",
+            "sourceCollections",
+            "sourceCreators",
+            "sourceFamilies",
+            "sourceFranchises",
+            "sourceGroups",
+            "sourceLanguageCode",
+            "sourceModifiedAt",
+            "sourceOrigins",
+            "sourceRepository",
+            "sourceSeries",
+            "sourceSongTypes",
+            "sourceSubtitleChecksum",
+            "sourceTitleAliases",
+            "sourceTitles",
+            "sourceVideoDurationSeconds",
+            "sourceVideoYear",
+            "sourceWarnings",
+            "version"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "lineTiming",
+            "lyrics",
+            "metadata"
+          ],
+          "timingTrackCount": 1,
+          "timingGranularities": [
+            "line"
+          ],
+          "timingRawRetained": true,
+          "hasChords": false,
+          "measurementProvenance": {
+            "runtime": "local-windows",
+            "measuredAt": "2026-10-27T04:54:00.175659Z",
+            "catalogPath": "config/source-catalog-v2.json",
+            "catalogRevision": 12,
+            "codeReference": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+            "codeReferenceStatus": "committed HEAD at measurement",
+            "contactConfiguration": "default, no contact compile define",
+            "scope": "full registered roster",
+            "probeId": "man-of-war-radiohead"
+          }
+        },
+        {
+          "id": "dune-ai-kizuna-cover",
+          "status": "healthy",
+          "candidateId": "sha256:98a4ea23cb90b820",
+          "providerId": "karamoe",
+          "bodyCharacters": 2023,
+          "metadataFields": [
+            "credits",
+            "identityScope",
+            "karaokeAuthors",
+            "karaokeMugenId",
+            "language",
+            "languages",
+            "mediaLinks",
+            "performers",
+            "songwriters",
+            "sourceCollections",
+            "sourceFamilies",
+            "sourceGroups",
+            "sourceLanguageCode",
+            "sourceModifiedAt",
+            "sourceOrigins",
+            "sourceRepository",
+            "sourceSongTypes",
+            "sourceSubtitleChecksum",
+            "sourceTitleAliases",
+            "sourceTitles",
+            "sourceVersions",
+            "sourceVideoDurationSeconds",
+            "sourceVideoYear",
+            "version"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "lineTiming",
+            "lyrics",
+            "metadata"
+          ],
+          "timingTrackCount": 1,
+          "timingGranularities": [
+            "line"
+          ],
+          "timingRawRetained": true,
+          "hasChords": false,
+          "measurementProvenance": {
+            "runtime": "local-windows",
+            "measuredAt": "2026-10-27T04:54:00.175659Z",
+            "catalogPath": "config/source-catalog-v2.json",
+            "catalogRevision": 12,
+            "codeReference": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+            "codeReferenceStatus": "committed HEAD at measurement",
+            "contactConfiguration": "default, no contact compile define",
+            "scope": "full registered roster",
+            "probeId": "dune-ai-kizuna-cover"
+          }
+        }
+      ],
+      "measurementProvenance": {
+        "runtime": "local-windows",
+        "measuredAt": "2026-10-27T04:54:00.175659Z",
+        "catalogPath": "config/source-catalog-v2.json",
+        "catalogRevision": 12,
+        "codeReference": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+        "codeReferenceStatus": "committed HEAD at measurement",
+        "contactConfiguration": "default, no contact compile define",
+        "scope": "full registered roster"
+      }
+    }
+  ],
+  "httpDiagnostics": {
+    "networkFailures": 0,
+    "hosts": {
+      "api.betterlyrics.org": {
+        "requests": 1,
+        "statuses": {
+          "401": 1
+        },
+        "retryAfterSeconds": {},
+        "databaseLag": {}
+      },
+      "api.genius.com": {
+        "requests": 2,
+        "statuses": {
+          "200": 2
+        },
+        "retryAfterSeconds": {},
+        "databaseLag": {}
+      },
+      "api.lyrics.ovh": {
+        "requests": 2,
+        "statuses": {
+          "200": 2
+        },
+        "retryAfterSeconds": {},
+        "databaseLag": {}
+      },
+      "api.synclrc.dev": {
+        "requests": 2,
+        "statuses": {
+          "200": 2
+        },
+        "retryAfterSeconds": {},
+        "databaseLag": {}
+      },
+      "commons.wikimedia.org": {
+        "requests": 3,
+        "statuses": {
+          "429": 1,
+          "200": 2
+        },
+        "retryAfterSeconds": {
+          "13": 1
+        },
+        "databaseLag": {}
+      },
+      "en.wikisource.org": {
+        "requests": 10,
+        "statuses": {
+          "429": 2,
+          "200": 8
+        },
+        "retryAfterSeconds": {
+          "12": 2
+        },
+        "databaseLag": {}
+      },
+      "filksongbook.com": {
+        "requests": 2,
+        "statuses": {
+          "200": 2
+        },
+        "retryAfterSeconds": {},
+        "databaseLag": {}
+      },
+      "genius.com": {
+        "requests": 1,
+        "statuses": {
+          "200": 1
+        },
+        "retryAfterSeconds": {},
+        "databaseLag": {}
+      },
+      "kara.moe": {
+        "requests": 4,
+        "statuses": {
+          "200": 4
+        },
+        "retryAfterSeconds": {},
+        "databaseLag": {}
+      },
+      "lrc.red": {
+        "requests": 6,
+        "statuses": {
+          "200": 6
+        },
+        "retryAfterSeconds": {},
+        "databaseLag": {}
+      },
+      "lrclib.net": {
+        "requests": 4,
+        "statuses": {
+          "200": 4
+        },
+        "retryAfterSeconds": {},
+        "databaseLag": {}
+      },
+      "music.youtube.com": {
+        "requests": 4,
+        "statuses": {
+          "200": 4
+        },
+        "retryAfterSeconds": {},
+        "databaseLag": {}
+      },
+      "musicbrainz.org": {
+        "requests": 2,
+        "statuses": {
+          "200": 2
+        },
+        "retryAfterSeconds": {},
+        "databaseLag": {}
+      },
+      "raw.githubusercontent.com": {
+        "requests": 2,
+        "statuses": {
+          "200": 2
+        },
+        "retryAfterSeconds": {},
+        "databaseLag": {}
+      },
+      "seanmcgrathmusic.com": {
+        "requests": 5,
+        "statuses": {
+          "200": 5
+        },
+        "retryAfterSeconds": {},
+        "databaseLag": {}
+      },
+      "tabs.ultimate-guitar.com": {
+        "requests": 1,
+        "statuses": {
+          "200": 1
+        },
+        "retryAfterSeconds": {},
+        "databaseLag": {}
+      },
+      "unison.betterlyrics.org": {
+        "requests": 4,
+        "statuses": {
+          "200": 4
+        },
+        "retryAfterSeconds": {},
+        "databaseLag": {}
+      },
+      "www.chordie.com": {
+        "requests": 2,
+        "statuses": {
+          "200": 2
+        },
+        "retryAfterSeconds": {},
+        "databaseLag": {}
+      },
+      "www.roswellmusicjam.com": {
+        "requests": 2,
+        "statuses": {
+          "200": 2
+        },
+        "retryAfterSeconds": {},
+        "databaseLag": {}
+      },
+      "www.songsterr.com": {
+        "requests": 2,
+        "statuses": {
+          "200": 2
+        },
+        "retryAfterSeconds": {},
+        "databaseLag": {}
+      },
+      "www.ultimate-guitar.com": {
+        "requests": 1,
+        "statuses": {
+          "200": 1
+        },
+        "retryAfterSeconds": {},
+        "databaseLag": {}
+      },
+      "www.wikidata.org": {
+        "requests": 10,
+        "statuses": {
+          "200": 10
+        },
+        "retryAfterSeconds": {},
+        "databaseLag": {}
+      }
+    }
+  },
+  "measurementProvenance": {
+    "runtime": "local-windows",
+    "scope": "full 22-source run plus separately dated affected-source re-probes",
+    "mixedMeasurementTimes": true,
+    "fullRunAt": "2026-10-27T04:54:00.175659Z",
+    "latestReprobeAt": "2026-10-27T04:57:25.539632Z",
+    "runs": [
+      {
+        "path": "reports/source-maintenance/local/2026-10-27T045400Z.json",
+        "runtime": "local-windows",
+        "measuredAt": "2026-10-27T04:54:00.175659Z",
+        "catalogPath": "config/source-catalog-v2.json",
+        "catalogRevision": 12,
+        "codeReference": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+        "codeReferenceStatus": "committed HEAD at measurement",
+        "contactConfiguration": "default, no contact compile define",
+        "scope": "full registered roster"
+      },
+      {
+        "path": "reports/source-maintenance/local/2026-10-27T045504Z-commons-identified-client.json",
+        "runtime": "local-windows",
+        "measuredAt": "2026-10-27T04:55:04.256255Z",
+        "catalogPath": "config/source-catalog-v2.json",
+        "catalogRevision": 12,
+        "codeReference": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+        "codeReferenceStatus": "committed HEAD at measurement",
+        "contactConfiguration": "explicit public project URL compile define",
+        "scope": "targeted source re-probe"
+      },
+      {
+        "path": "reports/source-maintenance/local/2026-10-27T045521Z-wikisource-identified-client.json",
+        "runtime": "local-windows",
+        "measuredAt": "2026-10-27T04:55:21.058942Z",
+        "catalogPath": "config/source-catalog-v2.json",
+        "catalogRevision": 12,
+        "codeReference": "408e6eb14cd7df6f7d4af8afdd245a2064534a01",
+        "codeReferenceStatus": "committed HEAD at measurement",
+        "contactConfiguration": "explicit public project URL compile define",
+        "scope": "targeted source re-probe"
+      },
+      {
+        "path": "reports/source-maintenance/local/2026-10-27T045711Z-commons-fixed-default.json",
+        "runtime": "local-windows",
+        "measuredAt": "2026-10-27T04:57:11.210488Z",
+        "catalogPath": "config/source-catalog-v2.json",
+        "catalogRevision": 12,
+        "codeReference": "f21afb4208e42d01fb57d47028b702804f36b3db",
+        "codeReferenceStatus": "working-tree patch subsequently committed unchanged",
+        "contactConfiguration": "default, no contact compile define",
+        "scope": "targeted source re-probe"
+      },
+      {
+        "path": "reports/source-maintenance/local/2026-10-27T045725Z-wikisource-fixed-default.json",
+        "runtime": "local-windows",
+        "measuredAt": "2026-10-27T04:57:25.539632Z",
+        "catalogPath": "config/source-catalog-v2.json",
+        "catalogRevision": 12,
+        "codeReference": "f21afb4208e42d01fb57d47028b702804f36b3db",
+        "codeReferenceStatus": "working-tree patch subsequently committed unchanged",
+        "contactConfiguration": "default, no contact compile define",
+        "scope": "targeted source re-probe"
+      }
+    ],
+    "limits": "Source/probe timestamps and code references govern each result. Local success does not establish cloud reachability. File-import coverage is not inferred from extraction."
+  },
+  "snapshotAt": "2026-10-27T04:59:51.739109+00:00",
+  "httpDiagnosticsScope": "Actual aggregate of all five recorded runs, including baseline 429 responses and explicit-identification diagnostic re-probes; not just the latest successful result for each source.",
+  "remainingRoadblocks": [
+    {
+      "source": "synclrc",
+      "reason": "two declared searches returned empty results",
+      "status": "unresolved; source retained"
+    },
+    {
+      "source": "betterlyrics",
+      "reason": "HTTP401 on the normal anonymous endpoint",
+      "status": "unresolved; no unauthorized credential substitution"
+    },
+    {
+      "source": "chordie",
+      "reason": "fileImport capability unverified; extraction healthy",
+      "status": "incomplete capability validation"
+    },
+    {
+      "source": "wikisource",
+      "reason": "fileImport capability unverified; both extraction canaries healthy after identification fix",
+      "status": "incomplete capability validation"
+    },
+    {
+      "source": "ozbcoz",
+      "reason": "import-only; catalog GET diagnostic returned403 challenge, recorded separately",
+      "status": "transparent catalog import not available; earlier exact-file imports not relabeled as rerun"
+    }
+  ],
+  "identificationFinding": {
+    "change": "Default transport contact now uses the real project URL; explicit contact override remains supported",
+    "pullRequest": "https://github.com/freevia-org/Singbook/pull/171",
+    "candidateCommit": "f21afb4208e42d01fb57d47028b702804f36b3db",
+    "observed": "Baseline Wikidata10HTTP200, Commons1HTTP429, Wikisource2HTTP429. Identified re-probes and fixed-default re-probes returned onlyHTTP200.",
+    "inferenceLimit": "Consistent with published global unidentified-client rate limits; exact server-side bucket and sole causation were not exposed. Identification does not remove quotas."
+  },
+  "comparison": {
+    "healthBase": "366b27d7622e03c14d7607dfd2d8f0b890d2d1ff",
+    "previousLocalAt": "2026-10-26T09:24:52.264826Z",
+    "cloudFullRunAt": "2026-10-26T23:11:43.549780Z",
+    "cloudCatalogRevision": 11,
+    "scope": "Compared with the cloud full report only; newer targeted cloud reports remain separate evidence",
+    "sources": [
+      {
+        "id": "genius",
+        "previousLocal": "healthy",
+        "currentLocal": "healthy",
+        "cloudFullReport": "transient_error"
+      },
+      {
+        "id": "songsterr",
+        "previousLocal": "healthy",
+        "currentLocal": "healthy",
+        "cloudFullReport": "healthy"
+      },
+      {
+        "id": "ultimateguitar",
+        "previousLocal": "healthy",
+        "currentLocal": "healthy",
+        "cloudFullReport": "transient_error"
+      },
+      {
+        "id": "lrclib",
+        "previousLocal": "healthy",
+        "currentLocal": "healthy",
+        "cloudFullReport": "healthy"
+      },
+      {
+        "id": "youtubemusic",
+        "previousLocal": "healthy",
+        "currentLocal": "healthy",
+        "cloudFullReport": "transient_error"
+      },
+      {
+        "id": "lyricsovh",
+        "previousLocal": "healthy",
+        "currentLocal": "healthy",
+        "cloudFullReport": "healthy"
+      },
+      {
+        "id": "synclrc",
+        "previousLocal": "unavailable",
+        "currentLocal": "unavailable",
+        "cloudFullReport": "unavailable"
+      },
+      {
+        "id": "betterlyrics",
+        "previousLocal": "unavailable",
+        "currentLocal": "unavailable",
+        "cloudFullReport": "unavailable"
+      },
+      {
+        "id": "unison",
+        "previousLocal": "healthy",
+        "currentLocal": "healthy",
+        "cloudFullReport": "healthy"
+      },
+      {
+        "id": "ozbcoz",
+        "previousLocal": "import_only",
+        "currentLocal": "import_only",
+        "cloudFullReport": "import_only"
+      },
+      {
+        "id": "chordie",
+        "previousLocal": "partial_coverage",
+        "currentLocal": "partial_coverage",
+        "cloudFullReport": "transient_error"
+      },
+      {
+        "id": "worshipcommons",
+        "previousLocal": "healthy",
+        "currentLocal": "healthy",
+        "cloudFullReport": "healthy"
+      },
+      {
+        "id": "openfilksongbook",
+        "previousLocal": "healthy",
+        "currentLocal": "healthy",
+        "cloudFullReport": "healthy"
+      },
+      {
+        "id": "seanmcgrathmusic",
+        "previousLocal": "healthy",
+        "currentLocal": "healthy",
+        "cloudFullReport": "unavailable"
+      },
+      {
+        "id": "worshiptogether",
+        "previousLocal": "retired",
+        "currentLocal": "retired",
+        "cloudFullReport": "retired"
+      },
+      {
+        "id": "musicbrainz",
+        "previousLocal": "healthy",
+        "currentLocal": "healthy",
+        "cloudFullReport": "healthy"
+      },
+      {
+        "id": "wikidata",
+        "previousLocal": "healthy",
+        "currentLocal": "healthy",
+        "cloudFullReport": "transient_error"
+      },
+      {
+        "id": "wikimediacommons",
+        "previousLocal": "healthy",
+        "currentLocal": "healthy",
+        "cloudFullReport": "healthy"
+      },
+      {
+        "id": "wikisource",
+        "previousLocal": "partial_coverage",
+        "currentLocal": "partial_coverage",
+        "cloudFullReport": "partial_coverage"
+      },
+      {
+        "id": "lrcred",
+        "previousLocal": "not_in_previous_roster",
+        "currentLocal": "healthy",
+        "cloudFullReport": "healthy"
+      },
+      {
+        "id": "roswellmusicjam",
+        "previousLocal": "not_in_previous_roster",
+        "currentLocal": "healthy",
+        "cloudFullReport": "healthy"
+      },
+      {
+        "id": "karamoe",
+        "previousLocal": "not_in_previous_roster",
+        "currentLocal": "healthy",
+        "cloudFullReport": "healthy"
+      }
+    ]
+  }
+}
