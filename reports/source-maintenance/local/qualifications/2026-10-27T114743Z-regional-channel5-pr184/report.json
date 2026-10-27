@@ -1,0 +1,1417 @@
+{
+  "schemaVersion": 1,
+  "kind": "candidate-regional-native-catalog-and-Android-qualification",
+  "atUtc": "2026-10-27T11:47:43.736032Z",
+  "pullRequest": "https://github.com/freevia-org/Singbook/pull/184",
+  "sourceCommit": "0c45cdb4d983f8f5f1f3a5ffe8adb98536c47313",
+  "testedRuntimeCommit": "7c54a202acd9792936c5b17acce6b2d98a1d24d4",
+  "onlyChangesAfterRuntimeQualification": [
+    "config/source-discovery.json",
+    "docs/regional-source-qualification.md"
+  ],
+  "baseBranch": "codex/vocadb-channel4-rollout-20261027",
+  "baseHead": "09a8bf95e6c226e34445293902a83dd36071df47",
+  "includedResearchMerge": "95955dee427f9ff500f5fcf5afb2165707e064b6",
+  "catalog": {
+    "oldCatalogsGitContentSha256": {
+      "config/source-catalog.json": "eb23bd9999d2e70a04912bb5150d0874fc2bd5490e6f6f60fb426d2fe9838c59",
+      "config/source-catalog-v2.json": "fb761d3e89e97faafcd20ba7dd3457e42e957f76a82e5a7acebd8f40c879b5e2",
+      "config/source-catalog-v3.json": "b27df30346ba9fd0b0e2db530c42cb621cc2fe9371f50b40c685bc58703ff069",
+      "config/source-catalog-v4.json": "987dee720305c7857532f619c8b8bb6c1574bc542538688051a1974d86e4fdfa"
+    },
+    "all24PriorEntriesExact": true,
+    "catalogRevision": 16,
+    "registeredEntries": 26,
+    "all33PriorDiscoveryEntriesExact": true,
+    "discoveryEntries": 35,
+    "releaseVersionUnchanged": true,
+    "channel": 5,
+    "newCacheKey": "sourceCatalog:v5",
+    "newSources": [
+      "touhoudb",
+      "utaitedb"
+    ],
+    "newSourcesActiveAndDefaultEnabledInCandidate": true,
+    "catalogGitBlobSha256": "9ef3207570100a0f2b2dfad47bb88b4c5c43a9952c71e330ec1a42a3bee50743",
+    "servedPublicCatalogVerified": false
+  },
+  "access": {
+    "hostScopedAnonymousApis": true,
+    "licence": "Each rendered host footer links shared database metadata CC-BY4.0/link-back terms. Underlying lyrics/images excluded; per-variant source credits retained and no blanket lyric-rights claim.",
+    "primaryDocumentation": [
+      "https://touhoudb.com/",
+      "https://utaitedb.net/",
+      "https://wiki.vocadb.net/docs/public-api",
+      "https://wiki.vocadb.net/docs/license",
+      "https://wiki.vocadb.net/docs/terms-of-service"
+    ],
+    "metadataOnlySongVersionCounts": {
+      "touhoudb": 190042,
+      "utaitedb": 78943
+    },
+    "countsAreNotLyricBearingDeduplicatedOrIncrementalCoverage": true
+  },
+  "validation": {
+    "focusedAliasCasesPassed": 10,
+    "combinedProviderControllerAndNativePersistenceCasesPassed": 620,
+    "scopedAnalysis": "clean",
+    "independentReview": "Alias edition conflict found and repaired; final review clear. Canonical data and all other identity checks preserved.",
+    "catalogOffline": {
+      "schemaVersion": 1,
+      "catalogRevision": 16,
+      "measuredAt": "2026-10-27T11:06:52.005533Z",
+      "offline": true,
+      "summary": {
+        "offline_unverified": 24,
+        "import_only": 1,
+        "retired": 1
+      },
+      "sources": [
+        {
+          "id": "genius",
+          "name": "Genius",
+          "status": "offline_unverified",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "catalog",
+              "lyrics",
+              "metadata"
+            ]
+          },
+          "probes": [
+            {
+              "id": "wonderwall-oasis",
+              "status": "offline_unverified"
+            }
+          ]
+        },
+        {
+          "id": "songsterr",
+          "name": "Songsterr",
+          "status": "offline_unverified",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "catalog",
+              "chords",
+              "lyrics",
+              "metadata"
+            ]
+          },
+          "probes": [
+            {
+              "id": "wonderwall",
+              "status": "offline_unverified"
+            }
+          ]
+        },
+        {
+          "id": "ultimateguitar",
+          "name": "Ultimate Guitar",
+          "status": "offline_unverified",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "catalog",
+              "chords",
+              "lyrics",
+              "metadata"
+            ]
+          },
+          "probes": [
+            {
+              "id": "wonderwall-oasis-chords",
+              "status": "offline_unverified"
+            }
+          ]
+        },
+        {
+          "id": "lrclib",
+          "name": "LRCLIB",
+          "status": "offline_unverified",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "catalog",
+              "lineTiming",
+              "lyrics",
+              "metadata"
+            ]
+          },
+          "probes": [
+            {
+              "id": "sound-of-silence-studio-recording",
+              "status": "offline_unverified"
+            }
+          ]
+        },
+        {
+          "id": "youtubemusic",
+          "name": "YouTube Music",
+          "status": "offline_unverified",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "catalog",
+              "lyrics",
+              "metadata"
+            ]
+          },
+          "probes": [
+            {
+              "id": "never-gonna-give-you-up",
+              "status": "offline_unverified"
+            }
+          ]
+        },
+        {
+          "id": "lyricsovh",
+          "name": "Lyrics.ovh",
+          "status": "offline_unverified",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "catalog",
+              "lyrics",
+              "metadata"
+            ]
+          },
+          "probes": [
+            {
+              "id": "wonderwall-oasis-studio",
+              "status": "offline_unverified"
+            }
+          ]
+        },
+        {
+          "id": "synclrc",
+          "name": "SyncLRC",
+          "status": "offline_unverified",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "catalog",
+              "lineTiming",
+              "lyrics",
+              "metadata",
+              "wordTiming"
+            ]
+          },
+          "probes": [
+            {
+              "id": "never-gonna-give-you-up-studio",
+              "status": "offline_unverified"
+            },
+            {
+              "id": "wonderwall-oasis-timed-version",
+              "status": "offline_unverified"
+            },
+            {
+              "id": "never-gonna-give-you-up-catalog-search",
+              "status": "offline_unverified"
+            }
+          ]
+        },
+        {
+          "id": "betterlyrics",
+          "name": "Better Lyrics",
+          "status": "offline_unverified",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "catalog",
+              "lineTiming",
+              "lyrics",
+              "metadata",
+              "wordTiming"
+            ]
+          },
+          "probes": [
+            {
+              "id": "never-gonna-give-you-up-studio-recording",
+              "status": "offline_unverified"
+            }
+          ]
+        },
+        {
+          "id": "unison",
+          "name": "Unison",
+          "status": "offline_unverified",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "catalog",
+              "lineTiming",
+              "lyrics",
+              "wordTiming"
+            ]
+          },
+          "probes": [
+            {
+              "id": "search-give-it-up-don-toliver",
+              "status": "offline_unverified"
+            },
+            {
+              "id": "give-it-up-don-toliver",
+              "status": "offline_unverified"
+            },
+            {
+              "id": "love-never-felt-so-good-michael-jackson",
+              "status": "offline_unverified"
+            }
+          ]
+        },
+        {
+          "id": "ozbcoz",
+          "name": "Ozbcoz",
+          "status": "import_only",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "chords",
+              "fileImport",
+              "lyrics",
+              "metadata"
+            ]
+          },
+          "probes": [
+            {
+              "id": "import-only",
+              "status": "import_only"
+            }
+          ]
+        },
+        {
+          "id": "chordie",
+          "name": "Chordie",
+          "status": "offline_unverified",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "catalog",
+              "chords",
+              "fileImport",
+              "lyrics",
+              "metadata"
+            ]
+          },
+          "probes": [
+            {
+              "id": "seventh-stranger-duran-duran",
+              "status": "offline_unverified"
+            }
+          ]
+        },
+        {
+          "id": "worshipcommons",
+          "name": "WorshipCommons",
+          "status": "offline_unverified",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "catalog",
+              "chords",
+              "lyrics",
+              "metadata",
+              "timing"
+            ]
+          },
+          "probes": [
+            {
+              "id": "amazing-grace",
+              "status": "offline_unverified"
+            }
+          ]
+        },
+        {
+          "id": "openfilksongbook",
+          "name": "Open Filk Songbook",
+          "status": "offline_unverified",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "catalog",
+              "chords",
+              "lyrics",
+              "metadata"
+            ]
+          },
+          "probes": [
+            {
+              "id": "everything-lastalda",
+              "status": "offline_unverified"
+            }
+          ]
+        },
+        {
+          "id": "seanmcgrathmusic",
+          "name": "Sean McGrath Music",
+          "status": "offline_unverified",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "catalog",
+              "chords",
+              "lyrics",
+              "metadata"
+            ]
+          },
+          "probes": [
+            {
+              "id": "be-here-soon",
+              "status": "offline_unverified"
+            },
+            {
+              "id": "black-dog",
+              "status": "offline_unverified"
+            }
+          ]
+        },
+        {
+          "id": "worshiptogether",
+          "name": "Worship Together",
+          "status": "retired",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "chords",
+              "fileImport",
+              "lyrics",
+              "metadata"
+            ]
+          },
+          "probes": [
+            {
+              "id": "import-only",
+              "status": "retired"
+            }
+          ]
+        },
+        {
+          "id": "musicbrainz",
+          "name": "MusicBrainz",
+          "status": "offline_unverified",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "catalog",
+              "metadata"
+            ]
+          },
+          "probes": [
+            {
+              "id": "wonderwall-oasis-recording",
+              "status": "offline_unverified"
+            }
+          ]
+        },
+        {
+          "id": "wikidata",
+          "name": "Wikidata",
+          "status": "offline_unverified",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "catalog",
+              "metadata"
+            ]
+          },
+          "probes": [
+            {
+              "id": "imagine-composition",
+              "status": "offline_unverified"
+            },
+            {
+              "id": "wonderwall-composition",
+              "status": "offline_unverified"
+            }
+          ]
+        },
+        {
+          "id": "wikimediacommons",
+          "name": "Wikimedia Commons",
+          "status": "offline_unverified",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "artwork",
+              "metadata"
+            ]
+          },
+          "probes": [
+            {
+              "id": "bach-portrait",
+              "status": "offline_unverified"
+            }
+          ]
+        },
+        {
+          "id": "wikisource",
+          "name": "Wikisource",
+          "status": "offline_unverified",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "catalog",
+              "fileImport",
+              "lyrics",
+              "metadata"
+            ]
+          },
+          "probes": [
+            {
+              "id": "cleansing-wave-palmer",
+              "status": "offline_unverified"
+            },
+            {
+              "id": "dunbar-hymn-1",
+              "status": "offline_unverified"
+            }
+          ]
+        },
+        {
+          "id": "lrcred",
+          "name": "lrc.red",
+          "status": "offline_unverified",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "catalog",
+              "lineTiming",
+              "lyrics",
+              "metadata",
+              "wordTiming"
+            ]
+          },
+          "probes": [
+            {
+              "id": "creep-radiohead",
+              "status": "offline_unverified"
+            },
+            {
+              "id": "bohemian-rhapsody-queen",
+              "status": "offline_unverified"
+            }
+          ]
+        },
+        {
+          "id": "roswellmusicjam",
+          "name": "Roswell Music Jam",
+          "status": "offline_unverified",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "catalog",
+              "chords",
+              "lyrics",
+              "metadata"
+            ]
+          },
+          "probes": [
+            {
+              "id": "if-not-for-you-dylan",
+              "status": "offline_unverified"
+            },
+            {
+              "id": "breakdown-petty",
+              "status": "offline_unverified"
+            }
+          ]
+        },
+        {
+          "id": "karamoe",
+          "name": "kara.moe",
+          "status": "offline_unverified",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "catalog",
+              "lineTiming",
+              "lyrics",
+              "metadata"
+            ]
+          },
+          "probes": [
+            {
+              "id": "man-of-war-radiohead",
+              "status": "offline_unverified"
+            },
+            {
+              "id": "dune-ai-kizuna-cover",
+              "status": "offline_unverified"
+            }
+          ]
+        },
+        {
+          "id": "amll",
+          "name": "AMLL Lyrics Database",
+          "status": "offline_unverified",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "catalog",
+              "lineTiming",
+              "lyrics",
+              "metadata",
+              "wordTiming"
+            ]
+          },
+          "probes": [
+            {
+              "id": "269710089745311-canonical",
+              "status": "offline_unverified"
+            },
+            {
+              "id": "269710089745311-search",
+              "status": "offline_unverified"
+            },
+            {
+              "id": "638303942317135-canonical",
+              "status": "offline_unverified"
+            },
+            {
+              "id": "638303942317135-search",
+              "status": "offline_unverified"
+            }
+          ]
+        },
+        {
+          "id": "vocadb",
+          "name": "VocaDB",
+          "status": "offline_unverified",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "catalog",
+              "lyrics",
+              "metadata"
+            ]
+          },
+          "probes": [
+            {
+              "id": "1501-canonical",
+              "status": "offline_unverified"
+            },
+            {
+              "id": "1501-search",
+              "status": "offline_unverified"
+            },
+            {
+              "id": "68814-canonical",
+              "status": "offline_unverified"
+            },
+            {
+              "id": "68814-search",
+              "status": "offline_unverified"
+            }
+          ]
+        },
+        {
+          "id": "touhoudb",
+          "name": "TouhouDB",
+          "status": "offline_unverified",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "catalog",
+              "lyrics",
+              "metadata"
+            ]
+          },
+          "probes": [
+            {
+              "id": "138-search",
+              "status": "offline_unverified"
+            },
+            {
+              "id": "51766-search",
+              "status": "offline_unverified"
+            }
+          ]
+        },
+        {
+          "id": "utaitedb",
+          "name": "UtaiteDB",
+          "status": "offline_unverified",
+          "coverage": {
+            "status": "unverified",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "catalog",
+              "lyrics",
+              "metadata"
+            ]
+          },
+          "probes": [
+            {
+              "id": "72011-search",
+              "status": "offline_unverified"
+            },
+            {
+              "id": "51300-canonical",
+              "status": "offline_unverified"
+            }
+          ]
+        }
+      ],
+      "httpDiagnostics": {
+        "networkFailures": 0,
+        "hosts": {}
+      }
+    },
+    "registeredCli": [
+      {
+        "codeCommit": "eb3f4b779d43bab40b646021f66708d96c53b542",
+        "report": {
+          "schemaVersion": 1,
+          "catalogRevision": 16,
+          "measuredAt": "2026-10-27T11:10:07.586936Z",
+          "offline": false,
+          "summary": {
+            "healthy": 1
+          },
+          "sources": [
+            {
+              "id": "touhoudb",
+              "name": "TouhouDB",
+              "status": "healthy",
+              "coverage": {
+                "status": "complete",
+                "verifiedCapabilities": [
+                  "catalog",
+                  "lyrics",
+                  "metadata"
+                ],
+                "unverifiedCapabilities": []
+              },
+              "probes": [
+                {
+                  "id": "138-search",
+                  "status": "healthy",
+                  "candidateId": "sha256:9f79b49d7800bc08",
+                  "providerId": "touhoudb",
+                  "bodyCharacters": 1475,
+                  "metadataFields": [
+                    "durationSeconds",
+                    "identityScope",
+                    "language",
+                    "sourceSongType",
+                    "touhoudbSongId"
+                  ],
+                  "verifiedCapabilities": [
+                    "catalog",
+                    "lyrics",
+                    "metadata"
+                  ],
+                  "timingTrackCount": 0,
+                  "timingGranularities": [],
+                  "timingRawRetained": false,
+                  "hasChords": false
+                },
+                {
+                  "id": "51766-search",
+                  "status": "healthy",
+                  "candidateId": "sha256:241f034d374a9911",
+                  "providerId": "touhoudb",
+                  "bodyCharacters": 677,
+                  "metadataFields": [
+                    "album",
+                    "durationSeconds",
+                    "identityScope",
+                    "sourceSongType",
+                    "touhoudbSongId"
+                  ],
+                  "verifiedCapabilities": [
+                    "catalog",
+                    "lyrics",
+                    "metadata"
+                  ],
+                  "timingTrackCount": 0,
+                  "timingGranularities": [],
+                  "timingRawRetained": false,
+                  "hasChords": false
+                }
+              ]
+            }
+          ],
+          "httpDiagnostics": {
+            "networkFailures": 0,
+            "hosts": {
+              "touhoudb.com": {
+                "requests": 4,
+                "statuses": {
+                  "200": 4
+                },
+                "retryAfterSeconds": {},
+                "databaseLag": {}
+              }
+            }
+          }
+        }
+      },
+      {
+        "codeCommit": "eb3f4b779d43bab40b646021f66708d96c53b542",
+        "report": {
+          "schemaVersion": 1,
+          "catalogRevision": 16,
+          "measuredAt": "2026-10-27T11:10:13.777917Z",
+          "offline": false,
+          "summary": {
+            "healthy": 1
+          },
+          "sources": [
+            {
+              "id": "utaitedb",
+              "name": "UtaiteDB",
+              "status": "healthy",
+              "coverage": {
+                "status": "complete",
+                "verifiedCapabilities": [
+                  "catalog",
+                  "lyrics",
+                  "metadata"
+                ],
+                "unverifiedCapabilities": []
+              },
+              "probes": [
+                {
+                  "id": "72011-search",
+                  "status": "healthy",
+                  "candidateId": "sha256:cffc22f50e0dbd06",
+                  "providerId": "utaitedb",
+                  "bodyCharacters": 588,
+                  "metadataFields": [
+                    "composer",
+                    "durationSeconds",
+                    "identityScope",
+                    "language",
+                    "lyricist",
+                    "sourceSongType",
+                    "utaitedbSongId"
+                  ],
+                  "verifiedCapabilities": [
+                    "catalog",
+                    "lyrics",
+                    "metadata"
+                  ],
+                  "timingTrackCount": 0,
+                  "timingGranularities": [],
+                  "timingRawRetained": false,
+                  "hasChords": false
+                },
+                {
+                  "id": "51300-canonical",
+                  "status": "healthy",
+                  "candidateId": "sha256:312e9f365105bbf4",
+                  "providerId": "utaitedb",
+                  "bodyCharacters": 801,
+                  "metadataFields": [
+                    "album",
+                    "durationSeconds",
+                    "identityScope",
+                    "language",
+                    "sourceSongType",
+                    "utaitedbSongId"
+                  ],
+                  "verifiedCapabilities": [
+                    "lyrics",
+                    "metadata"
+                  ],
+                  "timingTrackCount": 0,
+                  "timingGranularities": [],
+                  "timingRawRetained": false,
+                  "hasChords": false
+                }
+              ]
+            }
+          ],
+          "httpDiagnostics": {
+            "networkFailures": 0,
+            "hosts": {
+              "utaitedb.net": {
+                "requests": 3,
+                "statuses": {
+                  "200": 3
+                },
+                "retryAfterSeconds": {},
+                "databaseLag": {}
+              }
+            }
+          }
+        }
+      }
+    ],
+    "nativeQualification": {
+      "schemaVersion": 1,
+      "atUtc": "2026-10-27T10:46:01.276093Z",
+      "baseCommit": "09a8bf95e6c226e34445293902a83dd36071df47",
+      "workingTreeNativeQualification": true,
+      "runtime": "local-Windows production native providers and matching service",
+      "checks": [
+        {
+          "provider": "touhoudb",
+          "id": "138",
+          "measuredAt": "2026-10-27T10:45:53.979121Z",
+          "status": "healthy",
+          "title": "Cirno's Perfect Math Class",
+          "artist": "ARM, IOSYS feat. miko",
+          "sourceUrl": "https://touhoudb.com/S/138",
+          "contextualTitleLookupAndNormalForeignSelectionMatch": true,
+          "exactKnownIdFound": true,
+          "contextMatches": 2,
+          "bodyCharacters": 1475,
+          "selectedLyricId": "17",
+          "variantCount": 2,
+          "artistRoleCount": 5,
+          "albumCount": 12,
+          "aliasCount": 3,
+          "originalVersionId": 4774,
+          "allVariantsCreditsRolesAlbumsAliasesCultureAndWebLinksExact": true,
+          "originalPayloadSha256": "968a6cafff0f73d66d620797859cb964f9f8651190dbacb62f52f5ee5cdd7b55",
+          "sourceResultJsonRoundtripExact": true,
+          "cachedDocumentAndRetrievedAtExactWithoutHttp": true,
+          "sourceArrangementNotConfirmedRecording": true,
+          "timingTracks": 0,
+          "artworkAudioVideoFetched": false
+        },
+        {
+          "provider": "touhoudb",
+          "id": "51766",
+          "measuredAt": "2026-10-27T10:45:55.874053Z",
+          "status": "healthy",
+          "title": "Night dream in the cage",
+          "artist": "Linjin feat. Sakaue Nachi",
+          "sourceUrl": "https://touhoudb.com/S/51766",
+          "contextualTitleLookupAndNormalForeignSelectionMatch": true,
+          "exactKnownIdFound": true,
+          "contextMatches": 1,
+          "bodyCharacters": 677,
+          "selectedLyricId": "15699",
+          "variantCount": 1,
+          "artistRoleCount": 2,
+          "albumCount": 1,
+          "aliasCount": 1,
+          "originalVersionId": 96,
+          "allVariantsCreditsRolesAlbumsAliasesCultureAndWebLinksExact": true,
+          "originalPayloadSha256": "8f668a7807cfccaa217d29a6e2d0f2ce860100a421a4cc305ba86ea9a576baa6",
+          "sourceResultJsonRoundtripExact": true,
+          "cachedDocumentAndRetrievedAtExactWithoutHttp": true,
+          "sourceArrangementNotConfirmedRecording": true,
+          "timingTracks": 0,
+          "artworkAudioVideoFetched": false
+        },
+        {
+          "provider": "utaitedb",
+          "id": "72011",
+          "measuredAt": "2026-10-27T10:45:58.349534Z",
+          "status": "healthy",
+          "title": "Take you to an alien",
+          "artist": "Iyowa feat. SEKAI",
+          "sourceUrl": "https://utaitedb.net/S/72011",
+          "contextualTitleLookupAndNormalForeignSelectionMatch": true,
+          "exactKnownIdFound": true,
+          "contextMatches": 1,
+          "bodyCharacters": 588,
+          "selectedLyricId": "15343",
+          "variantCount": 1,
+          "artistRoleCount": 2,
+          "albumCount": 0,
+          "aliasCount": 3,
+          "originalVersionId": null,
+          "allVariantsCreditsRolesAlbumsAliasesCultureAndWebLinksExact": true,
+          "originalPayloadSha256": "fa84594d8af17c07095091849cba90ce839e9dc5561895d9bb7aee6c1c801d6c",
+          "sourceResultJsonRoundtripExact": true,
+          "cachedDocumentAndRetrievedAtExactWithoutHttp": true,
+          "sourceArrangementNotConfirmedRecording": true,
+          "timingTracks": 0,
+          "artworkAudioVideoFetched": false
+        },
+        {
+          "provider": "utaitedb",
+          "id": "51300",
+          "measuredAt": "2026-10-27T10:46:00.075123Z",
+          "status": "unverified",
+          "reason": "Known publisher ID absent or duplicated in bounded contextual search"
+        }
+      ],
+      "httpDiagnostics": {
+        "networkFailures": 0,
+        "hosts": {
+          "touhoudb.com": {
+            "requests": 4,
+            "statuses": {
+              "200": 4
+            },
+            "retryAfterSeconds": {},
+            "databaseLag": {}
+          },
+          "utaitedb.net": {
+            "requests": 3,
+            "statuses": {
+              "200": 3
+            },
+            "retryAfterSeconds": {},
+            "databaseLag": {}
+          }
+        }
+      },
+      "scope": "Two independent contextual search/exact-ID lyric-detail canaries per source. No factory registration, published catalog, released app, Android UI or cloud reachability claimed. Raw source JSON/results stay private."
+    },
+    "affectedCh4ngeReprobe": {
+      "schemaVersion": 1,
+      "atUtc": "2026-10-27T10:56:45.241709Z",
+      "baseCommit": "f546ade0c5229487c6a7a8e82c2828696559aca5",
+      "workingTreeNativeQualification": true,
+      "runtime": "local-Windows production native providers and matching service",
+      "checks": [
+        {
+          "provider": "utaitedb",
+          "id": "51300",
+          "measuredAt": "2026-10-27T10:56:42.388598Z",
+          "status": "healthy",
+          "title": "CH4NGE",
+          "artist": "Giga feat. KAFU",
+          "sourceUrl": "https://utaitedb.net/S/51300",
+          "contextualTitleLookupAndNormalForeignSelectionMatch": true,
+          "exactKnownIdFound": true,
+          "contextMatches": 1,
+          "bodyCharacters": 801,
+          "selectedLyricId": "10454",
+          "variantCount": 1,
+          "artistRoleCount": 6,
+          "albumCount": 1,
+          "aliasCount": 1,
+          "originalVersionId": null,
+          "allVariantsCreditsRolesAlbumsAliasesCultureAndWebLinksExact": true,
+          "originalPayloadSha256": "4a2e5d04e20b5344a13934083d5080acb1a9fd3e09ec29339854374cd8afca19",
+          "sourceResultJsonRoundtripExact": true,
+          "cachedDocumentAndRetrievedAtExactWithoutHttp": true,
+          "sourceArrangementNotConfirmedRecording": true,
+          "timingTracks": 0,
+          "artworkAudioVideoFetched": false
+        }
+      ],
+      "httpDiagnostics": {
+        "networkFailures": 0,
+        "hosts": {
+          "utaitedb.net": {
+            "requests": 3,
+            "statuses": {
+              "200": 3
+            },
+            "retryAfterSeconds": {},
+            "databaseLag": {}
+          }
+        }
+      },
+      "scope": "Only the previously failing UtaiteDB CH4NGE contextual search/detail canary, after adding a bounded Exact/Name fallback. The other three earlier successful canaries were not repeated. Native classes constructed directly; factory/catalog, Android and cloud qualification are separate.",
+      "nativeSourceNormalizedSha256": "dd3b179920b8379ca6375aa274a15e571010303b31816395ac9ef219358737c1",
+      "reportScopeClarifiedWithoutAdditionalHttp": true
+    },
+    "configuredAliasReprobe": {
+      "atUtc": "2026-10-27T11:37:50.199668Z",
+      "runtime": "local Windows configured native factory, channel5, ordinary matching",
+      "workingTreeQualification": true,
+      "head": "eb3f4b779d43bab40b646021f66708d96c53b542",
+      "checks": [
+        {
+          "source": "touhoudb",
+          "id": "138",
+          "startedAtUtc": "2026-10-27T11:37:47.182198Z",
+          "status": "healthy",
+          "canonicalTitle": "Cirno's Perfect Math Class",
+          "publishedJapaneseAlias": "チルノのパーフェクトさんすう教室",
+          "ordinaryConfiguredFactoryMatch": true,
+          "bodySha256": "3e5c601f2d2a886862f4f53890e5de03cd6da3536e9aa623eae5cb1e6cbd9abe",
+          "bodyAndStructuredFactsExactPriorCanary": true,
+          "sourceArrangementNotConfirmedRecording": true,
+          "sourceTitleAliasEvidence": {
+            "sourceId": "138",
+            "canonicalTitle": "Cirno's Perfect Math Class",
+            "selectedTitle": "チルノのパーフェクトさんすう教室",
+            "publishedAlias": "チルノのパーフェクトさんすう教室"
+          },
+          "finishedAtUtc": "2026-10-27T11:37:48.660355Z"
+        },
+        {
+          "source": "utaitedb",
+          "id": "72011",
+          "startedAtUtc": "2026-10-27T11:37:48.661358Z",
+          "status": "healthy",
+          "canonicalTitle": "Take you to an alien",
+          "publishedJapaneseAlias": "異星にいこうね",
+          "ordinaryConfiguredFactoryMatch": true,
+          "bodySha256": "b5518efaace9b732e311f02cf1634d55bcbeb3b3e139be994a1122cf4b9f2add",
+          "bodyAndStructuredFactsExactPriorCanary": true,
+          "sourceArrangementNotConfirmedRecording": true,
+          "sourceTitleAliasEvidence": {
+            "sourceId": "72011",
+            "canonicalTitle": "Take you to an alien",
+            "selectedTitle": "異星にいこうね",
+            "publishedAlias": "異星にいこうね"
+          },
+          "finishedAtUtc": "2026-10-27T11:37:50.198669Z"
+        }
+      ],
+      "httpDiagnostics": {
+        "networkFailures": 0,
+        "hosts": {
+          "touhoudb.com": {
+            "requests": 2,
+            "statuses": {
+              "200": 2
+            },
+            "retryAfterSeconds": {},
+            "databaseLag": {}
+          },
+          "utaitedb.net": {
+            "requests": 2,
+            "statuses": {
+              "200": 2
+            },
+            "retryAfterSeconds": {},
+            "databaseLag": {}
+          }
+        }
+      },
+      "scope": "Only two real Japanese-alias probes for changed matcher. No ID filtering, session, credentials or retries. Android/cloud remain separate."
+    },
+    "aliasCodeProvenance": "Measured working-tree code subsequently committed unchanged as testedRuntimeCommit. Four200 responses, no retries/network failures.",
+    "sourceAndControllerRetention": {
+      "atUtc": "2026-10-27T11:37:42.912858Z",
+      "runtime": "local-Windows Flutter native SQLite FFI",
+      "httpRequests": 0,
+      "userLibraryAccessed": false,
+      "actualAndroidUiTested": false,
+      "checks": [
+        {
+          "provider": "touhoudb",
+          "id": "138",
+          "title": "Cirno's Perfect Math Class",
+          "artist": "ARM, IOSYS feat. miko",
+          "variantCount": 2,
+          "allSourceExtraFactsAndOriginalPayloadExact": true,
+          "chordProEverySourceJsonFieldExact": true,
+          "sourceBodyExact": true,
+          "combinedLyricOrderExact": true,
+          "sectionInferenceChangedCombinedMarkup": true,
+          "recordingIdsEmpty": true,
+          "timingTracksEmpty": true,
+          "songHash": "76464cb4d9bbc8f031c976ceec845c95a4b116ca5cb84d709f4b91e49014b600"
+        },
+        {
+          "provider": "touhoudb",
+          "id": "51766",
+          "title": "Night dream in the cage",
+          "artist": "Linjin feat. Sakaue Nachi",
+          "variantCount": 1,
+          "allSourceExtraFactsAndOriginalPayloadExact": true,
+          "chordProEverySourceJsonFieldExact": true,
+          "sourceBodyExact": true,
+          "combinedLyricOrderExact": true,
+          "sectionInferenceChangedCombinedMarkup": true,
+          "recordingIdsEmpty": true,
+          "timingTracksEmpty": true,
+          "songHash": "a9aee7dcee37d5cc73e36ef91eba66259a7d40a4dadb3238becc30dc3254f32d"
+        },
+        {
+          "provider": "utaitedb",
+          "id": "72011",
+          "title": "Take you to an alien",
+          "artist": "Iyowa feat. SEKAI",
+          "variantCount": 1,
+          "allSourceExtraFactsAndOriginalPayloadExact": true,
+          "chordProEverySourceJsonFieldExact": true,
+          "sourceBodyExact": true,
+          "combinedLyricOrderExact": true,
+          "sectionInferenceChangedCombinedMarkup": true,
+          "recordingIdsEmpty": true,
+          "timingTracksEmpty": true,
+          "songHash": "4b5421dd412bc29d029ac6e2fe2d9e440dbc330943a4f1af1a14a0c271ad184d"
+        },
+        {
+          "provider": "utaitedb",
+          "id": "51300",
+          "title": "CH4NGE",
+          "artist": "Giga feat. KAFU",
+          "variantCount": 1,
+          "allSourceExtraFactsAndOriginalPayloadExact": true,
+          "chordProEverySourceJsonFieldExact": true,
+          "sourceBodyExact": true,
+          "combinedLyricOrderExact": true,
+          "sectionInferenceChangedCombinedMarkup": true,
+          "recordingIdsEmpty": true,
+          "timingTracksEmpty": true,
+          "songHash": "63e34bd310fe1144ad963e14ad2415137aed7659df57d8084375ac985b332b3d"
+        }
+      ],
+      "coldSqliteReopenCompleteSongJsonAndHashesExact": true
+    },
+    "vocadbBackwardReplay": {
+      "atUtc": "2026-10-27T11:37:42.191220Z",
+      "httpRequests": 0,
+      "checks": [
+        {
+          "id": "1501",
+          "candidateBodyMetadataAttributionEveryExtraFieldExact": true,
+          "retrievedAt": "New actual replay retrieval time; not compared to old HTTP retrieval time."
+        },
+        {
+          "id": "68814",
+          "candidateBodyMetadataAttributionEveryExtraFieldExact": true,
+          "retrievedAt": "New actual replay retrieval time; not compared to old HTTP retrieval time."
+        }
+      ]
+    }
+  },
+  "android": {
+    "apk": {
+      "atUtc": "2026-10-27T11:39:43.828561+00:00",
+      "sourceHead": "7c54a202acd9792936c5b17acce6b2d98a1d24d4",
+      "qaCombinedHead": "a23ce89ea23fc97ef23a2553cabb541c6aa60451",
+      "package": "org.freevia.singbook.qa09a8bf9",
+      "mode": "isolated debug QA update",
+      "apk": "E:\\Users\\anton\\Documents\\Claude\\Singbook-regional-qa-eb3f4b7\\build\\app\\outputs\\flutter-apk\\app-debug.apk",
+      "bytes": 102192989,
+      "sha256": "aa1b5343123710af9007a8a9a264d977334e361e7c162561f21fc70bf3fa535a",
+      "sameSigner": true,
+      "certificateSha256": "3fc9b99645962e4b5348a6d4ade05ae9671f0b7dcae6c3b5db42cd8bc8fe7a08",
+      "abis": [
+        "x86_64"
+      ],
+      "catalogRevision": 16,
+      "catalogSources": 26,
+      "catalogSha256": "9ef3207570100a0f2b2dfad47bb88b4c5c43a9952c71e330ec1a42a3bee50743",
+      "bothSourcesActiveDefaultOn": true,
+      "localNativeOverrides": [
+        "android/app/build.gradle.kts",
+        "android/app/src/main/AndroidManifest.xml",
+        "scripts/build-android.ps1"
+      ],
+      "dartAndAssetsExactSourceExceptSeparateValidatedNavGuard": true,
+      "credentialsOrProductionSigningCopied": false
+    },
+    "runtime": "Android16 API36 x86_64 16KB emulator-5554, existing SudokuBuddy16K_API36 AVD",
+    "actualUiSearchDetailCombinedSaveCanaries": [
+      {
+        "source": "touhoudb",
+        "id": "138"
+      },
+      {
+        "source": "touhoudb",
+        "id": "51766"
+      },
+      {
+        "source": "utaitedb",
+        "id": "72011"
+      },
+      {
+        "source": "utaitedb",
+        "id": "51300"
+      }
+    ],
+    "ch4ngeFlow": "Ordinary VocaDB original selection then UtaiteDB contextual matching; both source checks reported match found and both sources persisted. No claim that initial Utaite free-text page contains original.",
+    "offline": {
+      "startedAtUtc": "2026-10-27T11:46:36.881688+00:00",
+      "device": "emulator-5554",
+      "package": "org.freevia.singbook.qa09a8bf9",
+      "originalNetwork": {
+        "airplane_mode_on": "0",
+        "wifi_on": "1",
+        "mobile_data": "1"
+      },
+      "checks": [
+        {
+          "title": "CH4NGE",
+          "readerOpenedOffline": true,
+          "sourceLyricFragmentVisible": true
+        },
+        {
+          "title": "Cirno's Perfect Math Class",
+          "readerOpenedOffline": true,
+          "sourceLyricFragmentVisible": true
+        },
+        {
+          "title": "ECHO",
+          "readerOpenedOffline": true,
+          "sourceLyricFragmentVisible": "prior-qualified reader identity checked"
+        },
+        {
+          "title": "Night dream in the cage",
+          "readerOpenedOffline": true,
+          "sourceLyricFragmentVisible": true
+        },
+        {
+          "title": "Rollin' Girl",
+          "readerOpenedOffline": true,
+          "sourceLyricFragmentVisible": "prior-qualified reader identity checked"
+        },
+        {
+          "title": "Take you to an alien",
+          "readerOpenedOffline": true,
+          "sourceLyricFragmentVisible": true
+        }
+      ],
+      "scope": "Cold actual QA UI opens with emulator radios disabled. No physical device or canonical private data access.",
+      "offlineNetwork": {
+        "airplane_mode_on": "1",
+        "wifi_on": "0",
+        "mobile_data": "0"
+      },
+      "networkAtEnd": {
+        "airplane_mode_on": "1",
+        "wifi_on": "0",
+        "mobile_data": "0"
+      },
+      "restoredNetwork": {
+        "airplane_mode_on": "0",
+        "wifi_on": "1",
+        "mobile_data": "1"
+      },
+      "networkRestoredExactly": true,
+      "finishedAtUtc": "2026-10-27T11:47:28.218299+00:00"
+    },
+    "persistence": {
+      "atUtc": "2026-10-27T11:47:43.736032Z",
+      "sourceCommit": "7c54a202acd9792936c5b17acce6b2d98a1d24d4",
+      "runtime": "Actual stopped-Android coherent SQLite snapshots; production ChordPro codec on host, no Flutter build or native hooks",
+      "checks": [
+        {
+          "title": "Cirno's Perfect Math Class",
+          "source": "touhoudb",
+          "id": "138",
+          "sourceCount": 1,
+          "allStructuredSourceFactsExact": true,
+          "originalPayloadAndLyricsExact": true,
+          "attributionExact": true,
+          "combinedLyricOrderExact": true,
+          "songJsonAndStoredRowHashesExactAfterOffline": true,
+          "chordProEverySourceJsonFieldAndMetadataExact": true,
+          "recordingIdsEmpty": true,
+          "sourceTimingTracks": 0,
+          "variantCount": 2,
+          "songContentHash": "e7626d5fcab750fef8b587c1b26e6224bf8cb661e6273c64e9043264d6121c2b"
+        },
+        {
+          "title": "Night dream in the cage",
+          "source": "touhoudb",
+          "id": "51766",
+          "sourceCount": 1,
+          "allStructuredSourceFactsExact": true,
+          "originalPayloadAndLyricsExact": true,
+          "attributionExact": true,
+          "combinedLyricOrderExact": true,
+          "songJsonAndStoredRowHashesExactAfterOffline": true,
+          "chordProEverySourceJsonFieldAndMetadataExact": true,
+          "recordingIdsEmpty": true,
+          "sourceTimingTracks": 0,
+          "variantCount": 1,
+          "songContentHash": "e9e1746c71cc8986ea4c13993837b8ed2e56a4897e84a660bad9ca6334e9500e"
+        },
+        {
+          "title": "Take you to an alien",
+          "source": "utaitedb",
+          "id": "72011",
+          "sourceCount": 1,
+          "allStructuredSourceFactsExact": true,
+          "originalPayloadAndLyricsExact": true,
+          "attributionExact": true,
+          "combinedLyricOrderExact": true,
+          "songJsonAndStoredRowHashesExactAfterOffline": true,
+          "chordProEverySourceJsonFieldAndMetadataExact": true,
+          "recordingIdsEmpty": true,
+          "sourceTimingTracks": 0,
+          "variantCount": 1,
+          "songContentHash": "6f578deb2b140e8d286a1e0b2c20d5706e545de121325fd3a83e9fea8ab8699c"
+        },
+        {
+          "title": "CH4NGE",
+          "source": "utaitedb",
+          "id": "51300",
+          "sourceCount": 2,
+          "allStructuredSourceFactsExact": true,
+          "originalPayloadAndLyricsExact": true,
+          "attributionExact": true,
+          "combinedLyricOrderExact": true,
+          "songJsonAndStoredRowHashesExactAfterOffline": true,
+          "chordProEverySourceJsonFieldAndMetadataExact": true,
+          "recordingIdsEmpty": true,
+          "sourceTimingTracks": 0,
+          "variantCount": 1,
+          "songContentHash": "44382ee8bc995278331fc4395b507435564c2446ba9374f9dc604a9c58d68045"
+        }
+      ],
+      "priorSongRowsExact": 2,
+      "allSixStoredRowsExactAcrossOfflineReopen": true,
+      "priorProviderOptoutsExact": true,
+      "threeQaNativeSourcesRestoredEnabled": true,
+      "priorOutboxRowsExact": true,
+      "privateDatabasesOnly": true,
+      "httpRequestsByVerifier": 0,
+      "canonicalPrivateDataAccessed": false
+    },
+    "sameSignerInPlaceInstallPassed": true,
+    "uninstallOrClearDataUsed": false,
+    "defaultEnabledScreenshot": "reports/source-maintenance/local/qualifications/2026-10-27T114743Z-regional-channel5-pr184/regional-default.png",
+    "screenshotSha256": "bf4674775eeac29d5f586d9ea17fe3d37a74e1aa1f1fe4d7ac1dbc0f6ac6811e",
+    "visualReview": "New provider names and default-on switches visible without overflow; Japanese lyric readers inspected privately.",
+    "harnessRepair": "First offline selector expected comma-separated Library rows, but cold Recent rows used newlines. Stopped before opening song, preserved failed evidence and restored network. Corrected both forms, full offline pass succeeded.",
+    "canonicalApkIdentityUnchanged": "10648f17e6f0b2c738dbcdf0238114195f18392a07773435244b4158d5ee50be",
+    "canonicalPrivateDataAccessed": false,
+    "physicalDevicesTouched": false,
+    "qaAppStoppedAndAllSdkDeviceLeasesReleased": true
+  },
+  "hostedRuntimeCommitChecks": {
+    "CI": {
+      "run": 40497671645,
+      "conclusion": "success"
+    },
+    "macOS": {
+      "run": 40497671673,
+      "conclusion": "success"
+    },
+    "UX": {
+      "run": 40497671671,
+      "conclusion": "success"
+    },
+    "Wikisource": {
+      "run": 40497671617,
+      "conclusion": "success"
+    }
+  },
+  "privacy": "Only sanitized reports and provider-settings screenshot. No lyric bodies, API documents, reader screenshots, databases, cookies or credentials.",
+  "limits": [
+    "Candidate not integrated/served on public main",
+    "Compatible production distribution not performed by this task",
+    "Actual managed-cloud reachability for new sources not qualified",
+    "Cloud daily prompt still unverified; Freevia browser account had no visible Singbook schedule. ALI profile left alone.",
+    "Ordinary free-text search remains bounded; no automatic parent lyric borrowing",
+    "Per-variant facts preserved, no new translated-lyric selector UI or independent transcription accuracy claim"
+  ]
+}
