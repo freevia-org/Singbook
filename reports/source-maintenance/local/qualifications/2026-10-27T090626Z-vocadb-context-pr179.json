@@ -1,0 +1,125 @@
+{
+  "schemaVersion": 1,
+  "kind": "local-native-source-candidate-qualification",
+  "source": "vocadb",
+  "sourceCommit": "b196611be8895f55a62bd913e5f73bfd40f69140",
+  "baseCommit": "66a74d0e7f5d6eb78aef60666be0c44cd7de5e9f",
+  "pullRequest": "https://github.com/freevia-org/Singbook/pull/179",
+  "atUtc": "2026-10-27T09:06:26.230487Z",
+  "live": {
+    "schemaVersion": 1,
+    "atUtc": "2026-10-27T09:06:26.230487Z",
+    "sourceCommit": "b196611be8895f55a62bd913e5f73bfd40f69140",
+    "source": "vocadb",
+    "runtime": "local-windows-production-native-adapter-and-matching-service",
+    "candidateOnly": true,
+    "checks": [
+      {
+        "id": "1501",
+        "title": "Rollin' Girl",
+        "artist": "wowaka feat. Hatsune Miku",
+        "album": null,
+        "sourceUrl": "https://vocadb.net/S/1501",
+        "searchCandidates": 4,
+        "exactKnownIdFound": true,
+        "contextualTitleLookupAndNormalForeignSelectionMatch": true,
+        "bodyCharacters": 478,
+        "tempo": 195.0,
+        "language": "ja",
+        "artistRoleCount": 3,
+        "lyricVariantCount": 4,
+        "selectedLyricId": "97",
+        "aliasCount": 5,
+        "albumCount": 7,
+        "allStructuredFactsAndVariantSourceCreditsRetained": true,
+        "originalJsonSha256": "015c3551f532d21c7967a36b0639ac442ac6d63eaa4686db67838486a5169353",
+        "sameSongNotConfirmedRecording": true,
+        "noArtworkAudioOrTimingFetched": true
+      },
+      {
+        "id": "68814",
+        "title": "ECHO",
+        "artist": "Crusher, CIRCRUSH feat. V3 GUMI (English)",
+        "album": null,
+        "sourceUrl": "https://vocadb.net/S/68814",
+        "searchCandidates": 1,
+        "exactKnownIdFound": true,
+        "contextualTitleLookupAndNormalForeignSelectionMatch": true,
+        "bodyCharacters": 1628,
+        "tempo": 140.0,
+        "language": "en",
+        "artistRoleCount": 6,
+        "lyricVariantCount": 2,
+        "selectedLyricId": "13309",
+        "aliasCount": 1,
+        "albumCount": 0,
+        "allStructuredFactsAndVariantSourceCreditsRetained": true,
+        "originalJsonSha256": "917be71259eedf955d6221d1a52fe2b663ed425b07ece636f9d4bb7461ab77e5",
+        "sameSongNotConfirmedRecording": true,
+        "noArtworkAudioOrTimingFetched": true
+      }
+    ],
+    "httpDiagnostics": {
+      "networkFailures": 0,
+      "hosts": {
+        "vocadb.net": {
+          "requests": 4,
+          "statuses": {
+            "200": 4
+          },
+          "retryAfterSeconds": {},
+          "databaseLag": {}
+        }
+      }
+    },
+    "scope": "Two real contextual title searches plus exact publisher-ID detail selections for foreign canonical title/artist references through normal matching. Shared contextual interface wiring remains pending. Raw source snapshots remain private. Not registered, enabled, published, installed, cloud-qualified or independently transcription/audio verified."
+  },
+  "persistence": {
+    "atUtc": "2026-10-27T09:04:55.122612Z",
+    "runtime": "local-windows-Flutter-native-SQLite-FFI",
+    "scope": "Offline replay of real production native canaries through normal controller/save/repository/ChordPro. Isolated empty DB; zero HTTP requests, no device/UI, credentials or user data.",
+    "checks": [
+      {
+        "id": "1501",
+        "title": "Rollin' Girl",
+        "artist": "wowaka feat. Hatsune Miku",
+        "tempo": 195.0,
+        "variantCount": 4,
+        "aliasesRolesAlbumsEveryVariantSourceCreditAndRawJsonPreserved": true,
+        "chordProAllSourceJsonExact": true,
+        "noRecordingOrTimingPromotion": true,
+        "songHash": "62e72fcb827ec1671e80f159e9fb7b95d8c5fe81277cb3aa818f32271b513674"
+      },
+      {
+        "id": "68814",
+        "title": "ECHO",
+        "artist": "Crusher, CIRCRUSH feat. V3 GUMI (English)",
+        "tempo": 140.0,
+        "variantCount": 2,
+        "aliasesRolesAlbumsEveryVariantSourceCreditAndRawJsonPreserved": true,
+        "chordProAllSourceJsonExact": true,
+        "noRecordingOrTimingPromotion": true,
+        "songHash": "96999bed93f58143aafb42a865d20bcd45d07e610e6023dba306b1f28fd2e8bc"
+      }
+    ],
+    "coldSqliteReopenFullSongJsonAndHashesExact": true
+  },
+  "unitRegressionTestsPassed": 9,
+  "scopedAnalysis": "clean",
+  "normalProductionCatalogChanged": false,
+  "registeredOrEnabledOrShipped": false,
+  "cloudOrDeviceQualified": false,
+  "credentialCookieOrBrowserUse": false,
+  "artworkAudioOrVideoFetched": false,
+  "noRawSourceDocumentsOrPrivateLibrariesInReport": true,
+  "priorDiscoveryEntriesPreserved": 32,
+  "limitations": [
+    "Wiring through shared contextual interface remains",
+    "Compatible registry/catalog bootstrap rollout remains",
+    "Hosted CI, Android UI, cloud and compatible app publication remain",
+    "Database metadata license excludes lyrics and uploaded artwork",
+    "No current global catalog count, measured overlap or independent transcription/audio verification"
+  ],
+  "httpScope": "This final exact-head qualification used four requests, zero retries. Earlier access/selection diagnostics and precommit qualification are separate manual development checks; no daily production job was added or rerun, and source is not yet registered.",
+  "resourceReservations": "Host Flutter test SDK lease explicitly released after tests. No device or Android build lease held."
+}
