@@ -1892,7 +1892,14 @@
       "mediaRequests": 0
     },
     "noExtraFullSuite": true,
-    "rateLimitConclusion": "No HTTP429 in this measurement. HTTP503/Retry-After alone cannot prove excessive daily scheduling or a daily quota."
+    "rateLimitConclusion": "No HTTP429 in this measurement. HTTP503/Retry-After alone cannot prove excessive daily scheduling or a daily quota.",
+    "separateSelectedAndroidQa": {
+      "ozbcozDownloads": 2,
+      "ozbcozHttp200": 2,
+      "reason": "Native Android file-picker capability, separately counted from daily and host import phase.",
+      "lyricsplusAppFlow": "Two searches and two selected compare/save flows; device HTTP transport counts were not instrumented.",
+      "replayHttpRequests": 0
+    }
   },
   "comparison": {
     "priorLocal": {
@@ -2201,9 +2208,9 @@
     {
       "sourceOrStep": "ozbcoz",
       "reason": "Native Android file picker remains outside the host import proof.",
-      "whatWasTried": "Separate opt-in host phase: twoHTTP200 downloads, production decoder/controller/SQLite save/reopen and export passed; no user library used.",
-      "resolved": false,
-      "userAction": "No permission needed for private emulator testing; host import is verified, native picker pending."
+      "whatWasTried": "Separate opt-in host phase: twoHTTP200 downloads, production decoder/controller/SQLite save/reopen and export passed; no user library used. Subsequently both native Android picker imports passed on private channel7 QA with an unchanged public-main import pipeline; exact saved body/metadata/chords/comments and export/repository reopening passed, all prior12 and final14 documents retained.",
+      "resolved": true,
+      "userAction": "None. Native file import is now verified; automatic online search integration remains a separate enhancement."
     },
     {
       "sourceOrStep": "cloud-current-runtime",
@@ -2219,7 +2226,9 @@
     "measuredAt": "2026-10-27T17:41:46.733641Z",
     "status": "two_canaries_passed",
     "userLibraryAccessed": false,
-    "nativeFilePickerTested": false
+    "nativeFilePickerTested": false,
+    "subsequentNativeFilePickerTested": true,
+    "subsequentNativeFilePickerReceipt": "reports/source-maintenance/local/qualifications/2026-10-27T1816Z-lyricsplus-channel7-android/report.json"
   },
   "discovery": {
     "newRecords": [
@@ -2234,5 +2243,16 @@
     "artwork": "Source link/metadata/provenance extraction only; image bytes not fetched.",
     "worshipTogether": "Intentionally retired per user request, not an outage.",
     "nativeCandidates": "LyricsPlus PR191/channel7 evidence separate; not substituted into production latest."
+  },
+  "supplementedAtUtc": "2026-10-27T18:19:17.905272+00:00",
+  "separateAndroidQualification": {
+    "path": "reports/source-maintenance/local/qualifications/2026-10-27T1816Z-lyricsplus-channel7-android/report.json",
+    "reportSha256": "67d2a9d04e3fd22cb7258738667ba0ca84e0647ed17dba25d125059a014efd3b",
+    "runtime": "local-android16-api36-x86_64-16k-private-qa09",
+    "candidateChannel": 7,
+    "candidateOnly": true,
+    "doesNotReplaceProductionCli": true,
+    "ozbcozNativeFilePickerPassed": true,
+    "ozbcozImportPipelineUnchangedFromPublicMain": true
   }
 }

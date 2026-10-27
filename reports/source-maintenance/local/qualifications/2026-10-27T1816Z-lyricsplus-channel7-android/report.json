@@ -1,0 +1,609 @@
+{
+  "schemaVersion": 1,
+  "atUtc": "2026-10-27T18:18:39.894936+00:00",
+  "runtime": "local-android16-api36-x86_64-16k-private-qa09",
+  "scope": "Compatible channel7 and native LyricsPlus app qualification; candidate evidence separate from current-main production daily CLI.",
+  "source": {
+    "base": "20fc67ce8d08863289174bb5bd6da0be7c78b8db",
+    "testedCandidateHead": "1b768dd7ae09f442099c588927225e9852670390",
+    "latestPr193Head": "8ad48a83e930a877670d8b2252a3bdfe157ab4ec",
+    "latestDifferenceIsQualificationDocOnly": true,
+    "qaPackagingCommit": "4ae70853852849d03439dd441a0e807ab23b084c",
+    "ownedChannel7Files": [
+      "config/source-catalog-v7.json",
+      "docs/lyricsplus-channel7-qualification.md",
+      "lib/providers/source_catalog_client.dart",
+      "pubspec.yaml",
+      "test/application/source_channel_upgrade_test.dart",
+      "test/providers/lyricsplus_channel7_test.dart",
+      "test/providers/source_catalog_channel_test.dart",
+      "test/providers/source_catalog_client_test.dart",
+      "test/providers/startjamming_channel6_test.dart"
+    ],
+    "nativePr191Head": "20fc67ce8d08863289174bb5bd6da0be7c78b8db"
+  },
+  "apk": {
+    "candidateCommit": "1b768dd7ae09f442099c588927225e9852670390",
+    "qaCommit": "4ae70853852849d03439dd441a0e807ab23b084c",
+    "apkSha256": "786f24d6ec8a64e45110c40957c7d17a861c746eff9021808d8b519f94f3fefb",
+    "apkBytes": 102294571,
+    "package": "org.freevia.singbook.qa09a8bf9",
+    "versionCode": 4041,
+    "flutterBuildNumber": 41,
+    "abiVersionCodeOffset": 4000,
+    "versionName": "0.2.27",
+    "debugOnly": true,
+    "catalogRevision": 19,
+    "catalogSources": 28,
+    "catalogSha256": "b192e129d56664ddc04fea41be863cbb9e4c9f92eb7b3e5b76717e2a0b171e76",
+    "catalogBytesMatchCandidate": true,
+    "signingCertificates": [
+      "3fc9b99645962e4b5348a6d4ade05ae9671f0b7dcae6c3b5db42cd8bc8fe7a08"
+    ],
+    "matchesInstalledQaSigner": true,
+    "badging": [
+      "package: name='org.freevia.singbook.qa09a8bf9' versionCode='4041' versionName='0.2.27' platformBuildVersionName='16' platformBuildVersionCode='36' compileSdkVersion='36' compileSdkVersionCodename='16'",
+      "sdkVersion:'24'",
+      "targetSdkVersion:'36'",
+      "launchable-activity: name='org.freevia.singbook.MainActivity'  label='' icon=''",
+      "native-code: 'x86_64'"
+    ]
+  },
+  "installation": {
+    "mode": "direct adb install -r -t",
+    "signerCheckedBeforeInstall": true,
+    "uninstalledOrClearedData": false,
+    "userDeviceOrLibraryAccessed": false,
+    "inPlaceUpgradeSucceeded": true,
+    "baseline": {
+      "atUtc": "2026-10-27T18:05:06.611372+00:00",
+      "archiveSha256": "a902028e32f0f4a587cceb788f009515a602b1b2d57db50cf9a06afca9d70691",
+      "archiveBytes": 121221632,
+      "installedApkSha256": "09a34d7fa365a416b4da601ed62c8e576d11258a9b5750e994310a2785edfd22",
+      "installedApkBytes": 102259378,
+      "objects": {
+        "outbox": [
+          {
+            "idSha256": "075f44094f00fcf34e182ebf905ee2f1581a83b7cf761aa077e556b34037b464",
+            "rowSha256": "c9edb11ef38bfa93231cd26b7c0f00946b1fb48a61eb55452707d0b6b1b4aee6"
+          },
+          {
+            "idSha256": "0bc49723fc7f90627cec5f3d1377f858f6a03cd3f9aa929583d1c5af7d570ff5",
+            "rowSha256": "5af6a819664ed458b4fc406246168611cb9d57dc4c63e4cefdf0a7aa30edcbd6"
+          },
+          {
+            "idSha256": "2da6ca73d4cfd5c0c93b9180320a4869821fd16bf4485043cb5e1cbab054f08a",
+            "rowSha256": "bc3d0b37b843d1b47b8e8861f353019bb71548b481f790f41a5bd5bdedee0f7c"
+          },
+          {
+            "idSha256": "5d2b2dde938e02bd9b9e1bc2fc1459ae78157f5128fd4db6acfcc35f2dfa0244",
+            "rowSha256": "de0630374bfb653671d756e98a612a76550da2af96e87607ba86ffb9f265dc42"
+          },
+          {
+            "idSha256": "7c9187fa4964c53fcb38be1d6160913292dd9d2e196f7d87e2fa919e60301612",
+            "rowSha256": "ec4b426a8c6afc1808770f997e3b48531da7405be5fae3ea58c3fc586f54cf85"
+          },
+          {
+            "idSha256": "a008c3970343d12d81aa16034d080e9928ecd3e7acf76b4da847fb4f67e1d2af",
+            "rowSha256": "cd7004e7a31fc8bb20f76f92651790a6cfd13721422e9be66f1feafcf0fd79aa"
+          },
+          {
+            "idSha256": "a56810e00208a2dc4e0897bb4e2c1c81acb33e935dc589a9550cb62b076ed4c5",
+            "rowSha256": "216226d5c29d3b73e2a27f0951b093ca397fc6f427d44b7cdc209ed6e043efb3"
+          },
+          {
+            "idSha256": "ba24c354f5edc15d8dc452607886cf59df5e2fded7542a8e89ed030bdd78ee50",
+            "rowSha256": "a0282d78f1bcdcac1ad1c5630ffd0a48033442fa825f1539a13087e0fd948f95"
+          },
+          {
+            "idSha256": "e07e29d7a6f916397c3e458a20e7d85c7134b9f17011648dc07fe826b5957b49",
+            "rowSha256": "a4b73c89e92a94a22e475a2847347cd1cf651fa9a109f2b26fc23b75252e1a25"
+          },
+          {
+            "idSha256": "ef9f1c4870bb4c579c88759103e39a879fe47515fc45d7208af764cd0fd75fdf",
+            "rowSha256": "53e7a576a9c58f64d591e71bb5fef73e21e11b6153e130796ccdc1cf449e1876"
+          }
+        ],
+        "setlist_entries": [],
+        "setlists": [],
+        "songs": [
+          {
+            "idSha256": "04df23131d224f8f060dfb2a1ec775dcb3999dbf5f7ba6500800508ab4b84a57",
+            "rowSha256": "5a145900e2bfa0758a0a42a2032a8fce1c9c96e125cf92833fe6524eea4930a9"
+          },
+          {
+            "idSha256": "17ce996e0fd129be09d7b20c85a828472f0cfbbcbe89f801c943848d9a78b630",
+            "rowSha256": "b8429e4e9e0660f3008ccf13d2ec5373fb961c743dd4dc7ae3487d4cd519393e"
+          },
+          {
+            "idSha256": "3ddd563856b23a7a8060b6d4e02454297885a24c2f925e7fc0849d12a3e1aba8",
+            "rowSha256": "6105279de0f93e2d6ed3622c4578ae74cd66edf5d5ebbe5148fe394018739e08"
+          },
+          {
+            "idSha256": "44bdbd0fdfdf0ac82db9eb7bcb4db20b21dcf6230732c453027df217c1e41041",
+            "rowSha256": "52a3b62db194da666d55b308d2e4568eb0ee2737f294f7130b620c102c412b97"
+          },
+          {
+            "idSha256": "6d9a1b0869b4525aa3d26c0b2b82deacc8af611e4bebfb817fdf1d96592792ac",
+            "rowSha256": "ff3b8f0da89699e9e3eb0ff669ca805cf47b051ab94c0d7420ff519ae7e564e4"
+          },
+          {
+            "idSha256": "7c76ec870cf502aed252e6f91159881d452eba017ac48c014470d463a75fcf5b",
+            "rowSha256": "ee797e653680d0ee0e50130a0c8bbb0bb316fba5f6fe9243ea6b6504f69cccf8"
+          },
+          {
+            "idSha256": "86f0785fde29358307aff0d7d54dfceff3a8b285b792c012022f36fcf42a1304",
+            "rowSha256": "f5203b3620faa388bd73e1de56862f63fdb4e1e252217d1f9e24d65d9bf86e1a"
+          },
+          {
+            "idSha256": "897c2837c0c3d5f32da95f90e4d329c8f0879034dbd392b6439b816c4a8c5918",
+            "rowSha256": "62990bfb12bdec9cd672e7e89ba150553c8bcfc72b959fe078c5fe43e950d536"
+          },
+          {
+            "idSha256": "a41dd601dc1309d8821eba9aa12ac17bfa0126b9a6ef808e0731a07cf4964b2d",
+            "rowSha256": "c5aed96596daf33a0e83b78d51417078e10dd59123c23b5760cf0a1fd18881f8"
+          },
+          {
+            "idSha256": "aede5e1d433951ad1d8abb3b8f1040d6a78f3c7f0ad8c48e2cca5d282cacf8ea",
+            "rowSha256": "fce07575f45635dbf0a7a0958c932de594dea5a2401bdd5387fc53c6ce776b99"
+          }
+        ]
+      }
+    },
+    "afterNormalLaunch": {
+      "atUtc": "2026-10-27T18:06:57.377721+00:00",
+      "archiveSha256": "9a244ea7626299383861a7d7a1c603568c8a4b1c6316222ff11356f257ed9dbc",
+      "archiveBytes": 121372160,
+      "installedApkSha256": "786f24d6ec8a64e45110c40957c7d17a861c746eff9021808d8b519f94f3fefb",
+      "installedApkBytes": 102294571,
+      "objects": {
+        "outbox": [
+          {
+            "idSha256": "075f44094f00fcf34e182ebf905ee2f1581a83b7cf761aa077e556b34037b464",
+            "rowSha256": "c9edb11ef38bfa93231cd26b7c0f00946b1fb48a61eb55452707d0b6b1b4aee6"
+          },
+          {
+            "idSha256": "0bc49723fc7f90627cec5f3d1377f858f6a03cd3f9aa929583d1c5af7d570ff5",
+            "rowSha256": "5af6a819664ed458b4fc406246168611cb9d57dc4c63e4cefdf0a7aa30edcbd6"
+          },
+          {
+            "idSha256": "2da6ca73d4cfd5c0c93b9180320a4869821fd16bf4485043cb5e1cbab054f08a",
+            "rowSha256": "bc3d0b37b843d1b47b8e8861f353019bb71548b481f790f41a5bd5bdedee0f7c"
+          },
+          {
+            "idSha256": "5d2b2dde938e02bd9b9e1bc2fc1459ae78157f5128fd4db6acfcc35f2dfa0244",
+            "rowSha256": "de0630374bfb653671d756e98a612a76550da2af96e87607ba86ffb9f265dc42"
+          },
+          {
+            "idSha256": "7c9187fa4964c53fcb38be1d6160913292dd9d2e196f7d87e2fa919e60301612",
+            "rowSha256": "ec4b426a8c6afc1808770f997e3b48531da7405be5fae3ea58c3fc586f54cf85"
+          },
+          {
+            "idSha256": "a008c3970343d12d81aa16034d080e9928ecd3e7acf76b4da847fb4f67e1d2af",
+            "rowSha256": "cd7004e7a31fc8bb20f76f92651790a6cfd13721422e9be66f1feafcf0fd79aa"
+          },
+          {
+            "idSha256": "a56810e00208a2dc4e0897bb4e2c1c81acb33e935dc589a9550cb62b076ed4c5",
+            "rowSha256": "216226d5c29d3b73e2a27f0951b093ca397fc6f427d44b7cdc209ed6e043efb3"
+          },
+          {
+            "idSha256": "ba24c354f5edc15d8dc452607886cf59df5e2fded7542a8e89ed030bdd78ee50",
+            "rowSha256": "a0282d78f1bcdcac1ad1c5630ffd0a48033442fa825f1539a13087e0fd948f95"
+          },
+          {
+            "idSha256": "e07e29d7a6f916397c3e458a20e7d85c7134b9f17011648dc07fe826b5957b49",
+            "rowSha256": "a4b73c89e92a94a22e475a2847347cd1cf651fa9a109f2b26fc23b75252e1a25"
+          },
+          {
+            "idSha256": "ef9f1c4870bb4c579c88759103e39a879fe47515fc45d7208af764cd0fd75fdf",
+            "rowSha256": "53e7a576a9c58f64d591e71bb5fef73e21e11b6153e130796ccdc1cf449e1876"
+          }
+        ],
+        "setlist_entries": [],
+        "setlists": [],
+        "songs": [
+          {
+            "idSha256": "04df23131d224f8f060dfb2a1ec775dcb3999dbf5f7ba6500800508ab4b84a57",
+            "rowSha256": "5a145900e2bfa0758a0a42a2032a8fce1c9c96e125cf92833fe6524eea4930a9"
+          },
+          {
+            "idSha256": "17ce996e0fd129be09d7b20c85a828472f0cfbbcbe89f801c943848d9a78b630",
+            "rowSha256": "b8429e4e9e0660f3008ccf13d2ec5373fb961c743dd4dc7ae3487d4cd519393e"
+          },
+          {
+            "idSha256": "3ddd563856b23a7a8060b6d4e02454297885a24c2f925e7fc0849d12a3e1aba8",
+            "rowSha256": "6105279de0f93e2d6ed3622c4578ae74cd66edf5d5ebbe5148fe394018739e08"
+          },
+          {
+            "idSha256": "44bdbd0fdfdf0ac82db9eb7bcb4db20b21dcf6230732c453027df217c1e41041",
+            "rowSha256": "52a3b62db194da666d55b308d2e4568eb0ee2737f294f7130b620c102c412b97"
+          },
+          {
+            "idSha256": "6d9a1b0869b4525aa3d26c0b2b82deacc8af611e4bebfb817fdf1d96592792ac",
+            "rowSha256": "ff3b8f0da89699e9e3eb0ff669ca805cf47b051ab94c0d7420ff519ae7e564e4"
+          },
+          {
+            "idSha256": "7c76ec870cf502aed252e6f91159881d452eba017ac48c014470d463a75fcf5b",
+            "rowSha256": "ee797e653680d0ee0e50130a0c8bbb0bb316fba5f6fe9243ea6b6504f69cccf8"
+          },
+          {
+            "idSha256": "86f0785fde29358307aff0d7d54dfceff3a8b285b792c012022f36fcf42a1304",
+            "rowSha256": "f5203b3620faa388bd73e1de56862f63fdb4e1e252217d1f9e24d65d9bf86e1a"
+          },
+          {
+            "idSha256": "897c2837c0c3d5f32da95f90e4d329c8f0879034dbd392b6439b816c4a8c5918",
+            "rowSha256": "62990bfb12bdec9cd672e7e89ba150553c8bcfc72b959fe078c5fe43e950d536"
+          },
+          {
+            "idSha256": "a41dd601dc1309d8821eba9aa12ac17bfa0126b9a6ef808e0731a07cf4964b2d",
+            "rowSha256": "c5aed96596daf33a0e83b78d51417078e10dd59123c23b5760cf0a1fd18881f8"
+          },
+          {
+            "idSha256": "aede5e1d433951ad1d8abb3b8f1040d6a78f3c7f0ad8c48e2cca5d282cacf8ea",
+            "rowSha256": "fce07575f45635dbf0a7a0958c932de594dea5a2401bdd5387fc53c6ce776b99"
+          }
+        ]
+      }
+    },
+    "final": {
+      "atUtc": "2026-10-27T18:16:38.872773+00:00",
+      "archiveSha256": "86392749db323d4e7f16170a023c8d14b6e81b5892f945755123cd4a4e5eafce",
+      "archiveBytes": 121978368,
+      "installedApkSha256": "786f24d6ec8a64e45110c40957c7d17a861c746eff9021808d8b519f94f3fefb",
+      "installedApkBytes": 102294571,
+      "objects": {
+        "outbox": [
+          {
+            "idSha256": "075f44094f00fcf34e182ebf905ee2f1581a83b7cf761aa077e556b34037b464",
+            "rowSha256": "c9edb11ef38bfa93231cd26b7c0f00946b1fb48a61eb55452707d0b6b1b4aee6"
+          },
+          {
+            "idSha256": "0bc49723fc7f90627cec5f3d1377f858f6a03cd3f9aa929583d1c5af7d570ff5",
+            "rowSha256": "5af6a819664ed458b4fc406246168611cb9d57dc4c63e4cefdf0a7aa30edcbd6"
+          },
+          {
+            "idSha256": "1152ed33f068b89980f5a04a9679714ec8485b400530484f494f8f19660c44fb",
+            "rowSha256": "c8c9f24b948bae6a134de9ccadc116b48f20b7fad35099afd3486f9258c7870a"
+          },
+          {
+            "idSha256": "2da6ca73d4cfd5c0c93b9180320a4869821fd16bf4485043cb5e1cbab054f08a",
+            "rowSha256": "bc3d0b37b843d1b47b8e8861f353019bb71548b481f790f41a5bd5bdedee0f7c"
+          },
+          {
+            "idSha256": "5d2b2dde938e02bd9b9e1bc2fc1459ae78157f5128fd4db6acfcc35f2dfa0244",
+            "rowSha256": "de0630374bfb653671d756e98a612a76550da2af96e87607ba86ffb9f265dc42"
+          },
+          {
+            "idSha256": "7c9187fa4964c53fcb38be1d6160913292dd9d2e196f7d87e2fa919e60301612",
+            "rowSha256": "ec4b426a8c6afc1808770f997e3b48531da7405be5fae3ea58c3fc586f54cf85"
+          },
+          {
+            "idSha256": "a008c3970343d12d81aa16034d080e9928ecd3e7acf76b4da847fb4f67e1d2af",
+            "rowSha256": "cd7004e7a31fc8bb20f76f92651790a6cfd13721422e9be66f1feafcf0fd79aa"
+          },
+          {
+            "idSha256": "a56810e00208a2dc4e0897bb4e2c1c81acb33e935dc589a9550cb62b076ed4c5",
+            "rowSha256": "216226d5c29d3b73e2a27f0951b093ca397fc6f427d44b7cdc209ed6e043efb3"
+          },
+          {
+            "idSha256": "ba24c354f5edc15d8dc452607886cf59df5e2fded7542a8e89ed030bdd78ee50",
+            "rowSha256": "a0282d78f1bcdcac1ad1c5630ffd0a48033442fa825f1539a13087e0fd948f95"
+          },
+          {
+            "idSha256": "d10f1addbe4cab5435d467ffb24ef66da7c518074fdd2ff88fe611bc0e74f8bd",
+            "rowSha256": "3796d52ed4c4cdef4b40e5a84b1554c836461f39ddc84c1d013e74691d7762ea"
+          },
+          {
+            "idSha256": "d3548cba5f630ef36aba23d91b9b28fb1fda84ec52bc819c4f8e59e5362eb918",
+            "rowSha256": "b990ed1ffec5c66448811792bd5ddaaa8dd124af09a3e382271e02bed5255fe9"
+          },
+          {
+            "idSha256": "d82eda18eb72e1666c170ee53c417cae90efe00ca3595b158459e9ab539a4527",
+            "rowSha256": "b2abf1f25c18a79f9ca7b6e34e9ad2ea4f45db91b9b4e511dd2e7fade0128ae4"
+          },
+          {
+            "idSha256": "e07e29d7a6f916397c3e458a20e7d85c7134b9f17011648dc07fe826b5957b49",
+            "rowSha256": "a4b73c89e92a94a22e475a2847347cd1cf651fa9a109f2b26fc23b75252e1a25"
+          },
+          {
+            "idSha256": "ef9f1c4870bb4c579c88759103e39a879fe47515fc45d7208af764cd0fd75fdf",
+            "rowSha256": "53e7a576a9c58f64d591e71bb5fef73e21e11b6153e130796ccdc1cf449e1876"
+          }
+        ],
+        "setlist_entries": [],
+        "setlists": [],
+        "songs": [
+          {
+            "idSha256": "04df23131d224f8f060dfb2a1ec775dcb3999dbf5f7ba6500800508ab4b84a57",
+            "rowSha256": "5a145900e2bfa0758a0a42a2032a8fce1c9c96e125cf92833fe6524eea4930a9"
+          },
+          {
+            "idSha256": "17ce996e0fd129be09d7b20c85a828472f0cfbbcbe89f801c943848d9a78b630",
+            "rowSha256": "b8429e4e9e0660f3008ccf13d2ec5373fb961c743dd4dc7ae3487d4cd519393e"
+          },
+          {
+            "idSha256": "2a5e3ed4e9a39ed146ebb443d256fcad3d8e1ca1836e8a8185c197d1b7294070",
+            "rowSha256": "4534b0eeb9f4ca9ffbffbbdeabb11fc1aaa0ff752c0e09d952b116680a458ca7"
+          },
+          {
+            "idSha256": "3ddd563856b23a7a8060b6d4e02454297885a24c2f925e7fc0849d12a3e1aba8",
+            "rowSha256": "6105279de0f93e2d6ed3622c4578ae74cd66edf5d5ebbe5148fe394018739e08"
+          },
+          {
+            "idSha256": "44bdbd0fdfdf0ac82db9eb7bcb4db20b21dcf6230732c453027df217c1e41041",
+            "rowSha256": "52a3b62db194da666d55b308d2e4568eb0ee2737f294f7130b620c102c412b97"
+          },
+          {
+            "idSha256": "4f4b3287e6431cf3657cf96dc37141d6f3e584ed4b2aa074fe88ca891e50b1ac",
+            "rowSha256": "08eeb75325c1bba2ec4f72e0797d4d9a05e1caa51eabc7bf02b316d62d0e5332"
+          },
+          {
+            "idSha256": "6d9a1b0869b4525aa3d26c0b2b82deacc8af611e4bebfb817fdf1d96592792ac",
+            "rowSha256": "ff3b8f0da89699e9e3eb0ff669ca805cf47b051ab94c0d7420ff519ae7e564e4"
+          },
+          {
+            "idSha256": "7c76ec870cf502aed252e6f91159881d452eba017ac48c014470d463a75fcf5b",
+            "rowSha256": "ee797e653680d0ee0e50130a0c8bbb0bb316fba5f6fe9243ea6b6504f69cccf8"
+          },
+          {
+            "idSha256": "86f0785fde29358307aff0d7d54dfceff3a8b285b792c012022f36fcf42a1304",
+            "rowSha256": "f5203b3620faa388bd73e1de56862f63fdb4e1e252217d1f9e24d65d9bf86e1a"
+          },
+          {
+            "idSha256": "897c2837c0c3d5f32da95f90e4d329c8f0879034dbd392b6439b816c4a8c5918",
+            "rowSha256": "62990bfb12bdec9cd672e7e89ba150553c8bcfc72b959fe078c5fe43e950d536"
+          },
+          {
+            "idSha256": "98f6f6fccee3dcf1d703ca0963227fb906b03ea51e7538badfa960fc582aea1d",
+            "rowSha256": "8daccacdbda66f233cba3b121bda660f9a2620c539bd0272a1a2bff19e30ec34"
+          },
+          {
+            "idSha256": "a41dd601dc1309d8821eba9aa12ac17bfa0126b9a6ef808e0731a07cf4964b2d",
+            "rowSha256": "c5aed96596daf33a0e83b78d51417078e10dd59123c23b5760cf0a1fd18881f8"
+          },
+          {
+            "idSha256": "aede5e1d433951ad1d8abb3b8f1040d6a78f3c7f0ad8c48e2cca5d282cacf8ea",
+            "rowSha256": "fce07575f45635dbf0a7a0958c932de594dea5a2401bdd5387fc53c6ce776b99"
+          },
+          {
+            "idSha256": "cd6863fd20b3eb1979ea4706319ec2c6e0559a351b416e81e852ae4a0eee8650",
+            "rowSha256": "8bd7bd43ab22c45f71fc0c00d93f02127891cc44e8ccc95b84567a98c2c9092e"
+          }
+        ]
+      }
+    },
+    "all10BaselineSongOutboxSetlistRowsExact": true,
+    "all12PreImportDocumentsExact": true,
+    "all14FinalDocumentsReopenedExact": true
+  },
+  "catalog": {
+    "channel": 7,
+    "path": "config/source-catalog-v7.json",
+    "revision": 19,
+    "registryEntries": 28,
+    "sha256": "b192e129d56664ddc04fea41be863cbb9e4c9f92eb7b3e5b76717e2a0b171e76",
+    "assetMatchesCandidate": true,
+    "servedCandidateMatchesAsset": true,
+    "lyricsplusNewDefaultEnabledObserved": true,
+    "previousCachedCatalogs": [
+      {
+        "key": "sourceCatalog:v6",
+        "sha256": "41dedccce7ec1b04542bf8dd8c00f217465aed09c5412088a0837139c72395d4",
+        "unchanged": true
+      }
+    ],
+    "allOriginalProviderOverrideValuesRestored": true,
+    "onlyAdditionalExplicitOverride": {
+      "startjamming": true
+    },
+    "additionalOverridePreservesPreviouslyEnabledDefault": true
+  },
+  "lyricsplus": {
+    "atUtc": "2026-10-27T18:12:40.329901Z",
+    "scope": "Actual Android-saved SQLite data replay through production LibraryRepository and ChordPro; zero HTTP",
+    "all12DocumentsExactAfterRepositoryReopen": true,
+    "checks": [
+      {
+        "title": "Billie Jean",
+        "artist": "Michael Jackson",
+        "sourceId": "lyricsplus:work-4be1c5e90818ab9456309f7c3b63a9f5192f7ce056415ec4afd0d726d969f4fa",
+        "appleId": "1883770432",
+        "album": "Michael: Songs From The Motion Picture",
+        "durationMilliseconds": 294237,
+        "metadataFields": [
+          "agents",
+          "album",
+          "appleMusicIds",
+          "artworkUrl",
+          "country",
+          "discCount",
+          "discNumber",
+          "documentKind",
+          "durationSeconds",
+          "genre",
+          "identityScope",
+          "language",
+          "mediaLinks",
+          "primaryGenreName",
+          "releaseDate",
+          "songParts",
+          "songWriters",
+          "trackCount",
+          "trackNumber",
+          "writers"
+        ],
+        "recordingIdsEmpty": true,
+        "independentAppleResponseRetained": true,
+        "rawBytes": 33149,
+        "rawSha256": "a86ab8bbcccd5df3b727eb3418eecf50c90a44cf3408b3843f99163dfa223737",
+        "lyricLines": 61,
+        "wordSegments": 488,
+        "cues": 549,
+        "timingStatus": "unverified",
+        "allSourceFactsAndTimingExactAfterChordPro": true
+      },
+      {
+        "title": "Creep",
+        "artist": "Radiohead",
+        "sourceId": "lyricsplus:work-5b14105c3b1d86d27c180ab094257f8da4225b19a52e4329e6dbb05a2d63d3b1",
+        "appleId": "1097862231",
+        "album": "Pablo Honey",
+        "durationMilliseconds": 238640,
+        "metadataFields": [
+          "agents",
+          "album",
+          "appleMusicIds",
+          "artworkUrl",
+          "country",
+          "discCount",
+          "discNumber",
+          "documentKind",
+          "durationSeconds",
+          "genre",
+          "identityScope",
+          "language",
+          "mediaLinks",
+          "primaryGenreName",
+          "releaseDate",
+          "songParts",
+          "songWriters",
+          "trackCount",
+          "trackNumber",
+          "writers"
+        ],
+        "recordingIdsEmpty": true,
+        "independentAppleResponseRetained": true,
+        "rawBytes": 14760,
+        "rawSha256": "86648d4788444d966612d4bea75b53211c4c86dcc4729ea8dab36e6a535eba7f",
+        "lyricLines": 38,
+        "wordSegments": 190,
+        "cues": 228,
+        "timingStatus": "unverified",
+        "allSourceFactsAndTimingExactAfterChordPro": true
+      }
+    ]
+  },
+  "ozbcoz": {
+    "atUtc": "2026-10-27T18:15:32.322215Z",
+    "scope": "Actual Android native-picker saves replayed from consistent SQLite through production repository and ChordPro; zero HTTP",
+    "all12PriorDocumentsExact": true,
+    "all14DocumentsExactAfterReopen": true,
+    "automaticOnlineSearchIntegration": false,
+    "checks": [
+      {
+        "id": "1683",
+        "title": "Banana Boat Song",
+        "artist": "Harry Belafonte",
+        "downloadBytes": 1648,
+        "downloadSha256": "4c37793866fb8c37f1f05eef968eff072b0498af4cf4d51d1aa8e45e306b8e57",
+        "nativeFilePickerTested": true,
+        "appLibrarySaveObserved": true,
+        "openedOffline": true,
+        "bodyIdentityMetadataEqualToDecodedOriginal": true,
+        "allChordAndCommentLinesRetained": true,
+        "sourceRecordCount": 0,
+        "exportBodyMetadataIdentityExact": true
+      },
+      {
+        "id": "2941",
+        "title": "Wild Rover [C]",
+        "artist": "The Dubliners",
+        "downloadBytes": 2110,
+        "downloadSha256": "2babd7545e39e10c463775f1e7b6da454160963f59ef9a8cba5de0fb87052ee4",
+        "nativeFilePickerTested": true,
+        "appLibrarySaveObserved": true,
+        "openedOffline": true,
+        "bodyIdentityMetadataEqualToDecodedOriginal": true,
+        "allChordAndCommentLinesRetained": true,
+        "sourceRecordCount": 0,
+        "exportBodyMetadataIdentityExact": true
+      }
+    ],
+    "fileImportPipelineUnchangedFromCurrentPublicMain": [
+      {
+        "path": "lib/application/file_actions.dart",
+        "publicMain": "0e60375bdece0afe21a4fa9b307eadc84022379b",
+        "lfNormalizedSha256": "7b31a5fb1452770924d2241cbeef51c622c65c0a8a9cf46187a5f5eb9ec67034",
+        "unchanged": true
+      },
+      {
+        "path": "lib/data/library_repository.dart",
+        "publicMain": "0e60375bdece0afe21a4fa9b307eadc84022379b",
+        "lfNormalizedSha256": "d1e806d2aab5467f3ecef4dc1294b6976b758f17c6d95be3bfc4f4d7a05dbf86",
+        "unchanged": true
+      },
+      {
+        "path": "lib/domain/chordpro.dart",
+        "publicMain": "0e60375bdece0afe21a4fa9b307eadc84022379b",
+        "lfNormalizedSha256": "42af17a9ef936b69179b3875b8576cf8b989e7c6e6f934c201f505e29049b42c",
+        "unchanged": true
+      }
+    ]
+  },
+  "requests": {
+    "productionDailySuiteRepeated": false,
+    "selectedOzbcozPickerDownloads": [
+      {
+        "id": "2941",
+        "url": "https://ozbcoz.com/Songs/cp/get_pro.php?ID=2941&instr=guitar",
+        "measuredAt": "2026-10-27T18:12:29.712983+00:00",
+        "status": 200,
+        "bytes": 2110,
+        "sha256": "2babd7545e39e10c463775f1e7b6da454160963f59ef9a8cba5de0fb87052ee4"
+      },
+      {
+        "id": "1683",
+        "url": "https://ozbcoz.com/Songs/cp/get_pro.php?ID=1683&instr=guitar",
+        "measuredAt": "2026-10-27T18:12:30.012090+00:00",
+        "status": 200,
+        "bytes": 1648,
+        "sha256": "4c37793866fb8c37f1f05eef968eff072b0498af4cf4d51d1aa8e45e306b8e57"
+      }
+    ],
+    "selectedDownloadReason": "New native Android file-picker capability validation; two selected public canaries, separate from full daily suite and host import phase",
+    "lyricsplusAppFlow": "Two user-like catalog searches and two selected title/artist comparison/save flows; app HTTP attempts are not separately instrumented, so no exact transport count is inferred.",
+    "offlineReplayHttpRequests": 0,
+    "credentialsCookiesOrForceReloadUsed": false
+  },
+  "visualChecks": {
+    "portrait": true,
+    "landscape": true,
+    "fontScale1_3": true,
+    "darkTheme": true,
+    "sourceAlbumAndArtworkVisible": true,
+    "allScreenshotsRetainedPrivately": true
+  },
+  "checks": {
+    "build": "passed",
+    "focusedChannelTests": 30,
+    "combinedTests": 1484,
+    "analysis": "clean",
+    "offlineRegistryCatalogEntries": 28,
+    "actualAndroidSavedLyricsPlusReplay": "passed",
+    "actualNativePickerImportReplay": "passed",
+    "initialReplayHelperCompileFailure": "Resolved an absent SongDocument getter in ignored test helper; source app code was unchanged; corrected final replay passed."
+  },
+  "resourceRelease": {
+    "sdkAndBuildLeaseReleased": true,
+    "qaAppForceStoppedAfterConsistentBackup": true,
+    "ownEmulator5554GracefullyStopped": true,
+    "networkDisplaySettingsRestored": true,
+    "otherDevicesUntouched": true,
+    "release41OutputsUntouched": true,
+    "pendingSdkDeviceWrites": false
+  },
+  "remainingGates": [
+    "Exact final-head hosted CI and integration review",
+    "PR191 then PR193 integration/publication by owner",
+    "Compatible public app release",
+    "Cloud current-runtime reachability qualification"
+  ],
+  "privateArtifactsNotPublished": [
+    "Raw SQLite/library archives",
+    "Source documents/raw lyrics",
+    "APK binaries",
+    "Screenshots",
+    "Private filesystem paths",
+    "Credentials"
+  ]
+}
