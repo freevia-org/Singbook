@@ -553,6 +553,32 @@ class AppController extends ChangeNotifier {
         },
         writeCache: (value) =>
             repository.setSetting(SourceCatalogClient.cacheKey, value),
+        readPreviousCaches: () async {
+          final current = int.tryParse(
+            SourceCatalogClient.cacheKey.split(':v').last,
+          );
+          if (current == null || current < 2 || current > 8) return [];
+          final previous = <PreviousSourceCatalogCache>[];
+          for (var channel = current - 1; channel >= 1; channel--) {
+            final key = channel == 1
+                ? SourceCatalogClient.legacyCacheKey
+                : 'sourceCatalog:v$channel';
+            try {
+              final cached = await repository.getSetting(key);
+              if (cached is! String) continue;
+              final asset = channel == 1
+                  ? 'config/source-catalog.json'
+                  : 'config/source-catalog-v$channel.json';
+              previous.add((
+                bundled: await rootBundle.loadString(asset),
+                cached: cached,
+              ));
+            } catch (_) {
+              // A missing or damaged older channel never prevents bootstrap.
+            }
+          }
+          return previous;
+        },
       );
     }
     await discovery.catalogClient?.initialize();
@@ -573,10 +599,13 @@ class AppController extends ChangeNotifier {
     sourcesRefreshing = true;
     sourceRefreshError = null;
     _emit();
-    final previous = client.runtime.catalog?.revision;
+    final previous = client.runtime.catalog;
     final success = await client.refresh();
     if (_disposed) return false;
-    if (success && previous != client.runtime.catalog?.revision) {
+    final current = client.runtime.catalog;
+    if (success &&
+        current != null &&
+        (previous == null || !previous.sameContent(current))) {
       cancelSearch();
     }
     sourcesRefreshing = false;
