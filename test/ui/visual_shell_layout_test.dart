@@ -52,7 +52,7 @@ void main() {
           find.byKey(const ValueKey('appbar-brand-title')),
           findsOneWidget,
         );
-        expect(find.byKey(const ValueKey('appbar-version')), findsNothing);
+        expect(find.byKey(const ValueKey('appbar-version')), findsOneWidget);
         final appBarRect = tester.getRect(find.byType(AppBar));
         final brandRect = tester.getRect(
           find.byKey(const ValueKey('appbar-brand-title')),
@@ -284,7 +284,7 @@ void main() {
     }
   });
 
-  testWidgets('home header keeps version details out of the main flow', (
+  testWidgets('home header shows compact version alongside the wordmark', (
     tester,
   ) async {
     tester.view.devicePixelRatio = 1;
@@ -298,7 +298,7 @@ void main() {
     final controller = AppControllerAdapter(app);
     await _pumpShell(tester, const Locale('bg'), controller);
 
-    expect(find.byKey(const ValueKey('appbar-version')), findsNothing);
+    expect(find.byKey(const ValueKey('appbar-version')), findsOneWidget);
     final brand = tester.widget<Text>(
       find.byKey(const ValueKey('appbar-brand-title')),
     );

@@ -49,7 +49,7 @@ class _LibraryFilterController extends FakeUiController {
 
 void main() {
   group('Songs list', () {
-    testWidgets('is ordered and indexed by the alphabet, not code units', (
+    testWidgets('small list is alphabetically ordered without headings', (
       tester,
     ) async {
       final titles = [
@@ -97,7 +97,7 @@ void main() {
           )
           .map((text) => text.data)
           .toList();
-      expect(letters, ['Г', 'Ґ', 'Д', 'Е', 'Є', 'І', 'Ї', 'Я']);
+      expect(letters, isEmpty);
     });
 
     testWidgets('accented Latin titles share the base letter section', (
@@ -112,6 +112,7 @@ void main() {
             _song('2', 'Éclair'),
             _song('3', 'Eagle'),
             _song('4', 'Apple'),
+            for (var i = 0; i < 6; i++) _song('extra-$i', 'Zebra $i'),
           ],
         ),
       );

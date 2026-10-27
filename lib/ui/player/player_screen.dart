@@ -346,6 +346,11 @@ class _PlayerScreenState extends State<PlayerScreen>
       return KeyEventResult.handled;
     }
     if (!modified && key == LogicalKeyboardKey.space) {
+      // Keep standard keyboard activation for a deliberately focused button.
+      if (focused != null &&
+          Actions.maybeFind<ActivateIntent>(focused) != null) {
+        return KeyEventResult.ignored;
+      }
       unawaited(_togglePlayback());
       return KeyEventResult.handled;
     }
@@ -543,8 +548,11 @@ class _PlayerScreenState extends State<PlayerScreen>
   /// the playback position to the line in the middle. Autoscroll never fights
   /// it; with autoscroll off the lyrics scroll freely without seeking.
   bool _seekShortChartEndpoint(double delta) {
-    if (delta == 0 || !_lyricsScroll.hasClients || !controller.state.autoscroll)
+    if (delta == 0 ||
+        !_lyricsScroll.hasClients ||
+        !controller.state.autoscroll) {
       return false;
+    }
     final metrics = _lyricsScroll.position;
     if (metrics.maxScrollExtent - metrics.minScrollExtent > .5) return false;
     final state = controller.state;
@@ -568,8 +576,9 @@ class _PlayerScreenState extends State<PlayerScreen>
       return false;
     }
     if (notification is OverscrollNotification &&
-        _seekShortChartEndpoint(notification.overscroll))
+        _seekShortChartEndpoint(notification.overscroll)) {
       return false;
+    }
     if (notification is! ScrollUpdateNotification) return false;
     if (notification.dragDetails != null) _beginManualScroll();
     if (!_userScrolling) return false;
@@ -846,8 +855,9 @@ class _PlayerScreenState extends State<PlayerScreen>
     };
     Widget lyrics() => Listener(
       onPointerSignal: (event) {
-        if (event is PointerScrollEvent)
+        if (event is PointerScrollEvent) {
           _seekShortChartEndpoint(event.scrollDelta.dy);
+        }
       },
       onPointerDown: _lyricsPointerDown,
       onPointerMove: _lyricsPointerMove,
