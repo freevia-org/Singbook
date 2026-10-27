@@ -654,6 +654,143 @@ String? _soundingKey(SongDocument doc) {
   return capo == 0 ? shapeKey : transposeChord(shapeKey, capo);
 }
 
+({int pitch, String quality})? _practicalChordTriad(String symbol) {
+  final normalized = symbol.replaceAll('♯', '#').replaceAll('♭', 'b');
+  final slash = normalized.lastIndexOf('/');
+  final body = slash < 0 ? normalized : normalized.substring(0, slash);
+  final match = RegExp(r'^([A-G])([#b]{0,2})(.*)$').firstMatch(body);
+  if (match == null) return null;
+  const natural = {'C': 0, 'D': 2, 'E': 4, 'F': 5, 'G': 7, 'A': 9, 'B': 11};
+  var pitch = natural[match[1]]!;
+  for (final accidental in match[2]!.split('')) {
+    pitch += accidental == '#' ? 1 : -1;
+  }
+  final suffix = match[3]!.toLowerCase();
+  final quality =
+      suffix.startsWith('dim') ||
+          suffix.startsWith('°') ||
+          suffix.startsWith('ø') ||
+          suffix.startsWith('o') ||
+          suffix.startsWith('aug') ||
+          suffix.startsWith('+') ||
+          suffix.startsWith('sus')
+      ? 'other'
+      : (suffix.startsWith('m') && !suffix.startsWith('maj')) ||
+            suffix.startsWith('-')
+      ? 'minor'
+      : 'major';
+  return (pitch: pitch % 12, quality: quality);
+}
+
+/// Emits redacted chord positions plus a triad-level key screen. It never
+/// copies lyric text into the report. Non-diatonic or unsupported chords are
+/// review leads, not automatic errors (borrowed chords and key changes occur).
+Map<String, Object?> _practicalChordAnchorAudit(
+  List<ArrangementLine> arrangement,
+  String? selectedKey,
+  int capo,
+) {
+  final identity = selectedKey == null ? null : _exactKeyIdentity(selectedKey);
+  final parts = identity?.split(':');
+  final tonic = parts == null ? null : int.tryParse(parts[0]);
+  final mode = parts == null ? null : parts[1];
+  final major = mode == 'major'
+      ? (
+          scale: const [0, 2, 4, 5, 7, 9, 11],
+          qualities: const [
+            'major', 'minor', 'minor', 'major', 'major', 'minor', 'other',
+          ],
+        )
+      : null;
+  final minor = mode == 'minor'
+      ? (
+          scale: const [0, 2, 3, 5, 7, 8, 10],
+          qualities: const [
+            'minor', 'other', 'major', 'minor', 'major', 'major', 'major',
+          ],
+        )
+      : null;
+  final scale = major?.scale ?? minor?.scale;
+  final qualities = major?.qualities ?? minor?.qualities;
+  var chordCount = 0;
+  var comparableChordCount = 0;
+  var inKeyTriads = 0;
+  final harmonyReview = <Map<String, Object?>>[];
+  final unparsed = <Map<String, Object?>>[];
+  final lines = <Map<String, Object?>>[];
+  for (var i = 0; i < arrangement.length; i++) {
+    final line = arrangement[i];
+    if (line.directive || line.text.trim().isEmpty || line.chords.isEmpty) {
+      continue;
+    }
+    final words = RegExp(r'[\p{L}\p{N}]+', unicode: true)
+        .allMatches(line.text)
+        .toList();
+    final anchors = <Map<String, Object?>>[];
+    for (final chord in line.chords) {
+      chordCount++;
+      final triad = _practicalChordTriad(chord.chord);
+      int? wordIndex;
+      for (var word = 0; word < words.length; word++) {
+        if (chord.offset <= words[word].end) {
+          wordIndex = word + 1;
+          break;
+        }
+      }
+      wordIndex ??= words.isEmpty ? null : words.length;
+      String fit;
+      if (triad != null &&
+          tonic != null &&
+          scale != null &&
+          qualities != null) {
+        comparableChordCount++;
+        final soundingPitch = (triad.pitch + capo) % 12;
+        final degree = (soundingPitch - tonic + 12) % 12;
+        final scaleIndex = scale.indexOf(degree);
+        fit = scaleIndex >= 0 && qualities[scaleIndex] == triad.quality
+            ? 'diatonicTriad'
+            : 'needsHarmonyReview';
+        if (fit == 'diatonicTriad') inKeyTriads++;
+      } else {
+        fit = 'keyOrChordUnparsed';
+      }
+      final anchor = <String, Object?>{
+        'symbol': chord.chord,
+        'wordIndex': wordIndex,
+        'charOffset': chord.offset,
+        'triadFit': fit,
+      };
+      anchors.add(anchor);
+      if (fit == 'needsHarmonyReview') {
+        harmonyReview.add({'line': i + 1, ...anchor});
+      } else if (fit == 'keyOrChordUnparsed') {
+        unparsed.add({'line': i + 1, ...anchor});
+      }
+    }
+    lines.add({
+      'line': i + 1,
+      'normalizedTextSha256': _sha(_normalize(line.text)),
+      'wordCount': words.length,
+      'chords': anchors,
+    });
+  }
+  return {
+    'selectedKey': selectedKey,
+    'capo': capo,
+    'triadChordOccurrences': chordCount,
+    'keyComparableTriadOccurrences': comparableChordCount,
+    'diatonicTriadOccurrences': inKeyTriads,
+    'diatonicTriadShare': comparableChordCount == 0
+        ? null
+        : inKeyTriads / comparableChordCount,
+    'needsHarmonyReviewOccurrences': harmonyReview,
+    'unparsedOccurrences': unparsed,
+    'chordedLines': lines,
+    'interpretation':
+        'Positions are redacted line numbers, word indices, offsets, and line hashes. The triad screen checks root/triad against the selected major/minor scale; borrowed chords, secondary dominants, modes, key changes, and extensions need separate review, so flagged symbols are not automatic errors.',
+  };
+}
+
 /// Identifies the scope of the combined key value for reference comparison.
 /// A chart can name the transposed arrangement key without establishing the
 /// selected recording's home key. Keep that useful chart claim, but do not
@@ -1691,6 +1828,36 @@ void main() {
       _chordAlignmentHash(song('[Db]Amber windows')),
     );
   });
+  test('practical chord audit emits redacted anchors and key triad screens', () {
+    final body = '[C]Amber [Am]windows [F]sing\n[F#]quiet [G]water';
+    final audit = _practicalChordAnchorAudit(parseArrangement(body), 'C', 0);
+    expect(audit['triadChordOccurrences'], 5);
+    expect(audit['keyComparableTriadOccurrences'], 5);
+    expect(audit['diatonicTriadOccurrences'], 4);
+    expect(audit['diatonicTriadShare'], .8);
+    expect(audit['needsHarmonyReviewOccurrences'], hasLength(1));
+    final rows = audit['chordedLines'] as List;
+    expect(rows, hasLength(2));
+    expect((rows.first as Map)['normalizedTextSha256'], isA<String>());
+    expect(((rows.first as Map)['chords'] as List).first['wordIndex'], 1);
+    expect(jsonEncode(audit), isNot(contains('Amber')));
+
+    final unknownKey = _practicalChordAnchorAudit(
+      parseArrangement('[C]Words here'),
+      null,
+      0,
+    );
+    expect(unknownKey['diatonicTriadShare'], isNull);
+    expect(unknownKey['unparsedOccurrences'], hasLength(1));
+
+    final capoArrangement = _practicalChordAnchorAudit(
+      parseArrangement('[G]Amber [D]windows [Em]sing'),
+      'Ab',
+      1,
+    );
+    expect(capoArrangement['diatonicTriadOccurrences'], 3);
+    expect(capoArrangement['diatonicTriadShare'], 1);
+  });
   test('chord progression corroboration ignores transposition only', () {
     expect(
       _transpositionInvariantChordProgressionHash(['C', 'G', 'Am', 'F']),
@@ -2343,6 +2510,12 @@ Future<void> _benchmark() async {
         'chordedLineCount': arrangement
             .where((l) => l.chords.isNotEmpty)
             .length,
+        'practicalChordAnchorAudit':
+            _practicalChordAnchorAudit(
+              arrangement,
+              key,
+              _capoOf(doc.metadata['capo']),
+            ),
         'practicalChordLyricCorrespondence': {
           'selectedLyricsAvailable': selectedLyricsSource != null,
           'selectedChordContributors': sourceSummaries
