@@ -73,6 +73,11 @@ Matcher _failure(String code) =>
     isA<ProviderException>().having((error) => error.code, 'code', code);
 
 void main() {
+  test('the native candidate is disabled until explicitly enabled', () async {
+    final harness = _Harness(search: _search, page: _page());
+    addTearDown(harness.transport.close);
+    expect(harness.provider.definition.enabledByDefault, isFalse);
+  });
   test(
     'extended chords and flat tuning retain their actual musical spelling',
     () {

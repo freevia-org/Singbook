@@ -76,6 +76,7 @@ class ChordsAndTabsProvider implements LyricsProvider {
     id: 'chordsandtabs',
     name: 'Chords and Tabs',
     capabilities: {'catalog', 'lyrics', 'chords', 'metadata'},
+    enabledByDefault: false,
     accessMode: 'publicPage',
     website: _base,
   );
