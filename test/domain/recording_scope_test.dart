@@ -145,35 +145,66 @@ void main() {
   }
 
   for (final scope in ['composition', 'work', 'artist', 'image']) {
-    for (final location in ['source metadata', 'source extra']) {
+    for (final location in [
+      'selected metadata',
+      'selected extra',
+      'candidate metadata',
+      'candidate extra',
+      'source metadata',
+      'source extra',
+    ]) {
       test(
         'same candidate ID with $scope in $location is not recording proof',
         () {
-          const selected = SongCandidate(
+          const base = SongCandidate(
             providerId: 'catalog',
             id: 'shared-identity',
             title: 'Amazing Grace',
             artist: 'John Newton',
           );
-          const candidate = SongCandidate(
-            providerId: 'catalog',
-            id: 'shared-identity',
-            title: 'Amazing Grace',
-            artist: 'John Newton',
+          final selectedJson = cloneJson(base.toJson());
+          final sourceJson = cloneJson(
+            SourceResult(
+              candidate: base,
+              body: 'Amazing grace',
+              matchKind: MatchKind.sameSong,
+            ).toJson(),
           );
-          final source = SourceResult(
-            candidate: candidate,
-            body: 'Amazing grace',
-            matchKind: MatchKind.sameSong,
-            metadata: location == 'source metadata'
-                ? {'identityScope': scope}
-                : const {},
-            extra: location == 'source extra'
-                ? {'identityScope': scope}
-                : const {},
-          );
+          final candidateJson = sourceJson['candidate'] as JsonMap;
+          switch (location) {
+            case 'selected metadata':
+              (selectedJson['metadata'] ??=
+                      <String, dynamic>{})['identityScope'] =
+                  scope;
+              break;
+            case 'selected extra':
+              selectedJson['identityScope'] = scope;
+              break;
+            case 'candidate metadata':
+              (candidateJson['metadata'] ??=
+                      <String, dynamic>{})['identityScope'] =
+                  scope;
+              break;
+            case 'candidate extra':
+              candidateJson['identityScope'] = scope;
+              break;
+            case 'source metadata':
+              (sourceJson['metadata'] ??=
+                      <String, dynamic>{})['identityScope'] =
+                  scope;
+              break;
+            case 'source extra':
+              sourceJson['identityScope'] = scope;
+              break;
+          }
 
-          expect(recordingCompatible(selected, source), isFalse);
+          expect(
+            recordingCompatible(
+              SongCandidate.fromJson(selectedJson),
+              SourceResult.fromJson(sourceJson),
+            ),
+            isFalse,
+          );
         },
       );
     }
