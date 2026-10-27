@@ -387,6 +387,15 @@ void main() {
     );
   }
 
+  test('an explicit zero capo can match a chart with no saved capo value', () {
+    final donor = _source(
+      'donor',
+      _donorBody,
+      metadata: {'key': 'F#m', 'capo': 0},
+    );
+    expect(corroboratedArrangementKey(_saved(sources: [donor]))?.key, 'F#m');
+  });
+
   test(
     'catalog-only key, unverified facts, or lyrics alone are insufficient',
     () {

@@ -311,6 +311,20 @@ int _capoOf(Object? capo) {
   return value == null || value < 0 ? 0 : value % 12;
 }
 
+bool _isExplicitZeroCapo(Object? capo) =>
+    capo is num ? capo.isFinite && capo == 0 : capo is String && capo.trim() == '0';
+
+bool _isStandardTuning(Object? tuning) {
+  final text = tuning is List ? tuning.join(' ') : tuning?.toString();
+  if (text == null) return false;
+  return text
+          .toLowerCase()
+          .split(RegExp(r'[\s,\[\]]+'))
+          .where((note) => note.isNotEmpty)
+          .join(' ') ==
+      'e a d g b e';
+}
+
 /// Whether a chart's declared (sounding) key fits its own chords played with
 /// [capo]. A chart whose chords give no key estimate is not contradicted.
 bool declaredKeyFitsChords(String chart, String declared, Object? capo) {
@@ -1263,7 +1277,15 @@ bool _compatibleMetadataKeySource(SongDocument song, SourceResult source) {
       ArrangementLine(line.text, const [], directive: line.directive),
   ];
   final claims = <String, ({String key, List<String> sourceIds})>{};
+  final chordSourceIds = (song.extra['chordSourceIds'] as List?)
+      ?.whereType<String>()
+      .toSet() ??
+      const <String>{};
   for (final source in song.sources) {
+    final contributingChartCreditMatches =
+        source.extra['requiresLyricsAgreement'] == true &&
+        chordSourceIds.contains(source.id) &&
+        _sameArrangedSong(source.candidate, selected);
     if (!source.hasChords ||
         !(const {
               MatchKind.sameSong,
@@ -1274,7 +1296,8 @@ bool _compatibleMetadataKeySource(SongDocument song, SourceResult source) {
             (source.matchKind == MatchKind.rejected &&
                 source.matchReason == 'incomplete_or_different_lyrics')) ||
         source.hasPendingMatchCheck ||
-        !_sameSong(source.candidate, selected) ||
+        !(_sameSong(source.candidate, selected) ||
+            contributingChartCreditMatches) ||
         _version(source.candidate.title) != _version(selected.title)) {
       continue;
     }
@@ -1315,7 +1338,15 @@ bool _compatibleMetadataKeySource(SongDocument song, SourceResult source) {
       if (field == 'capo' &&
           !_hasMetadata(baseValue) &&
           _hasMetadata(donorValue) &&
-          _capoOf(donorValue) == 0) {
+          _isExplicitZeroCapo(donorValue)) {
+        continue;
+      }
+      // A contributing chart with ordinary guitar tuning contributes the
+      // same displayed shapes when the selected document has no tuning header.
+      if (field == 'tuning' &&
+          contributingChartCreditMatches &&
+          !_hasMetadata(baseValue) &&
+          _isStandardTuning(donorValue)) {
         continue;
       }
       String normalize(Object? value) {
@@ -1341,10 +1372,16 @@ bool _compatibleMetadataKeySource(SongDocument song, SourceResult source) {
       }
     }
     if (!compatible) continue;
-    final aligned = _phraseChords(
-      plain,
-      shifted ? transposeBody(source.body, shift) : source.body,
-    );
+    final keyEvidenceBody = shifted
+        ? transposeBody(source.body, shift)
+        : source.body;
+    // Rejected main-artist chart aliases reach this branch only when that
+    // exact chart supplied the saved chord anchors. Reuse the fuzzy line
+    // aligner that admitted those anchors; requiring exact phrase alignment
+    // here would discard a key whose chord placements were already checked.
+    final aligned = contributingChartCreditMatches
+        ? _fuzzyLineChords(plain, keyEvidenceBody)
+        : _phraseChords(plain, keyEvidenceBody);
     var agreements = 0, contradicts = false;
     final roots = <String>{}, matchedLines = <int>{};
     for (final entry in aligned.entries) {
@@ -2726,7 +2763,15 @@ _overlayChords(
           candidate.source.extra.containsKey('keyConsensus') &&
           _keyConsensusRank(primary) > 0 &&
           _keyConsensusRank(candidate.source) > 0;
-      if (contradicts || (!agrees && !explicitSetup && !checkedSameKey)) {
+      // Sources carrying this flag reached _overlayChords only after the
+      // selected-recording lyric-context gate accepted them in combineSources.
+      final contextualLyricsChecked =
+          candidate.source.extra['requiresRecordingLyricsAgreement'] == true;
+      if (contradicts ||
+          (!agrees &&
+              !explicitSetup &&
+              !checkedSameKey &&
+              !contextualLyricsChecked)) {
         continue;
       }
       // A same-song chart without a compatible explicit arrangement setup or
@@ -2736,7 +2781,8 @@ _overlayChords(
       // one matching chorus chord authorize new chords elsewhere in the song.
       if (candidate.confidence < 2 &&
           !explicitSetup &&
-          !checkedSameKey) {
+          !checkedSameKey &&
+          !contextualLyricsChecked) {
         candidate = (
           source: candidate.source,
           chords: {
@@ -3130,8 +3176,8 @@ SongDocument combineSources(
     ...accepted.where((source) => source.id != best.id),
   ];
   // A chart rejected only for incomplete/different lyric coverage can still
-  // supply chords when the selected lyrics contain multiple exact anchored
-  // phrases. It never becomes a lyric, section, or general-metadata donor.
+  // supply chords when multiple chart lines align clearly with the selected
+  // lyrics. It never becomes a lyric, section, or general-metadata donor.
   // Limit this path to a lyric-only selected base with no accepted chord
   // chart, so it cannot compete with a qualified arrangement.
   if (!best.hasChords && !accepted.any((source) => source.hasChords)) {
@@ -3140,13 +3186,15 @@ SongDocument combineSources(
         ArrangementLine(line.text, const [], directive: line.directive),
     ];
     for (final source in results) {
+      final chartCreditMatches =
+          source.extra['requiresLyricsAgreement'] == true &&
+          _sameArrangedSong(source.candidate, selected);
       if (source.matchKind != MatchKind.rejected ||
           source.matchReason != 'incomplete_or_different_lyrics' ||
           !source.hasChords ||
           source.hasPendingMatchCheck ||
-          source.extra['requiresLyricsAgreement'] == true ||
           source.extra['requiresRecordingLyricsAgreement'] == true ||
-          !_sameSong(source.candidate, selected) ||
+          !(_sameSong(source.candidate, selected) || chartCreditMatches) ||
           _version(source.candidate.title) != _version(selected.title) ||
           !explicitEditionsCompatible(
             selected,
@@ -3181,7 +3229,10 @@ SongDocument combineSources(
               !declaredKeyFitsChords(source.body, donorKey, donorCapo))) {
         continue;
       }
-      final anchored = _phraseChords(plain, _keyCorrectedBody(source));
+      final anchored = _fuzzyLineChords(plain, _keyCorrectedBody(source));
+      // Phrase anchors can satisfy ordinary lyrics-agreement requirements
+      // for this chord-only overlay. Recording-specific agreement remains a
+      // separate identity gate above and is never waived by text overlap.
       final matchedLines = anchored.entries
           .where((entry) => entry.value.isNotEmpty)
           .length;
