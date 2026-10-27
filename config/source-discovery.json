@@ -18,14 +18,14 @@
       "id": "startjamming",
       "name": "Start Jamming",
       "firstSeen": "2026-10-15",
-      "lastChecked": "2026-10-19",
-      "status": "deferred",
+      "lastChecked": "2026-10-27",
+      "status": "accepted",
       "documentation": [
         "https://www.startjamming.com/api",
         "https://www.startjamming.com/llms-full.txt"
       ],
-      "endpoint": "https://www.startjamming.com",
-      "reason": "Publisher API documentation at https://www.startjamming.com/api was reread on 2026-10-19; it specifies anonymous read endpoints, mandatory for=agent identification, canonical IDs/URLs, ETags, full-song fields and normalized arrangements, and says agent responses omit license. Bounded live checks at 2026-10-19T06:46:42Z and 06:46:43Z used documented exact searches and returned full records: Amazing Grace (id amazing-grace, exact match score 1.0, canonical https://www.startjamming.com/song/amazing-grace; lyrics string 519 characters, arrangement with 1 section) and Blue Moon of Kentucky (id blue-moon-of-kentucky, exact match score 1.0, canonical https://www.startjamming.com/song/blue-moon-of-kentucky; lyrics string 390 characters, arrangement with 2 sections). No raw lyrics were retained. Observed fields include id/title/slug/song_id/canonical_id/url/api_url, key, type, sections, arrangement, lyrics, signature and demo fields; artist is absent on both. This confirms exact identity-by-title and public extraction, not author/recording identity, reusable rights, or two repository canaries. The documented small bluegrass catalog likely overlaps broad lyric sources (Genius, LRCLIB, YouTube Music, Lyrics.ovh) on common songs; actual overlap was not measured. No per-work lyric license or attribution requirement was established; links/credits in returned pages do not grant reuse. Keep deferred pending rights and attribution review, compatible extraction for optional fields/normalized arrangement, and two independent repository canaries for claimed capabilities."
+      "endpoint": "https://www.startjamming.com/api",
+      "reason": "Accepted for compatible catalog preparation after two independent native repository canaries passed through bounded ordinary search, returned canonical full-song API resolution, selection, save, SQLite close/reopen and ChordPro export/import. Clinch Mountain Backstep is instrumental and establishes chords/metadata; Blue Moon of Kentucky is the vocal canary and establishes lyric extraction. Both retained arrangement identity, canonical attribution, key/time signature and source provenance. Agent-mode responses omit licensing; rights remain unknown per work. No artist or recording identity is inferred. Channel 6 publication, public-main integration, released compatible app, Android rollout and managed-cloud reachability remain pending. No source corpus size, overlap, array-variant live-proof or musical/transcription accuracy claim."
     },
     {
       "id": "lyrica",
@@ -479,6 +479,34 @@
         "https://en.deezercommunity.com/other-devices-49/deezer-api-current-track-82480"
       ],
       "reason": "Official API docs redirected to login. Official community staff said token-request process closed on2026-04-14; this is not proof every anonymous endpoint fails or current reopening status. Accessible developer terms restrict purpose/content use and do not establish the intended public-app/permanent-offline artwork and metadata use; permission contract needed. Artist/album/track families known, exact ID/ISRC/edition/country/attribution/quota/retry contract unverified. No catalog counts, API canaries, content downloads, credentials, acceptance, account creation or outreach."
+    },
+    {
+      "id": "lyricsplus",
+      "name": "LyricsPlus / YouLy+ backend",
+      "firstSeen": "2026-10-27",
+      "lastChecked": "2026-10-27",
+      "status": "deferred",
+      "documentation": [
+        "https://github.com/ibratabian17/LyricsPlus/blob/gelato/docs/endpoints.md",
+        "https://lyricsplus.prjktla.my.id/openapi.yaml",
+        "https://raw.githubusercontent.com/ibratabian17/LyricsPlus/gelato/internal/service/service.go"
+      ],
+      "endpoint": "https://lyricsplus.prjktla.my.id",
+      "reason": "Publisher documents anonymous catalog and V2/raw/TTML lyric reads. Four ordinary local requests at15:27–15:30Z returned HTTP200: two catalog searches then two ISRC/title/artist/album/duration-selected V2 reads, Billie Jean / Michael Jackson and Creep / Radiohead. Search also returns unrelated rows, so first-result selection is unsafe. V2 responses report Apple provenance, language, writers and word timing (61/38 lines,488/190 segments); no lyrics are included in this ledger. Identity fields are nested under processingTime.selectedSongMetadata, and published service.go can fill them and IDs from the request on cache hits; matching those fields alone is not independent recording evidence. No native adapter, cue parser, independent identity/lyric corroboration, app or cloud qualification, corpus count or incremental overlap has passed. Preserve unknown per-work rights and upstream attribution; Apache2.0 is the code license. No credentials, cookies, retry, mirror, forceReload, raw-route query or activation. Next: qualify source-specific timing/raw preservation and guarded work-level identity using independent lyric agreement before any recording/timing promotion."
+    },
+    {
+      "id": "songsterr",
+      "name": "Songsterr",
+      "firstSeen": "2026-10-27",
+      "lastChecked": "2026-10-27",
+      "status": "deferred",
+      "documentation": [
+        "https://www.songsterr.com/terms",
+        "https://www.songsterr.com/ai.txt",
+        "https://www.songsterr.com/help"
+      ],
+      "endpoint": "https://www.songsterr.com",
+      "reason": "Publisher terms describe a large user-contributed tab archive (80,000+ songs is the terms-page claim, not an independent count). The current machine-readable agent policy was fetched by one ordinary TLS-verified documentation GET, HTTP200, SHA256239732eeafed182917b11fcf7898b352f2e1fcb98e3a16019fbc45c14752c4e9. It permits viewing tab title/artist/tuning/notes and basic playback, while downloads/printing and other Plus features require subscription and may not be emulated through automation. A supported public programmatic search/extraction contract and app offline-use scope were not established. No tab/body/API canaries, accounts, downloads, purchases or paid-feature workaround were attempted. Defer a machine chart adapter; preserve permitted read-only linking/viewing as distinct from qualified app import. Corpus overlap and lyric/chord schema remain unmeasured."
     }
   ]
 }

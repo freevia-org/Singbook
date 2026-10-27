@@ -62,3 +62,15 @@ app release, Android visual/import testing and managed cloud reachability are
 separate gates. These local checks establish neither current production
 activation nor Android screen behavior nor cloud health. Older catalog/cache
 channels must keep their existing source rosters and preferences.
+
+## Channel 6 compatible catalog preparation (2026-10-27)
+
+The prospective `source-catalog-v6.json` advances the catalog to revision 18 and appends Start Jamming revision 1 while carrying every channel 5 source entry forward unchanged. The new entry is active and enabled by default, with catalog, lyrics, chords and metadata capabilities. Its two ordinary exact-title probes pin canonical candidate IDs `clinch-mountain-backstep` (instrumental; body, chords, metadata) and `blue-moon-of-kentucky` (vocal; body, chords, metadata). Each probe has an exact-title query and a full canonical candidate, and requires `identityScope`, key and `timeSignature`. The maintenance harness independently searches for and checks each pinned ID before resolving it; the vocal probe establishes lyric coverage while lyrics may be absent from the instrumental. Resolution follows each candidate’s canonical API URL with `for=agent`.
+
+This is compatible catalog preparation, not publication or production activation. Public-main integration and serving the v6 catalog, compatible app publication, Android rollout/UI qualification, managed-cloud reachability and hosted checks remain pending. Preserve channel 1–5 assets, stream behavior, cache keys and saved opt-outs. The native adapter registration alone does not activate Start Jamming in older catalog channels.
+
+The catalog validator accepts an unknown artist on a chord-arrangement canary
+only when it has an explicit search, matching expected title, stable candidate
+ID, no recording-ID claim and a safe HTTPS URL on a declared source host.
+Ordinary lyric/recording probes still require an artist. Discovery and combined
+song matching retain their existing identity checks.

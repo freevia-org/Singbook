@@ -9,7 +9,11 @@ import '../domain/arrangement.dart' as arrangement;
 import '../domain/chordpro.dart';
 import '../domain/chord_key_estimate.dart' show estimateChordKey;
 import '../domain/combine.dart'
-    show checkedChordKeyEstimate, recordingCompatible, sourcedArrangementKey;
+    show
+        checkedChordKeyEstimate,
+        combineSources,
+        recordingCompatible,
+        sourcedArrangementKey;
 import '../domain/metadata_enrichment.dart' show displayMetadataFor;
 import '../domain/models.dart';
 import '../domain/search_grouping.dart';
@@ -587,13 +591,58 @@ class AppControllerAdapter extends VerseUiController {
     return [for (final entry in keyed) entry.card];
   }
 
-  bool _isUsableLyricResult(SourceResult result, {bool allowRejected = false}) {
+  bool _isUsableResult(SourceResult result, {bool allowRejected = false}) {
     return (allowRejected || result.matchKind != MatchKind.rejected) &&
-        _hasLyrics(result);
+        _hasUsableBody(result);
   }
 
   bool _hasLyrics(SourceResult result) =>
       arrangement.plainLyrics(result.body).trim().isNotEmpty;
+
+  final _chordArrangementUsability =
+      Expando<({SongCandidate selection, bool usable})>();
+
+  bool _hasUsableBody(SourceResult result) {
+    if (_hasLyrics(result)) return true;
+    final selected = app.selection;
+    if (selected == null ||
+        selected.identity != result.candidate.identity ||
+        result.candidate.metadata['identityScope'] != 'arrangement' ||
+        !_hasChordRows(result.body) ||
+        result.hasPendingMatchCheck ||
+        !app.isSourceReady(result) ||
+        !const {
+          MatchKind.sameSong,
+          MatchKind.sameRecording,
+        }.contains(result.matchKind)) {
+      return false;
+    }
+    final cached = _chordArrangementUsability[result];
+    if (cached != null && identical(cached.selection, selected)) {
+      return cached.usable;
+    }
+    // The domain permits an explicitly selected, verified own arrangement
+    // without a lyric line. Reuse its identity/edition rules rather than
+    // promoting arbitrary chord-only responses in the presentation layer.
+    var usable = false;
+    try {
+      usable = combineSources(selected, [
+        result,
+      ], preferredSourceId: result.id).hasChords;
+    } on FormatException {
+      // A chart that cannot be saved must not appear ready to open.
+    }
+    _chordArrangementUsability[result] = (selection: selected, usable: usable);
+    return usable;
+  }
+
+  bool _hasUsableDocument(SongDocument document) =>
+      arrangement.plainLyrics(document.body).trim().isNotEmpty ||
+      _hasChordRows(document.body);
+
+  bool _hasChordRows(String body) => arrangement
+      .parseArrangement(body)
+      .any((line) => !line.directive && line.chords.isNotEmpty);
 
   bool _hasUsableTiming(Iterable<TimingTrack> tracks) => tracks.any(
     (track) => track.status == TimingStatus.usable && track.cues.isNotEmpty,
@@ -921,10 +970,7 @@ class AppControllerAdapter extends VerseUiController {
             ),
             artworkUrl: _metaString(combined.metadata['artworkUrl']),
             hasLyrics: arrangement.plainLyrics(combined.body).trim().isNotEmpty,
-            isUsableVersion: arrangement
-                .plainLyrics(combined.body)
-                .trim()
-                .isNotEmpty,
+            isUsableVersion: _hasUsableDocument(combined),
             hasChords: combined.hasChords,
             hasTiming: _hasUsableTiming(combined.timingTracks),
             sameRecording:
@@ -1009,7 +1055,7 @@ class AppControllerAdapter extends VerseUiController {
       error: app.errorCode,
       discoveryError: app.errorCode,
       discovering: app.discovering,
-      noUsableLyrics: !app.discovering && !app.results.any(_hasLyrics),
+      noUsableLyrics: !app.discovering && !app.results.any(_hasUsableBody),
       providerChecks: checks,
     );
   }
@@ -1158,7 +1204,7 @@ class AppControllerAdapter extends VerseUiController {
           .where((source) => source.id == song.extra['selectedSourceId'])
           .firstOrNull
           ?.candidate ??
-      song.sources.where(_isUsableLyricResult).firstOrNull?.candidate;
+      song.sources.where(_isUsableResult).firstOrNull?.candidate;
 
   bool _versionMatchesFilters(SourceVersionData item) =>
       (!_filters.chordsOnly || item.hasChords) &&
@@ -1234,7 +1280,7 @@ class AppControllerAdapter extends VerseUiController {
       rating: _metaDouble(result.metadata['rating']),
       ratingCount: _metaInt(result.metadata['ratingCount']),
       hasLyrics: arrangement.plainLyrics(result.body).trim().isNotEmpty,
-      isUsableVersion: _hasLyrics(result),
+      isUsableVersion: _hasUsableBody(result),
       hasChords: result.hasChords,
       hasTiming: _hasUsableTiming(result.timingTracks),
       sameRecording: sameRecording,
@@ -1252,7 +1298,7 @@ class AppControllerAdapter extends VerseUiController {
       bodyLines: lines,
       contributions: _sourceContributions(result),
       isChecking: isChecking,
-      canSave: _hasLyrics(result) && savedId == null,
+      canSave: _hasUsableBody(result) && savedId == null,
       savedSongId: savedId,
     );
   }
@@ -1903,13 +1949,12 @@ class AppControllerAdapter extends VerseUiController {
     if (selectedId == 'combined' &&
         (!_combinedMatchesFilters(app.combined) ||
             app.combined == null ||
-            arrangement.plainLyrics(app.combined!.body).trim().isEmpty)) {
+            !_hasUsableDocument(app.combined!))) {
       postNotice(UiNotice.songSaveFailed);
       return;
     }
     if (selectedId != 'combined' &&
-        (version == null ||
-            !_isUsableLyricResult(version, allowRejected: true))) {
+        (version == null || !_isUsableResult(version, allowRejected: true))) {
       postNotice(UiNotice.songSaveFailed);
       return;
     }
