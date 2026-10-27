@@ -19,9 +19,23 @@ and durable snapshot. Bundle and cache loading do not depend on a network call.
 No provider update changes saved songs, ChordPro provenance or user preferences.
 Catalog storage is separate from the user's synced application settings.
 Channel 3 reads/writes `sourceCatalog:v3` and never overwrites either
-`sourceCatalog:v2` or `sourceCatalog`, or provider preferences. It starts from
-its own bundled snapshot when the new cache is absent; independently higher
-older-channel revisions cannot lock out channel-3 updates. Channel 2 retains
+`sourceCatalog:v2` or `sourceCatalog`, or provider preferences. Without a valid
+current-channel cache, offline startup validates the closest older cached channel
+against its own bundle and the current compiled adapters. It carries newer
+compatible source revisions, added declarative sources, disabled/retired entries
+and removals into an in-memory view of the new bundle. New compiled sources and
+newer bundled source revisions remain; a retired bundled source is never
+resurrected. The old envelope revision is not imported, and startup writes
+neither cache.
+
+This is an offline upgrade fallback, not a synthetic publisher snapshot. The
+first successfully validated and persisted current-channel refresh replaces it
+with that channel's complete authoritative snapshot, including omissions. Failed
+downloads, invalid responses and failed cache writes retain the fallback.
+Subsequent offline starts use the valid current-channel cache. Independently
+higher old envelope/source revisions cannot lock out the new channel. A pending
+search is cancelled if the transition changes effective configuration, even if
+the envelope revision is unchanged. Channel 2 retains
 its existing cache and URL. Unknown native providers cause a refresh to fail
 before any live/cache mutation. Never add an unknown native ID to an older
 channel, even disabled. In particular AMLL is absent from both older channels.
