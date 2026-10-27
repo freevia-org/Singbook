@@ -71,6 +71,8 @@ bool _isVersionHeading(String line, String title) {
 
 /// Splits a provider result that explicitly contains multiple complete charts.
 /// Ordinary section labels (verse, chorus, bridge, etc.) never create a split.
+/// Version headings and capo declarations delimit views; later key or tuning
+/// annotations can describe a modulation and remain inside the same chart.
 /// The original result remains the canonical source payload; returned views
 /// carry only their own chart text and parent references.
 List<SourceResult> splitChartArrangements(SourceResult source) {
@@ -87,13 +89,10 @@ List<SourceResult> splitChartArrangements(SourceResult source) {
 
   for (var i = 0; i < lines.length; i++) {
     final line = lines[i];
-    final explicitSetup =
-        _capoValue(line) != null ||
-        _tuningLine.hasMatch(line) ||
-        _keyLine.hasMatch(line);
     if (i > segmentStart &&
         currentHasChords(i) &&
-        (explicitSetup || _isVersionHeading(line, source.candidate.title))) {
+        (_capoValue(line) != null ||
+            _isVersionHeading(line, source.candidate.title))) {
       boundaries.add(i);
       segmentStart = i;
     }
@@ -108,24 +107,28 @@ List<SourceResult> splitChartArrangements(SourceResult source) {
     final rawLines = lines.sublist(starts[part], ends[part]);
     final setup = <String, Object?>{};
     final bodyLines = <String>[];
+    var chartStarted = false;
     for (final line in rawLines) {
       final capo = _capoValue(line);
       final tuning = _tuningLine.firstMatch(line);
       final key = _keyLine.firstMatch(line);
-      if (capo != null) {
+      if (!chartStarted && capo != null) {
         setup['capo'] = capo;
         continue;
       }
-      if (tuning != null) {
+      if (!chartStarted && tuning != null) {
         setup['tuning'] = tuning.group(1)!.trim();
         continue;
       }
-      if (key != null) {
+      if (!chartStarted && key != null) {
         setup['key'] = key.group(1)!.trim();
         continue;
       }
-      if (_isVersionHeading(line, source.candidate.title)) continue;
+      if (!chartStarted && _isVersionHeading(line, source.candidate.title)) {
+        continue;
+      }
       bodyLines.add(line);
+      chartStarted = chartStarted || containsChords(line);
     }
     final viewBody = bodyLines.join('\n').trim();
     if (!containsChords(viewBody)) continue;

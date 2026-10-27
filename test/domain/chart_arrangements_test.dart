@@ -78,6 +78,51 @@ Tuning: D A D G B E
     expect(splitChartArrangements(source), isEmpty);
   });
 
+  test('bridge key and tuning declarations do not create another version', () {
+    const body = '''Key: C
+Tuning: E A D G B E
+[C]quiet lantern
+[Bridge]
+Key: E
+Tuning: D A D G B E
+[E]silver morning''';
+    final parent = _source(body);
+    expect(splitChartArrangements(parent), isEmpty);
+    expect(parent.body, body);
+  });
+
+  test('only setup before a version starts scopes its overall metadata', () {
+    const body = '''Key: C
+Tuning: E A D G B E
+[C]quiet lantern
+[Bridge]
+Key: E
+Tuning: D A D G B E
+[E]silver morning
+Arrangement 2
+Key: Am
+Tuning: D G C F A D
+[Am]second garden
+[Bridge]
+Key: Dm
+Tuning: D A D G B E
+[Dm]gentle river''';
+    final parent = _source(body);
+    final views = splitChartArrangements(parent);
+    expect(views, hasLength(2));
+    for (final metadata in [views[0].metadata, views[0].candidate.metadata]) {
+      expect(metadata['key'], 'C');
+      expect(metadata['tuning'], 'E A D G B E');
+    }
+    for (final metadata in [views[1].metadata, views[1].candidate.metadata]) {
+      expect(metadata['key'], 'Am');
+      expect(metadata['tuning'], 'D G C F A D');
+    }
+    expect(views[0].body, contains('Key: E\nTuning: D A D G B E'));
+    expect(views[1].body, contains('Key: Dm\nTuning: D A D G B E'));
+    expect(parent.body, body);
+  });
+
   test('does not interpret prose mentioning versions as chart headings', () {
     final source = _source('''[C]quiet lantern
 I remember version 2 of our summer

@@ -4529,6 +4529,7 @@ bool _recordingKeyBound(
   List<SourceResult> sources,
   JsonMap recording,
 ) {
+  if (recording['recordingScope'] == 'song') return false;
   final ids = (recording['ids'] as List? ?? const [])
       .whereType<String>()
       .toSet();
@@ -4578,7 +4579,12 @@ List<SourceResult> _recordingArrangementViews(
     final key = recording['key'];
     if (key is String &&
         _keyIdentity(key) != null &&
-        _recordingKeyBound(selected, sources, recording)) {
+        (_recordingKeyBound(selected, sources, recording) ||
+            const {
+                  MatchKind.sameSong,
+                  MatchKind.sameRecording,
+                }.contains(source.matchKind) &&
+                _sameArrangedSong(selected, source.candidate))) {
       targets.add(key);
     }
   }
@@ -4591,6 +4597,13 @@ List<SourceResult> _recordingArrangementViews(
   }
   final views = <String, SourceResult>{};
   for (final target in signatures) {
+    final bound = sources.any((source) {
+      final recording = jsonMap(source.extra['keyRecording']);
+      final key = recording['key'];
+      return key is String &&
+          _keyDistance(key, target) == 0 &&
+          _recordingKeyBound(selected, sources, recording);
+    });
     for (final source in sources) {
       if (!source.hasChords ||
           source.extra['hasArrangementViews'] == true ||
@@ -4631,12 +4644,18 @@ List<SourceResult> _recordingArrangementViews(
         'publishedCapo': oldCapo,
         'capo': newCapo,
         'recordingKey': target,
-        'basis': 'bound_recording_key_and_chart_harmony',
+        'recordingScope': bound ? 'recording' : 'song',
+        'basis': bound
+            ? 'bound_recording_key_and_chart_harmony'
+            : 'same_song_key_and_chart_harmony',
       };
       final id =
           'recording-${_bodyHash(jsonEncode(descriptor)).substring(0, 16)}';
       final view = SourceResult(
-        candidate: source.candidate,
+        candidate: SongCandidate.fromJson({
+          ...source.candidate.toJson(),
+          'metadata': {...source.candidate.metadata, 'capo': newCapo},
+        }),
         body: source.body,
         metadata: {...source.metadata, 'capo': newCapo},
         matchKind: MatchKind.sameSong,
@@ -4911,7 +4930,11 @@ EvidenceRanking _rankSourceCombination(
         if (source.extra['keyConsensus'] == false)
           'sourceKeyAgreement': source.extra['keyShift'] is int ? -6 : -12,
         if (source.extra['recordingArrangement'] is Map)
-          'derivedRecordingSetup': -6,
+          'derivedRecordingSetup':
+              jsonMap(source.extra['recordingArrangement'])['recordingScope'] ==
+                  'song'
+              ? -10
+              : -6,
         if (recordingEvidence.any((evidence) => evidence.bound))
           'recordingKeyAgreement':
               recordingEvidence
@@ -4925,6 +4948,15 @@ EvidenceRanking _rankSourceCombination(
                   )
               ? 6
               : -8,
+        if (!recordingEvidence.any((evidence) => evidence.bound) &&
+            recordingEvidence.isNotEmpty)
+          'songKeyAgreement':
+              recordingEvidence.any(
+                (evidence) =>
+                    _chartSupportsSoundingKey(source, selected, evidence.key),
+              )
+              ? 4
+              : -4,
       };
     }
     return const {};
@@ -5203,7 +5235,8 @@ EvidenceRanking _rankSourceCombination(
     );
   }
   bool pairCompatible(EvidenceClaim a, EvidenceClaim b) {
-    if (a.field.startsWith('${b.field}.') || b.field.startsWith('${a.field}.')) {
+    if (a.field.startsWith('${b.field}.') ||
+        b.field.startsWith('${a.field}.')) {
       return false;
     }
     EvidenceClaim? chart;

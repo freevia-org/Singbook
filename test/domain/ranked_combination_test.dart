@@ -69,6 +69,56 @@ List<Map<String, dynamic>> _claims(SongDocument song, String field) => [
 
 void main() {
   test(
+    'song-scoped recording evidence offers a setup without claiming recording identity',
+    () {
+      final chart = _source(
+        'chart',
+        body:
+            '[G]Amber lanterns [Am]glow above the quiet water\n'
+            '[C]Silver rain [D]returns beneath the evening sky\n'
+            '[G]Every window [Am]keeps a little golden light\n'
+            '[C]Morning carries [D]every dream back home',
+      );
+      final analysis = _source(
+        'analysis',
+        body: '',
+        extra: {
+          'keyRecording': {
+            'key': 'A',
+            'ids': ['USAAA2400001'],
+            'selectedIdentity': _selected.identity,
+            'recordingScope': 'song',
+          },
+        },
+      );
+      final combined = combineSources(_selected, [
+        _source('lyrics'),
+        chart,
+        analysis,
+      ]);
+      expect(combined.metadata['key'], 'A');
+      expect(combined.metadata['capo'], 2);
+      final reading = _claims(
+        combined,
+        'metadata.key',
+      ).singleWhere((claim) => claim['providerId'] == 'recording-key-analysis');
+      expect(reading['matchQuality'], 'sameSong');
+      expect(reading['sourceScope'], 'song');
+      final view = combined.sources.singleWhere(
+        (source) => source.extra['recordingArrangement'] is Map,
+      );
+      expect(view.extra['recordingArrangement']['recordingScope'], 'song');
+      expect(recordingCompatible(_selected, view), isFalse);
+      expect(
+        combined.sources
+            .singleWhere((source) => source.id == chart.id)
+            .metadata['capo'],
+        isNull,
+      );
+    },
+  );
+
+  test(
     'archived compound payloads still expose separate arrangement views',
     () {
       final earlier = _source(
@@ -189,6 +239,8 @@ void main() {
     expect(derived.candidate.id, chart.candidate.id);
     expect(derived.body, chart.body);
     expect(derived.metadata['capo'], 2);
+    expect(derived.candidate.metadata['capo'], 2);
+    expect(derived.extra['parentCandidate'], chart.candidate.toJson());
     expect(recordingCompatible(_selected, derived), isFalse);
     final capoDecision =
         (_ranking(combined)['appliedFields'] as Map)['metadata.capo'] as Map;

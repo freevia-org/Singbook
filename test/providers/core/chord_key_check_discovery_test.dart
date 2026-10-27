@@ -103,6 +103,45 @@ class _Provider implements LyricsProvider {
   }
 }
 
+class _MetadataProvider implements LyricsProvider {
+  _MetadataProvider(
+    this.id, {
+    this.version = 'album version',
+    this.duration = 262,
+  });
+  final String id, version;
+  final double duration;
+  @override
+  ProviderDefinition get definition =>
+      ProviderDefinition(id: id, name: id, capabilities: {'metadata'});
+  @override
+  Future<List<SongCandidate>> search(
+    String query, {
+    CancellationToken? cancel,
+  }) async => [];
+  @override
+  Future<SourceResult> resolve(
+    SongCandidate selection, {
+    CancellationToken? cancel,
+  }) async => SourceResult(
+    candidate: SongCandidate(
+      providerId: id,
+      id: 'album-recording',
+      title: selection.title,
+      artist: selection.artist,
+      album: 'Harbor Album',
+      durationSeconds: duration,
+      metadata: {'identityScope': 'recording', 'version': version},
+    ),
+    body: '',
+    metadata: {
+      'isrcs': ['USAAA2400001'],
+      'version': version,
+    },
+    extra: {'metadataOnly': true},
+  );
+}
+
 void main() {
   test('disagreeing charts are double checked and marked by key', () async {
     final ug = _Provider('ug', {
@@ -260,6 +299,202 @@ void main() {
     );
     List<SourceResult> chartsOf(List<SourceResult> results) =>
         results.where((r) => r.hasChords).toList();
+
+    const fallbackSelection = SongCandidate(
+      providerId: 'lyrics',
+      id: 'song',
+      title: 'Harbor Song',
+      artist: 'Test Artist',
+      metadata: {
+        'album': 'Harbor Album',
+        'durationSeconds': 262,
+        'mediaLinks': [
+          {
+            'kind': 'audio',
+            'url': 'https://open.spotify.com/track/1kgdslQYmeTR4thk9whoRw',
+          },
+        ],
+      },
+    );
+    RecordingKeyService fallbackService(
+      List<Uri> requests, {
+      bool exactWorks = false,
+      bool failExact = false,
+      int fallbackKey = 7,
+      void Function()? onFallback,
+    }) => RecordingKeyService(
+      ProviderTransport(
+        hostInterval: Duration.zero,
+        client: MockClient((request) async {
+          requests.add(request.url);
+          final fallback = request.url.queryParameters['ids'] == 'USAAA2400001';
+          if (fallback) onFallback?.call();
+          return http.Response(
+            jsonEncode({
+              'content': [
+                if (fallback || exactWorks)
+                  {
+                    'isrc': fallback ? 'USAAA2400001' : 'USRE19100010',
+                    if (!fallback)
+                      'href':
+                          'https://open.spotify.com/track/1kgdslQYmeTR4thk9whoRw',
+                    'key': fallback ? fallbackKey : 7,
+                    'mode': 1,
+                  },
+              ],
+            }),
+            !fallback && failExact ? 503 : 200,
+            headers: {'content-type': 'application/json'},
+          );
+        }),
+      ),
+    );
+    List<LyricsProvider> fallbackProviders({
+      bool wrongEdition = false,
+      double duration = 262,
+    }) => [
+      _Provider('lyrics', {'song': _lines.join('\n')}, chords: false),
+      _Provider('ug', {'g': clearG}),
+      _MetadataProvider(
+        'metadata',
+        version: wrongEdition ? 'live' : 'album version',
+        duration: duration,
+      ),
+    ];
+    test(
+      'empty exact analysis falls back without claiming recording identity',
+      () async {
+        final requests = <Uri>[];
+        final results = await SourceDiscoveryService(
+          fallbackProviders(),
+          recordingKeys: fallbackService(requests),
+        ).discover(fallbackSelection);
+        expect(requests.map((uri) => uri.queryParameters['ids']), [
+          '1kgdslQYmeTR4thk9whoRw',
+          'USAAA2400001',
+        ]);
+        final chart = chartsOf(results).single;
+        final evidence = chart.extra['keyRecording'] as Map;
+        expect(evidence['key'], 'G');
+        expect(evidence['recordingScope'], 'song');
+        expect(evidence, isNot(contains('selectedIdentity')));
+        expect(evidence['identifierSourceIds'], ['metadata:album-recording']);
+        expect(evidence['identifierProviders'], ['metadata']);
+        expect(chart.extra, isNot(contains('keyShift')));
+      },
+    );
+    test(
+      'song-scoped analysis is retained without authorizing a chart shift',
+      () async {
+        final requests = <Uri>[];
+        final results = await SourceDiscoveryService(
+          [
+            _Provider('lyrics', {'song': _lines.join('\n')}, chords: false),
+            _Provider('ug', {'g': clearG}, labels: {'g': 'C'}),
+            _MetadataProvider('metadata'),
+          ],
+          recordingKeys: fallbackService(requests, fallbackKey: 0),
+        ).discover(fallbackSelection);
+        final chart = chartsOf(results).single;
+        expect(chart.extra['keyRecording'], containsPair('key', 'C'));
+        expect(
+          chart.extra['keyRecording'],
+          containsPair('recordingScope', 'song'),
+        );
+        expect(chart.extra, isNot(contains('keyShift')));
+      },
+    );
+    test('a conflicting edition cannot supply fallback identifiers', () async {
+      final requests = <Uri>[];
+      final results =
+          await SourceDiscoveryService(
+            fallbackProviders(wrongEdition: true),
+            recordingKeys: fallbackService(requests),
+          ).discover(
+            SongCandidate(
+              providerId: fallbackSelection.providerId,
+              id: fallbackSelection.id,
+              title: fallbackSelection.title,
+              artist: fallbackSelection.artist,
+              metadata: {...fallbackSelection.metadata, 'version': 'studio'},
+            ),
+          );
+      expect(requests.map((uri) => uri.queryParameters['ids']), [
+        '1kgdslQYmeTR4thk9whoRw',
+      ]);
+      expect(chartsOf(results).single.extra, isNot(contains('keyRecording')));
+    });
+    test(
+      'a different length recording cannot supply fallback identifiers',
+      () async {
+        final requests = <Uri>[];
+        final results = await SourceDiscoveryService(
+          fallbackProviders(duration: 225),
+          recordingKeys: fallbackService(requests),
+        ).discover(fallbackSelection);
+        expect(requests.map((uri) => uri.queryParameters['ids']), [
+          '1kgdslQYmeTR4thk9whoRw',
+        ]);
+        expect(chartsOf(results).single.extra, isNot(contains('keyRecording')));
+        expect(
+          results.any((source) => source.candidate.providerId == 'metadata'),
+          isTrue,
+          reason:
+              'The alternative recording metadata remains evidence even when it cannot identify this analysis.',
+        );
+      },
+    );
+    test(
+      'an exact analysis prevents fallback and retains recording scope',
+      () async {
+        final requests = <Uri>[];
+        final results = await SourceDiscoveryService(
+          fallbackProviders(),
+          recordingKeys: fallbackService(requests, exactWorks: true),
+        ).discover(fallbackSelection);
+        expect(requests, hasLength(1));
+        final evidence = chartsOf(results).single.extra['keyRecording'] as Map;
+        expect(evidence['recordingScope'], 'recording');
+        expect(evidence['selectedIdentity'], fallbackSelection.identity);
+      },
+    );
+    test(
+      'a failed exact request does not trigger a fallback request',
+      () async {
+        final requests = <Uri>[];
+        await SourceDiscoveryService(
+          fallbackProviders(),
+          recordingKeys: fallbackService(requests, failExact: true),
+        ).discover(fallbackSelection);
+        expect(requests, isNotEmpty);
+        expect(
+          requests.every(
+            (uri) => uri.queryParameters['ids'] == '1kgdslQYmeTR4thk9whoRw',
+          ),
+          isTrue,
+        );
+      },
+    );
+    test(
+      'disabling a fallback identifier provider removes its analysis',
+      () async {
+        final requests = <Uri>[];
+        final disabled = CancellationToken();
+        final results =
+            await SourceDiscoveryService(
+              fallbackProviders(),
+              recordingKeys: fallbackService(
+                requests,
+                onFallback: disabled.cancel,
+              ),
+            ).discover(
+              fallbackSelection,
+              providerCancellation: {'metadata': disabled},
+            );
+        expect(requests, hasLength(2));
+        expect(chartsOf(results).single.extra, isNot(contains('keyRecording')));
+      },
+    );
 
     test('a recording key agreeing with a label moves the chart', () async {
       final requests = <Uri>[];

@@ -1996,42 +1996,205 @@ class SourceDiscoveryService {
         .toList();
   }
 
-  /// The key measured from the selected recording's audio, when results
-  /// already identified as that recording carry a Spotify link or ISRC.
-  /// Failures and missing identifiers give null; cancellation still throws.
-  /// [providers] names the providers whose results gave the identifiers.
-  Future<({RecordingKey key, Set<String> providers})?> _recordingKey(
+  /// Prefer identifiers bound to the selection. A clean empty analysis can
+  /// fall back to compatible same-song recordings without asserting that they
+  /// identify the selected recording. Failed requests never trigger retries.
+  Future<
+    ({
+      RecordingKey key,
+      Set<String> providers,
+      List<String> sourceIds,
+      bool recordingBound,
+    })?
+  >
+  _recordingKey(
+    SongCandidate selection,
     List<SourceResult> results,
     bool Function(String providerId) eligible, {
     CancellationToken? cancel,
   }) async {
     final service = recordingKeys;
     if (service == null) return null;
-    final spotify = <String>{}, isrcs = <String>{}, providers = <String>{};
-    for (final result in results) {
-      if (result.matchKind != MatchKind.sameRecording ||
-          !eligible(result.candidate.providerId)) {
-        continue;
-      }
-      final ids = recordingIdentifiers(result);
-      if (ids.spotify.isEmpty && ids.isrcs.isEmpty) continue;
-      spotify.addAll(ids.spotify);
-      isrcs.addAll(ids.isrcs);
-      providers.add(result.candidate.providerId);
+    final exact = results
+        .where(
+          (result) =>
+              result.matchKind == MatchKind.sameRecording &&
+              !result.hasPendingMatchCheck &&
+              eligible(result.candidate.providerId),
+        )
+        .toList();
+    double? duration(SourceResult source) {
+      final value =
+          source.candidate.durationSeconds ??
+          source.metadata['durationSeconds'] ??
+          source.metadata['duration'] ??
+          source.candidate.metadata['durationSeconds'] ??
+          source.candidate.metadata['duration'];
+      return value is num && value.isFinite && value > 0
+          ? value.toDouble()
+          : null;
     }
-    if (spotify.isEmpty && isrcs.isEmpty) return null;
-    cancel?.throwIfCancelled();
+
+    String? album(SourceResult source) {
+      final value =
+          source.candidate.album ??
+          source.metadata['album'] ??
+          source.candidate.metadata['album'];
+      return value is String && value.trim().isNotEmpty ? value : null;
+    }
+
+    final selectedSource = SourceResult(candidate: selection, body: '');
+    final knownAlbums = <String>{
+      if (album(selectedSource) case final String value)
+        normalizedIdentity(value),
+      for (final source in exact)
+        if (album(source) case final String value) normalizedIdentity(value),
+    };
+    final selectedDuration = duration(selectedSource);
+    final knownDurations = selectedDuration != null
+        ? [selectedDuration]
+        : exact.map(duration).whereType<double>().toList();
+    bool fallbackMatches(SourceResult source) {
+      if (source.matchKind != MatchKind.sameSong ||
+          source.hasPendingMatchCheck ||
+          !eligible(source.candidate.providerId) ||
+          !sameSong(selection, source.candidate) ||
+          !explicitEditionsCompatible(
+            selection,
+            source.candidate,
+            metadata: source.metadata,
+            extra: source.extra,
+          )) {
+        return false;
+      }
+      for (final anchor in exact) {
+        if (!explicitEditionsCompatible(
+          anchor.candidate,
+          source.candidate,
+          selectedMetadata: anchor.metadata,
+          selectedExtra: anchor.extra,
+          metadata: source.metadata,
+          extra: source.extra,
+        )) {
+          return false;
+        }
+      }
+      final length = duration(source);
+      if (length != null &&
+          knownDurations.isNotEmpty &&
+          !knownDurations.any((known) => (known - length).abs() <= 3)) {
+        return false;
+      }
+      final albums = <String>{
+        if (album(source) case final String value) normalizedIdentity(value),
+        for (final map in [source.candidate.metadata, source.metadata])
+          for (final raw
+              in map['releases'] is List ? map['releases'] as List : const [])
+            if (raw is Map && raw['title'] is String)
+              normalizedIdentity(raw['title'] as String),
+      };
+      return knownAlbums.isEmpty ||
+          albums.isEmpty ||
+          albums.any(knownAlbums.contains);
+    }
+
     final lookupCancel = CancellationToken();
     cancel?.cancelled.then((_) => lookupCancel.cancel());
-    try {
+    final tried = <String>{};
+    Future<
+      ({
+        RecordingKey key,
+        Set<String> providers,
+        List<String> sourceIds,
+        bool recordingBound,
+      })?
+    >
+    lookup(List<SourceResult> sources, bool recordingBound) async {
+      final spotify = <String>{}, isrcs = <String>{}, providers = <String>{};
+      final sourceIds = <String>{};
+      for (final source in sources) {
+        if (!eligible(source.candidate.providerId)) continue;
+        final ids = recordingIdentifiers(source);
+        final freshSpotify = ids.spotify
+            .where((id) => !tried.contains(id))
+            .toList();
+        final freshIsrcs = ids.isrcs
+            .where((id) => !tried.contains(id))
+            .toList();
+        if (freshSpotify.isEmpty && freshIsrcs.isEmpty) continue;
+        spotify.addAll(freshSpotify);
+        isrcs.addAll(freshIsrcs);
+        providers.add(source.candidate.providerId);
+        sourceIds.add(source.id);
+      }
+      if (spotify.isEmpty && isrcs.isEmpty) return null;
+      tried.addAll({...spotify, ...isrcs});
+      cancel?.throwIfCancelled();
       final key = await service.lookup(
         spotifyIds: spotify.toList(),
         isrcs: isrcs.toList(),
         cancel: lookupCancel,
       );
+      cancel?.throwIfCancelled();
       return key == null || !providers.every(eligible)
           ? null
-          : (key: key, providers: providers);
+          : (
+              key: key,
+              providers: providers,
+              sourceIds: sourceIds.toList()..sort(),
+              recordingBound: recordingBound,
+            );
+    }
+
+    try {
+      final bound = await lookup(exact, true);
+      if (bound != null) return bound;
+      // Cancellation of an identity witness invalidates this lookup batch.
+      if (!exact.every((source) => eligible(source.candidate.providerId))) {
+        return null;
+      }
+      final fallback = results.where(fallbackMatches).where((source) {
+        final ids = recordingIdentifiers(source);
+        return [...ids.spotify, ...ids.isrcs].any((id) => !tried.contains(id));
+      }).toList();
+      int preference(SourceResult source) {
+        var score = 0;
+        final length = duration(source);
+        if (length != null &&
+            knownDurations.any((known) => (known - length).abs() <= 3)) {
+          score += 4;
+        }
+        if (album(source) case final String value) {
+          if (knownAlbums.contains(normalizedIdentity(value))) score += 4;
+        }
+        final edition = [
+          source.candidate.title,
+          for (final map in [
+            source.candidate.metadata,
+            source.metadata,
+            source.extra,
+          ])
+            for (final field in const [
+              'version',
+              'edition',
+              'disambiguation',
+              'recording',
+            ])
+              if (map[field] is String) map[field] as String,
+        ].join(' ').toLowerCase();
+        if (RegExp(r'\b(?:album version|studio)\b').hasMatch(edition)) {
+          score += 1;
+        }
+        return score;
+      }
+
+      fallback.sort((a, b) {
+        final ranked = preference(b).compareTo(preference(a));
+        return ranked != 0 ? ranked : a.id.compareTo(b.id);
+      });
+      // Keep each fallback recording's identifiers together. Different edits
+      // must not vote as if they were one recording merely sharing a song.
+      return fallback.isEmpty ? null : await lookup([fallback.first], false);
     } on ProviderException {
       cancel?.throwIfCancelled();
       return null;
@@ -2071,9 +2234,17 @@ class SourceDiscoveryService {
   }) async {
     bool eligible(String providerId) =>
         providerCancellation[providerId]?.isCancelled != true;
-    JsonMap recordingEvidence(RecordingKey key) => {
+    JsonMap recordingEvidence(
+      RecordingKey key,
+      bool bound, {
+      List<String> sourceIds = const [],
+      Set<String> providers = const {},
+    }) => {
       ...key.toJson(),
-      'selectedIdentity': selection.identity,
+      'recordingScope': bound ? 'recording' : 'song',
+      'identifierSourceIds': sourceIds,
+      'identifierProviders': providers.toList()..sort(),
+      if (bound) 'selectedIdentity': selection.identity,
     };
     List<int> acceptedIndexes() => [
       for (var i = 0; i < results.length; i++)
@@ -2087,8 +2258,13 @@ class SourceDiscoveryService {
     final charts = [for (final i in indexes) results[i].body];
     Object? setup(SourceResult source, String field) =>
         source.metadata[field] ?? source.candidate.metadata[field];
-    final heard = await _recordingKey(results, eligible, cancel: cancel);
-    var recording = heard?.key;
+    final heard = await _recordingKey(
+      selection,
+      results,
+      eligible,
+      cancel: cancel,
+    );
+    var recording = heard?.recordingBound == true ? heard!.key : null;
     // Doubt: charts in different keys, or a chart whose declared key
     // contradicts its own chords (a transposed chart or a missing capo).
     // Charts are compared by sounding key: the same shapes with a different
@@ -2120,7 +2296,7 @@ class SourceDiscoveryService {
     });
     // The recording's measured key disagreeing with a chart's chords (beyond
     // a relative major/minor) is doubt as well.
-    final measured = heard?.key.key;
+    final measured = recording?.key;
     final unheard =
         measured != null &&
         indexes.any((i) {
@@ -2138,7 +2314,12 @@ class SourceDiscoveryService {
           results[i] = results[i].copyWith(
             extra: {
               ...results[i].extra,
-              'keyRecording': recordingEvidence(heard.key),
+              'keyRecording': recordingEvidence(
+                heard.key,
+                heard.recordingBound,
+                sourceIds: heard.sourceIds,
+                providers: heard.providers,
+              ),
             },
           );
         }
@@ -2269,6 +2450,25 @@ class SourceDiscoveryService {
               ),
       ],
     );
+    // Same-song analyses inform ranking, but cannot authorize a correction
+    // of the selected recording's published chart setup.
+    if (heard != null &&
+        !heard.recordingBound &&
+        heard.providers.every(eligible)) {
+      for (final i in current) {
+        results[i] = results[i].copyWith(
+          extra: {
+            ...results[i].extra,
+            'keyRecording': recordingEvidence(
+              heard.key,
+              false,
+              sourceIds: heard.sourceIds,
+              providers: heard.providers,
+            ),
+          },
+        );
+      }
+    }
     if (outcome == null) return;
     final verdict = outcome.shifts;
     // Estimate the majority key from every chart moved into it; a key is
@@ -2311,7 +2511,12 @@ class SourceDiscoveryService {
           'keyEstimate': ?keyEstimate,
           'keyRecording': ?(recording == null
               ? null
-              : recordingEvidence(recording)),
+              : recordingEvidence(
+                  recording,
+                  true,
+                  sourceIds: heard!.sourceIds,
+                  providers: heard.providers,
+                )),
         },
       );
     }
