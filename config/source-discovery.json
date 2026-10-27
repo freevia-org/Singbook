@@ -349,6 +349,20 @@
         "https://www.vagalume.com.br/terms/"
       ],
       "reason": "Publisher developer documentation returned503 on 2026-10-27 through both the web reader and an ordinary TLS-verified local documentation GET; this is not proof that all API routes are unavailable. General platform terms2.3 and8.1 restrict copying and database collection, while9.10 requires prior authorization for passing content to third parties. No accessible API-specific contract established intended app display/storage rights, attribution, auth/quota/cost, routes/schema or stable identities. The publisher describes a Brazilian audience, making this a potential regional lead; API language coverage, catalog size and overlap remain unmeasured. No account, credential, song/lyric-body API query, canary or outreach was used. Defer pending a current permitted-access contract, compatible extraction and two independent identity-correct live repository canaries."
+    },
+    {
+      "id": "tucuatro",
+      "name": "TuCuatro",
+      "firstSeen": "2026-10-27",
+      "lastChecked": "2026-10-27",
+      "status": "deferred",
+      "documentation": [
+        "https://tucuatro.com/es/canciones/",
+        "https://tucuatro.com/es/canciones/agregar/",
+        "https://tucuatro.com/es/cancion/moliendo-cafe/",
+        "https://tucuatro.com/terms-of-service/"
+      ],
+      "reason": "Publisher index advertises thousands of multi-instrument song arrangements with Latin American/traditional and international repertoire. This is a publisher claim, not an independently counted or deduplicated catalog; incremental language/regional coverage and overlap are unmeasured. Public Moliendo Cafe page labels Hugo Blanco as artist and composer and offers instrument selection; those are arrangement facts, not recording IDs. Contributor guide describes moderated submissions and chords positioned above lyric lines. Use of the Site terms explicitly restrict automated data gathering/extraction. Intellectual Property terms permit bounded personal/educational copying of unmodified content with notices, which does not establish access for an automated Singbook adapter. No API/app-access agreement was verified. Deferred pending explicit publisher authorization covering automated search/extraction, app display/storage and attribution. Existing grammar compatibility, stable identity mapping and two independent live extraction canaries remain unverified. No provider API probing, extraction-canary runs, accounts, cookies, bulk collection, parser changes or outreach were undertaken; no source was registered or enabled."
     }
   ]
 }
