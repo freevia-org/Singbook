@@ -1,0 +1,227 @@
+{
+  "schemaVersion": 1,
+  "atUtc": "2026-10-27T19:06:31.129668+00:00",
+  "runtime": "local-windows-identified-http-discovery-plus-offline-field-inspection",
+  "sourceCommit": "de7e236fd534a58201a64963c65653973300a8ba",
+  "scope": "Separate research; not a production maintenance result or native qualification.",
+  "productionSuiteRepeated": false,
+  "registeredCatalogChanged": false,
+  "activated": [],
+  "newDeferredRecords": [
+    {
+      "id": "ozbcoz",
+      "name": "Ozbcoz native search upgrade",
+      "documentation": [
+        "https://ozbcoz.com/Songs/cp/",
+        "https://ozbcoz.com/myfaq/doku.php/chordpro_index",
+        "https://ozbcoz.com/terms"
+      ],
+      "endpoint": "https://ozbcoz.com/Songs/cp/",
+      "reason": "Existing file-import provider remains supported: two host and two Android native-picker canaries already passed. Publisher Help documents clicking a song to download ChordPro for other song apps. New local index-readiness checks returned403 for the initial default client and for actual Singbook project identification; the identified response contains a browser challenge. No session, cookies, browser impersonation, access workaround or further index request was used. Automatic catalog search is deferred until ordinary native access or a publisher-supported integration is available. This does not retire the import route or establish a permanent outage. Terms reserve site rights and require checking each song; no blanket lyric/chart reuse license is inferred.",
+      "firstSeen": "2026-10-27",
+      "lastChecked": "2026-10-27",
+      "status": "deferred"
+    },
+    {
+      "id": "karalyr",
+      "name": "Karalyr word lyrics and detected chords",
+      "documentation": [
+        "https://www.karalyr.com/docs",
+        "https://www.karalyr.com/",
+        "https://www.karalyr.com/takedown",
+        "https://github.com/lemara98/karalyr"
+      ],
+      "endpoint": "https://karalyr.com/api",
+      "reason": "Official docs provide anonymous LRCLIB-compatible search/get, word-synced lyrics, revision tiers, and separate machine-detected chord segments with confidence. Read limits are600 per5minutes/IP and300/minute burst, with429/Retry-After; client identification is encouraged and misses should be cached. Homepage currently reports52 library songs, so this is a small emerging source rather than a large-corpus coverage claim. No API-content, media, publishing, feedback, queue or account request was made. Native payload/chord semantics, exact identity, two live canaries and app persistence are unqualified. MIT covers code rather than contributed song text; per-item rights and machine-generation provenance must remain explicit. Deferred, no activation.",
+      "firstSeen": "2026-10-27",
+      "lastChecked": "2026-10-27",
+      "status": "deferred"
+    },
+    {
+      "id": "music-utils",
+      "name": "music-utils metadata and artwork API",
+      "documentation": [
+        "https://github.com/sillygru/music-utils",
+        "https://github.com/sillygru/music-utils/blob/main/API.md"
+      ],
+      "endpoint": "https://music.gru0.dev/api",
+      "reason": "Publisher documents a no-authentication metadata/lyrics/artwork API with local instance IDs, upstream provenance, descriptive User-Agent/contact and Retry-After behavior. Two distinct identified metadata GETs for Paranoid Android/Radiohead and Dreams/Fleetwood Mac each returned530 edge pages rather than JSON metadata. No retries, other endpoints, lyrics/image/audio requests, credentials or environment changes were made. Availability is unresolved; this is not a parser regression, credential rejection or proof of new corpus coverage. Metadata source identity, release context, upstream overlap and two successful extraction canaries must be qualified before activation. Software MIT licensing does not grant underlying lyric rights.",
+      "firstSeen": "2026-10-27",
+      "lastChecked": "2026-10-27",
+      "status": "deferred"
+    },
+    {
+      "id": "pisni",
+      "name": "Українські пісні / Pisni.org.ua",
+      "documentation": [
+        "https://www.pisni.org.ua/articles/12.html",
+        "https://www.pisni.org.ua/articles/34.html",
+        "https://www.pisni.org.ua/page.php?chapter=stats",
+        "https://www.pisni.org.ua/articles/11.html"
+      ],
+      "endpoint": "https://www.pisni.org.ua",
+      "reason": "Ukrainian-language regional catalog. Publisher statistics display55,929 songs and2,873 chord-bearing entries; these are publisher-reported figures, not an independent or synchronized census. Four bounded identified local GETs returned200: homepage, observed song IDs3424/8878 and one actual publisher-form search. Windows-1251 decoding/re-encoding preserved exact bytes; the correctly encoded Cyrillic form query returned expected3424. Offline parsing located h1 and pre.songwords and isolated1,253/1,279-character song bodies without scraping discussion blocks. These are field-discovery checks, not full native extraction or app qualification. Multiple performer credits must remain distinct from writer/composer roles and recording identity; original regional H/B chord labels require qualified notation conversion, not guessing. No media, authentication, bulk enumeration or write action occurred. Robots rules were unavailable through the research tool; no permission is inferred from that. Native adapter, two complete search/resolve/identity/notation canaries, attribution/rights and persistence are pending. No catalog entry or source activation.",
+      "firstSeen": "2026-10-27",
+      "lastChecked": "2026-10-27",
+      "status": "deferred"
+    }
+  ],
+  "requestAccounting": {
+    "ozbcozIndex": {
+      "requests": 2,
+      "statuses": {
+        "403": 2
+      },
+      "initialDefaultClient": "403 observed before identified follow-up; initial exact timestamp/body not captured",
+      "identifiedRequest": {
+        "atUtc": "2026-10-27T18:58:26.526579+00:00",
+        "url": "https://ozbcoz.com/Songs/cp/",
+        "status": 403,
+        "bytes": 5481,
+        "sha256": "51f903e90f4ab6e7ce3a66f1a082b61f14940c4cecb75614b9a86776ccfc5362",
+        "projectIdentification": "Actual Singbook version and public contact; no browser impersonation, credentials, cookies or bypass.",
+        "reason": "One identified-client readiness check after the initial unmodified urllib index request returned403; no retry loop.",
+        "scripts": [],
+        "apiReferences": [],
+        "blockedMarkupPresent": true
+      }
+    },
+    "musicUtils": {
+      "atUtc": "2026-10-27T19:00:59.196626+00:00",
+      "runtime": "local-windows-python-identified-readiness",
+      "sourceCommit": "de7e236fd534a58201a64963c65653973300a8ba",
+      "purpose": "Bounded discovery of a documented metadata/artwork API; no lyrics/media/image/download or user data request. No adapter/corpus/catalog/release claims.",
+      "requests": [
+        {
+          "atUtc": "2026-10-27T19:00:57.892333+00:00",
+          "url": "https://music.gru0.dev/api/metadata/get?track_name=Paranoid+Android&artist_name=Radiohead",
+          "status": 530,
+          "bytes": 761,
+          "sha256": "6f44c79a4423e12eb2232007d796c822ecb62514effb2228a5d7bcb72230fb5c",
+          "retried": false
+        },
+        {
+          "atUtc": "2026-10-27T19:00:59.122580+00:00",
+          "url": "https://music.gru0.dev/api/metadata/get?track_name=Dreams&artist_name=Fleetwood+Mac",
+          "status": 530,
+          "bytes": 761,
+          "sha256": "fe65b20a8b41ec0caf6c464d35d4c4513d7952a7e1b44a3e08bb34549d068245",
+          "retried": false
+        }
+      ],
+      "credentialsOrCookies": false,
+      "retryLoop": false
+    },
+    "pisni": {
+      "runtime": "local-windows-identified-http-readiness",
+      "atUtc": "2026-10-27T19:02:18.663620+00:00",
+      "purpose": "New Ukrainian catalog reachability and two observed song-page HTML contracts, no media/cookies/credentials/full corpus crawl. Extraction not yet qualified.",
+      "requests": [
+        {
+          "url": "https://www.pisni.org.ua/",
+          "atUtc": "2026-10-27T19:02:15.910076+00:00",
+          "status": 200,
+          "bytes": 42714,
+          "sha256": "560363a8663f071e39e560739cf97ff5a37b006efd797f3b12cd2b4815bfe79a",
+          "contentType": "text/html; charset=windows-1251",
+          "retried": false
+        },
+        {
+          "url": "https://www.pisni.org.ua/songs/3424.html",
+          "atUtc": "2026-10-27T19:02:17.247693+00:00",
+          "status": 200,
+          "bytes": 54125,
+          "sha256": "bd6c82bbae55c4cf82d39aa436fec2d7fb3a184bbf017559cad880c3c6d02ffe",
+          "contentType": "text/html; charset=windows-1251",
+          "retried": false
+        },
+        {
+          "url": "https://www.pisni.org.ua/songs/8878.html",
+          "atUtc": "2026-10-27T19:02:18.508332+00:00",
+          "status": 200,
+          "bytes": 64720,
+          "sha256": "906d87361f163b8baf9515c5dd0dedf8143e29b45946d9c43836a58a16a7c9da",
+          "contentType": "text/html; charset=windows-1251",
+          "retried": false
+        }
+      ]
+    },
+    "pisniNewSearchCapability": {
+      "url": "https://www.pisni.org.ua/search.php?phrase=%D7%E5%F0%E2%EE%ED%E0+%F0%F3%F2%E0&obj=s",
+      "atUtc": "2026-10-27T19:04:30.923780+00:00",
+      "status": 200,
+      "bytes": 38680,
+      "sha256": "f4ea01c7ff2f1ab998c677d46f705913a3950640e44176a720b632eb4ba6d786",
+      "formActionAndFieldsObservedInHomepage": true,
+      "queryEncoding": "windows-1251 application/x-www-form-urlencoded, matching publisher page charset",
+      "canaryId3424Present": true,
+      "requestPurpose": "New native-search capability; one specific query, no retries or corpus crawl."
+    },
+    "totalNewDirectHttpRequests": 8,
+    "httpRetries": 0,
+    "webDocumentationReads": "Separate research-tool documentation fetches; not included in direct HTTP/probe counts.",
+    "karalyrApiContentRequests": 0,
+    "mediaRequests": 0
+  },
+  "pisniOfflineFieldChecks": [
+    {
+      "sourceId": "3424",
+      "title": "Червона рута",
+      "rawHttpSha256": "bd6c82bbae55c4cf82d39aa436fec2d7fb3a184bbf017559cad880c3c6d02ffe",
+      "sourceCharset": "windows-1251",
+      "sourceBytesPreserved": true,
+      "lyricSelector": "pre.songwords",
+      "lyricCharacters": 1253,
+      "decodedLyricSha256": "49127e7956025db800e7fd5b4a1cfb87895a51c2844a2e4a4dc5df5e9aff6d56",
+      "regionalHChordPresent": false,
+      "bChordNotationMayBeAmbiguous": true,
+      "multiplePerformerCreditsPresent": true,
+      "creditRoleBindingAndChordConversionQualified": false
+    },
+    {
+      "sourceId": "8878",
+      "title": "Ой у лузі",
+      "rawHttpSha256": "906d87361f163b8baf9515c5dd0dedf8143e29b45946d9c43836a58a16a7c9da",
+      "sourceCharset": "windows-1251",
+      "sourceBytesPreserved": true,
+      "lyricSelector": "pre.songwords",
+      "lyricCharacters": 1279,
+      "decodedLyricSha256": "c265a6f7d3bcd053a83ffbff38178d92958006bad53a4d8f4a0929521bb781a5",
+      "regionalHChordPresent": true,
+      "bChordNotationMayBeAmbiguous": false,
+      "multiplePerformerCreditsPresent": true,
+      "creditRoleBindingAndChordConversionQualified": false
+    }
+  ],
+  "all41PriorDiscoveryRecordsUnchanged": true,
+  "credentialsCookiesBypassOrUserLibraryUsed": false,
+  "sourceDocumentsRemainPrivate": true,
+  "sourceDataNotPublished": true,
+  "sdkOrDevicesUsed": false,
+  "discoveryReview": {
+    "pullRequest": 192,
+    "head": "cb4f73a8db24918ba89187e11f7d32d87d2fe60b",
+    "base": "0e60375bdece0afe21a4fa9b307eadc84022379b",
+    "ownedFiles": [
+      "config/source-discovery.json",
+      "docs/source-discovery-review-20261027.md"
+    ],
+    "validation": "Four new deferred records; all41 prior records equal;45 unique IDs; HTTPS/date/status checks; diff check clean. No provider/catalog/release change."
+  },
+  "pisniCreditHeaders": [
+    {
+      "file": "1.html",
+      "creditNamesObservedBeforeLyricBlock": {
+        "Софія Ротару": true,
+        "Назарій Яремчук": true
+      }
+    },
+    {
+      "file": "2.html",
+      "creditNamesObservedBeforeLyricBlock": {
+        "Гомін": true,
+        "Не журись": true
+      }
+    }
+  ]
+}
