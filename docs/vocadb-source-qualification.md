@@ -22,6 +22,12 @@ with bounded optional fields and English display names. Search requests at most
 query. Default name sorting placed unrelated versions ahead of both known
 canaries in an initial five-row diagnostic; sorting is not permission to choose
 the first result. Every qualification selects the exact publisher-linked ID.
+Context lookup searches the title alone, checks the full artist credit and any
+specified album/duration against structured search rows, and leaves the service's
+independent identity checks intact. Search includes album records for this
+purpose. Cached rows are reusable only when the added context still matches.
+The methods follow PR173's interface contract; that interface is deliberately
+not duplicated in this independent branch and must be wired after integration.
 
 The source ID identifies a VocaDB song/version. It does not become an ISRC or
 confirmed recording ID. The original/cover/remix classification stays attached
@@ -64,14 +70,15 @@ lyric text belong in a report or repository fixture. The synthetic regression
 fixtures exercise selection order, identity, attribution, cache expiration,
 cancellation, malformed/lifecycle responses and extension escaping.
 
-Eight focused regressions passed. Offline replay of the two real native results
+Nine focused regressions cover the adapter, including title-only context lookup
+and cache reuse after artist/album context changes. Offline replay of two real native results
 through the normal AppController, disposable native SQLite and ChordPro codec
 also passed. Both saved song JSONs and hashes survived reopening exactly; every
 source JSON field, lyric variant and source credit survived export/import. This
 host replay made no new HTTP calls and accessed no user library or device.
 
 This is native extraction qualification, not an activated app source. Registry,
-catalog-channel compatibility, contextual lookup through the shared search
+catalog-channel compatibility, wiring through the shared contextual-search
 interface, ordinary app bootstrap, Android UI, hosted checks, cloud reachability
 and a compatible published app remain required.
 Do not add this unknown native ID to either released catalog channel. This work
