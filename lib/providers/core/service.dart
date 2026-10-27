@@ -589,8 +589,21 @@ Future<SourceResult> findMatchingSource(
   report('search', 'pending', query: searchQuery);
   late final List<SongCandidate> results;
   try {
-    results = searchedCandidates == null
-        ? await provider.search(searchQuery, cancel: cancel)
+    final canReuse =
+        searchedCandidates != null &&
+        (provider is! ContextualLyricsSearch ||
+            (provider as ContextualLyricsSearch).canReuseSearchForSelection(
+              selection,
+              searchedCandidates,
+            ));
+    results = !canReuse
+        ? provider is ContextualLyricsSearch
+              ? await (provider as ContextualLyricsSearch).searchForSelection(
+                  selection,
+                  fallbackQuery: searchQuery,
+                  cancel: cancel,
+                )
+              : await provider.search(searchQuery, cancel: cancel)
         : List.unmodifiable(searchedCandidates.take(100));
     cancel?.throwIfCancelled();
     onSearchCandidates?.call(List.unmodifiable(results.take(100)));

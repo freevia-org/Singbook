@@ -108,6 +108,35 @@ void main() {
   });
 
   group('rate limits', () {
+    test('SyncLRC routes and immediate retries share the 30/min queue', () async {
+      final clock = Stopwatch()..start();
+      final attempts = <int>[];
+      final t = wire((_) async {
+        attempts.add(clock.elapsedMicroseconds);
+        return attempts.length == 1
+            ? http.Response('slow down', 429, headers: {'retry-after': '0'})
+            : http.Response('ok', 200);
+      });
+      try {
+        expect(
+          await Future.wait([
+            t.getText(Uri.parse('https://api.synclrc.dev/search?q=fixture')),
+            t.getText(
+              Uri.parse(
+                'https://api.synclrc.dev/lyrics/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+              ),
+            ),
+          ]),
+          ['ok', 'ok'],
+        );
+        expect(attempts, hasLength(3));
+        for (var i = 1; i < attempts.length; i++) {
+          expect(attempts[i] - attempts[i - 1], greaterThanOrEqualTo(2000000));
+        }
+      } finally {
+        await t.close();
+      }
+    });
     test('MusicBrainz apex and www requests share one paced queue', () async {
       final clock = Stopwatch()..start();
       final attempts = <int>[];

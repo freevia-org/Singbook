@@ -430,9 +430,15 @@ class LyricsOvhProvider implements LyricsProvider {
   }
 }
 
-class SyncLrcProvider implements LyricsProvider {
+class SyncLrcProvider implements LyricsProvider, ContextualLyricsSearch {
   SyncLrcProvider(this.http);
   final ProviderTransport http;
+  static final _canonicalId = RegExp(r'^[a-f0-9]{32}$');
+  static String _identity(String value) => value
+      .toLowerCase()
+      .replaceAll(RegExp("['‘’]"), '')
+      .replaceAll(RegExp(r'[^\p{L}\p{N}]+', unicode: true), ' ')
+      .trim();
   @override
   ProviderDefinition get definition => const ProviderDefinition(
     id: 'synclrc',
@@ -463,7 +469,7 @@ class SyncLrcProvider implements LyricsProvider {
 
   SongCandidate _song(JsonMap data, String query) {
     final id = requiredText(data['id']);
-    if (!RegExp(r'^[a-f0-9]{32}$').hasMatch(id)) {
+    if (!_canonicalId.hasMatch(id)) {
       throw const ProviderException('invalid_response');
     }
     final lyrics = object(data['lyrics']);
@@ -501,13 +507,88 @@ class SyncLrcProvider implements LyricsProvider {
     return parseRows(rows, (d) => _withRecord(object(d), query));
   }
 
+  // The documented lookup response has flat variants, unlike search rows.
+  Future<JsonMap> _lookup(Uri url, CancellationToken? cancel) async {
+    final data = object(await http.requestJson(url, cancel: cancel));
+    const variants = ['plain', 'synced', 'karaoke'];
+    if (!variants.any(data.containsKey) ||
+        variants.any((key) => data[key] != null && data[key] is! String)) {
+      throw const ProviderException('invalid_response');
+    }
+    return {
+      ...data,
+      'lyrics': {
+        for (final key in ['plain', 'synced', 'karaoke'])
+          if (data[key] != null) key: data[key],
+      },
+    };
+  }
+
+  @override
+  bool canReuseSearchForSelection(
+    SongCandidate selection,
+    List<SongCandidate> candidates,
+  ) => candidates.any(
+    (candidate) =>
+        candidate.providerId == definition.id &&
+        _identity(candidate.title) == _identity(selection.title) &&
+        _identity(candidate.artist) == _identity(selection.artist) &&
+        (selection.album == null ||
+            _identity(candidate.album ?? '') == _identity(selection.album!)) &&
+        (selection.durationSeconds == null ||
+            candidate.durationSeconds != null &&
+                (candidate.durationSeconds! - selection.durationSeconds!)
+                        .abs() <=
+                    0.5),
+  );
+
+  @override
+  Future<List<SongCandidate>> searchForSelection(
+    SongCandidate selection, {
+    required String fallbackQuery,
+    CancellationToken? cancel,
+  }) async {
+    final parameters = {
+      'track': requiredText(selection.title),
+      'artist': requiredText(selection.artist),
+      if (clean(selection.album) case final String album) 'album': album,
+      if (durationValue(selection.durationSeconds) case final double duration)
+        'duration': duration.toString(),
+    };
+    // SyncLRC treats '+' literally. Encode spaces as %20 on every route.
+    final query = parameters.entries
+        .map(
+          (e) =>
+              '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}',
+        )
+        .join('&');
+    final JsonMap row;
+    try {
+      row = await _lookup(
+        Uri.https('api.synclrc.dev', '/lyrics').replace(query: query),
+        cancel,
+      );
+    } on ProviderException catch (error) {
+      if (error.code == 'unavailable') return [];
+      rethrow;
+    }
+    final found = _withRecord(row, fallbackQuery);
+    if (_identity(found.title) != _identity(selection.title) ||
+        _identity(found.artist) != _identity(selection.artist)) {
+      throw const ProviderException('identity_mismatch');
+    }
+    // Album/duration stay as returned. Discovery's existing edition and timing
+    // gates decide whether this is the selected recording or only the song.
+    return [found];
+  }
+
   /// Largest compressed record (base64url characters) carried in a selection.
   /// The whole selection id is limited to 16384 characters and is itself
   /// base64url-encoded JSON, so this leaves room for the other fields.
   static const _recordLimit = 8000;
 
-  /// SyncLRC has no get-by-id endpoint, so the chosen record travels inside
-  /// the selection id (gzip + base64url) and resolve needs no second search.
+  /// Existing selections carry the chosen record inside their id (gzip +
+  /// base64url), preserving their exact variant without another request.
   /// A record too large for the id is not carried; resolve then searches again.
   SongCandidate _withRecord(JsonMap row, String query) {
     final song = _song(row, query);
@@ -564,24 +645,56 @@ class SyncLrcProvider implements LyricsProvider {
     }
   }
 
-  /// SyncLRC exposes only its search endpoint (its host also answers plain
-  /// clients with a Cloudflare challenge, so no get-by-id route could be
-  /// confirmed). When the selection carries the chosen record, resolve uses it
-  /// directly. Otherwise (a record too large for the id) it searches again:
-  /// first with the original query, then with an exact "title artist" query so
-  /// the record is found even when the original query ranked it outside the
-  /// top ten.
+  /// Keep legacy carried selections working. The current documented canonical
+  /// lookup also resolves bare source IDs and records too large to carry.
   @override
   Future<SourceResult> resolve(
     SongCandidate candidate, {
     CancellationToken? cancel,
   }) async {
-    final selected = decodeSelection(candidate.id, 'synclrc'),
-        original = requiredText(selected.metadata['query'], 200);
+    if (candidate.providerId != definition.id) {
+      throw const ProviderException('invalid_selection');
+    }
+    final canonical = _canonicalId.hasMatch(candidate.id);
+    final selected = canonical
+        ? candidate
+        : decodeSelection(candidate.id, 'synclrc');
+    if (!_canonicalId.hasMatch(selected.id)) {
+      throw const ProviderException('invalid_selection');
+    }
+    final original = canonical
+        ? ''
+        : requiredText(selected.metadata['query'], 200);
     final carried = _carriedRecord(selected);
     if (carried != null) {
       final result = _resolveFrom([carried], original, candidate, selected);
       if (result != null) return result;
+    }
+    try {
+      final row = await _lookup(
+        Uri.https('api.synclrc.dev', '/lyrics/${selected.id}'),
+        cancel,
+      );
+      if (row['id'] != selected.id) {
+        throw const ProviderException('identity_mismatch');
+      }
+      final found = _song(row, original);
+      if (_identity(found.title) != _identity(selected.title) ||
+          _identity(found.artist) != _identity(selected.artist) ||
+          selected.album != null &&
+              _identity(found.album ?? '') != _identity(selected.album!) ||
+          selected.durationSeconds != null &&
+              (found.durationSeconds == null ||
+                  (found.durationSeconds! - selected.durationSeconds!).abs() >
+                      0.5)) {
+        throw const ProviderException('identity_mismatch');
+      }
+      final result = _resolveFrom([row], original, candidate, selected);
+      if (result != null) return result;
+    } on ProviderException catch (error) {
+      if (error.code != 'unavailable' || canonical) rethrow;
+      // A legacy selection can still be present in search after an ID miss.
+      // Access failures and throttles must never trigger alternate requests.
     }
     final exact = '${selected.title} ${selected.artist}';
     final queries = <String>{

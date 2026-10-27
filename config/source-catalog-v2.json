@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "extractionSchemaVersion": 1,
-  "revision": 12,
-  "publishedAt": "2026-10-26T23:21:32.5805304Z",
+  "revision": 13,
+  "publishedAt": "2026-10-27T05:34:29.743646Z",
   "sources": [
     {
       "id": "genius",
@@ -195,7 +195,7 @@
       "name": "SyncLRC",
       "adapter": "builtin",
       "status": "active",
-      "revision": 3,
+      "revision": 4,
       "capabilities": [
         "catalog",
         "lyrics",
@@ -207,11 +207,19 @@
       "accessMode": "public",
       "website": "https://synclrc.dev",
       "hosts": [],
-      "changeReason": "2026-10-17 local live requests proved form-encoded '+' spaces return no matches while '%20' returns the expected records. Compiled adapter repair needs a compatible app release; retain existing IDs and add independent Wonderwall line/word timing coverage.",
+      "changeReason": "Use documented contextual and canonical lookup. Two exact content canaries retain returned album/duration, including Oasis259s rather than the old279s selection. Separate catalog probing stays explicit: identical title search returned10rows at05:15Z and0at05:29/31Z(2026-10-27). Healthy retrieval does not prove search availability. Native app lookup needs a compatible build; legacy carried IDs and channel1 remain unchanged.",
       "probes": [
         {
           "id": "never-gonna-give-you-up-studio",
-          "query": "Never Gonna Give You Up Rick Astley",
+          "candidate": {
+            "providerId": "synclrc",
+            "id": "e0847f0683371c67a1583e44f10663d8",
+            "title": "Never Gonna Give You Up",
+            "artist": "Rick Astley",
+            "album": "Rick Astley - Never Gonna Give You Up",
+            "durationSeconds": 214,
+            "url": "https://synclrc.dev"
+          },
           "expectedTitle": "Never Gonna Give You Up",
           "expectedArtist": "Rick Astley",
           "expectedAlbum": "Rick Astley - Never Gonna Give You Up",
@@ -220,16 +228,40 @@
             "body",
             "metadata",
             "timing",
-            "lineTiming"
+            "lineTiming",
+            "wordTiming"
           ]
         },
         {
           "id": "wonderwall-oasis-timed-version",
-          "query": "Wonderwall Oasis",
+          "candidate": {
+            "providerId": "synclrc",
+            "id": "52590772a18697c755282fe2f24680d0",
+            "title": "Wonderwall",
+            "artist": "Oasis",
+            "album": "(What's the Story) Morning Glory? [Deluxe Edition]",
+            "durationSeconds": 259,
+            "url": "https://synclrc.dev"
+          },
           "expectedTitle": "Wonderwall",
           "expectedArtist": "Oasis",
-          "expectedAlbum": "Oasis - Wonderwall",
-          "expectedDurationSeconds": 279,
+          "expectedAlbum": "(What's the Story) Morning Glory? [Deluxe Edition]",
+          "expectedDurationSeconds": 259,
+          "requiredFields": [
+            "body",
+            "metadata",
+            "timing",
+            "lineTiming",
+            "wordTiming"
+          ]
+        },
+        {
+          "id": "never-gonna-give-you-up-catalog-search",
+          "query": "Never Gonna Give You Up",
+          "expectedTitle": "Never Gonna Give You Up",
+          "expectedArtist": "Rick Astley",
+          "expectedAlbum": "Never Gonna Give You Up",
+          "expectedDurationSeconds": 214,
           "requiredFields": [
             "body",
             "metadata",

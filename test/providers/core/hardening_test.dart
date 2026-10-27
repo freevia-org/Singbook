@@ -22,9 +22,9 @@ ProviderTransport wire(
   timeout: const Duration(seconds: 2),
   retryBaseDelay: const Duration(milliseconds: 1),
 );
-http.Response json(Object value) => http.Response(
+http.Response json(Object value, [int status = 200]) => http.Response(
   jsonEncode(value),
-  200,
+  status,
   headers: {'content-type': 'application/json'},
 );
 
@@ -298,28 +298,34 @@ void main() {
       expect(r.candidate.metadata.containsKey('record'), isFalse);
       await t.close();
     });
-    test('an oversized record falls back to searching again', () async {
-      final target = {
-        'id': 'a' * 32,
-        'track': 'Paper Satellites',
-        'artist': 'Fixture Ensemble',
-        'lyrics': {'plain': bulky, 'synced': '[00:01.00]$bulky'},
-      };
-      var calls = 0;
-      final t = wire((_) {
-        calls++;
-        return json({
-          'results': [target],
+    test(
+      'an oversized legacy record searches after a canonical ID miss',
+      () async {
+        final target = {
+          'id': 'a' * 32,
+          'track': 'Paper Satellites',
+          'artist': 'Fixture Ensemble',
+          'lyrics': {'plain': bulky, 'synced': '[00:01.00]$bulky'},
+        };
+        var calls = 0;
+        final t = wire((request) {
+          calls++;
+          if (request.url.path.startsWith('/lyrics/')) {
+            return json({'error': 'not found'}, 404);
+          }
+          return json({
+            'results': [target],
+          });
         });
-      });
-      final selection = (await SyncLrcProvider(t).search('paper')).single;
-      expect(selection.id.length, lessThanOrEqualTo(16384));
-      calls = 0;
-      final r = await SyncLrcProvider(t).resolve(selection);
-      expect(calls, 1);
-      expect(r.timingTracks, hasLength(1));
-      await t.close();
-    });
+        final selection = (await SyncLrcProvider(t).search('paper')).single;
+        expect(selection.id.length, lessThanOrEqualTo(16384));
+        calls = 0;
+        final r = await SyncLrcProvider(t).resolve(selection);
+        expect(calls, 2);
+        expect(r.timingTracks, hasLength(1));
+        await t.close();
+      },
+    );
     test(
       'finds the record via an exact title/artist query when the original ranked it low',
       () async {
@@ -333,6 +339,9 @@ void main() {
         };
         final target = row('a' * 32, 'Paper Satellites');
         final t = wire((request) {
+          if (request.url.path.startsWith('/lyrics/')) {
+            return json({'error': 'not found'}, 404);
+          }
           final q = request.url.queryParameters['q']!;
           queries.add(q);
           return json({
@@ -370,7 +379,11 @@ void main() {
       );
       final selection = (await SyncLrcProvider(vague).search('paper')).single;
       await vague.close();
-      final t = wire((_) => json({'results': []}));
+      final t = wire(
+        (request) => request.url.path.startsWith('/lyrics/')
+            ? json({'error': 'not found'}, 404)
+            : json({'results': []}),
+      );
       await expectLater(
         SyncLrcProvider(t).resolve(selection),
         throwsA(errorCode('unavailable')),
