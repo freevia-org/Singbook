@@ -1,0 +1,295 @@
+{
+  "atUtc": "2026-10-27T17:12:42.165501+00:00",
+  "runtime": "local-windows",
+  "purpose": "Prospective native LyricsPlus qualification, separate from daily full-registry health",
+  "pullRequest": "https://github.com/freevia-org/Singbook/pull/191",
+  "base": "05a708ba12b9e4914ae2051f2366aab3a58ad647",
+  "head": "ced30765b41d71615199c1af5f7487b690f29e07",
+  "files": [
+    "config/source-discovery.json",
+    "docs/lyricsplus-source-qualification.md",
+    "lib/providers/extra/extra_providers.dart",
+    "lib/providers/extra/lyricsplus.dart",
+    "test/providers/extra/extra_providers_test.dart",
+    "test/providers/extra/lyricsplus_test.dart",
+    "test/providers/lyricsplus_catalog_boundary_test.dart"
+  ],
+  "nativeProviderSha256": "bd43940febedd0ed328f2b466fb5d95d2a5923b8c257431a100c6e05f19cf8c4",
+  "checks": {
+    "dedicatedSyntheticAndNormalDiscoveryCases": 29,
+    "combinedProviderDomainApplicationTestsOnPreMergeBase": 1461,
+    "affectedPostMainIntegrationTests": 352,
+    "analysis": "No issues found",
+    "independentReview": "no concrete defects; subsequent per-background-layer fix proved by retained-real-byte replay and four synthetic cases",
+    "existingChannels1To6Unchanged": true,
+    "otherDiscoveryRecordsUnchanged": true
+  },
+  "nativeLiveAdapter": {
+    "atUtc": "2026-10-27T16:54:11.079485Z",
+    "startedAtUtc": "2026-10-27T16:54:07.060568Z",
+    "runtime": "local-windows-direct-dart-vm",
+    "scope": "Two selected prospective native-adapter canaries only, no registry/daily full-source run; no app/SQLite/cloud claim",
+    "providerSha256": "bd43940febedd0ed328f2b466fb5d95d2a5923b8c257431a100c6e05f19cf8c4",
+    "credentialsCookiesOrForceReloadUsed": false,
+    "hostIntervalMs": 1000,
+    "maxRetries": 0,
+    "diagnostics": {
+      "networkFailures": 0,
+      "hosts": {
+        "itunes.apple.com": {
+          "requests": 2,
+          "statuses": {
+            "200": 2
+          },
+          "retryAfterSeconds": {},
+          "databaseLag": {}
+        },
+        "lyricsplus.prjktla.my.id": {
+          "requests": 4,
+          "statuses": {
+            "200": 4
+          },
+          "retryAfterSeconds": {},
+          "databaseLag": {}
+        }
+      }
+    },
+    "checks": [
+      {
+        "title": "Billie Jean",
+        "artist": "Michael Jackson",
+        "status": "healthy_local_live_native_adapter",
+        "candidateId": "work-4be1c5e90818ab9456309f7c3b63a9f5192f7ce056415ec4afd0d726d969f4fa",
+        "groupedCatalogRows": 2,
+        "identityScope": "arrangement",
+        "independentAppleId": "1883770432",
+        "actualAlbum": "Michael: Songs From The Motion Picture",
+        "actualDurationSeconds": 294.237,
+        "recordingIdsEmpty": true,
+        "timingStatus": "unverified",
+        "timingGranularity": "word",
+        "cues": 549,
+        "lyricLines": 61,
+        "originalHttpBytes": 33149,
+        "originalHttpSha256": "a86ab8bbcccd5df3b727eb3418eecf50c90a44cf3408b3843f99163dfa223737",
+        "sourceFactsExactAfterChordPro": true,
+        "queryIdentityNotPromoted": true
+      },
+      {
+        "title": "Creep",
+        "artist": "Radiohead",
+        "status": "healthy_local_live_native_adapter",
+        "candidateId": "work-5b14105c3b1d86d27c180ab094257f8da4225b19a52e4329e6dbb05a2d63d3b1",
+        "groupedCatalogRows": 2,
+        "identityScope": "arrangement",
+        "independentAppleId": "1097862231",
+        "actualAlbum": "Pablo Honey",
+        "actualDurationSeconds": 238.64,
+        "recordingIdsEmpty": true,
+        "timingStatus": "unverified",
+        "timingGranularity": "word",
+        "cues": 228,
+        "lyricLines": 38,
+        "originalHttpBytes": 14760,
+        "originalHttpSha256": "86648d4788444d966612d4bea75b53211c4c86dcc4729ea8dab36e6a535eba7f",
+        "sourceFactsExactAfterChordPro": true,
+        "queryIdentityNotPromoted": true
+      }
+    ],
+    "passed": true
+  },
+  "ordinaryMaintenanceCli": {
+    "schemaVersion": 1,
+    "catalogRevision": 19,
+    "measuredAt": "2026-10-27T17:07:44.012493Z",
+    "offline": false,
+    "summary": {
+      "healthy": 1
+    },
+    "sources": [
+      {
+        "id": "lyricsplus",
+        "name": "LyricsPlus",
+        "status": "healthy",
+        "coverage": {
+          "status": "complete",
+          "verifiedCapabilities": [
+            "catalog",
+            "lineTiming",
+            "lyrics",
+            "metadata",
+            "wordTiming"
+          ],
+          "unverifiedCapabilities": []
+        },
+        "probes": [
+          {
+            "id": "billie-jean-michael-jackson",
+            "status": "healthy",
+            "candidateId": "sha256:d0fc8a133c888b3b",
+            "providerId": "lyricsplus",
+            "bodyCharacters": 2238,
+            "metadataFields": [
+              "agents",
+              "album",
+              "appleMusicIds",
+              "artworkUrl",
+              "country",
+              "discCount",
+              "discNumber",
+              "documentKind",
+              "durationSeconds",
+              "genre",
+              "identityScope",
+              "language",
+              "mediaLinks",
+              "primaryGenreName",
+              "releaseDate",
+              "songParts",
+              "songWriters",
+              "trackCount",
+              "trackNumber",
+              "writers"
+            ],
+            "verifiedCapabilities": [
+              "catalog",
+              "lineTiming",
+              "lyrics",
+              "metadata",
+              "wordTiming"
+            ],
+            "timingTrackCount": 1,
+            "timingGranularities": [
+              "word"
+            ],
+            "timingRawRetained": true,
+            "hasChords": false
+          },
+          {
+            "id": "creep-radiohead",
+            "status": "healthy",
+            "candidateId": "sha256:7b9ed8028dcc7382",
+            "providerId": "lyricsplus",
+            "bodyCharacters": 803,
+            "metadataFields": [
+              "agents",
+              "album",
+              "appleMusicIds",
+              "artworkUrl",
+              "country",
+              "discCount",
+              "discNumber",
+              "documentKind",
+              "durationSeconds",
+              "genre",
+              "identityScope",
+              "language",
+              "mediaLinks",
+              "primaryGenreName",
+              "releaseDate",
+              "songParts",
+              "songWriters",
+              "trackCount",
+              "trackNumber",
+              "writers"
+            ],
+            "verifiedCapabilities": [
+              "catalog",
+              "lineTiming",
+              "lyrics",
+              "metadata",
+              "wordTiming"
+            ],
+            "timingTrackCount": 1,
+            "timingGranularities": [
+              "word"
+            ],
+            "timingRawRetained": true,
+            "hasChords": false
+          }
+        ]
+      }
+    ],
+    "httpDiagnostics": {
+      "networkFailures": 0,
+      "hosts": {
+        "itunes.apple.com": {
+          "requests": 2,
+          "statuses": {
+            "200": 2
+          },
+          "retryAfterSeconds": {},
+          "databaseLag": {}
+        },
+        "lyricsplus.prjktla.my.id": {
+          "requests": 4,
+          "statuses": {
+            "200": 4
+          },
+          "retryAfterSeconds": {},
+          "databaseLag": {}
+        }
+      }
+    }
+  },
+  "prospectiveCatalogOffline": {
+    "entries": 28,
+    "summary": {
+      "offline_unverified": 26,
+      "import_only": 1,
+      "retired": 1
+    },
+    "all27PriorEntriesUnchanged": true,
+    "privateCandidateOnly": true,
+    "publicCatalogChanged": false
+  },
+  "currentDefaultCatalogGate": {
+    "catalogChannel": 6,
+    "revision": 18,
+    "status": "coverage_gap",
+    "source": "lyricsplus",
+    "reason": "catalog_entry_missing",
+    "expectedForStagedNativeRegistry": true,
+    "resolution": "Prepare a new compatible catalog channel; never insert unknown native ID into an older channel, even disabled"
+  },
+  "requestAccounting": {
+    "firstNativeAttemptHttp200": 3,
+    "firstNativeAttemptOutcome": "background-word interleaving parser issue; reproduced and fixed offline",
+    "correctedNativeCanariesHttp200": 6,
+    "ordinaryMaintenanceContractCanariesHttp200": 6,
+    "selectedQualificationTotalHttp200": 15,
+    "retries": 0,
+    "networkFailures": 0,
+    "fullRegistryLiveRerun": false,
+    "additionalEarlierResearchRequests": "Recorded separately in discovery evidence; not included in15 selected native/maintenance requests"
+  },
+  "identity": {
+    "scope": "arrangement lyric document",
+    "queryEchoRecordingIdPromotion": false,
+    "independentlyVerifiedReturnedAppleIds": [
+      "1883770432",
+      "1097862231"
+    ],
+    "billieActualAlbum": "Michael: Songs From The Motion Picture",
+    "differentCatalogAlbumPreservedAsHint": true,
+    "recordingIdsInvented": false,
+    "sourceTimingStatus": "unverified",
+    "rights": "unknown underlying lyric rights; code licensing is separate"
+  },
+  "limitations": [
+    "Public native integration and exact-head hostedCI still pending.",
+    "New compatible catalog channel/cache migration and app release required for activation.",
+    "Actual app/SQLite/Android import and managed-cloud qualification pending.",
+    "Only independently verified Apple winners currently supported; no corpus size or unique-overlap claim."
+  ],
+  "privacy": {
+    "credentialsOrCookiesUsed": false,
+    "rawSourceDocumentsPublished": false,
+    "rawLibraryOrSourceLyricsIncluded": false
+  },
+  "resources": {
+    "flutterAndroidBuildAndEmulatorLeases": "released",
+    "rootProcesses": "all completed; only remoteCI pending",
+    "physicalDevicesAndRelease41Outputs": "untouched"
+  }
+}
