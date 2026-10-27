@@ -100,7 +100,8 @@ void main() {
     () async {
       final legacyValue = jsonDecode(_bundle('')) as Map<String, dynamic>;
       // Channel 1 may advance independently before a user upgrades the app.
-      legacyValue['revision'] = 1000;
+      legacyValue['revision'] =
+          (jsonDecode(_bundle('-v2'))['revision'] as int) + 1000;
       final legacy = jsonEncode(legacyValue);
       final next = _next(_bundle('-v2'));
       final settings = <String, Object?>{
@@ -156,10 +157,56 @@ void main() {
           if (previous.id == 'seanmcgrathmusic') {
             // Channel 2 ships the publisher path migration and another canary;
             // channel 1 remains byte-compatible with the released app.
-            expect(current['revision'], greaterThan(expected['revision'] as int));
+            expect(
+              current['revision'],
+              greaterThan(expected['revision'] as int),
+            );
             expect(current['probes'], containsAll(expected['probes'] as List));
             expect((current['probes'] as List).length, 2);
             expect(current['changeReason'], contains('songs_and_poems'));
+            for (final key in ['revision', 'probes', 'changeReason']) {
+              current.remove(key);
+              expected.remove(key);
+            }
+          } else if (previous.id == 'synclrc') {
+            // Channel 2 qualifies the documented lookup contract separately
+            // from the unchanged legacy probes. Runtime identity, capability,
+            // access, attribution and preference fields still compare below.
+            expect(current['revision'], greaterThan(previous.revision));
+            final probes = (current['probes'] as List)
+                .cast<Map<String, dynamic>>();
+            final direct = probes.where((probe) => probe['candidate'] is Map);
+            expect(direct, hasLength(2));
+            expect(
+              probes.where((probe) => probe['query'] is String),
+              hasLength(1),
+            );
+            expect(
+              probes.map((probe) => probe['id']),
+              containsAll([
+                'never-gonna-give-you-up-studio',
+                'wonderwall-oasis-timed-version',
+                'never-gonna-give-you-up-catalog-search',
+              ]),
+            );
+            for (final probe in probes) {
+              expect(
+                probe['requiredFields'],
+                containsAll(['body', 'metadata', 'lineTiming', 'wordTiming']),
+              );
+            }
+            for (final probe in direct) {
+              final candidate = probe['candidate'] as Map;
+              expect(candidate['providerId'], previous.id);
+              expect(candidate['id'], matches(RegExp(r'^[a-f0-9]{32}$')));
+              expect(candidate['title'], probe['expectedTitle']);
+              expect(candidate['artist'], probe['expectedArtist']);
+              expect(candidate['album'], probe['expectedAlbum']);
+              expect(
+                candidate['durationSeconds'],
+                probe['expectedDurationSeconds'],
+              );
+            }
             for (final key in ['revision', 'probes', 'changeReason']) {
               current.remove(key);
               expected.remove(key);
