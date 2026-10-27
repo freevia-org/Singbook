@@ -2177,6 +2177,7 @@ Map<int, List<ChordAnchor>> _fuzzyLineChords(
     }
   }
 
+  final abstainedLyrics = <int>{};
   for (var m = 0; m < matched.length; m++) {
     final (d, l, span) = matched[m];
     // Another chart line between the neighbouring matches that fits this
@@ -2192,10 +2193,18 @@ Map<int, List<ChordAnchor>> _fuzzyLineChords(
           _chordSignature(donors[other].line) !=
               _chordSignature(donors[d].line);
     }
-    if (tied) continue;
+    if (tied) {
+      abstainedLyrics.addAll(
+        List.generate(span, (i) => lyrics[l + i].index),
+      );
+      continue;
+    }
     if (weak((d, l, span)) &&
         (!matched.take(m).any((match) => !weak(match)) ||
             !matched.skip(m + 1).any((match) => !weak(match)))) {
+      abstainedLyrics.addAll(
+        List.generate(span, (i) => lyrics[l + i].index),
+      );
       continue;
     }
     place(d, l, span);
@@ -2208,7 +2217,10 @@ Map<int, List<ChordAnchor>> _fuzzyLineChords(
     for (final (d, _, _) in matched) donorRanges[d],
   ];
   for (var l = 0; l < columns; l++) {
-    if (result.containsKey(lyrics[l].index)) continue;
+    if (result.containsKey(lyrics[l].index) ||
+        abstainedLyrics.contains(lyrics[l].index)) {
+      continue;
+    }
     var best = -1;
     var bestScore = 0.0;
     var ambiguous = false;
