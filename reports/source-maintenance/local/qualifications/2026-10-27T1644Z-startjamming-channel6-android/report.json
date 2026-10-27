@@ -1,0 +1,213 @@
+{
+  "atUtc": "2026-10-27T16:46:43.316780+00:00",
+  "runtime": "local-windows-android-emulator",
+  "purpose": "Prospective PR189 catalog6 and normal app import qualification; not daily whole-registry health",
+  "base": "6d41626d8e6dc61aac23b6d1969001ebc2eb8b4b",
+  "head": "c305ee4485d69a89e0f2a5acc0870a9935a7a5e9",
+  "files": [
+    "config/source-catalog-v6.json",
+    "config/source-discovery.json",
+    "docs/startjamming-source-qualification.md",
+    "lib/application/app_controller.dart",
+    "lib/providers/source_catalog.dart",
+    "lib/providers/source_catalog_client.dart",
+    "lib/ui/app_controller_adapter.dart",
+    "lib/ui/home/source_version_browser.dart",
+    "pubspec.yaml",
+    "test/application/source_channel_upgrade_test.dart",
+    "test/providers/source_catalog_channel_test.dart",
+    "test/providers/source_catalog_client_test.dart",
+    "test/providers/source_catalog_test.dart",
+    "test/providers/startjamming_channel6_test.dart",
+    "test/ui/chord_only_comparison_test.dart"
+  ],
+  "catalog": {
+    "channel": 6,
+    "revision": 18,
+    "sources": 27,
+    "sha256": "bc698ebbbe0bdec8583a44d1dd05422a9e0d423228d61ccd7be20ea80c5f932d",
+    "older26EntriesUnchanged": true,
+    "candidateBranchServedBytesMatch": true,
+    "publicMainV6Served": false
+  },
+  "checks": {
+    "preUiFixProviderDomainApplicationTests": 1436,
+    "updatedApplicationDomainFocusedUiTests": 881,
+    "mixedSourceFocusedTests": 12,
+    "analysis": "No issues found",
+    "independentReview": "no concrete defects found",
+    "ordinaryOfflineCliAll27": "pass",
+    "ordinaryLiveMaintenance": {
+      "source": "startjamming",
+      "canaries": 2,
+      "http200": 4,
+      "retries": 0,
+      "networkFailures": 0,
+      "measuredAtUtc": "2026-10-27T15:55:26.292676Z",
+      "instrumentalNotLyricCoverage": true
+    }
+  },
+  "android": {
+    "device": "emulator-5554",
+    "avd": "SudokuBuddy16K_API36",
+    "package": "org.freevia.singbook.qa09a8bf9",
+    "debugOnly": true,
+    "versionName": "0.2.26",
+    "versionCode": 4040,
+    "flutterBuildNumber": 40,
+    "abiVersionCodeOffset": 4000,
+    "qaSourceCommit": "2e383bf0c561b6b1da7c9f804ad4dba4216fc4a6",
+    "builtPublicRuntimeCommit": "12692c94c490a7fc0fea96aff3e446234d0f3b61",
+    "allLibConfigPubspecGitBlobsExactlyMatchFinalHead": true,
+    "apkSha256": "09a34d7fa365a416b4da601ed62c8e576d11258a9b5750e994310a2785edfd22",
+    "apkBytes": 102259378,
+    "nativeAbi": "x86_64",
+    "signerMatchesPriorQa": true,
+    "inPlaceInstall": "success",
+    "noUninstallOrDataClear": true,
+    "storageRoadblock": {
+      "initialUniversalApkBytes": 201383298,
+      "initialInstall": "INSTALL_FAILED_INSUFFICIENT_STORAGE",
+      "resolution": "x86_64 split APK installed successfully without deleting app data"
+    },
+    "upgrade": {
+      "baselineSongs": 8,
+      "afterFirstNormalLaunchSongs": 8,
+      "afterVocalSaveSongs": 9,
+      "afterUiFixNormalLaunchSongs": 9,
+      "afterBothImportsSongs": 10,
+      "original8FullSongRowsExact": true,
+      "original8OutboxRowsExact": true,
+      "setlistsExact": true,
+      "all9RowsExactAcrossUiFixInstallAndNormalLaunch": true,
+      "originalProviderOverridesRestoredExactly": true,
+      "newStartJammingDefaultEnabledObserved": true,
+      "baselineArchiveSha256": "289137b2096de7fa6a9d5bca81218ba840780ef8713346516f7f5fa525d76809",
+      "finalArchiveSha256": "a902028e32f0f4a587cceb788f009515a602b1b2d57db50cf9a06afca9d70691"
+    },
+    "actualAppChecks": [
+      {
+        "id": "clinch-mountain-backstep",
+        "title": "Clinch Mountain Backstep",
+        "search": "pass",
+        "combinedAndRawPreviewReady": "pass",
+        "saveCombinedToReader": "pass",
+        "lyricsFlag": false,
+        "chords": true,
+        "unknownArtistPreserved": true,
+        "coldOfflineSavedReopen": "pass"
+      },
+      {
+        "id": "blue-moon-of-kentucky",
+        "title": "Blue Moon of Kentucky",
+        "search": "pass",
+        "preview": "pass",
+        "saveCombinedToReader": "pass",
+        "lyricsFlag": true,
+        "chords": true,
+        "unknownArtistPreserved": true,
+        "coldOfflineSavedReopen": "pass"
+      }
+    ],
+    "offlineVerified": "Wi-Fi and mobile data disabled; dumpsys active default network none",
+    "actualSavedDataReplay": [
+      {
+        "title": "Clinch Mountain Backstep",
+        "idSha256": "015f446528654439b0f2012b9b63da1a971a7738297d30fd5c788944dbe54e85",
+        "sourceId": "startjamming:clinch-mountain-backstep",
+        "hasLyrics": false,
+        "hasChords": true,
+        "unknownArtistPreserved": true,
+        "recordingIdsEmpty": true,
+        "canonicalAttributionPreserved": true,
+        "exactHttpPayloadBytes": 2403,
+        "exactHttpPayloadSha256": "292cdd4b29dc02325d5691fb60737018daa39ed110c55f41714dd662612cffc9",
+        "rawFactsAndChordMeasuresExact": true,
+        "sourceFactsExactAfterChordPro": true,
+        "documentSha256": "e635da861266e51729718fae2f6636a025f14dff6e374455704a74b70fc98486"
+      },
+      {
+        "title": "Blue Moon of Kentucky",
+        "idSha256": "73e7f89937c2f11094c44ade47451053d33411d6ac9181b29fbe0d46cd52fd98",
+        "sourceId": "startjamming:blue-moon-of-kentucky",
+        "hasLyrics": true,
+        "hasChords": true,
+        "unknownArtistPreserved": true,
+        "recordingIdsEmpty": true,
+        "canonicalAttributionPreserved": true,
+        "exactHttpPayloadBytes": 6041,
+        "exactHttpPayloadSha256": "854a5065dec11f34b69f7079260aa2e662df739945f89803397302553e940330",
+        "rawFactsAndChordMeasuresExact": true,
+        "sourceFactsExactAfterChordPro": true,
+        "documentSha256": "b647e8f37d9d5e716ad3d52b5f31b422599cb75ff88d5e6829708f08448e686b"
+      }
+    ],
+    "all10DocumentsExactAfterProductionRepositoryReopen": true,
+    "visualReview": {
+      "portrait": "pass",
+      "landscape": "pass",
+      "fontScale1_3": "pass",
+      "darkTheme": "pass",
+      "freshPrivateScreenshotHashes": {
+        "clinch-uifix-detail": {
+          "sha256": "a5eed23ddfa8a66badfb63da1267a47aa0a5c9fd83e708843041cbb5f49b1d77",
+          "privateOnly": true
+        },
+        "clinch-uifix-saved": {
+          "sha256": "9c455c9c191be83f59d08c57990817c363a87e35cea6288f92da3c4b7a4f0339",
+          "privateOnly": true
+        },
+        "clinch-offline-reopened": {
+          "sha256": "4feb8c5937b5a6df6ad615fd43cdf96a7f06712aa0716dc2ea2468ebca3199e7",
+          "privateOnly": true
+        },
+        "clinch-offline-landscape": {
+          "sha256": "198b382c0f2cebb3ce6b8cfb9045e08ab11f0925e03030e2b710b1bbe33376a2",
+          "privateOnly": true
+        },
+        "clinch-offline-large-text": {
+          "sha256": "87bfe3ae360d9afdb776a8ef7b4cf5b00ac3feaa51ae867d4b4b8cc86fc27b4b",
+          "privateOnly": true
+        },
+        "clinch-offline-dark": {
+          "sha256": "f52355656fb23cd9995b30d3f4a9b964fc9d70428022e98bb9382f8377099340",
+          "privateOnly": true
+        },
+        "blue-saved": {
+          "sha256": "a6788f4978df6e847232e12fa6754910ddf4a50dab5aed3f85133583faed1710",
+          "privateOnly": true
+        },
+        "blue-offline-reopened": {
+          "sha256": "55fa9b4f46d663b603062de52c1e8baeacd194ecf652bbaa1844b60be6253166",
+          "privateOnly": true
+        }
+      }
+    },
+    "restoration": {
+      "wifi": true,
+      "mobileData": true,
+      "fontScale": 1.0,
+      "userRotation": 0,
+      "accelerometerRotation": 1,
+      "night": "no",
+      "qaAppForceStopped": true,
+      "emulatorGracefullyStopped": true,
+      "emulatorLauncherExitCode": 0,
+      "sdkBuildDeviceLeaseReleased": true,
+      "physicalDevicesAndReleaseOutputsUntouched": true
+    },
+    "httpRequestCounts": "Android HTTP calls not instrumented; do not substitute maintenance CLI request counts."
+  },
+  "limitations": [
+    "Hosted CI must pass exact final head before merge; latest observation pending jobs.",
+    "Managed cloud reachability is unverified.",
+    "No production/Play package was installed or published in this QA run.",
+    "Compatible release and served-main v6 publication remain Integration-owned gates."
+  ],
+  "privacy": {
+    "secretsIncluded": false,
+    "rawSourceDocumentsIncluded": false,
+    "rawLibraryOrScreenshotsPublished": false
+  },
+  "mergeReadiness": "Android functional/upgrade gate passed; final exact-head hosted CI and Integration review remain"
+}
