@@ -642,6 +642,53 @@ bool _eligibleAgreementSource(Map source, String hashField) =>
 int _capoOf(Object? raw) =>
     raw is num ? raw.toInt() : int.tryParse('$raw') ?? 0;
 
+/// Captures the player's key fallback without retaining song content.
+///
+/// This mirrors the replay's no-user-override path in
+/// `AppControllerAdapter._songKey`. `combineSources` may recover a sourced
+/// arrangement key into metadata, so it follows the explicit-key path. After
+/// that, the player tries the current body estimate before the checked estimate
+/// bound to that body's hash.
+Map<String, Object?> _playerKeyResolution(SongDocument doc) {
+  final checked = jsonMap(doc.extra['chordKeyEstimate']);
+  final checkedHash = checked['bodyHash'];
+  final checkedBodyHashMatches = checkedHash is String
+      ? checkedHash == _sha(doc.body)
+      : null;
+  final explicit = doc.metadata['key'];
+  if (explicit is String && explicit.trim().isNotEmpty) {
+    return {
+      'key': explicit,
+      'source': 'explicitMetadata',
+      'checkedEstimateBodyHashMatches': checkedBodyHashMatches,
+    };
+  }
+
+  final rawEstimate = estimateChordKey(doc.body)?.key;
+  if (rawEstimate != null) {
+    return {
+      'key': rawEstimate,
+      'source': 'rawChordEstimate',
+      'checkedEstimateBodyHashMatches': checkedBodyHashMatches,
+    };
+  }
+
+  final checkedEstimate = checkedChordKeyEstimate(doc);
+  if (checkedEstimate != null) {
+    return {
+      'key': checkedEstimate,
+      'source': 'checkedBodyHashEstimate',
+      'checkedEstimateBodyHashMatches': true,
+    };
+  }
+
+  return {
+    'key': null,
+    'source': 'unavailable',
+    'checkedEstimateBodyHashMatches': checkedBodyHashMatches,
+  };
+}
+
 String? _soundingKey(SongDocument doc) {
   final m = doc.metadata;
   final declared = m['key'] as String?;
@@ -1444,6 +1491,84 @@ void main() {
           'ambiguous base contributors must not be attributed to one source',
     );
   });
+  test('player key report follows metadata then chord estimate fallbacks', () {
+    const clearChart = '''
+[E] [A/E] [C#m] [F#]
+[G#m] [F#] [B] [B/A]
+[E] [A/E] [C#m] [F#]
+[D/F#] [A/E] [E]
+''';
+    final explicit = SongDocument(
+      id: 'explicit-key',
+      title: 'Fixture',
+      artist: 'Fixture',
+      body: clearChart,
+      metadata: const {'key': 'F#'},
+      extra: {
+        'chordKeyEstimate': {'key': 'E', 'bodyHash': _sha(clearChart)},
+      },
+    );
+    expect(_playerKeyResolution(explicit), {
+      'key': 'F#',
+      'source': 'explicitMetadata',
+      'checkedEstimateBodyHashMatches': true,
+    });
+
+    final inferred = SongDocument(
+      id: 'raw-estimate',
+      title: 'Fixture',
+      artist: 'Fixture',
+      body: clearChart,
+    );
+    expect(_playerKeyResolution(inferred), {
+      'key': 'E',
+      'source': 'rawChordEstimate',
+      'checkedEstimateBodyHashMatches': null,
+    });
+  });
+
+  test('player accepts only a body-hash-bound checked chord estimate', () {
+    const body = '[Am] [F] [C] [G]';
+    final checked = SongDocument(
+      id: 'checked-estimate',
+      title: 'Fixture',
+      artist: 'Fixture',
+      body: body,
+      extra: {
+        'chordKeyEstimate': {'key': 'Am', 'bodyHash': _sha(body)},
+      },
+    );
+    expect(_playerKeyResolution(checked), {
+      'key': 'Am',
+      'source': 'checkedBodyHashEstimate',
+      'checkedEstimateBodyHashMatches': true,
+    });
+
+    final stale = checked.copyWith(
+      body: '[C] [F] [G] [C]',
+      extra: checked.extra,
+    );
+    expect(_playerKeyResolution(stale), {
+      'key': null,
+      'source': 'unavailable',
+      'checkedEstimateBodyHashMatches': false,
+    });
+  });
+
+  test('player reports no key when a song has no chords or key metadata', () {
+    final lyricOnly = SongDocument(
+      id: 'lyric-only',
+      title: 'Fixture',
+      artist: 'Fixture',
+      body: 'A lyric-only fixture with no chord markers.',
+    );
+    expect(_playerKeyResolution(lyricOnly), {
+      'key': null,
+      'source': 'unavailable',
+      'checkedEstimateBodyHashMatches': null,
+    });
+  });
+
   test('recording key comparisons distinguish chart-scoped key claims', () {
     const selected = SongCandidate(
       providerId: 'genius',
@@ -2491,6 +2616,14 @@ Future<void> _benchmark() async {
         );
       }
       final keyClaimScope = _keyClaimScope(doc);
+      final playerKeyResolution = _playerKeyResolution(doc);
+      final keyOrigin = jsonMap(doc.extra['fieldOrigins'])['key'];
+      final keySourceIds = doc.extra['keySourceIds'] is List
+          ? ((doc.extra['keySourceIds'] as List)
+                .whereType<String>()
+                .toList()
+              ..sort())
+          : const <String>[];
       final identityReady =
           recordingReferenceAnchored &&
           (edition == null || row['recordingEditionAnchored'] == true);
@@ -2505,6 +2638,9 @@ Future<void> _benchmark() async {
         'sourceIds': (contributingProviderIds(doc).toList()..sort()),
         'normalizedLyricsSha256': lyricsHash,
         'key': key,
+        'playerKeyResolution': playerKeyResolution,
+        'keyOrigin': keyOrigin,
+        'keySourceIds': keySourceIds,
         'keyEvidence': doc.metadata['key'] != null
             ? 'source'
             : checkedChordKeyEstimate(doc) != null
