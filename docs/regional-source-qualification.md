@@ -146,13 +146,34 @@ unchanged lyric bodies and structured facts. These targeted probes do not imply
 Android or cloud reachability. Ten focused synthetic tests cover positive aliases
 and conflicting context, recording IDs, title editions and detail-only editions.
 
-Before production availability:
+The final registered CLI verified both canaries per source at 11:10:07Z and
+11:10:13Z. The shared-matcher fix then passed 620 combined provider/controller/
+persistence cases, clean scoped analysis and independent review. Two affected
+Japanese-alias live probes passed at 11:37:47Z-11:37:50Z through the normal
+configured factory (four HTTP 200 responses, no retries/network failures).
 
-1. Complete final registered-runtime CLI and hosted checks on the committed
-   candidate; retain precise timestamps and request/code provenance.
-2. Verify Android search/detail/save and offline readers with data preservation.
-3. Integrate through the public-main owner, verify the served compatible catalog
+Android qualification completed at 11:47:43Z on the existing Android 16/API 36
+x86_64 emulator. A same-signer in-place update of an isolated QA package saved
+all four canaries using ordinary UI controls. CH4NGE used VocaDB's original as
+the selection; UtaiteDB's contextual lookup found its matching original, and
+both versions were saved. The initial generic UtaiteDB page is still not claimed
+to contain that original. Six saved songs reopened after a cold offline launch,
+and complete stored rows, hashes, source facts, original payloads, credits and
+ChordPro round trips remained exact. The two earlier songs/outbox rows and
+prior source opt-outs survived. QA source choices and emulator network settings
+were restored, and the app stopped before releasing resources. Production
+private data and physical devices were not accessed.
+
+One offline harness attempt expected comma-separated Library semantics while
+the cold Recent view exposed newline-separated rows. It stopped before opening
+a song and restored network settings. Both observed row forms were accepted by
+the corrected harness; the complete offline pass then succeeded. This was a
+test-selector failure, not a lost-song or provider failure.
+
+Remaining gates:
+
+1. Integrate through the public-main owner, verify the served compatible catalog
    and release/install a new compatible app. Older released clients retain their
    existing catalogs and cannot gain native providers through configuration alone.
-4. Probe the actual managed-cloud runtime separately. Local success, synthetic
+2. Probe the actual managed-cloud runtime separately. Local success, synthetic
    fixtures and hosted compilation do not establish cloud API reachability.
