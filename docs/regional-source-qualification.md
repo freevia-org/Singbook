@@ -2,9 +2,11 @@
 
 The prepared compatible channel-5 runtime registers both native sources. It
 complements VocaDB's voice-synth focus and preserves all 24 channel-4 entries.
-Public-main integration, a compatible app release, Android UI and cloud
-qualification remain separate gates. Catalog totals below do not establish
-lyric-bearing counts or incremental coverage.
+Both sources now have two qualified live native search/detail canaries, both
+published Japanese-alias re-probes pass, and isolated Android QA saved all four
+canaries and reopened six songs offline. Public-main integration, a compatible
+app release and managed-cloud qualification remain separate gates. Catalog
+totals below do not establish lyric-bearing counts or incremental coverage.
 
 ## Publisher scope and documented interface
 
@@ -90,10 +92,10 @@ retrieval timestamp in a 32-entry, 15-minute cache. Requests serialize at one
 second per provider, in addition to ordinary transport pacing.
 
 Initial cover/remaster detail checks returned no lyrics. The four lyric-bearing
-canaries below were identified through those responses' explicit version links;
-the adapter never follows those links to fill a cover's empty lyric body.
-Entries remain source arrangements with empty recording IDs. Multiple originals
-are ambiguous; no original is unavailable, rather than an English-translation
+canaries below were identified through explicit version relationships; the
+adapter never follows those links to fill a cover's empty lyric body. Entries
+remain source arrangements with empty recording IDs. Multiple originals are
+ambiguous; no original is unavailable, rather than an English-translation
 fallback. Original and translated variants remain distinct source facts.
 
 | Native canary | Artist | Selected original / retained variants |
@@ -103,22 +105,22 @@ fallback. Original and translated variants remain distinct source facts.
 | [UtaiteDB 72011](https://utaitedb.net/S/72011), Take you to an alien | Iyowa feat. SEKAI | 15343 / 1 |
 | [UtaiteDB 51300](https://utaitedb.net/S/51300), CH4NGE | Giga feat. KAFU | 10454 / 1 |
 
-At 10:45:53Z–10:46:01Z on 2026-10-27, the first three contextual search/detail
-canaries passed through the native adapters and ordinary matching service. The
-fourth search did not contain its known ID: twelve highly rated covers crowded
-out the original. That first attempt used seven HTTP 200 responses, no retries
-or network failures. Metadata-only diagnostics confirmed that the documented
-`Exact` name match with `Name` sorting includes the exact original.
-
-Contextual lookup now uses the ordinary title-only `Auto`/`RatingScore` search
-first, then at most one same-title `Exact`/`Name` search when no row satisfies the
-full artist/alias/album/duration context. Each response remains capped at twelve;
-there is no pagination, count query or fallback after an access/parse failure.
-Ordinary free-text search remains unchanged. The affected CH4NGE contextual
-lookup passed at 10:56:42Z–10:56:45Z with three HTTP 200 responses and no retries
-or failures; the other three successful canaries were not repeated for that fix.
-CH4NGE is a direct canonical CLI canary plus this separate contextual-app check;
-its ordinary first free-text page is not claimed to contain the original.
+The initial native run (10:45:53Z–10:46:01Z) passed the first three contextual
+search/detail canaries. Its fourth search omitted the known CH4NGE original
+because twelve highly rated covers crowded it out. The bounded fix preserves
+ordinary free-text search: after the regular title-only `Auto`/`RatingScore`
+search, it makes at most one same-title `Exact`/`Name` search if no result
+matches the full artist/alias/album/duration context. Each response is capped at
+twelve; there is no pagination, count query or fallback after access/parse
+failure. The affected CH4NGE contextual lookup passed at 10:56:42Z–10:56:45Z
+with three HTTP 200 responses, no retries or failures. The final registered
+channel-5 CLI then passed two independent extraction canaries per source at
+11:10:07Z (TouhouDB) and 11:10:13Z (UtaiteDB): all four records were healthy,
+with four and three HTTP 200 responses respectively and no retries or network
+failures. TouhouDB IDs 138 and 51766 and UtaiteDB ID 72011 used search plus
+detail; UtaiteDB ID 51300 used direct canonical detail. The separate contextual
+CH4NGE check above establishes its bounded search/detail path. Its ordinary
+first free-text page is still not claimed to contain the original.
 
 All four retained full variant credits, aliases, artist roles, album arrays,
 culture codes, web links, original-version IDs and raw JSON. Actual native
@@ -141,26 +143,24 @@ recording-ID and explicit edition checks. Canonical source titles and documents
 remain unchanged; alias provenance is recorded separately. Detail responses must
 retain the alias and cannot contradict the selected edition through their title,
 metadata or extra fields. Declarative alias-shaped data alone grants no trust.
-The two actual Japanese aliases passed normal configured-factory matching with
-unchanged lyric bodies and structured facts. These targeted probes do not imply
-Android or cloud reachability. Ten focused synthetic tests cover positive aliases
-and conflicting context, recording IDs, title editions and detail-only editions.
-
-The final registered CLI verified both canaries per source at 11:10:07Z and
-11:10:13Z. The shared-matcher fix then passed 620 combined provider/controller/
-persistence cases, clean scoped analysis and independent review. Two affected
-Japanese-alias live probes passed at 11:37:47Z-11:37:50Z through the normal
-configured factory (four HTTP 200 responses, no retries/network failures).
+The two actual Japanese aliases passed normal configured-factory matching at
+11:37:47Z–11:37:50Z: TouhouDB 138's published Japanese title and UtaiteDB 72011's
+published Japanese title both selected the existing canonical entry. Both lyric
+bodies and structured source facts matched their prior canaries exactly. This
+used four HTTP 200 responses with no retries or network failures. These targeted
+probes do not imply cloud reachability. Ten focused synthetic cases cover
+positive aliases and conflicting context, recording IDs, title editions and
+detail-only editions.
 
 Android qualification completed at 11:47:43Z on the existing Android 16/API 36
 x86_64 emulator. A same-signer in-place update of an isolated QA package saved
-all four canaries using ordinary UI controls. CH4NGE used VocaDB's original as
-the selection; UtaiteDB's contextual lookup found its matching original, and
-both versions were saved. The initial generic UtaiteDB page is still not claimed
-to contain that original. Six saved songs reopened after a cold offline launch,
-and complete stored rows, hashes, source facts, original payloads, credits and
-ChordPro round trips remained exact. The two earlier songs/outbox rows and
-prior source opt-outs survived. QA source choices and emulator network settings
+all four new canaries through ordinary UI controls. CH4NGE used VocaDB's
+original as the selection; UtaiteDB contextual lookup found its matching
+original, and both versions were saved. The generic UtaiteDB first page is not
+claimed to contain that original. Six songs then reopened after a cold offline
+launch. The four new and two prior stored rows, hashes, source facts, original
+payloads, credits and ChordPro round trips remained exact; prior outbox rows and
+source opt-outs also survived. QA source choices and emulator network settings
 were restored, and the app stopped before releasing resources. Production
 private data and physical devices were not accessed.
 
@@ -177,3 +177,7 @@ Remaining gates:
    existing catalogs and cannot gain native providers through configuration alone.
 2. Probe the actual managed-cloud runtime separately. Local success, synthetic
    fixtures and hosted compilation do not establish cloud API reachability.
+
+The [PR 184 qualification report](https://github.com/freevia-org/Singbook/blob/0697c23dd9c90380043aaf516854b9e0c085fa59/reports/source-maintenance/local/qualifications/2026-10-27T114743Z-regional-channel5-pr184/report.json)
+records the tested runtime commit, final canary and Android evidence, and these
+remaining publication and cloud gates.
