@@ -16,7 +16,7 @@ void main() {
   final v5File = File('config/source-catalog-v5.json');
   final v6File = File('config/source-catalog-v6.json');
 
-  test('channel 6 preserves channel 5 entries and selects v6 defaults', () {
+  test('channel 6 preserves channel 5 entries as a bundled fallback', () {
     final old = jsonDecode(v5File.readAsStringSync()) as Map<String, dynamic>;
     final current =
         jsonDecode(v6File.readAsStringSync()) as Map<String, dynamic>;
@@ -63,14 +63,9 @@ void main() {
         containsAll(['identityScope', 'key', 'timeSignature']),
       );
     }
-    expect(SourceCatalogClient.bundledAsset, 'config/source-catalog-v6.json');
-    expect(SourceCatalogClient.cacheKey, 'sourceCatalog:v6');
+    expect(SourceCatalogClient.channel6CacheKey, 'sourceCatalog:v6');
     expect(SourceCatalogClient.channel5CacheKey, 'sourceCatalog:v5');
     expect(SourceCatalogClient.channel4CacheKey, 'sourceCatalog:v4');
-    expect(
-      SourceCatalogClient.defaultEndpoint,
-      endsWith('/source-catalog-v6.json'),
-    );
     expect(
       File('pubspec.yaml').readAsStringSync(),
       contains('config/source-catalog-v6.json'),

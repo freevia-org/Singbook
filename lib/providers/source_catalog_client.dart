@@ -26,12 +26,13 @@ class SourceCatalogClient {
   static const defaultEndpoint = String.fromEnvironment(
     'SINGBOOK_SOURCE_CATALOG_URL',
     defaultValue:
-        'https://raw.githubusercontent.com/freevia-org/Singbook/main/config/source-catalog-v6.json',
+        'https://raw.githubusercontent.com/freevia-org/Singbook/main/config/source-catalog-v7.json',
   );
-  // Channel 6 adds Start Jamming; older compiled rosters keep their
+  // Channel 7 adds LyricsPlus; older compiled rosters keep their
   // own streams and are never promoted into this cache.
-  static const bundledAsset = 'config/source-catalog-v6.json';
-  static const cacheKey = 'sourceCatalog:v6';
+  static const bundledAsset = 'config/source-catalog-v7.json';
+  static const cacheKey = 'sourceCatalog:v7';
+  static const channel6CacheKey = 'sourceCatalog:v6';
   static const channel5CacheKey = 'sourceCatalog:v5';
   static const channel4CacheKey = 'sourceCatalog:v4';
   static const channel3CacheKey = 'sourceCatalog:v3';
