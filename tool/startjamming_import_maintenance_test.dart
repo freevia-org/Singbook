@@ -214,7 +214,7 @@ void main() {
         'atUtc': DateTime.now().toUtc().toIso8601String(),
         'scope':
             'Four local live native HTTP requests through normal AppController, real SQLite save/reopen and production ChordPro codec; no Android UI or cloud claim',
-        'baseCommit': Platform.environment['SINGBOOK_SOURCE_COMMIT'],
+        'sourceCommit': Platform.environment['SINGBOOK_SOURCE_COMMIT'],
         'workingTreeQualification': true,
         'sourceSha256': sha256
             .convert(
@@ -231,7 +231,9 @@ void main() {
         'checks': checks,
         'savedSongCount': saved.length,
         'completeSavedSongJsonExactAfterSQLiteReopen': true,
-        'newSourceRegisteredOrActivated': false,
+        'catalogActivationVerified': false,
+        'androidUiVerified': false,
+        'cloudVerified': false,
       };
       File('artifacts/startjamming-native-live-report.json').writeAsStringSync(
         '${const JsonEncoder.withIndent('  ').convert(report)}\n',

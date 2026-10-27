@@ -49,6 +49,11 @@ requests and emits a sanitized report under `artifacts/`. Set
 Ordinary CI skips network access. The source CLI can use regular declarative
 probes once a compatible catalog channel includes the source.
 
+The maintenance harness also distinguishes a nonempty chord chart from lyric
+text: only actual plain lyric lines verify the `lyrics` capability. An
+instrumental canary can verify chords and metadata while a vocal canary
+separately establishes lyric extraction.
+
 ## Release gates
 
 The native adapter registration alone does not change any existing catalog
