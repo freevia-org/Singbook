@@ -7,7 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:xml/xml.dart' show XmlException;
 import '../data/library_repository.dart';
-import '../domain/arrangement.dart' show plainLyrics;
+import '../domain/arrangement.dart' show parseArrangement, plainLyrics;
 import '../domain/models.dart';
 import '../domain/chordpro.dart';
 import '../domain/combine.dart';
@@ -1146,10 +1146,16 @@ class AppController extends ChangeNotifier {
       (r) =>
           (r.matchKind != MatchKind.rejected ||
               _historicalCacheUses.any((use) => use.allows(candidate, r))) &&
-          plainLyrics(r.body).trim().isNotEmpty,
+          (plainLyrics(r.body).trim().isNotEmpty ||
+              parseArrangement(
+                r.body,
+              ).any((line) => !line.directive && line.chords.isNotEmpty)),
     );
     try {
       if (usable.isNotEmpty) {
+        // A verified own arrangement may contain only chord rows. This is a
+        // content prefilter; combineSources still decides identity, readiness,
+        // editions and whether the chart is eligible without a lyric base.
         combined = combineSources(
           candidate,
           available,
