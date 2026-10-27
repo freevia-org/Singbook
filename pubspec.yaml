@@ -51,6 +51,7 @@ flutter:
   assets:
     - config/source-catalog.json
     - config/source-catalog-v2.json
+    - config/source-catalog-v3.json
     - assets/fonts/
     - assets/fonts/brand-candidates/Lora-OFL.txt
     - assets/branding/singbook-icon.png

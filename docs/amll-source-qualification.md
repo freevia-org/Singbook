@@ -1,10 +1,13 @@
 # AMLL native adapter qualification
 
-The native adapter is prepared for a compatible future app/catalog rollout.
-It is not registered in the default provider factory or added to either
-published catalog. Older clients reject unknown native IDs even when disabled;
-the integration coordinator must select a compatible new distribution channel
-and app build before activation. Frozen release 39 is unchanged.
+The compatible rollout registers the native adapter and includes it active and
+enabled by default in `config/source-catalog-v3.json`. New code uses channel 3's
+URL, bundle and `sourceCatalog:v3` cache; saved provider choices still win.
+Both older catalog files and cache streams remain unchanged because older
+clients reject unknown native IDs even when disabled. The integration
+coordinator must publish this code/catalog and build/install the next compatible
+app before shipped-client availability can be claimed. Frozen release 39 is
+unchanged. This document distinguishes local qualification from that rollout.
 
 ## API and identity
 
@@ -81,5 +84,6 @@ contributor arrays, original JSON, raw TTML, cue facts and document timing remai
 intact. The existing codec shares derived timing status/binding by track ID, so
 full source JSON byte equality after export is not claimed.
 
-Regional coverage, catalog size, overlap, cloud reachability, default app roster
-activation, and device UI testing remain unverified for this adapter.
+Regional coverage, catalog size, overlap, cloud reachability, published-client
+availability and device UI testing remain unverified for this adapter. Local
+bootstrap/migration tests separately check channel-3 registration and preferences.
