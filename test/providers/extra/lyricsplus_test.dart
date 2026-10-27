@@ -7,6 +7,7 @@ import 'package:singbook/domain/models.dart';
 import 'package:singbook/domain/chordpro.dart';
 import 'package:singbook/providers/extra/lyricsplus.dart';
 import 'package:singbook/providers/provider.dart';
+import 'package:singbook/providers/core/service.dart';
 
 Map<String, dynamic> _catalogRow({
   String title = 'Example',
@@ -172,6 +173,72 @@ final _timingFailure = throwsA(
 );
 
 void main() {
+  test(
+    'normal discovery accepts searched lyric documents without recording or timing authority',
+    () async {
+      const lyrics =
+          'Copper lanterns shimmer across quiet water while distant mountain '
+          'echoes carry another gentle melody home';
+      final tokens = lyrics.split(' ');
+      final h = _Harness(
+        payload: _payload(
+          lines: [
+            _line(
+              text: lyrics,
+              words: [
+                for (var i = 0; i < tokens.length; i++)
+                  _word(
+                    '${tokens[i]}${i == tokens.length - 1 ? '' : ' '}',
+                    1000 + i * 100,
+                    100,
+                  ),
+              ],
+            ),
+          ],
+        ),
+      );
+      addTearDown(h.close);
+      final selected = (await h.provider.search(
+        'Example Fixture Artist',
+      )).single;
+      final checks = <ProviderCheck>[];
+      final results = await SourceDiscoveryService([
+        h.provider,
+      ]).discover(selected, enabledIds: {'lyricsplus'}, onProgress: checks.add);
+      expect(results, hasLength(1));
+      final result = results.single;
+      expect(result.id, selected.identity);
+      expect(result.matchKind, MatchKind.sameSong);
+      expect(result.body, lyrics);
+      expect(result.candidate.recordingIds, isEmpty);
+      expect(result.metadata['identityScope'], 'arrangement');
+      expect(result.candidate.album, 'Actual Apple Album');
+      expect(result.metadata['appleMusicIds'], ['12345']);
+      expect(
+        result.extra['lyricsplus']['catalogRows'][0]['album'],
+        'Catalog Album',
+      );
+      expect(
+        result.extra['lyricsplus']['catalogRows'][0]['isrc'],
+        'GBXXX1200001',
+      );
+      expect(result.metadata.containsKey('isrc'), isFalse);
+      final track = result.timingTracks.single;
+      expect(track.status, TimingStatus.unverified);
+      expect(track.recordingId, isNull);
+      expect(track.extra['recordingEvidence'], 'sourceDemonstrationOnly');
+      expect(track.sourceLyrics, lyrics);
+      expect(
+        track.cues.where((cue) => cue.graphemeStart != null),
+        hasLength(tokens.length),
+      );
+      expect(checks.last.state, 'found');
+      expect(checks.last.code, isNull);
+      expect(checks.last.result?.id, selected.identity);
+      expect(h.requests, hasLength(3));
+    },
+  );
+
   test(
     'search groups exact lyric identities and retains every catalog fact',
     () async {

@@ -2,10 +2,12 @@
 
 This native candidate is compiled into the provider registry, with no catalog
 or release activation. Older catalog channels keep their exact source rosters.
-The dedicated 28-case offline suite, 1,461 combined provider/domain/controller
+The dedicated 29-case offline suite, 1,461 combined provider/domain/controller
 tests and scoped analysis pass on the isolated native branch. Two independent
 live adapter canaries also pass; integration on the latest main and app release
-gates remain explicit below.
+gates remain explicit below. After merging public main `05a708b`, 352 affected
+application/catalog/native/UI tests pass, including normal discovery accepting
+the source without recording or timing authority. Analysis remains clean.
 
 ## Access and observed schema
 
@@ -93,9 +95,19 @@ exactly. This establishes local adapter extraction, not app or cloud behavior.
 The first selected live attempt returned three HTTP 200 responses but exposed
 valid background-word interleaving rejected by the parser. That was reproduced
 and fixed offline from retained data, with four synthetic regression cases,
-before one justified two-canary rerun. No full-registry live run was repeated.
+before one justified two-canary rerun. A subsequent ordinary maintenance CLI
+qualification of the prospective catalog also passed both probes with complete
+catalog/lyrics/metadata/line/word-timing extraction coverage and six HTTP 200
+responses. This separate run validates the automation's actual probe contract.
+No full-registry live run was repeated.
 
-Recheck affected integration paths after updating to the latest public main.
+The ignored prospective catalog structurally validates all 28 entries offline,
+with the existing 27 unchanged. Running the current channel-6 default against
+this staged native registry truthfully reports `lyricsplus/catalog_entry_missing`.
+That expected integration gate is retained: never insert an unknown native ID
+into an older published channel, even disabled. A compatible new catalog channel
+must accompany activation; this PR changes no published catalog or cache stream.
+
 Confirm app search/import/save/reopen and ChordPro provenance/timing round trips.
 Cloud reachability remains untested. Source-specific support beyond Apple
 winners requires its own returned-identity and timing evidence. No activation,
