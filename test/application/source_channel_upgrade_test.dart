@@ -50,7 +50,7 @@ void main() {
           app.discovery.catalogClient!.runtime.catalog!.sources,
           hasLength(26),
         );
-        expect(app.discovery.catalogClient!.runtime.catalog!.revision, 16);
+        expect(app.discovery.catalogClient!.runtime.catalog!.revision, 17);
         expect(requests, 0);
         await app.setProviderEnabled('amll', false);
         await app.setProviderEnabled('vocadb', false);
@@ -186,7 +186,7 @@ void main() {
       try {
         await app.initialize();
         expect(await repo.getSetting(SourceCatalogClient.cacheKey), isNull);
-        expect(app.discovery.catalogClient!.runtime.catalog!.revision, 16);
+        expect(app.discovery.catalogClient!.runtime.catalog!.revision, 17);
         expect(
           app.discovery.catalogClient!.runtime.catalog!.sources,
           hasLength(26),
