@@ -1309,6 +1309,15 @@ bool _compatibleMetadataKeySource(SongDocument song, SourceResult source) {
                 source.matchReason == 'incomplete_or_different_lyrics')) ||
         source.hasPendingMatchCheck ||
         !(_sameSong(source.candidate, selected) ||
+            // A positively accepted same-song chart can carry a different
+            // provider credit from the selected catalog artist. The match
+            // verdict is useful only together with the edition guard above,
+            // setup compatibility below, and phrase/chord corroboration
+            // against the saved arrangement; it never promotes a rejected
+            // or pending chart.
+            (source.matchKind == MatchKind.sameSong &&
+                _version(source.candidate.title) ==
+                    _version(selected.title)) ||
             contributingChartCreditMatches) ||
         _version(source.candidate.title) != _version(selected.title)) {
       continue;
