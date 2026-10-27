@@ -1,0 +1,210 @@
+{
+  "schemaVersion": 1,
+  "atUtc": "2026-10-27T23:39:40.448189+00:00",
+  "scope": "Candidate-only Pisni native provider preparation, unregistered. Not production daily latest or managed-cloud/app release proof.",
+  "source": {
+    "base": "4f943eb126dd83eb8af12680d2544a42e89b94f6",
+    "head": "befcb0d6f5cbd108a62cf9de6bdf3319308937d4",
+    "pullRequest": 195,
+    "ownedFiles": [
+      "docs/pisni-source-qualification.md",
+      "lib/providers/extra/pisni.dart",
+      "test/providers/extra/pisni_test.dart"
+    ],
+    "providerSha256": "7a350a2a66f8933fa4b1a4a9db86a9eaf8178cab7b026606a17470851aff048e",
+    "liveProviderSha256": "b0685815e90b8086a9279920d4ca845e9a4e707f14fc86bdb5f9567ee67e7e16",
+    "postLiveChange": "One conditional return gained braces for lint; exact saved source snapshot comparison proves this is the only difference."
+  },
+  "live": {
+    "startedAtUtc": "2026-10-27T23:32:18.728059Z",
+    "completedAtUtc": "2026-10-27T23:32:24.708723Z",
+    "runtime": "local-windows-standalone-dart-native-provider",
+    "sourceBase": "4f943eb126dd83eb8af12680d2544a42e89b94f6",
+    "providerSha256": "b0685815e90b8086a9279920d4ca845e9a4e707f14fc86bdb5f9567ee67e7e16",
+    "scope": "Two selected native search/resolve canaries only; changed/new extraction capability, separate from production suite. No registry/catalog/cloud/app-release claim.",
+    "maxRetries": 0,
+    "hostIntervalMs": 1100,
+    "checks": [
+      {
+        "sourceId": "3424",
+        "title": "Червона рута",
+        "measuredAtUtc": "2026-10-27T23:32:18.731060Z",
+        "status": "healthy_native_selected_canary",
+        "searchCandidates": 12,
+        "rawBytes": 54136,
+        "rawSha256": "db4efae05ecf1cf8053637c570472b7b621b8155779ad64b77dc896b26f49675",
+        "bodyCharacters": 1006,
+        "chords": true,
+        "creditCount": 2,
+        "performerCount": 7,
+        "sourceFieldCount": 5,
+        "sourceVariantCount": 0,
+        "recordingIdsEmpty": true,
+        "sourceFactsExactAfterChordPro": true
+      },
+      {
+        "sourceId": "8878",
+        "title": "Ой у лузі",
+        "measuredAtUtc": "2026-10-27T23:32:21.470546Z",
+        "status": "healthy_native_selected_canary",
+        "searchCandidates": 12,
+        "rawBytes": 64720,
+        "rawSha256": "17d54c53579d8d931204aaec256843b9961fdcbb44d62d5b96cacac7e5251716",
+        "bodyCharacters": 1082,
+        "chords": true,
+        "creditCount": 3,
+        "performerCount": 3,
+        "sourceFieldCount": 5,
+        "sourceVariantCount": 0,
+        "recordingIdsEmpty": true,
+        "sourceFactsExactAfterChordPro": true
+      }
+    ],
+    "httpDiagnostics": {
+      "networkFailures": 0,
+      "hosts": {
+        "www.pisni.org.ua": {
+          "requests": 4,
+          "statuses": {
+            "200": 4
+          },
+          "retryAfterSeconds": {},
+          "databaseLag": {}
+        }
+      }
+    },
+    "requestTrace": [
+      {
+        "atUtc": "2026-10-27T23:32:18.757062Z",
+        "url": "https://www.pisni.org.ua/search.php?phrase=%D7%E5%F0%E2%EE%ED%E0+%F0%F3%F2%E0&obj=s",
+        "status": 200
+      },
+      {
+        "atUtc": "2026-10-27T23:32:21.052136Z",
+        "url": "https://www.pisni.org.ua/songs/3424.html",
+        "status": 200
+      },
+      {
+        "atUtc": "2026-10-27T23:32:22.415004Z",
+        "url": "https://www.pisni.org.ua/search.php?phrase=%CE%E9+%F3+%EB%F3%E7%B3&obj=s",
+        "status": 200
+      },
+      {
+        "atUtc": "2026-10-27T23:32:24.342855Z",
+        "url": "https://www.pisni.org.ua/songs/8878.html",
+        "status": 200
+      }
+    ],
+    "credentialsCookiesForceReloadUsed": false,
+    "catalogOrRegistryChanged": false
+  },
+  "persistence": {
+    "atUtc": "2026-10-27T23:34:31.551444Z",
+    "runtime": "host-flutter-test-disposable-sqlite",
+    "networkRequests": 0,
+    "userLibraryAccessed": false,
+    "checks": [
+      {
+        "sourceId": "3424",
+        "title": "Червона рута",
+        "controllerSave": true,
+        "repositoryReopenExact": true,
+        "exportSourceFactsExact": true
+      },
+      {
+        "sourceId": "8878",
+        "title": "Ой у лузі",
+        "controllerSave": true,
+        "repositoryReopenExact": true,
+        "exportSourceFactsExact": true
+      }
+    ]
+  },
+  "offlineCapturedResponseReplay": {
+    "atUtc": "2026-10-27T23:19:26.669762Z",
+    "runtime": "standalone-dart-offline-http-fixture-replay",
+    "networkRequests": 0,
+    "mockRequests": 4,
+    "sourceCommitBase": "4f943eb126dd83eb8af12680d2544a42e89b94f6",
+    "checks": [
+      {
+        "id": "3424",
+        "title": "Червона рута",
+        "performerCount": 7,
+        "creditCount": 2,
+        "chords": true,
+        "rawBytes": 54125,
+        "rawSha256": "bd6c82bbae55c4cf82d39aa436fec2d7fb3a184bbf017559cad880c3c6d02ffe",
+        "bodyCharacters": 1006,
+        "recordingIdsEmpty": true,
+        "sourceFactsExactAfterChordPro": true
+      },
+      {
+        "id": "8878",
+        "title": "Ой у лузі",
+        "performerCount": 3,
+        "creditCount": 3,
+        "chords": true,
+        "rawBytes": 64720,
+        "rawSha256": "906d87361f163b8baf9515c5dd0dedf8143e29b45946d9c43836a58a16a7c9da",
+        "bodyCharacters": 1082,
+        "recordingIdsEmpty": true,
+        "sourceFactsExactAfterChordPro": true
+      }
+    ],
+    "contextualListedPerformerValidated": true,
+    "activatedOrRegistered": false
+  },
+  "validation": {
+    "focusedProviderTests": 26,
+    "disposableControllerSqliteTests": 1,
+    "totalTests": 27,
+    "testCommand": "flutter test --no-pub test/providers/extra/pisni_test.dart artifacts/pisni_persistence_test.dart",
+    "testExitCode": 0,
+    "testLogSha256": "f0b256b2c4bb2a70ca8cbd31e5744103aa0b468e95074eb04a2451404739e672",
+    "scopedAnalysis": "No issues found",
+    "analysisTargets": [
+      "lib/providers/extra/pisni.dart",
+      "test/providers/extra/pisni_test.dart"
+    ],
+    "independentReview": "Initial ambiguous-lyric/cancellation findings fixed and regression-tested; final bounded read-only review found no concrete blocker."
+  },
+  "notationReference": {
+    "atUtc": "2026-10-27T23:12:50.159419+00:00",
+    "purpose": "Publisher chord-notation documentation only; no additional song canary",
+    "url": "https://www.pisni.org.ua/articles/11.html",
+    "status": 200,
+    "sha256": "ef2dfa8cfcc40a071e7376de7b39a3311c387cc37d95255fa8e733747dce5a26",
+    "images": []
+  },
+  "requestAccounting": {
+    "selectedNativeCanaryRequests": 4,
+    "statuses": {
+      "200": 4
+    },
+    "transportRetries": 0,
+    "separatePublisherNotationDocumentationRequests": 1,
+    "fullProductionSuiteRepeated": false,
+    "offlineFixtureReplayNetworkRequests": 0,
+    "cookiesCredentialsMediaOrUserLibraryUsed": false
+  },
+  "limits": [
+    "Preformatted chord conversion uses layout heuristics, including indented single Latin notes; ambiguous unindented letters remain literal with facts.",
+    "Native module only; no factory/catalog/default/channel activation.",
+    "Two source canaries do not establish corpus-wide coverage.",
+    "No explicit per-work content license; rights remain unknown.",
+    "Source dates/notes heterogeneous rather than a formal publisher API.",
+    "Compatible registration/catalog, device UI and managed-cloud qualification remain pending."
+  ],
+  "resources": {
+    "hostFlutterTestWindowReleased": true,
+    "noGradleBuildOrDeviceUse": true,
+    "sdkAndDeviceReservationsRemainReleased": true,
+    "temporaryUserLibraryAccessed": false
+  },
+  "productionLatestSha256Preserved": {
+    "reports/source-maintenance/latest.json": "775610cfe42d78ef194759c0516c0c70dfcb285f5e02c59ca13618cc18979604",
+    "reports/source-maintenance/local/latest.json": "a0455e0efc1bcdc7694b4d7e27ebece92875459c666c38b666bbc13638e72fbf"
+  },
+  "rawSourceDocumentsAndLyricBodiesPublished": false
+}
