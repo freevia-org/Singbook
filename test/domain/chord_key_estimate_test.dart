@@ -2,6 +2,65 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:singbook/domain/chord_key_estimate.dart';
 
 void main() {
+  test('boundary tonic does not treat repeated ii chords as the home key', () {
+    const body = '[F] [Gm] [Bb] [C] [Gm] [F]';
+
+    expect(chartSupportsDeclaredTonic(body, 'Gm'), isTrue);
+    expect(chartSupportsBoundaryTonic(body, 'Gm'), isFalse);
+    expect(chartSupportsBoundaryTonic(body, 'F'), isTrue);
+  });
+
+  test(
+    'boundary tonic supports modal charts when the scale estimate differs',
+    () {
+      const body = '[D] [C] [G] [D] [C] [G]';
+
+      expect(chartSupportsBoundaryTonic(body, 'D'), isTrue);
+    },
+  );
+
+  test(
+    'boundary tonic survives a contrasting bridge between matching ends',
+    () {
+      const body = '''
+[Am]
+[C] [G] [D] [F] [C] [G] [D] [F]
+[Am]
+''';
+
+      expect(chartSupportsBoundaryTonic(body, 'Am'), isTrue);
+    },
+  );
+
+  test('boundary tonic parses extended and slash chords after directives', () {
+    const body = '''
+{comment: Intro}
+{start_of_verse}
+[Fmaj7/A] [G7] [C]
+''';
+
+    expect(chartSupportsBoundaryTonic(body, 'F'), isTrue);
+    expect(chartSupportsBoundaryTonic('[C] [G] [Am7/G]', 'Am'), isTrue);
+  });
+
+  test(
+    'power chords support either mode, while incompatible quality does not',
+    () {
+      expect(chartSupportsBoundaryTonic('[D5] [F] [G]', 'D'), isTrue);
+      expect(chartSupportsBoundaryTonic('[D5] [F] [G]', 'Dm'), isTrue);
+      expect(chartSupportsBoundaryTonic('[Fm] [C] [G]', 'F'), isFalse);
+    },
+  );
+
+  test('boundary tonic abstains for absent chords or an invalid key', () {
+    expect(chartSupportsBoundaryTonic('', 'C'), isFalse);
+    expect(
+      chartSupportsBoundaryTonic('{start_of_verse}\n[N.C.]', 'C'),
+      isFalse,
+    );
+    expect(chartSupportsBoundaryTonic('[C] [G] [F]', 'H'), isFalse);
+  });
+
   test(
     'estimates E major from the chart harmony, not its first chord alone',
     () {

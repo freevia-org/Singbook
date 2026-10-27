@@ -263,6 +263,41 @@ bool chartSupportsDeclaredTonic(String body, String shapeKey) {
   return tonicChords >= 2 || tonicChords == chords.length;
 }
 
+/// Whether a compatible tonic chord begins or ends the chart's chord sequence.
+///
+/// This is narrow positive evidence for a chart's boundary tonic, including
+/// modal charts whose interior chords may favor another major/minor estimate.
+/// It does not reject a key merely because the boundary does not support it.
+bool chartSupportsBoundaryTonic(String body, String shapeKey) {
+  final parts = _keyIdentity(shapeKey).split(':');
+  if (parts.length != 2) return false;
+  final tonic = int.tryParse(parts.first);
+  if (tonic == null || tonic < 0 || tonic > 11) return false;
+  final expectedQuality = parts.last == 'minor'
+      ? _Quality.minor
+      : parts.last == 'major'
+      ? _Quality.major
+      : null;
+  if (expectedQuality == null) return false;
+
+  _Chord? first;
+  _Chord? last;
+  for (final line in parseArrangement(body)) {
+    if (line.directive) continue;
+    for (final anchor in line.chords) {
+      final chord = _Chord.parse(anchor.chord);
+      if (chord == null) continue;
+      first ??= chord;
+      last = chord;
+    }
+  }
+  bool supports(_Chord? chord) =>
+      chord != null &&
+      chord.root == tonic &&
+      (chord.quality == _Quality.power || chord.quality == expectedQuality);
+  return supports(first) || supports(last);
+}
+
 class _ScoredKey {
   const _ScoredKey(this.tonic, this.mode, this.score);
   final int tonic;

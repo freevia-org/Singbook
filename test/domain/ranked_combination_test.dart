@@ -68,6 +68,80 @@ List<Map<String, dynamic>> _claims(SongDocument song, String field) => [
 ];
 
 void main() {
+  test('an automatic ii-chord key does not outweigh the chart home key', () {
+    final chart = _source(
+      'chart',
+      body:
+          '[F]Amber [Gm]lanterns [C7]glow above [F]the quiet water\n'
+          '[Bb]Silver [Gm]rain [C7]returns beneath [F]the evening sky\n'
+          '[F]Every [Dm]window keeps a [C7]little golden light\n'
+          '[Gm]Morning [C7]carries every dream back [F]home',
+    );
+    final analysis = _source(
+      'analysis',
+      body: '',
+      extra: {
+        'keyRecording': {
+          'key': 'Gm',
+          'ids': ['USAAA2400001'],
+          'selectedIdentity': _selected.identity,
+        },
+      },
+    );
+    final song = combineSources(_selected, [
+      _source('lyrics'),
+      chart,
+      analysis,
+    ]);
+    expect(song.metadata['key'] ?? rankedChordKeyEstimate(song), 'F');
+    final retained = _claims(
+      song,
+      'metadata.key',
+    ).singleWhere((c) => c['providerId'] == 'recording-key-analysis');
+    expect(retained['value'], 'Gm');
+    expect(retained['harmonyFit'], 'neutral');
+    expect(
+      (retained['qualitySignals'] as Map)['algorithmicLocalTonicOnly'],
+      -12,
+    );
+  });
+
+  test('automatic modal tonic at a chart boundary keeps its support', () {
+    final chart = _source(
+      'chart',
+      body:
+          '[D]Amber lanterns [C]glow above the [G]quiet [D]water\n'
+          '[D]Silver rain [C]returns beneath the [G]evening [D]sky\n'
+          '[D]Every window [C]keeps a little [G]golden [D]light\n'
+          '[D]Morning carries [C]every dream [G]back [D]home',
+    );
+    final analysis = _source(
+      'analysis',
+      body: '',
+      extra: {
+        'keyRecording': {
+          'key': 'D',
+          'ids': ['USAAA2400001'],
+          'selectedIdentity': _selected.identity,
+        },
+      },
+    );
+    final song = combineSources(_selected, [
+      _source('lyrics'),
+      chart,
+      analysis,
+    ]);
+    expect(song.metadata['key'], 'D');
+    final retained = _claims(
+      song,
+      'metadata.key',
+    ).singleWhere((c) => c['providerId'] == 'recording-key-analysis');
+    expect(retained['harmonyFit'], 'fitting');
+    expect(
+      (retained['qualitySignals'] as Map),
+      isNot(contains('algorithmicLocalTonicOnly')),
+    );
+  });
   test('conflicting supplied keys weigh the chosen chart home key', () {
     final chart = _source(
       'chart',

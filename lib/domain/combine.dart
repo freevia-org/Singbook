@@ -16,7 +16,11 @@ import 'compact_chord_alignment.dart';
 import 'lyric_word_identity.dart';
 import 'short_lyric_reference.dart';
 import 'chord_key_estimate.dart'
-    show estimateChordKey, rankChordKeyCandidates, chartSupportsDeclaredTonic;
+    show
+        estimateChordKey,
+        rankChordKeyCandidates,
+        chartSupportsDeclaredTonic,
+        chartSupportsBoundaryTonic;
 import 'evidence_ranking.dart';
 import 'source_evidence.dart';
 import 'chart_arrangements.dart';
@@ -5363,6 +5367,29 @@ EvidenceRanking _rankSourceCombination(
               : opposingMode)
           .add(identity);
     }
+    final measuredFit = fit(source, 'metadata.key', measured);
+    final estimatedCharts = [
+      for (final chart in charts)
+        if (estimateChordKey(_keyCorrectedBody(chart)) case final estimate?)
+          (
+            source: chart,
+            key: transposeChord(
+              estimate.key,
+              _capoOf(_setupValue(chart, selected, 'capo')),
+            ),
+          ),
+    ];
+    final localTonicOnly =
+        measuredFit == EvidenceHarmonyFit.fitting &&
+        estimatedCharts.isNotEmpty &&
+        estimatedCharts.every((chart) {
+          final capo = _capoOf(_setupValue(chart.source, selected, 'capo'));
+          return _keyIdentity(chart.key) != _keyIdentity(measured) &&
+              !chartSupportsBoundaryTonic(
+                _keyCorrectedBody(chart.source),
+                transposeChord(measured, (12 - capo) % 12),
+              );
+        });
     claims.add(
       EvidenceClaim(
         field: 'metadata.key',
@@ -5380,6 +5407,7 @@ EvidenceRanking _rankSourceCombination(
         origin: EvidenceOrigin.provider,
         qualitySignals: {
           'algorithmicModeUncertainty': -12,
+          if (localTonicOnly) 'algorithmicLocalTonicOnly': -12,
           'recordingAgreement':
               (((observation.data['ids'] as List? ?? const [])
                               .whereType<String>()
@@ -5395,7 +5423,7 @@ EvidenceRanking _rankSourceCombination(
         contextCompatible:
             (observation.bound || factSourceIds.contains(source.id)) &&
             (preferredSourceId == null || source.id == preferredSourceId),
-        harmonyFit: fit(source, 'metadata.key', measured),
+        harmonyFit: localTonicOnly ? EvidenceHarmonyFit.neutral : measuredFit,
       ),
     );
   }
