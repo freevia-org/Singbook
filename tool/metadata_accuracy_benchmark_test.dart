@@ -4,6 +4,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math' as math;
 
+import 'package:characters/characters.dart';
+
 import 'package:crypto/crypto.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:singbook/domain/arrangement.dart';
@@ -32,6 +34,10 @@ const _cachePath = String.fromEnvironment(
   'METADATA_BENCHMARK_CACHE',
   defaultValue: 'artifacts/metadata-accuracy/cache',
 );
+const _reportOutputPath = String.fromEnvironment(
+  'METADATA_BENCHMARK_OUTPUT',
+  defaultValue: 'build/metadata_accuracy',
+);
 const _fields = ['lyrics', 'key', 'chords'];
 
 String _normalize(String text) => text
@@ -46,13 +52,43 @@ String _normalizedLyrics(String body) => _normalize(
       .replaceAll(RegExp(r'\[[^\]\n]*\]'), ''),
 );
 
+/// Returns comparison units without assuming every language separates words
+/// with spaces. Latin and other space-delimited text stays word based; CJK,
+/// Thai, Lao, Khmer, and Myanmar runs use grapheme clusters so unspaced lyrics
+/// still produce useful vocabulary and ordered-bigram evidence.
+List<String> _practicalLyricsUnits(String body) {
+  final normalized = foldLyricVowelAccents(_normalizedLyrics(body));
+  final matches = RegExp(
+    r'[\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF'
+    r'\u3040-\u309F\u30A0-\u30FF\u31F0-\u31FF\uAC00-\uD7AF'
+    r'\u0E00-\u0E7F\u0E80-\u0EFF\u1780-\u17FF\u1000-\u109F]+'
+    r'|[\p{L}\p{N}]+',
+    unicode: true,
+  ).allMatches(normalized);
+  final result = <String>[];
+  for (final match in matches) {
+    final value = match.group(0)!;
+    final first = value.runes.first;
+    final noSpaceScript =
+        first >= 0x3400 && first <= 0x4dbf ||
+        first >= 0x4e00 && first <= 0x9fff ||
+        first >= 0xf900 && first <= 0xfaff ||
+        first >= 0x20000 && first <= 0x3134f ||
+        first >= 0x3040 && first <= 0x30ff ||
+        first >= 0x31f0 && first <= 0x31ff ||
+        first >= 0xac00 && first <= 0xd7af ||
+        first >= 0x0e00 && first <= 0x0eff ||
+        first >= 0x1780 && first <= 0x17ff ||
+        first >= 0x1000 && first <= 0x109f;
+    result.addAll(noSpaceScript ? value.characters : [value]);
+  }
+  return result;
+}
+
 Map<String, Object?> _practicalLyricsTextAgreement(
   String candidateBody,
   String selectedBody,
 ) {
-  List<String> words(String body) => foldLyricVowelAccents(
-    _normalizedLyrics(body),
-  ).split(' ').where((word) => word.isNotEmpty).toList();
   Set<String> bigrams(List<String> values) => {
     for (var i = 1; i < values.length; i++)
       '${values[i - 1]}\u0000${values[i]}',
@@ -60,8 +96,8 @@ Map<String, Object?> _practicalLyricsTextAgreement(
   double coverage(Set<String> source, Set<String> reference) =>
       source.isEmpty ? 0 : source.intersection(reference).length / source.length;
 
-  final candidateWords = words(candidateBody);
-  final selectedWords = words(selectedBody);
+  final candidateWords = _practicalLyricsUnits(candidateBody);
+  final selectedWords = _practicalLyricsUnits(selectedBody);
   final candidateVocabulary = candidateWords.toSet();
   final selectedVocabulary = selectedWords.toSet();
   final candidateBigrams = bigrams(candidateWords);
@@ -185,8 +221,7 @@ Map<String, Object?> _practicalLyricCorrespondence(
 ) {
   List<List<String>> lines(String body) => body
       .split(RegExp(r'\r?\n'))
-      .map((line) => foldLyricVowelAccents(_normalizedLyrics(line)))
-      .map((line) => line.split(' ').where((word) => word.isNotEmpty).toList())
+      .map(_practicalLyricsUnits)
       .where((line) => line.isNotEmpty)
       .toList();
 
@@ -207,8 +242,7 @@ Map<String, Object?> _practicalLyricCorrespondence(
   final selectedPairs = bigrams(selectedLines);
   final chordedLines = parseArrangement(chartBody)
       .where((line) => !line.directive && line.chords.isNotEmpty)
-      .map((line) => foldLyricVowelAccents(_normalizedLyrics(line.text)))
-      .map((line) => line.split(' ').where((word) => word.isNotEmpty).toList())
+      .map((line) => _practicalLyricsUnits(line.text))
       .where((line) => line.isNotEmpty)
       .toList();
   final chordedWords = chordedLines.expand((line) => line).toSet();
@@ -1760,6 +1794,49 @@ void main() {
       unrelated['candidateOrderedBigramCoverageBySelectedLyrics'],
       lessThan(excerpt['candidateOrderedBigramCoverageBySelectedLyrics'] as num),
     );
+
+    final japanese = _practicalLyricsTextAgreement(
+      '夜空ノムコウ\n明日も晴れるかな',
+      '夜空ノムコウ、\n明日も晴れるかな',
+    );
+    expect(japanese['candidateWordCount'], greaterThan(10));
+    expect(japanese['candidateOrderedBigramCoverageBySelectedLyrics'], 1);
+    expect(japanese['selectedLyricsOrderedBigramCoverageByCandidate'], 1);
+
+    final japaneseExcerpt = _practicalLyricsTextAgreement(
+      '夜空ノムコウ',
+      '夜空ノムコウ\n明日も晴れるかな',
+    );
+    expect(
+      japaneseExcerpt['candidateOrderedBigramCoverageBySelectedLyrics'],
+      1,
+    );
+    expect(
+      japaneseExcerpt['selectedLyricsOrderedBigramCoverageByCandidate'],
+      lessThan(1),
+    );
+
+    final japaneseUnrelated = _practicalLyricsTextAgreement(
+      '春の山道を歩き続ける',
+      '夜空ノムコウ\n明日も晴れるかな',
+    );
+    expect(
+      japaneseUnrelated['candidateOrderedBigramCoverageBySelectedLyrics'],
+      lessThan(0.3),
+    );
+
+    final japaneseChart = _practicalLyricCorrespondence(
+      '[C]夜空ノムコウ\n[G]明日も晴れるかな',
+      '夜空ノムコウ\n明日も晴れるかな',
+    );
+    expect(
+      japaneseChart['chartChordedLineOrderedBigramCoverageBySelectedLyrics'],
+      1,
+    );
+    expect(
+      japaneseChart['selectedLyricsOrderedBigramCoverageByChordedLines'],
+      1,
+    );
   });
   test('practical chord key screen accounts for capo and flags mismatch', () {
     const chart = '''
@@ -2851,7 +2928,7 @@ Future<void> _benchmark() async {
     },
     'songs': rows,
   };
-  final out = Directory('build/metadata_accuracy');
+  final out = Directory(_reportOutputPath);
   out.createSync(recursive: true);
   File(
     '${out.path}/report.json',
