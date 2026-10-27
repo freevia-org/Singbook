@@ -471,10 +471,13 @@ List<Map<String, dynamic>> _sourceFields(dom.Element? block) {
         return;
       }
       if (node.localName == 'a') {
+        if (current == 'Підбір акордів') {
+          // A linked account name is a musical credit only when the URL
+          // identifies an actual publisher account, not an off-site lookalike.
+          if (_isUserLink(node.attributes['href'])) text.write(node.text);
+          return;
+        }
         if (_isUserLink(node.attributes['href'])) {
-          // A named chord arranger is a musical credit; uploader account
-          // links elsewhere are not song metadata. Keep name, never account URL.
-          if (current == 'Підбір акордів') text.write(node.text);
           return;
         }
         final link = resolvedLink(
@@ -499,8 +502,14 @@ List<Map<String, dynamic>> _sourceFields(dom.Element? block) {
   return result;
 }
 
-bool _isUserLink(String? href) =>
-    href != null && Uri.tryParse(href)?.path.startsWith('/users/') == true;
+bool _isUserLink(String? href) {
+  if (href == null || href.length > 200) return false;
+  // Match the original attribute: Uri normalizes an explicit HTTPS port 443.
+  final match = RegExp(
+    r'^(?:https://www\.pisni\.org\.ua)?/users/[1-9]\d{0,9}\.html$',
+  ).firstMatch(href);
+  return match != null && match.end == href.length;
+}
 
 // Explicit Windows-1251 table, with the undefined byte rejected. No lossy
 // UTF-8/Latin-1 fallback may corrupt Ukrainian identities or original text.

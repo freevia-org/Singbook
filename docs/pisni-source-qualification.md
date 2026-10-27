@@ -35,7 +35,12 @@ notes, keywords, composition information and reference links separately from
 the selected lyric text. Alternate preformatted blocks in that source section
 remain separate variant facts. Discussion, uploader account details and media
 performers do not become canonical song credits. A specifically labelled chord
-arranger name is preserved without importing an account URL.
+arranger name is preserved without importing an account URL. Linked arranger
+names require an exact relative `/users/<positive-numeric-id>.html` or HTTPS
+`www.pisni.org.ua` profile URL. Foreign hosts, other schemes, explicit ports,
+credentials, queries, fragments, encoded IDs and malformed paths are discarded
+with their linked text. The original attribute is checked before URI
+normalization can erase an explicit default port.
 
 ## Chords and rights
 
@@ -59,11 +64,11 @@ public accessibility or attribution.
 
 ## Evidence
 
-Twenty-six focused provider tests pass, covering legacy form/Unicode handling,
+Twenty-eight focused provider tests pass, covering legacy form/Unicode handling,
 variant IDs, role/album boundaries, canonical identity, source spoofing,
 cancellation, cache behavior, source-note privacy, ambiguous lyric letters and
 ChordPro retention. A separate disposable AppController/SQLite test saves,
-reopens and exports both actual captured source documents exactly: 27 tests in
+reopens and exports both actual captured source documents exactly: 29 tests in
 the combined qualification. Scoped analysis is clean. No user library or
 device was used.
 
@@ -77,10 +82,14 @@ ChordPro round trips; recording IDs remain empty.
 
 Live-tested provider SHA-256:
 `b0685815e90b8086a9279920d4ca845e9a4e707f14fc86bdb5f9567ee67e7e16`.
-The final module differs only by adding braces around a single conditional
-return for lint compliance; the exact live-tested snapshot and diff are kept
-privately. Final provider SHA-256:
-`7a350a2a66f8933fa4b1a4a9db86a9eaf8178cab7b026606a17470851aff048e`.
+The subsequent credit-validation repair tightens publisher profile URLs and
+discards invalid linked arranger text. Both original native HTTP captures were
+replayed offline against that repair: their complete SourceResult values,
+including all source fields, credits, chords and original bytes, remain exact.
+This repair required zero additional HTTP requests. The original live snapshot
+and append-only exact-commit repair receipts remain separate qualification
+evidence on `codex/datasource-health`; earlier live evidence is not presented as
+a fresh network run of the repaired code.
 
 These selected new-capability checks did not rerun the production datasource
 suite or change production health reports. Source HTML/lyrics remain private;

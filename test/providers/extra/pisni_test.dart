@@ -493,4 +493,55 @@ void main() {
     );
     expect(requests, hasLength(2));
   });
+  test(
+    'only exact publisher user URLs can supply linked arranger credit',
+    () async {
+      for (final url in [
+        '/users/7.html',
+        'https://www.pisni.org.ua/users/7.html',
+      ]) {
+        html = page(
+          extra:
+              '<div id="songdatablock"><b>Підбір акордів:</b><a href="$url">Arranger</a></div>',
+        );
+        final result = await PisniProvider(transport).resolve(candidate());
+        expect(result.metadata['sourceFields'], [
+          {'label': 'Підбір акордів', 'text': 'Arranger'},
+        ]);
+      }
+    },
+  );
+  test(
+    'off-site schemes ports and malformed arranger profiles are not credits',
+    () async {
+      for (final url in [
+        'https://attacker.example/users/7.html',
+        'http://www.pisni.org.ua/users/7.html',
+        'https://www.pisni.org.ua:443/users/7.html',
+        'https://www.pisni.org.ua:8443/users/7.html',
+        '//www.pisni.org.ua/users/7.html',
+        '/users/not-numeric.html',
+        '/users/0.html',
+        '/users/0007.html',
+        '/users/7.html?extra=1',
+        '/users/7.html#profile',
+        'https://attacker@www.pisni.org.ua/users/7.html',
+        '/users/%37.html',
+        '/users/7.html/extra',
+        '/users/12345678901.html',
+      ]) {
+        html = page(
+          extra:
+              '<div id="songdatablock"><b>Підбір акордів:</b><a href="$url">Forged Credit</a></div>',
+        );
+        final result = await PisniProvider(transport).resolve(candidate());
+        expect(result.metadata['sourceFields'], isEmpty, reason: url);
+        expect(
+          jsonEncode(result.metadata),
+          isNot(contains('Forged Credit')),
+          reason: url,
+        );
+      }
+    },
+  );
 }
