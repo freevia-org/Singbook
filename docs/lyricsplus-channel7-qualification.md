@@ -39,6 +39,24 @@ concrete compatibility defect. The ordinary default offline CLI validates all
 28 entries with no registry/catalog gap. The previously live-probed LyricsPlus
 runtime/probe configuration is unchanged; only its change-reason text differs.
 
-App/device qualification, native PR integration, publication, cloud reachability
-and a compatible app release remain explicit gates. These local checks do not
-claim those outcomes.
+Private Android qualification passed on the existing QA09 emulator package.
+The x64 debug APK SHA-256 is
+`786f24d6ec8a64e45110c40957c7d17a861c746eff9021808d8b519f94f3fefb`,
+built from candidate `1b768dd` plus packaging-only QA commit `4ae7085`.
+Signer-checked in-place installation preserved all ten existing song/outbox
+rows. LyricsPlus was enabled by default while prior opt-outs were retained.
+Billie Jean and Creep each passed actual search, source comparison, save and
+cold offline reopen. The saved source metadata, independent Apple responses,
+exact raw JSON and word cues survived production SQLite/ChordPro replay;
+all twelve documents reopened exactly. Portrait, landscape, large text and
+dark-mode screenshots were reviewed. Timing remains unverified source timing.
+
+The same private app also passed both Ozbcoz native file-picker imports while
+offline. Original chord/comment lines and metadata survived save/reopen/export;
+all twelve prior documents and fourteen final documents were retained exactly.
+Those two selected public downloads are separate from the daily suite and host
+import phase. This proves file import, not automatic online Ozbcoz search.
+
+Native PR integration, publication, cloud reachability and a compatible public
+app release remain explicit gates. Release 41 artifacts and physical devices
+were not changed by this private qualification.
