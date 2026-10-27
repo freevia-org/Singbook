@@ -523,6 +523,7 @@ bool recordingCompatible(SongCandidate selected, SourceResult result) {
     'work',
     'artist',
     'image',
+    'arrangement',
     'historicalText',
   };
   final scopes = [
@@ -567,6 +568,9 @@ bool recordingCompatible(SongCandidate selected, SourceResult result) {
   )) {
     return true;
   }
+  // Album and duration can associate ordinary recording search results, but
+  // they cannot turn a composition/arrangement-level source into a recording.
+  if (scopes.any(nonRecordingScopes.contains)) return false;
   return result.matchKind == MatchKind.sameRecording &&
       selected.album != null &&
       found.album != null &&
@@ -1428,8 +1432,9 @@ Object? _setupValue(SourceResult source, SongCandidate selected, String key) =>
 bool _compatibleArrangementSetup(
   SourceResult base,
   SourceResult donor,
-  SongCandidate selected,
-) {
+  SongCandidate selected, {
+  bool allowCapoDifference = false,
+}) {
   if (!explicitEditionsCompatible(
     selected,
     donor.candidate,
@@ -1439,6 +1444,7 @@ bool _compatibleArrangementSetup(
     return false;
   }
   for (final key in const ['key', 'capo', 'tuning', 'timeSignature']) {
+    if (key == 'capo' && allowCapoDifference) continue;
     final baseValue = _setupValue(base, selected, key);
     final donorValue = _setupValue(donor, selected, key);
     if (baseValue == null || donorValue == null) continue;
@@ -2516,7 +2522,12 @@ _overlayChords(
   final contextSources = <String>{};
   for (final source in sources) {
     if (!source.hasChords ||
-        !_compatibleArrangementSetup(base, source, selected)) {
+        !_compatibleArrangementSetup(
+          base,
+          source,
+          selected,
+          allowCapoDifference: true,
+        )) {
       continue;
     }
     final donorBody = _keyCorrectedBody(source);
@@ -2620,7 +2631,33 @@ _overlayChords(
           (_capoOf(_setupValue(candidate.source, selected, 'capo')) -
               _capoOf(_setupValue(primary, selected, 'capo'))) %
           12;
-      if (move != 0 && _keyConsensusRank(candidate.source) > 0) {
+      if (move != 0) {
+        final primaryKey = _setupValue(primary, selected, 'key');
+        final donorKey = _setupValue(candidate.source, selected, 'key');
+        final primaryCapo = _setupValue(primary, selected, 'capo');
+        final donorCapo = _setupValue(candidate.source, selected, 'capo');
+        // A capo move needs an affirmative discovery check. When both capo
+        // values are explicit, also require matching sounding-key claims that
+        // fit each chart's shapes. Older charts with an unspecified primary
+        // capo retain the established keyConsensus-based conversion path.
+        final explicitCapos = primaryCapo != null && donorCapo != null;
+        if (candidate.source.extra['keyConsensus'] != true ||
+            (explicitCapos &&
+                (primaryKey is! String ||
+                    donorKey is! String ||
+                    _keyIdentity(primaryKey) != _keyIdentity(donorKey) ||
+                    !declaredKeyFitsChords(
+                      _keyCorrectedBody(primary),
+                      primaryKey,
+                      primaryCapo,
+                    ) ||
+                    !declaredKeyFitsChords(
+                      _keyCorrectedBody(candidate.source),
+                      donorKey,
+                      donorCapo,
+                    )))) {
+          continue;
+        }
         final flats = _chartSpelling(_keyCorrectedBody(primary));
         candidate = (
           source: candidate.source,
@@ -2639,7 +2676,12 @@ _overlayChords(
         );
         movedIds.add(candidate.source.id);
       }
-      if (!_compatibleArrangementSetup(primary, candidate.source, selected)) {
+      if (!_compatibleArrangementSetup(
+        primary,
+        candidate.source,
+        selected,
+        allowCapoDifference: true,
+      )) {
         continue;
       }
       var agrees = false, contradicts = false;

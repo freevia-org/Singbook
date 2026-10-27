@@ -144,7 +144,13 @@ void main() {
     });
   }
 
-  for (final scope in ['composition', 'work', 'artist', 'image']) {
+  for (final scope in [
+    'composition',
+    'work',
+    'artist',
+    'image',
+    'arrangement',
+  ]) {
     for (final location in [
       'selected metadata',
       'selected extra',
@@ -209,4 +215,70 @@ void main() {
       );
     }
   }
+
+  test('arrangement scope blocks album and duration recording fallback', () {
+    const selected = SongCandidate(
+      providerId: 'musicbrainz',
+      id: 'recording-1',
+      title: 'Amazing Grace',
+      artist: 'John Newton',
+      album: 'Hymns',
+      durationSeconds: 180,
+    );
+    final chart = SourceResult(
+      candidate: const SongCandidate(
+        providerId: 'roswell',
+        id: 'chart-1',
+        title: 'Amazing Grace',
+        artist: 'John Newton',
+        album: 'Hymns',
+        durationSeconds: 180,
+        metadata: {'identityScope': 'arrangement'},
+      ),
+      body: '[C]Amazing grace how sweet the sound',
+      matchKind: MatchKind.sameRecording,
+    );
+
+    expect(recordingCompatible(selected, chart), isFalse);
+  });
+
+  test(
+    'arrangement-scoped chart can still supply aligned same-song chords',
+    () {
+      const selected = SongCandidate(
+        providerId: 'catalog',
+        id: 'recording-1',
+        title: 'Amazing Grace',
+        artist: 'John Newton',
+        metadata: {'key': 'C', 'capo': 0},
+      );
+      const lyrics =
+          'Amazing grace how sweet the sound\n'
+          'That saved a wretch like me\n'
+          'I once was lost but now am found\n'
+          'Was blind but now I see';
+      final chart = SourceResult(
+        candidate: const SongCandidate(
+          providerId: 'roswell',
+          id: 'arrangement-1',
+          title: 'Amazing Grace',
+          artist: 'John Newton',
+          metadata: {'identityScope': 'arrangement'},
+        ),
+        body: '[C]Amazing grace how sweet the sound',
+        metadata: const {'key': 'C', 'capo': 0},
+        matchKind: MatchKind.sameSong,
+      );
+      final lyricSource = SourceResult(
+        candidate: selected,
+        body: lyrics,
+        matchKind: MatchKind.sameRecording,
+      );
+
+      expect(recordingCompatible(selected, chart), isFalse);
+      final document = combineSources(selected, [lyricSource, chart]);
+      expect(document.body, contains('[C]Amazing grace how sweet the sound'));
+      expect(document.extra['chordSourceIds'], contains(chart.id));
+    },
+  );
 }

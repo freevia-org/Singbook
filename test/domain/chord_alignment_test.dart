@@ -349,6 +349,111 @@ void main() {
     expect(doc.metadata.containsKey('capo'), isFalse);
   });
 
+  test('explicitly scoped capo charts transpose into the primary shapes', () {
+    const selectedEb = SongCandidate(
+      providerId: 'catalog',
+      id: 'harbor-eb',
+      title: 'Harbor Song',
+      artist: 'Test Artist',
+      metadata: {'key': 'Eb', 'capo': 0},
+    );
+    final lyrics = [..._verse, _chorus, ..._tail].join('\n');
+    final primary = [
+      '[Eb]Someone hums a tune along the [Bb]winding river road',
+      _verse[1],
+      _chorus,
+      _tail[0],
+      _tail[1],
+    ].join('\n');
+    final document = combineSources(selectedEb, [
+      SourceResult(
+        candidate: selectedEb,
+        body: lyrics,
+        matchKind: MatchKind.sameRecording,
+      ),
+      SourceResult(
+        candidate: selectedEb,
+        body: primary,
+        matchKind: MatchKind.sameRecording,
+        metadata: const {'key': 'Eb', 'capo': 0},
+        extra: const {'keyConsensus': true},
+      ),
+      SourceResult(
+        candidate: const SongCandidate(
+          providerId: 'ug',
+          id: 'harbor-c-capo3',
+          title: 'Harbor Song',
+          artist: 'Test Artist',
+        ),
+        body: [
+          '[C]Paper lanterns drifting over the [G]quiet harbor water',
+          '[Am]Morning carries salt and cedar [F]through the open door',
+          '[C]Little boats are waiting where the [G]gulls begin to call',
+        ].join('\n'),
+        matchKind: MatchKind.sameSong,
+        metadata: const {'key': 'Eb', 'capo': 3},
+        extra: const {'partialLyrics': true, 'keyConsensus': true},
+      ),
+    ]);
+
+    expect(_chordsByLine(document.body)[_verse[0]], ['Eb', 'Bb']);
+    expect(_chordsByLine(document.body)[_chorus], ['Eb', 'Bb']);
+    expect(_chordsByLine(document.body)[_tail[0]], ['Cm', 'Ab']);
+    expect(_chordsByLine(document.body)[_tail[1]], ['Eb', 'Bb']);
+    expect(document.metadata['key'], 'Eb');
+    expect(document.metadata['capo'], 0);
+    expect(document.extra['chordSourceIds'], contains('ug:harbor-c-capo3'));
+  });
+
+  test(
+    'capo difference is not merged without checked sounding-key evidence',
+    () {
+      const selectedEb = SongCandidate(
+        providerId: 'catalog',
+        id: 'harbor-eb',
+        title: 'Harbor Song',
+        artist: 'Test Artist',
+        metadata: {'key': 'Eb', 'capo': 0},
+      );
+      final lyrics = [..._verse, _chorus, ..._tail].join('\n');
+      final primary = [
+        '[Eb]${_verse[0]}',
+        _verse[1],
+        _chorus,
+        ..._tail,
+      ].join('\n');
+      final document = combineSources(selectedEb, [
+        SourceResult(
+          candidate: selectedEb,
+          body: lyrics,
+          matchKind: MatchKind.sameRecording,
+        ),
+        SourceResult(
+          candidate: selectedEb,
+          body: primary,
+          matchKind: MatchKind.sameRecording,
+          metadata: const {'key': 'Eb', 'capo': 0},
+          extra: const {'keyConsensus': true},
+        ),
+        SourceResult(
+          candidate: const SongCandidate(
+            providerId: 'ug',
+            id: 'harbor-c-capo3',
+            title: 'Harbor Song',
+            artist: 'Test Artist',
+          ),
+          body: '[C]Paper lanterns drifting over the [G]quiet harbor water',
+          matchKind: MatchKind.sameSong,
+          metadata: const {'key': 'Eb', 'capo': 3},
+        ),
+      ]);
+
+      expect(_chordsByLine(document.body)[_verse[0]], ['Eb']);
+      expect(_chordsByLine(document.body)[_chorus], isEmpty);
+      expect(document.metadata['capo'], 0);
+    },
+  );
+
   test('overlapping readings of a repeated phrase do not interleave', () {
     const line = 'la la la la la la la la';
     final doc = _combine(
