@@ -243,6 +243,77 @@ void main() {
     );
   });
 
+  test(
+    'accepted chart with a different artist credit recovers key across line grouping',
+    () {
+      final selected = _source('selected', _body);
+      final groupedChart = SourceResult(
+        candidate: SongCandidate(
+          providerId: 'chart-provider',
+          id: 'chart-song',
+          title: 'Song',
+          artist: 'Provider Credit Alias',
+        ),
+        body:
+            '[F#m]Amber lanterns glow [Bm]Silver rain returns\n'
+            '[D]Across the sleepy water [C#7]Morning brings a melody',
+        metadata: {'key': 'F#m'},
+        matchKind: MatchKind.sameSong,
+      );
+      final combined = combineSources(
+        _candidate,
+        [selected, groupedChart],
+        preferredSourceId: selected.id,
+      );
+
+      expect(combined.metadata['key'], 'F#m');
+      expect(combined.body, _body);
+      expect(combined.extra['fieldOrigins']['key'], groupedChart.id);
+      expect(combined.extra['corroboratedKeySourceIds'], [groupedChart.id]);
+    },
+  );
+
+  test('repeated lyric phrases retain their ordered chord anchors', () {
+    const repeatedBody =
+        '[F#m]Amber lanterns glow\n[Bm]Silver rain returns\n'
+        '[D]Across the sleepy water\n[F#m]Amber lanterns glow\n'
+        '[C#7]Morning brings a melody';
+    final source = _source(
+      'repeat-chart',
+      repeatedBody,
+      metadata: {'key': 'F#m'},
+    );
+
+    expect(
+      corroboratedArrangementKey(
+        _saved(body: repeatedBody, sources: [source]),
+      )?.key,
+      'F#m',
+    );
+  });
+
+  test('rejected chart with a different artist credit stays blocked', () {
+    final rejected = SourceResult(
+      candidate: SongCandidate(
+        providerId: 'chart-provider',
+        id: 'chart-song',
+        title: 'Song',
+        artist: 'Provider Credit Alias',
+      ),
+      body: _donorBody,
+      metadata: {'key': 'F#m'},
+      matchKind: MatchKind.rejected,
+      matchReason: 'identity_mismatch',
+    );
+
+    expect(
+      corroboratedArrangementKey(
+        _saved(sources: [rejected]),
+      ),
+      isNull,
+    );
+  });
+
   test('explicit saved key always wins', () {
     expect(corroboratedArrangementKey(_saved(metadata: {'key': 'A'})), isNull);
     final chosen = _source('chosen', _body, metadata: {'key': 'A'});

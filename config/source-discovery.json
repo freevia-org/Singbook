@@ -270,12 +270,13 @@
       "id": "roswell-music-jam",
       "name": "Roswell Music Jam",
       "firstSeen": "2026-10-26",
-      "lastChecked": "2026-10-26",
+      "lastChecked": "2026-10-27",
       "status": "accepted",
       "documentation": [
-        "https://www.roswellmusicjam.com/songbooks"
+        "https://www.roswellmusicjam.com/songbooks",
+        "https://www.bobdylan.com/songs/if-not-you/"
       ],
-      "reason": "Publisher documents a free educational ChordPro archive for use in ChordPro apps, with OnSong import instructions. The latest listed release, Nov 25, 2025, was observed as a public ZIP of 293 files (486087 bytes; SHA256 8f45048f6497177e6adae2286a800e3ff26cc4f7699c6cd5faffe9c4646149e3), covering Bluegrass, Americana and Electric collections. Two final production-adapter canaries at 2026-10-26T11:33:56Z passed search/resolve, consistent source title/artist, lyrics, chords and required metadata: If Not For You/Bob Dylan and Breakdown/Tom Petty. The probes reused one page and one archive GET, both HTTP 200, without rate limits or network failures. Offline replay of the actual archive through AppController verified individual save, SQLite reopen hashes, ChordPro export/import, 132/60 chord tokens and retained original source evidence. Subsequent Android native search/import/reader checks passed, including cached readers and exact source/raw payload retention through a new SQLite connection and ChordPro round trips. PR159 merged at public main commit 3e879428 and stages disabled source roswellmusicjam on channel 2 revision 9 with bounded ZIP checks, a 24-hour memory cache, stable filename arrangement IDs and attribution. Publisher updates recheck title/artist and retain the current retrieval revision. No bulk library import, recording-identity claim or blanket redistribution license. Implementation accepted after independent archive/transport review, clean analysis/offline validation, combined regressions and all 11 applicable CI checks passed. Manual qualification follow-up: PR162 merged at 7717b330 and channel 2 revision 11 enables this source by default. Ordinary-app cold startup showed it enabled and preserved cached-song hashes. The official compatible app update remains a separate release step. Broad-catalog overlap is unmeasured; no large or regionally unique catalog claim is made. Canary chord counts and successful import/export establish extraction and preservation, not independently verified chord correctness, lyric completeness, musical or transcription accuracy."
+      "reason": "Publisher documents a free educational ChordPro archive for use in ChordPro apps, with OnSong import instructions. The latest listed release, Nov 25, 2025, was observed as a public ZIP of 293 files (486087 bytes; SHA256 8f45048f6497177e6adae2286a800e3ff26cc4f7699c6cd5faffe9c4646149e3), covering Bluegrass, Americana and Electric collections. Two final production-adapter canaries at 2026-10-26T11:33:56Z passed search/resolve, consistent source title/artist, lyrics, chords and required metadata: If Not For You/Bob Dylan and Breakdown/Tom Petty. The probes reused one page and one archive GET, both HTTP 200, without rate limits or network failures. Offline replay of the actual archive through AppController verified individual save, SQLite reopen hashes, ChordPro export/import, 132/60 chord tokens and retained original source evidence. Subsequent Android native search/import/reader checks passed, including cached readers and exact source/raw payload retention through a new SQLite connection and ChordPro round trips. PR159 merged at public main commit 3e879428 and stages disabled source roswellmusicjam on channel 2 revision 9 with bounded ZIP checks, a 24-hour memory cache, stable filename arrangement IDs and attribution. Publisher updates recheck title/artist and retain the current retrieval revision. No bulk library import, recording-identity claim or blanket redistribution license. Implementation accepted after independent archive/transport review, clean analysis/offline validation, combined regressions and all 11 applicable CI checks passed. Manual qualification follow-up: PR162 merged at 7717b330 and channel 2 revision 11 enables this source by default. Ordinary-app cold startup showed it enabled and preserved cached-song hashes. The official compatible app update remains a separate release step. Broad-catalog overlap is unmeasured; no large or regionally unique catalog claim is made. Canary chord counts and successful import/export establish extraction and preservation, not independently verified chord correctness, lyric completeness, musical or transcription accuracy. Combined-lyrics qualification 2026-10-27: a bounded production-service replay against exact Genius song 199440 (If Not for You / Bob Dylan, resolved album New Morning) rejected Roswell if-not-for-you.chordpro as incomplete_or_different_lyrics. The retained publisher archive above and parsed chart have identical normalized word sequences, excluding adapter corruption. Chart/reference agreement was 49 shared unique words out of 66/64 (74.2%/76.6%); full, partial and noisy-chart comparisons all failed. The independently fetched songwriter-published text agreed with the Genius reference on 63/64 unique words (98.4%) and 97.8% of bigrams, while the Roswell comparison still failed. This is evidence of source-content disagreement for this identified reference, not an established edition identity or audio/master transcription claim. The earlier UI reference identity was not retained and is not retroactively inferred. Exact Roswell-owned normal-app selection, save, attribution, chords and offline reopen passed; library/settings were restored. Retain the separate arrangement and its provenance, and preserve rejection when its lyrics do not corroborate the selected recording. No matching safeguards, catalog activation, runtime or release version changed for this finding."
     },
     {
       "id": "kara-moe",
@@ -349,6 +350,75 @@
         "https://www.vagalume.com.br/terms/"
       ],
       "reason": "Publisher developer documentation returned503 on 2026-10-27 through both the web reader and an ordinary TLS-verified local documentation GET; this is not proof that all API routes are unavailable. General platform terms2.3 and8.1 restrict copying and database collection, while9.10 requires prior authorization for passing content to third parties. No accessible API-specific contract established intended app display/storage rights, attribution, auth/quota/cost, routes/schema or stable identities. The publisher describes a Brazilian audience, making this a potential regional lead; API language coverage, catalog size and overlap remain unmeasured. No account, credential, song/lyric-body API query, canary or outreach was used. Defer pending a current permitted-access contract, compatible extraction and two independent identity-correct live repository canaries."
+    },
+    {
+      "id": "tucuatro",
+      "name": "TuCuatro",
+      "firstSeen": "2026-10-27",
+      "lastChecked": "2026-10-27",
+      "status": "deferred",
+      "documentation": [
+        "https://tucuatro.com/es/canciones/",
+        "https://tucuatro.com/es/canciones/agregar/",
+        "https://tucuatro.com/es/cancion/moliendo-cafe/",
+        "https://tucuatro.com/terms-of-service/"
+      ],
+      "reason": "Publisher index advertises thousands of multi-instrument song arrangements with Latin American/traditional and international repertoire. This is a publisher claim, not an independently counted or deduplicated catalog; incremental language/regional coverage and overlap are unmeasured. Public Moliendo Cafe page labels Hugo Blanco as artist and composer and offers instrument selection; those are arrangement facts, not recording IDs. Contributor guide describes moderated submissions and chords positioned above lyric lines. Use of the Site terms explicitly restrict automated data gathering/extraction. Intellectual Property terms permit bounded personal/educational copying of unmodified content with notices, which does not establish access for an automated Singbook adapter. No API/app-access agreement was verified. Deferred pending explicit publisher authorization covering automated search/extraction, app display/storage and attribution. Existing grammar compatibility, stable identity mapping and two independent live extraction canaries remain unverified. No provider API probing, extraction-canary runs, accounts, cookies, bulk collection, parser changes or outreach were undertaken; no source was registered or enabled."
+    },
+    {
+      "id": "itunes-search",
+      "name": "Apple iTunes Search API",
+      "firstSeen": "2026-10-27",
+      "lastChecked": "2026-10-27",
+      "status": "deferred",
+      "documentation": [
+        "https://performance-partners.apple.com/search-api"
+      ],
+      "endpoint": "https://itunes.apple.com/search",
+      "reason": "Current publisher documentation describes music search and ID lookup with storefront/country context and approximately20 calls/minute. Its artwork terms require a promotional purpose and a nearby approved store badge linking to the promoted item; a generic songbook cover display does not establish that use. No artwork download or song API canaries were run. Defer pending an intended-use design consistent with those terms, exact storefront/track/release identity, compatible extraction and two independent canaries. Numerical catalog size, regional benefit and incremental overlap are unmeasured; no account, contract, expense or app activation."
+    },
+    {
+      "id": "theaudiodb",
+      "name": "TheAudioDB",
+      "firstSeen": "2026-10-27",
+      "lastChecked": "2026-10-27",
+      "status": "deferred",
+      "documentation": [
+        "https://www.theaudiodb.com/free_music_api",
+        "https://www.theaudiodb.com/docs_terms_of_use.php"
+      ],
+      "endpoint": "https://www.theaudiodb.com/api/v1/json",
+      "reason": "Publisher documents artist/album/track metadata, artwork, v1/v2 APIs, numeric entity IDs and MusicBrainz lookup options. Terms allow official API use with notices and attribution, but distinguish free development from app-store publication, which requires a paid subscription; third-party content permission remains separate. A public development key is not production access authorization. Defer pending an approved production access plan and credential handling, exact recording/release identity, per-asset rights/credit handling and two independent extraction canaries. No subscription, account, API content/artwork calls, credentials or source activation; catalog size, languages and overlap unmeasured."
+    },
+    {
+      "id": "betterlyrics-optional-providers",
+      "name": "Better Lyrics provider-specific Kugou and QQ routes",
+      "firstSeen": "2026-10-27",
+      "lastChecked": "2026-10-27",
+      "status": "deferred",
+      "documentation": [
+        "https://docs.betterlyrics.org/docs/providers",
+        "https://docs.betterlyrics.org/docs/authentication",
+        "https://docs.betterlyrics.org/reference/get-lyrics"
+      ],
+      "endpoint": "https://api.betterlyrics.org",
+      "reason": "Publisher describes a line-timed LRC Kugou route and word-timed QRC QQ route as alternatives to its TTML service and documents anonymous access including cache misses. Two ordinary local GET diagnostics on2026-10-27T05:02Z against /kugou/getLyrics, with the documented title/artist/album/duration fields for Never Gonna Give You Up/Rick Astley and The Sound Of Silence/Simon & Garfunkel, instead returned HTTP401 with X-Provider:kugou and X-Cache-Status:MISS. No retries, credentials or denial workaround; no lyric documents received or retained. This contradicts the reviewed anonymous-route contract for those two requests, not proof that every song or QQ is unavailable. QQ was not probed. Keep existing Better Lyrics/Unison adapters unchanged; defer additional routes pending an access-contract resolution, response identity validation, compatible LRC/QRC extraction, preserved source/timing provenance and two real production canaries. Catalog size, independent regional coverage and overlap unmeasured."
+    },
+    {
+      "id": "vocadb",
+      "name": "VocaDB",
+      "firstSeen": "2026-10-27",
+      "lastChecked": "2026-10-27",
+      "status": "deferred",
+      "documentation": [
+        "https://wiki.vocadb.net/docs/public-api",
+        "https://wiki.vocadb.net/docs/license",
+        "https://wiki.vocadb.net/docs/song-entry-editing",
+        "https://github.com/VocaDB/vocadb-openapi-client-java/blob/main/docs/SongApi.md",
+        "https://blog.vocadb.net/blog/new-year-2025"
+      ],
+      "endpoint": "https://vocadb.net/api",
+      "reason": "Documented anonymous HTTPS API, free use with identifying User-Agent and response caching; excessive unapproved traffic prohibited. Publisher reports148860 song additions during2024, not a current lyric/catalog total. Native production search/detail qualification2026-10-27T08:48:38Z passed exact publisher-linked IDs1501 Rollin' Girl/wowaka feat.Hatsune Miku and68814 ECHO/Crusher,CIRCRUSH feat.V3 GUMI(English): four200 responses, zero retries/network failures. Default name-sorted first5 rows missed both known versions; documented RatingScore sort brought each exact ID into bounded12-row native searches. Original lyric selected by unique Original variant, never array position; complete translated/romanized variants and source credits, names, artist-role records, album entries, culture codes, BPM range and raw JSON retained. Only explicit composer/lyricist roles and fixed BPM become those fields; multiple albums are not a guessed first album. Source entries remain arrangements with no confirmed recording IDs or timing. Publisher metadata is CC-BY4.0 with link-back; lyrics and uploaded images are expressly excluded, so lyric rights remain unknown. No artwork/audio/video fetched, account/cookies/credential use or restriction workaround. Nine synthetic regressions and real native controller/SQLite/ChordPro persistence replay passed; all source facts, every variant, full raw JSON, song JSON and hashes retained through reopen. Adapter exists in a separate qualification branch but is not registered, activated or shipped. Title-only contextual lookup and album/artist/duration-aware cache reuse are prepared against the shared173 contract but not yet wired. Keep pending shared contextual search integration, safe compatible catalog rollout, full hosted checks, Android UI, cloud reachability and compatible app publication. Existing older catalog channels unchanged. Missing or multiple original variants remain explicit unavailable/ambiguous outcomes. Incremental overlap, broader language coverage and independent musical/transcription accuracy unmeasured."
     }
   ]
 }
