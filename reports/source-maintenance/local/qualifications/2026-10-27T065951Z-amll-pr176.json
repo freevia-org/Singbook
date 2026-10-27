@@ -1,0 +1,314 @@
+{
+  "schemaVersion": 1,
+  "kind": "unpublished-native-source-candidate-qualification",
+  "providerId": "amll",
+  "runtime": "local-windows",
+  "sourceCommit": "9be6e11ec067c9c1651fa2d84f25d45326ccee31",
+  "pullRequest": "https://github.com/freevia-org/Singbook/pull/176",
+  "baseCommit": "3ba169ff2e49d279106d87c22f1600bf17765557",
+  "catalogPublication": "No AMLL entry in either production catalog and no default provider registration; compatible rollout pending",
+  "live": {
+    "schemaVersion": 1,
+    "catalogRevision": 1,
+    "measuredAt": "2026-10-27T06:59:51.099058Z",
+    "offline": false,
+    "summary": {
+      "healthy": 1
+    },
+    "sources": [
+      {
+        "id": "amll",
+        "name": "AMLL Lyrics Database",
+        "status": "healthy",
+        "coverage": {
+          "status": "complete",
+          "verifiedCapabilities": [
+            "catalog",
+            "lineTiming",
+            "lyrics",
+            "metadata",
+            "wordTiming"
+          ],
+          "unverifiedCapabilities": []
+        },
+        "probes": [
+          {
+            "id": "269710089745311-canonical",
+            "status": "healthy",
+            "candidateId": "sha256:b1ba813c719505ea",
+            "providerId": "amll",
+            "bodyCharacters": 2455,
+            "metadataFields": [
+              "album",
+              "albumAliases",
+              "appleMusicIds",
+              "authorIds",
+              "authorUsernames",
+              "documentKind",
+              "filename",
+              "format",
+              "identityScope",
+              "isrcs",
+              "mediaLinks",
+              "ncmMusicIds",
+              "qqMusicIds",
+              "sourceTitleAliases",
+              "spotifyIds"
+            ],
+            "verifiedCapabilities": [
+              "lineTiming",
+              "lyrics",
+              "metadata",
+              "wordTiming"
+            ],
+            "timingTrackCount": 1,
+            "timingGranularities": [
+              "word"
+            ],
+            "timingRawRetained": true,
+            "hasChords": false
+          },
+          {
+            "id": "269710089745311-search",
+            "status": "healthy",
+            "candidateId": "sha256:b1ba813c719505ea",
+            "providerId": "amll",
+            "bodyCharacters": 2455,
+            "metadataFields": [
+              "album",
+              "albumAliases",
+              "appleMusicIds",
+              "authorIds",
+              "authorUsernames",
+              "documentKind",
+              "filename",
+              "format",
+              "identityScope",
+              "isrcs",
+              "mediaLinks",
+              "ncmMusicIds",
+              "qqMusicIds",
+              "sourceTitleAliases",
+              "spotifyIds"
+            ],
+            "verifiedCapabilities": [
+              "catalog",
+              "lineTiming",
+              "lyrics",
+              "metadata",
+              "wordTiming"
+            ],
+            "timingTrackCount": 1,
+            "timingGranularities": [
+              "word"
+            ],
+            "timingRawRetained": true,
+            "hasChords": false
+          },
+          {
+            "id": "638303942317135-canonical",
+            "status": "healthy",
+            "candidateId": "sha256:8b2248e6939c5e8d",
+            "providerId": "amll",
+            "bodyCharacters": 3186,
+            "metadataFields": [
+              "album",
+              "albumAliases",
+              "appleMusicIds",
+              "authorIds",
+              "authorUsernames",
+              "documentKind",
+              "filename",
+              "format",
+              "identityScope",
+              "isrcs",
+              "mediaLinks",
+              "ncmMusicIds",
+              "qqMusicIds",
+              "sourceTitleAliases",
+              "spotifyIds"
+            ],
+            "verifiedCapabilities": [
+              "lineTiming",
+              "lyrics",
+              "metadata",
+              "wordTiming"
+            ],
+            "timingTrackCount": 1,
+            "timingGranularities": [
+              "word"
+            ],
+            "timingRawRetained": true,
+            "hasChords": false
+          },
+          {
+            "id": "638303942317135-search",
+            "status": "healthy",
+            "candidateId": "sha256:8b2248e6939c5e8d",
+            "providerId": "amll",
+            "bodyCharacters": 3186,
+            "metadataFields": [
+              "album",
+              "albumAliases",
+              "appleMusicIds",
+              "authorIds",
+              "authorUsernames",
+              "documentKind",
+              "filename",
+              "format",
+              "identityScope",
+              "isrcs",
+              "mediaLinks",
+              "ncmMusicIds",
+              "qqMusicIds",
+              "sourceTitleAliases",
+              "spotifyIds"
+            ],
+            "verifiedCapabilities": [
+              "catalog",
+              "lineTiming",
+              "lyrics",
+              "metadata",
+              "wordTiming"
+            ],
+            "timingTrackCount": 1,
+            "timingGranularities": [
+              "word"
+            ],
+            "timingRawRetained": true,
+            "hasChords": false
+          }
+        ]
+      }
+    ],
+    "runtime": "local-windows-DesktopMaintenanceClient",
+    "candidateOnly": true,
+    "publishedCatalogChanged": false,
+    "httpDiagnostics": {
+      "networkFailures": 0,
+      "hosts": {
+        "api.amll.dev": {
+          "requests": 4,
+          "statuses": {
+            "200": 4
+          },
+          "retryAfterSeconds": {},
+          "databaseLag": {}
+        }
+      }
+    },
+    "qualificationScope": "Production AMLL provider, configured wrapper and maintenance harness, isolated single-source candidate catalog. No app/provider roster registration or remote publication, no cookies/credentials/retries. Extraction/identity consistency is not independent transcription or recording/audio alignment."
+  },
+  "earlierSchemaDiagnostic": {
+    "measuredAtUtc": "2026-10-27T06:51:24.055860Z",
+    "runtime": "local-windows-DesktopMaintenanceClient",
+    "candidateOnly": true,
+    "httpRequests": 4,
+    "http200": 4,
+    "canonicalProbesHealthy": 2,
+    "searchProbesChangedSchema": 2,
+    "reason": "Actual native search rows omit format; documented flat detail still declares format ttml. Adapter initially overrequired format on search. Diagnosed with one additional metadata-only Shape of You request and fixed only search optionality; missing/wrong detail format and contradictory search format remain rejected. A later separately timed final qualification is retained separately.",
+    "rawDocumentsIncluded": false
+  },
+  "nativePersistence": {
+    "at": "2026-10-27T07:01:34.054922Z",
+    "runtime": "local-windows-Flutter-native-SQLite-FFI",
+    "scope": "offline replay of two real production-provider/configured-maintenance snapshots; isolated new database, no user library, no device/UI or new HTTP calls. Source facts exclude only derived timing status/binding as in the production fingerprint contract.",
+    "checks": [
+      {
+        "title": "ME!",
+        "artist": "Brendon Urie & Taylor Swift",
+        "bodyCharacters": 2455,
+        "songHash": "1776b0977afe7396811601e821112a1f8de25420c92dbc0b74606685d7b06165",
+        "sourceSelectionFingerprint": "e07c109586e507400cd30a0c0b8208176d06318de5c2f29a44fdc6c1a699a24b",
+        "timingTrackCount": 1,
+        "sourceIdentityContributorsAndOriginalJsonPreserved": true,
+        "notPromotedToVerifiedRecordingOrUsableTiming": true,
+        "chordProSourceFactsAndTimingExact": true,
+        "fullSourceJsonExactAfterExport": false,
+        "codecDerivedTimingAnnotations": "document-level status/binding shared by track ID; source facts, raw documents, cues, metadata and IDs are preserved"
+      },
+      {
+        "title": "Shape of You",
+        "artist": "Ed Sheeran",
+        "bodyCharacters": 3186,
+        "songHash": "aac09719b2a4e978c6a58665cb287168636227b3aee37495d116e5464cff9861",
+        "sourceSelectionFingerprint": "45f8da888b675661ea8937093f046401a52da519b82875eef5c567489073e88c",
+        "timingTrackCount": 1,
+        "sourceIdentityContributorsAndOriginalJsonPreserved": true,
+        "notPromotedToVerifiedRecordingOrUsableTiming": true,
+        "chordProSourceFactsAndTimingExact": true,
+        "fullSourceJsonExactAfterExport": false,
+        "codecDerivedTimingAnnotations": "document-level status/binding shared by track ID; source facts, raw documents, cues, metadata and IDs are preserved"
+      }
+    ],
+    "sqliteReopenSongHashesAndFactsExact": true,
+    "httpRequests": 0
+  },
+  "realFixtureCueChecks": {
+    "measuredAtUtc": "2026-10-27T06:50:03.743790Z",
+    "runtime": "local-dart-production-provider",
+    "mode": "offline-replay-of-two-private-real-api-responses",
+    "liveHttpRequests": 0,
+    "mockDetailCalls": 2,
+    "checks": [
+      {
+        "sourceId": "269710089745311",
+        "title": "ME!",
+        "artist": "Brendon Urie & Taylor Swift",
+        "lineCues": 84,
+        "wordCues": 567,
+        "firstLineStartUs": 115000,
+        "firstWordStartUs": 115000,
+        "firstWordEndUs": 237000,
+        "rawTtmlSha256": "76d9b59330cdb2fa8c1c5b0b9e8fa87bd705e75bf1b7a16acf436cdd93e46826",
+        "rawResponseSha256": "1c6a3fa1f9b1b70ee29646c488c77467de0ad0ab3c97ad45aad48316e688402b",
+        "allIdentityAndContributorArraysPreserved": true,
+        "exactRawResponseAndTimingPreserved": true,
+        "immutableDetailCacheVerified": true,
+        "recordingOrPlaybackSyncVerified": false
+      },
+      {
+        "sourceId": "638303942317135",
+        "title": "Shape of You",
+        "artist": "Ed Sheeran",
+        "lineCues": 99,
+        "wordCues": 727,
+        "firstLineStartUs": 9929000,
+        "firstWordStartUs": 9929000,
+        "firstWordEndUs": 10076000,
+        "rawTtmlSha256": "8014aff22a08d19631c91686478be95f05bc8e80f6a3ca5dcae36171686c5ad5",
+        "rawResponseSha256": "e8a72df30867eb5c0c748b5a4e6aea4b640fe344b715f7920d27c1597af8cf45",
+        "allIdentityAndContributorArraysPreserved": true,
+        "exactRawResponseAndTimingPreserved": true,
+        "immutableDetailCacheVerified": true,
+        "recordingOrPlaybackSyncVerified": false
+      }
+    ],
+    "scope": "Exact extraction and retention from earlier live fixtures, not fresh reachability, search coverage, independent transcription or audio alignment."
+  },
+  "checks": {
+    "combinedTestsPassed": 730,
+    "focusedAdapterTestsPassedAfterFinalCacheGuard": 11,
+    "finalNativeAndProfileTestsPassed": 9,
+    "scopedAnalysis": "clean",
+    "currentChannel2OfflineExitCode": 0,
+    "legacyChannel1OfflineExitCode": 1,
+    "legacyChannel1ExpectedMissingNewChannelSources": [
+      "lrcred",
+      "roswellmusicjam",
+      "karamoe"
+    ]
+  },
+  "provenanceNote": "The live run preceded final commit. Subsequent production changes were Ruby-none handling and JSON-rehydrated candidate cache guards, checked offline. Fresh live snapshots then passed native persistence with arrangement identity and source-only timing guard. Two immutable-document fixtures independently assert raw/cue clocks and complete contributor arrays. No cloud or device coverage is inferred.",
+  "limitations": [
+    "Not activated or shipped",
+    "Ruby/sequential timing unsupported",
+    "Every collaboration syntax not qualified",
+    "Regional/catalog-size/overlap unmeasured",
+    "No independent transcription or audio synchronization verification",
+    "Database license claim does not independently clear underlying works",
+    "Full SourceResult JSON is not byte-identical after existing codec shares derived status/binding by track ID"
+  ],
+  "privacy": "Sanitized counts, hashes, source IDs and provenance only; no raw documents, credentials or private session data"
+}
