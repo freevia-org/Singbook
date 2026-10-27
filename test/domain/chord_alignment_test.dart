@@ -509,7 +509,7 @@ Singin', this is my message to you-ou-ou''';
     expect(document.extra['selectedSourceId'], 'genius:three-little-birds');
   });
 
-  test('a rejected chart with only one phrase or pending identity stays out', () {
+  test('a rejected partial chart contributes only its aligned phrase', () {
     const selected = SongCandidate(
       providerId: 'genius',
       id: 'three-little-birds',
@@ -541,11 +541,11 @@ Three little birds sit by my doorstep''';
         extra: const {'requiresLyricsAgreement': true},
       ),
     ]);
-    expect(
-      _chordsByLine(onePhraseDocument.body).values.every((c) => c.isEmpty),
-      isTrue,
-    );
-    expect(onePhraseDocument.metadata['key'], isNull);
+    final partialLines = _chordsByLine(onePhraseDocument.body);
+    expect(partialLines["Rise up this mornin'"], ['A']);
+    expect(partialLines['Smile with the rising sun'], isEmpty);
+    expect(partialLines['Three little birds sit by my doorstep'], isEmpty);
+    expect(onePhraseDocument.body, isNot(contains('Some unrelated phrase')));
 
     const chart = '''[A]Rise up this mornin'
 [E]Smile with the rising sun
@@ -570,14 +570,18 @@ Three little birds sit by my doorstep''';
         extra: const {'pendingMatchCheck': true},
       ),
     ]);
-    expect(
-      _chordsByLine(pendingDocument.body).values.every((c) => c.isEmpty),
-      isTrue,
-    );
-    expect(pendingDocument.metadata['key'], isNull);
+    final pendingLines = _chordsByLine(pendingDocument.body);
+    expect(pendingLines["Rise up this mornin'"], ['A']);
+    expect(pendingLines['Smile with the rising sun'], ['E']);
+    expect(pendingLines['Three little birds sit by my doorstep'], ['A']);
+    expect(pendingDocument.extra['pendingChordSourceIds'], ['ug:pending-chart']);
+    final pendingKey = (pendingDocument.extra['evidenceRanking'] as Map)
+        ['appliedFields']['metadata.key'] as Map;
+    expect(pendingKey['sourceId'], 'ug:pending-chart');
+    expect(pendingKey['provisional'], isTrue);
   });
 
-  test('a rejected alternate-tuning chart does not donate guitar shapes', () {
+  test('an alternate-tuning chart keeps its anchors and tuning together', () {
     const selected = SongCandidate(
       providerId: 'genius',
       id: 'three-little-birds',
@@ -615,11 +619,15 @@ Three little birds sit by my doorstep''';
       ),
     ]);
 
+    expect(_chordsByLine(document.body)['Rise up this mornin\''], ['A']);
+    expect(_chordsByLine(document.body)['Smile with the rising sun'], ['E']);
     expect(
-      _chordsByLine(document.body).values.every((chords) => chords.isEmpty),
-      isTrue,
+      _chordsByLine(document.body)['Three little birds sit by my doorstep'],
+      ['A'],
     );
-    expect(document.metadata['key'], isNull);
+    expect(document.metadata['tuning'], ['D', 'A', 'D', 'G', 'B', 'E']);
+    expect(document.extra['fieldContributors']['tuning'],
+        contains('ug:alternate-tuning-chart'));
   });
 
   test('phrase overlap cannot bypass recording-specific chart identity', () {
@@ -666,7 +674,7 @@ Three little birds sit by my doorstep''';
     expect(document.metadata['key'], isNull);
   });
 
-  test('a rejected chart cannot import unconverted capo or failed key consensus', () {
+  test('a rejected chart retains supported capo and declared key context', () {
     const selected = SongCandidate(
       providerId: 'genius',
       id: 'lantern-song',
@@ -698,8 +706,14 @@ Morning finds the nets along the shore''';
         extra: const {'keyConsensus': true},
       ),
     ]);
-    expect(_chordsByLine(capoed.body).values.every((c) => c.isEmpty), isTrue);
-    expect(capoed.metadata['key'], isNull);
+    final capoedLines = _chordsByLine(capoed.body);
+    expect(capoedLines['Lanterns drift above the quiet harbor'], ['Am']);
+    expect(capoedLines['Moonlight follows boats across the water'], ['F']);
+    expect(capoedLines['Morning finds the nets along the shore'], ['C', 'G']);
+    expect(capoed.metadata['key'], 'Em');
+    expect(capoed.metadata['capo'], 7);
+    expect(capoed.extra['fieldContributors']['key'],
+        contains('ug:capoed-lantern-chart'));
 
     final nonconsensus = combineSources(selected, [
       SourceResult(
@@ -723,11 +737,12 @@ Morning finds the nets along the shore''';
         extra: const {'keyConsensus': false},
       ),
     ]);
-    expect(
-      _chordsByLine(nonconsensus.body).values.every((c) => c.isEmpty),
-      isTrue,
-    );
-    expect(nonconsensus.metadata['key'], isNull);
+    final nonconsensusLines = _chordsByLine(nonconsensus.body);
+    expect(nonconsensusLines['Lanterns drift above the quiet harbor'], ['G']);
+    expect(nonconsensusLines['Moonlight follows boats across the water'], ['D']);
+    expect(nonconsensusLines['Morning finds the nets along the shore'], ['C']);
+    expect(nonconsensus.metadata['key'], 'G');
+    expect(nonconsensus.metadata['capo'], 0);
   });
 
   test('unscoped same-song donor cannot add uncorroborated anchors', () {
@@ -810,6 +825,10 @@ Morning finds the nets along the shore''';
         '[Am]Bells are ringing [F]gently down the [C]empty market [G]halls',
       ].join('\n'),
     );
-    expect(checkedChordKeyEstimate(doc), isNull);
+    expect(doc.metadata['key'], isNull);
+    expect(checkedChordKeyEstimate(doc), 'Am');
+    final keyDecision = (doc.extra['evidenceRanking'] as Map)
+        ['appliedFields']['metadata.key'] as Map;
+    expect(keyDecision['inferred'], isTrue);
   });
 }

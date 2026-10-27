@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:convert';
 
+import 'package:crypto/crypto.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:singbook/application/app_controller.dart';
@@ -210,6 +212,94 @@ void main() {
       expect(ui.state.readerKey, 'E');
       expect(ui.state.readerKeyEstimated, isFalse);
       expect(ui.displayedKey, 'E');
+    },
+  );
+
+  test(
+    'reader retains a checked home key when labeled sections change key',
+    () async {
+      const body = '''
+[Verse]
+[B] [E] [F#] [B] [G#m] [E] [F#] [B]
+[B] [E] [F#] [B] [G#m] [E] [F#] [B]
+[Chorus]
+[A] [D] [E] [A] [F#m] [D] [E] [A]
+[A] [D] [E] [A] [F#m] [D] [E] [A]
+''';
+      await app.saveSong(
+        SongDocument(
+          id: 'song',
+          title: 'Section key fixture',
+          artist: 'Fixture',
+          body: body,
+          extra: {
+            'chordKeyEstimate': {
+              'key': 'A',
+              'bodyHash': sha256.convert(utf8.encode(body)).toString(),
+            },
+          },
+        ),
+      );
+      await ui.openSong('song');
+
+      expect(ui.state.readerKey, 'A');
+      expect(ui.state.readerKeyEstimated, isTrue);
+    },
+  );
+
+  test(
+    'reader keeps a checked key for a sparse nonconflicting chart',
+    () async {
+      const body = '[E]A short phrase';
+      await app.saveSong(
+        SongDocument(
+          id: 'song',
+          title: 'Sparse key fixture',
+          artist: 'Fixture',
+          body: body,
+          extra: {
+            'chordKeyEstimate': {
+              'key': 'E',
+              'bodyHash': sha256.convert(utf8.encode(body)).toString(),
+            },
+          },
+        ),
+      );
+      await ui.openSong('song');
+
+      expect(ui.state.readerKey, 'E');
+      expect(ui.state.readerKeyEstimated, isTrue);
+    },
+  );
+
+  test(
+    'reader keeps a checked key when unlabeled chord groups differ',
+    () async {
+      const body = '''
+[B] [E] [F#] [B] [G#m] [E] [F#] [B]
+[B] [E] [F#] [B] [G#m] [E] [F#] [B]
+
+[A] [D] [E] [A] [F#m] [D] [E] [A]
+[A] [D] [E] [A] [F#m] [D] [E] [A]
+''';
+      await app.saveSong(
+        SongDocument(
+          id: 'song',
+          title: 'Unlabeled group fixture',
+          artist: 'Fixture',
+          body: body,
+          extra: {
+            'chordKeyEstimate': {
+              'key': 'A',
+              'bodyHash': sha256.convert(utf8.encode(body)).toString(),
+            },
+          },
+        ),
+      );
+      await ui.openSong('song');
+
+      expect(ui.state.readerKey, 'A');
+      expect(ui.state.readerKeyEstimated, isTrue);
     },
   );
 
@@ -777,7 +867,8 @@ void main() {
         saved.extra['selectedSourceId'],
         app.combined!.extra['selectedSourceId'],
       );
-      expect(saved.extra['selectedSourceId'], isNot('plain:sample-song'));
+      expect(saved.body, app.combined!.body);
+      expect(saved.extra['chordSourceIds'], contains('chords:sample-song'));
     },
   );
 

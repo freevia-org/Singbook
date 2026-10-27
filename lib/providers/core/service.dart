@@ -324,6 +324,22 @@ Future<SourceResult> findMatchingSource(
     }
   }
 
+  final searchEvidence = <JsonMap>[];
+  final rejectedEvidence = <JsonMap>[];
+  final unresolvedEvidence = <JsonMap>[];
+  final acceptedEvidence = <JsonMap>[];
+  JsonMap evidenceSnapshot(SourceResult source) =>
+      {...source.toJson()}..remove('discoveryEvidence');
+  JsonMap evidenceEnvelope() => {
+    'searchCandidates': searchEvidence,
+    'rejectedPayloads': rejectedEvidence,
+    'unresolvedCandidates': unresolvedEvidence,
+    'acceptedPayloads': acceptedEvidence,
+  };
+  SourceResult withEvidence(SourceResult source) => source.copyWith(
+    extra: {...source.extra, 'discoveryEvidence': evidenceEnvelope()},
+  );
+
   final phaseSequences = <String, int>{};
   final activeOperationIds = <String, String>{};
   void report(
@@ -381,6 +397,11 @@ Future<SourceResult> findMatchingSource(
       );
     } on ProviderException catch (error) {
       cancel?.throwIfCancelled();
+      unresolvedEvidence.add({
+        'candidate': selection.toJson(),
+        'state': 'failed',
+        'code': _safeDiagnosticCode(error.code),
+      });
       report(
         'metadata',
         'failed',
@@ -391,6 +412,11 @@ Future<SourceResult> findMatchingSource(
       rethrow;
     } catch (_) {
       cancel?.throwIfCancelled();
+      unresolvedEvidence.add({
+        'candidate': selection.toJson(),
+        'state': 'failed',
+        'code': 'invalid_response',
+      });
       report(
         'metadata',
         'failed',
@@ -410,10 +436,20 @@ Future<SourceResult> findMatchingSource(
         code: 'identity_mismatch',
         candidate: song,
       );
-      return _matched(result, MatchKind.rejected, 'identity_mismatch');
+      final rejected = _matched(result, MatchKind.rejected, 'identity_mismatch');
+      rejectedEvidence.add({
+        'reason': 'identity_mismatch',
+        'payload': evidenceSnapshot(rejected),
+      });
+      return withEvidence(rejected);
     }
     if (result.metadata.isEmpty) {
       report('validate', 'failed', code: 'unavailable', candidate: song);
+      unresolvedEvidence.add({
+        'candidate': selection.toJson(),
+        'state': 'failed',
+        'code': 'unavailable',
+      });
       throw const ProviderException('unavailable');
     }
     report('validate', 'completed', candidate: song);
@@ -441,8 +477,9 @@ Future<SourceResult> findMatchingSource(
       exact ? MatchKind.sameRecording : MatchKind.sameSong,
       exact ? 'same_recording' : 'same_song',
     );
+    acceptedEvidence.add(evidenceSnapshot(matched));
     observeCandidate(matched);
-    return matched;
+    return withEvidence(matched);
   }
   var attempts = 0;
   final seen = <String>{...exclude};
@@ -462,6 +499,20 @@ Future<SourceResult> findMatchingSource(
             (candidate.metadata['instrumental'] == true ||
                 candidate.metadata['hasLyrics'] == false)) ||
         attempts >= maxAttempts) {
+      final reason = exclude.contains(candidate.id)
+          ? 'excluded'
+          : candidate.metadata['instrumental'] == true
+          ? 'instrumental'
+          : candidate.metadata['hasLyrics'] == false
+          ? 'lyrics_unavailable'
+          : attempts >= maxAttempts
+          ? 'attempt_limit'
+          : 'duplicate';
+      unresolvedEvidence.add({
+        'candidate': candidate.toJson(),
+        'state': 'skipped',
+        'reason': reason,
+      });
       return null;
     }
     attempts++;
@@ -480,7 +531,14 @@ Future<SourceResult> findMatchingSource(
         candidate: candidate,
         elapsedMilliseconds: fetchWatch.elapsedMilliseconds,
       );
-      if (e.code == 'unavailable') return null;
+      unresolvedEvidence.add({
+        'candidate': candidate.toJson(),
+        'state': 'failed',
+        'code': _safeDiagnosticCode(e.code),
+      });
+      if (e.code == 'unavailable') {
+        return null;
+      }
       // One chart that cannot be read leaves the provider's other candidates
       // to try; all failing still reports why.
       if (e.code == 'extraction_failed' || e.code == 'invalid_response') {
@@ -502,6 +560,11 @@ Future<SourceResult> findMatchingSource(
         candidate: candidate,
         elapsedMilliseconds: fetchWatch.elapsedMilliseconds,
       );
+      unresolvedEvidence.add({
+        'candidate': candidate.toJson(),
+        'state': 'failed',
+        'code': 'invalid_response',
+      });
       rethrow;
     }
     report(
@@ -548,11 +611,21 @@ Future<SourceResult> findMatchingSource(
         candidate: song,
       );
       rejected ??= _matched(result, MatchKind.rejected, 'identity_mismatch');
+      rejectedEvidence.add({
+        'reason': 'identity_mismatch',
+        'payload': evidenceSnapshot(
+          _matched(result, MatchKind.rejected, 'identity_mismatch'),
+        ),
+      });
       return null;
     }
     if (result.body.trim().isEmpty &&
         !result.timingTracks.any((track) => track.raw?.isNotEmpty == true)) {
       report('validate', 'failed', code: 'unavailable', candidate: song);
+      rejectedEvidence.add({
+        'reason': 'unavailable',
+        'payload': evidenceSnapshot(result),
+      });
       return null;
     }
     final scope = song.metadata['identityScope'];
@@ -624,6 +697,12 @@ Future<SourceResult> findMatchingSource(
       },
     );
     if (accept != null && !accept(matched)) {
+      rejectedEvidence.add({
+        'reason': operationPrefix == 'corroboration'
+            ? 'incomplete_or_different_lyrics'
+            : 'validation_rejected',
+        'payload': evidenceSnapshot(matched),
+      });
       report(
         'validate',
         'rejected',
@@ -635,16 +714,17 @@ Future<SourceResult> findMatchingSource(
       return null;
     }
     report('validate', 'completed', candidate: song);
+    acceptedEvidence.add(evidenceSnapshot(matched));
     observeCandidate(matched);
     return matched;
   }
 
   if (selection.providerId == provider.definition.id) {
     final result = await attempt(selection);
-    if (result != null) return result;
+    if (result != null) return withEvidence(result);
     if (!allowSelectedProviderAlternatives ||
         provider.definition.id == 'wikisource') {
-      if (rejected != null) return rejected!;
+      if (rejected != null) return withEvidence(rejected!);
       if (unresolved.isNotEmpty) {
         throw ProviderException(
           unresolved.first.code,
@@ -686,6 +766,27 @@ Future<SourceResult> findMatchingSource(
         : List.unmodifiable(searchedCandidates.take(100));
     cancel?.throwIfCancelled();
     onSearchCandidates?.call(List.unmodifiable(results.take(100)));
+    for (final candidate in results) {
+      var reason = 'identity_mismatch';
+      if (candidate.providerId == provider.definition.id) {
+        if (!sameSong(selection, candidate) && !arrangementMatches(candidate)) {
+          reason = 'identity_mismatch';
+        } else if (candidate.metadata['instrumental'] == true) {
+          reason = 'instrumental';
+        } else if (candidate.metadata['hasLyrics'] == false) {
+          reason = 'lyrics_unavailable';
+        } else {
+          reason = 'eligible';
+        }
+      } else {
+        reason = 'provider_mismatch';
+      }
+      searchEvidence.add({
+        'candidate': candidate.toJson(),
+        'state': 'returned',
+        'reason': reason,
+      });
+    }
   } on ProviderException catch (error) {
     report(
       'search',
@@ -727,6 +828,28 @@ Future<SourceResult> findMatchingSource(
           final rank = _rank(selection, b).compareTo(_rank(selection, a));
           return rank != 0 ? rank : a.id.compareTo(b.id);
         });
+  for (final evidence in searchEvidence) {
+    final raw = evidence['candidate'];
+    if (raw is Map &&
+        raw['providerId'] == provider.definition.id &&
+        candidates.any((candidate) => candidate.id == raw['id']) &&
+        evidence['reason'] == 'eligible') {
+      evidence['state'] = 'eligible';
+    }
+  }
+  for (final evidence in searchEvidence) {
+    final raw = evidence['candidate'];
+    if (evidence['reason'] == 'eligible' &&
+        raw is Map &&
+        !candidates.any(
+          (candidate) =>
+              candidate.providerId == raw['providerId'] &&
+              candidate.id == raw['id'],
+        )) {
+      evidence['state'] = 'not_considered';
+      evidence['reason'] = 'candidate_window';
+    }
+  }
   report(
     'search',
     'completed',
@@ -739,6 +862,13 @@ Future<SourceResult> findMatchingSource(
   String? alternativeFailure;
   for (final candidate in candidates) {
     if (attempts >= maxAttempts) break;
+    final evidence = searchEvidence.where((item) {
+      final raw = item['candidate'];
+      return raw is Map &&
+          raw['providerId'] == candidate.providerId &&
+          raw['id'] == candidate.id;
+    }).firstOrNull;
+    if (evidence != null) evidence['state'] = 'attempted';
     SourceResult? result;
     try {
       result = await attempt(candidate);
@@ -753,11 +883,17 @@ Future<SourceResult> findMatchingSource(
       alternativeFailure = 'invalid_response';
       break;
     }
-    if (result == null) continue;
+    if (result == null) {
+      if (evidence != null && evidence['state'] == 'attempted') {
+        evidence['state'] = rejectedEvidence.isNotEmpty ? 'rejected' : 'unavailable';
+      }
+      continue;
+    }
+    if (evidence != null) evidence['state'] = 'accepted';
     alternatives.add(result);
     if (stopAfterFirstChordCandidate && !allowSelectedProviderAlternatives) {
       cancel?.throwIfCancelled();
-      return result;
+      return withEvidence(result);
     }
     if (best == null ||
         (result.matchKind == MatchKind.sameRecording &&
@@ -766,6 +902,11 @@ Future<SourceResult> findMatchingSource(
             preferCompatibleLyrics(best.body, [result.body]) == result.body &&
             best.body != result.body)) {
       best = result;
+    }
+  }
+  if (attempts >= maxAttempts) {
+    for (final evidence in searchEvidence) {
+      if (evidence['state'] == 'eligible') evidence['reason'] = 'attempt_limit';
     }
   }
   if (best != null) {
@@ -779,9 +920,13 @@ Future<SourceResult> findMatchingSource(
         }
       }
     }
+    acceptedEvidence
+      ..clear()
+      ..addAll(alternatives.map(evidenceSnapshot));
     return best.copyWith(
       extra: {
         ...best.extra,
+        'discoveryEvidence': evidenceEnvelope(),
         if (alternatives.length > 1)
           'providerAlternatives': [
             for (final alternative in alternatives)
@@ -793,7 +938,7 @@ Future<SourceResult> findMatchingSource(
     );
   }
   cancel?.throwIfCancelled();
-  if (rejected != null) return rejected!;
+  if (rejected != null) return withEvidence(rejected!);
   if (unresolved.isEmpty) throw const ProviderException('unavailable');
   // 'blocked' is rethrown at once (hammering a bot wall helps nobody); layout
   // failures from every attempted candidate are reported together.

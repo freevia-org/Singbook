@@ -140,4 +140,73 @@ void main() {
 ''';
     expect(estimateChordKey(cSharp)?.key, 'Db');
   });
+
+  test('ranked API returns alternatives for relatively ambiguous harmony', () {
+    const body = '''
+[Am] [F] [C] [G]
+[Am] [F] [C] [G]
+''';
+    expect(estimateChordKey(body), isNull);
+    final ranked = rankChordKeyCandidates(body);
+    expect(ranked, hasLength(24));
+    expect(ranked.map((item) => item.rank), List.generate(24, (i) => i + 1));
+    expect(ranked.every((item) => item.chordCount == 8), isTrue);
+  });
+
+  test('ranked API analyzes modulation globally without section veto', () {
+    const body = '''
+[Verse]
+[C] [F] [G] [C] [Am] [F] [G] [C]
+[Bridge]
+[D] [G] [A] [D] [Bm] [G] [A] [D]
+''';
+    expect(estimateChordKey(body), isNull);
+    final ranked = rankChordKeyCandidates(body);
+    expect(ranked, hasLength(24));
+    expect(ranked.first.chordCount, 16);
+  });
+
+  test('ranked API needs at least three chords and two chord roots', () {
+    expect(rankChordKeyCandidates('[C]'), isEmpty);
+    expect(rankChordKeyCandidates('[C] [C]'), isEmpty);
+    expect(rankChordKeyCandidates('[C/G] [C/G] [C/G] [C/G]'), isEmpty);
+  });
+
+  test('hint breaks near ambiguity but does not override clear harmony', () {
+    const ambiguous = '[Am] [F] [C] [G]\n[Am] [F] [C] [G]';
+    expect(rankChordKeyCandidates(ambiguous, hint: 'Am').first.key, 'Am');
+    expect(rankChordKeyCandidates(ambiguous, hint: 'C').first.key, 'C');
+    const clear = '''
+[E] [A/E] [Am/E] [E]
+[E] [A/E] [C#m] [F#]
+[G#m] [F#] [B] [B/A]
+[E] [A/E] [C#m] [F#]
+[D/F#] [A/E] [E]
+''';
+    expect(rankChordKeyCandidates(clear, hint: 'C#m').first.key, 'E');
+  });
+
+  test('enharmonic chart spellings have the same ranked key identities', () {
+    const sharp = '''
+[C#] [F#] [G#] [C#] [A#m] [F#] [G#] [C#]
+[C#] [F#] [G#] [C#] [A#m] [F#] [G#] [C#]
+''';
+    const flat = '''
+[Db] [Gb] [Ab] [Db] [Bbm] [Gb] [Ab] [Db]
+[Db] [Gb] [Ab] [Db] [Bbm] [Gb] [Ab] [Db]
+''';
+    String identity(String key) {
+      final minor = key.endsWith('m');
+      final root = minor ? key.substring(0, key.length - 1) : key;
+      const pitches = {
+        'C': 0, 'B#': 0, 'C#': 1, 'Db': 1, 'D': 2, 'D#': 3, 'Eb': 3,
+        'E': 4, 'Fb': 4, 'E#': 5, 'F': 5, 'F#': 6, 'Gb': 6, 'G': 7,
+        'G#': 8, 'Ab': 8, 'A': 9, 'A#': 10, 'Bb': 10, 'B': 11, 'Cb': 11,
+      };
+      return '${pitches[root]}:${minor ? 'minor' : 'major'}';
+    }
+    final sharpIds = rankChordKeyCandidates(sharp).map((item) => identity(item.key));
+    final flatIds = rankChordKeyCandidates(flat).map((item) => identity(item.key));
+    expect(sharpIds, flatIds);
+  });
 }

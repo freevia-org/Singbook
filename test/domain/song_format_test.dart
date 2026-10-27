@@ -615,7 +615,10 @@ void main() {
       ]);
 
       expect(result.body, contains('[Am]'));
-      expect(result.extra['selectedSourceId'], 'ug:1');
+      // Lyrics can remain the base while the complete chart wins the harmony
+      // claim; timing from the lyric provider remains attached independently.
+      expect(result.extra['selectedSourceId'], 'lrclib:1');
+      expect(result.extra['chordSourceIds'], contains('ug:1'));
       expect(result.timingTracks.single.raw, raw);
     },
   );
@@ -864,7 +867,9 @@ void main() {
         '[C]one two three four five six seven eight nine ten eleven twelve',
       ),
     );
-    expect(result.extra['excludedIncompleteSourceIds'], contains('ug:1'));
+    expect(result.extra['excludedIncompleteSourceIds'], isNot(contains('ug:1')));
+    expect(result.sources.any((candidate) => candidate.id == 'ug:1'), isTrue);
+    expect(result.extra['chordSourceIds'], contains('ug:1'));
     final explicit = combineSources(
       selected,
       [
@@ -960,7 +965,7 @@ void main() {
     expect(lines[1].chords, isEmpty);
     expect(result.extra['chordSourceIds'], [result.sources.last.id]);
   });
-  test('automatic chord overlays require matching recording setup', () {
+  test('automatic chart choice keeps one coherent recording setup', () {
     const full = 'First lyric line\nSecond lyric line\nThird lyric line';
     final base = source('base', full, metadata: {'key': 'D', 'capo': 1});
     final otherRecording = source(
@@ -971,9 +976,17 @@ void main() {
     );
 
     final automatic = combineSources(selected, [base, otherRecording]);
-    expect(automatic.hasChords, isFalse);
-    expect(automatic.metadata['key'], 'D');
-    expect(automatic.metadata['capo'], 1);
+    expect(automatic.body, contains('[C]First lyric line'));
+    expect(automatic.body, contains('[F]Second lyric line'));
+    expect(automatic.metadata['key'], 'C');
+    expect(automatic.metadata['capo'], 2);
+    expect(automatic.extra['chordSourceIds'], contains(otherRecording.id));
+    expect(automatic.sources.map((source) => source.id), containsAll([base.id, otherRecording.id]));
+    final ranking = jsonMap(automatic.extra['evidenceRanking']);
+    final keyClaims = (ranking['claims'] as List).whereType<Map>().where(
+      (claim) => claim['field'] == 'metadata.key',
+    );
+    expect(keyClaims.map((claim) => claim['value']), containsAll(['D', 'C']));
 
     final explicitlySelected = combineSources(selected, [
       base,

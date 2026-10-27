@@ -62,7 +62,9 @@ void main() {
     );
   });
 
-  test('durations within three seconds agree; wider ones abstain', () {
+  test(
+    'duration conflicts retain ranked alternatives and choose deterministically',
+    () {
     final close = _combine([
       _catalog('a', 'Harbor Lights (Remastered 2009)', 243),
       _catalog('b', 'The Mariners - Harbor Lights', 244.5),
@@ -72,7 +74,16 @@ void main() {
       _catalog('a', 'Harbor Lights (Remastered 2009)', 243),
       _catalog('b', 'The Mariners - Harbor Lights', 260),
     ]);
-    expect(apart.metadata.containsKey('durationSeconds'), isFalse);
+    expect(apart.metadata['durationSeconds'], 243);
+    expect(apart.extra['fieldOrigins']['durationSeconds'], 'a:a');
+    final claims = (apart.extra['evidenceRanking'] as Map)['claims'] as List;
+    expect(
+      claims
+          .whereType<Map>()
+          .where((claim) => claim['field'] == 'metadata.durationSeconds')
+          .map((claim) => claim['value']),
+      containsAll([243, 260]),
+    );
   });
 
   test('a live or acoustic edition of the album lends nothing', () {
@@ -87,7 +98,7 @@ void main() {
     }
   });
 
-  test('the agreeing durations must be a strict majority', () {
+  test('duration ties keep all claims and resolve reproducibly', () {
     // 103, 104 and 105 agree within three seconds; 100 does not.
     final majority = _combine([
       _catalog('a', 'Harbor Lights', 100),
@@ -103,13 +114,44 @@ void main() {
       _catalog('c', 'Harbor Lights', 110),
       _catalog('d', 'Harbor Lights', 111),
     ]);
-    expect(split.metadata.containsKey('durationSeconds'), isFalse);
-    // [100, 103] and [103, 106] are equally supported: no choice.
+    expect(split.metadata['durationSeconds'], isNotNull);
+    expect(split.extra['fieldOrigins']['durationSeconds'], isNotNull);
+    final splitClaims = (split.extra['evidenceRanking'] as Map)['claims'] as List;
+    expect(
+      splitClaims
+          .whereType<Map>()
+          .where((claim) => claim['field'] == 'metadata.durationSeconds')
+          .map((claim) => claim['value']),
+      containsAll([100, 101, 110, 111]),
+    );
+    // [100, 103] and [103, 106] are equally supported. Keep both claims,
+    // and require the tie-break to be independent of result arrival order.
     final tied = _combine([
       _catalog('a', 'Harbor Lights', 100),
       _catalog('b', 'Harbor Lights', 103),
       _catalog('c', 'Harbor Lights', 106),
     ]);
-    expect(tied.metadata.containsKey('durationSeconds'), isFalse);
+    final tiedReversed = _combine([
+      _catalog('c', 'Harbor Lights', 106),
+      _catalog('b', 'Harbor Lights', 103),
+      _catalog('a', 'Harbor Lights', 100),
+    ]);
+    expect(tied.metadata['durationSeconds'], isNotNull);
+    expect(
+      tiedReversed.metadata['durationSeconds'],
+      tied.metadata['durationSeconds'],
+    );
+    expect(
+      tied.extra['fieldOrigins']['durationSeconds'],
+      tiedReversed.extra['fieldOrigins']['durationSeconds'],
+    );
+    final tiedClaims = (tied.extra['evidenceRanking'] as Map)['claims'] as List;
+    expect(
+      tiedClaims
+          .whereType<Map>()
+          .where((claim) => claim['field'] == 'metadata.durationSeconds')
+          .map((claim) => claim['value']),
+      containsAll([100, 103, 106]),
+    );
   });
 }
