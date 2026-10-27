@@ -2,9 +2,11 @@
 
 `config/source-catalog.json` remains the complete channel-1 source list used by
 released clients through build 38. Keep this file and its URL compatible with
-those clients. New code uses `config/source-catalog-v2.json` as its complete
-channel-2 bundle and refresh URL on public GitHub `main`. This is a distribution
-channel change; both files still use envelope/extraction schema version 1.
+those clients. `config/source-catalog-v2.json` remains the complete channel-2
+bundle and refresh URL for the compatible build-39 runtime. New code uses
+`config/source-catalog-v3.json`, which adds the native AMLL adapter, as its
+complete channel-3 bundle and refresh URL on public GitHub `main`. These are
+distribution channels; all three files use envelope/extraction schema version 1.
 `SINGBOOK_SOURCE_CATALOG_URL` can override
 the HTTPS publisher URL at build time. Settings → Sources → Refresh source list
 performs the same refresh manually. A new app build containing this implementation
@@ -16,16 +18,19 @@ unsupported schema, rollback, or failed cache write preserves the previous live
 and durable snapshot. Bundle and cache loading do not depend on a network call.
 No provider update changes saved songs, ChordPro provenance or user preferences.
 Catalog storage is separate from the user's synced application settings.
-Channel 2 reads/writes `sourceCatalog:v2` and never overwrites the old
-`sourceCatalog` cache or provider preferences. It starts from its own bundled
-snapshot when the new cache is absent; an independently higher legacy revision
-cannot lock out channel-2 updates. Unknown native providers
-cause a refresh to fail before any live/cache mutation. Thus a channel-2 entry,
-even when disabled, must never be added to channel 1 if released clients do not
-compile that adapter.
+Channel 3 reads/writes `sourceCatalog:v3` and never overwrites either
+`sourceCatalog:v2` or `sourceCatalog`, or provider preferences. It starts from
+its own bundled snapshot when the new cache is absent; independently higher
+older-channel revisions cannot lock out channel-3 updates. Channel 2 retains
+its existing cache and URL. Unknown native providers cause a refresh to fail
+before any live/cache mutation. Never add an unknown native ID to an older
+channel, even disabled. In particular AMLL is absent from both older channels.
 
 Channel 2 enables lrc.red, Roswell Music Jam and kara.moe for compatible app
-builds. Existing channel-1 apps keep their original source list and URL. Native
+builds. Channel 3 inherits all 22 channel-2 entries without altering them and
+adds AMLL enabled by default for the new compiled runtime. Existing saved
+opt-outs win. Channel-1 and channel-2 apps keep their source lists, URLs and
+cache streams. Frozen release-39 artifacts are not rebuilt by this change. Native
 qualification covers real search/import, cached readers, artwork decoding and
 exact source-payload retention across SQLite reopening and ChordPro round trips;
 it does not establish independent lyric transcription or musical accuracy.
@@ -138,7 +143,11 @@ dart run tool/source_maintenance.dart --source lrclib --report artifacts/lrclib-
 ```
 
 Options also include `--catalog path` to validate a candidate catalog. Both
-offline and live CLI defaults follow the current channel-2 catalog. To qualify a pending
+offline and live CLI defaults follow the app's current bundled channel (now 3).
+An explicit older `--catalog` still parses/applies that snapshot, but the full
+current registry reports newer compiled providers intentionally absent from it
+as coverage gaps; this is not evidence that an older app's source list is broken.
+To qualify a pending
 native source before release, use an ignored temporary active copy with
 `--catalog` and `--source`; do not publish that copy or change the disabled
 rollout entry merely to make a probe run. Released channel-1 clients and their

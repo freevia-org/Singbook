@@ -12,11 +12,19 @@ import 'package:singbook/providers/configurable_provider.dart';
 
 const _releasedEndpoint =
     'https://raw.githubusercontent.com/freevia-org/Singbook/main/config/source-catalog.json';
+const _channel2Endpoint =
+    'https://raw.githubusercontent.com/freevia-org/Singbook/main/config/source-catalog-v2.json';
+http.Response _catalogResponse(String text) => http.Response(
+  text,
+  200,
+  headers: {'content-type': 'application/json; charset=utf-8'},
+);
 String _bundle(String channel) =>
     File('config/source-catalog$channel.json').readAsStringSync();
 SourceCatalogRuntime _runtime(
   ProviderTransport transport, {
   bool released = false,
+  bool channel2 = false,
 }) => SourceCatalogRuntime(
   builtins:
       [
@@ -25,12 +33,11 @@ SourceCatalogRuntime _runtime(
           ]
           .where(
             (p) =>
-                !released ||
-                !{
-                  'lrcred',
-                  'roswellmusicjam',
-                  'karamoe',
-                }.contains(p.definition.id),
+                (!released && !channel2) ||
+                !(channel2
+                        ? {'amll'}
+                        : {'lrcred', 'roswellmusicjam', 'karamoe', 'amll'})
+                    .contains(p.definition.id),
           )
           .toList(),
   createProvider: (entry) => ConfigurableProvider(entry, transport),
@@ -65,7 +72,7 @@ void main() {
       final transport = ProviderTransport(
         client: MockClient((r) async {
           seen.add(r.url);
-          return http.Response(_bundle('-v2'), 200);
+          return _catalogResponse(_bundle('-v2'));
         }),
         hostInterval: Duration.zero,
         maxRetries: 0,
@@ -111,7 +118,7 @@ void main() {
       final transport = ProviderTransport(
         client: MockClient((r) async {
           expect(r.url.path, endsWith('/source-catalog-v2.json'));
-          return http.Response(next, 200);
+          return _catalogResponse(next);
         }),
         hostInterval: Duration.zero,
         maxRetries: 0,
@@ -122,10 +129,11 @@ void main() {
         transport: transport,
         loadBundled: () async => _bundle('-v2'),
         readCache: () async =>
-            settings[SourceCatalogClient.cacheKey] as String?,
+            settings[SourceCatalogClient.channel2CacheKey] as String?,
         writeCache: (text) async {
-          settings[SourceCatalogClient.cacheKey] = text;
+          settings[SourceCatalogClient.channel2CacheKey] = text;
         },
+        endpoint: Uri.parse(_channel2Endpoint),
       );
       try {
         await client.initialize();
@@ -133,11 +141,11 @@ void main() {
           runtime.catalog!.revision,
           jsonDecode(_bundle('-v2'))['revision'],
         );
-        expect(await client.refresh(), true);
+        expect(await client.refresh(), true, reason: client.lastErrorCode);
         expect(runtime.catalog!.revision, jsonDecode(next)['revision']);
         expect(settings['sourceCatalog'], legacy);
         expect(settings['providers'], {'genius': false});
-        expect(settings[SourceCatalogClient.cacheKey], next);
+        expect(settings[SourceCatalogClient.channel2CacheKey], next);
         for (final id in ['lrcred', 'roswellmusicjam', 'karamoe']) {
           final added = runtime.catalog!.sources.singleWhere((s) => s.id == id);
           expect(added.status, 'active');
@@ -231,7 +239,7 @@ void main() {
       var cached = bundle;
       final transport = ProviderTransport(
         client: MockClient(
-          (_) async => http.Response(_next(bundle, unknown: true), 200),
+          (_) async => _catalogResponse(_next(bundle, unknown: true)),
         ),
         hostInterval: Duration.zero,
         maxRetries: 0,
@@ -245,6 +253,7 @@ void main() {
         writeCache: (text) async {
           cached = text;
         },
+        endpoint: Uri.parse(_channel2Endpoint),
       );
       try {
         expect(await client.refresh(), false);
@@ -260,12 +269,125 @@ void main() {
     },
   );
 
-  test('explicit publisher override remains in effect on channel2', () async {
+  test(
+    'channel3 bundle has the AMLL native source enabled by default',
+    () async {
+      final bundle = _bundle('-v3');
+      final transport = ProviderTransport(
+        client: MockClient((_) async => _catalogResponse(bundle)),
+        hostInterval: Duration.zero,
+        maxRetries: 0,
+      );
+      final runtime = _runtime(transport);
+      final client = SourceCatalogClient(
+        runtime: runtime,
+        transport: transport,
+        loadBundled: () async => bundle,
+        readCache: () async => null,
+        writeCache: (_) async {},
+      );
+      try {
+        await client.initialize();
+        final previousEntries = SourceCatalog.parse(_bundle('-v2')).sources;
+        expect(
+          SourceCatalogClient.bundledAsset,
+          'config/source-catalog-v3.json',
+        );
+        expect(SourceCatalogClient.cacheKey, 'sourceCatalog:v3');
+        expect(runtime.catalog!.sources, hasLength(23));
+        for (final previous in previousEntries) {
+          expect(
+            runtime.catalog!.sources
+                .singleWhere((entry) => entry.id == previous.id)
+                .toJson(),
+            previous.toJson(),
+            reason: 'Channel 3 preserves ${previous.id} configuration',
+          );
+        }
+        final amll = runtime.catalog!.sources.singleWhere(
+          (s) => s.id == 'amll',
+        );
+        expect(amll.status, 'active');
+        expect(amll.enabledByDefault, true);
+        expect(
+          runtime.providers
+              .singleWhere((p) => p.definition.id == 'amll')
+              .definition
+              .enabledByDefault,
+          true,
+        );
+      } finally {
+        await transport.close();
+      }
+    },
+  );
+
+  test(
+    'old channel1 and channel2 reject AMLL before live/cache mutation',
+    () async {
+      final amll =
+          (jsonDecode(_bundle('-v3')) as Map<String, dynamic>)['sources']
+              as List;
+      final amllEntry = (amll.cast<Map<String, dynamic>>().singleWhere(
+        (source) => source['id'] == 'amll',
+      ))..['status'] = 'disabled';
+
+      for (final channel in ['', '-v2']) {
+        final bundle = _bundle(channel);
+        final incomingCatalog = jsonDecode(bundle) as Map<String, dynamic>;
+        incomingCatalog['revision'] = (incomingCatalog['revision'] as int) + 1;
+        (incomingCatalog['sources'] as List).add(amllEntry);
+        final incoming = jsonEncode(incomingCatalog);
+        var cached = bundle;
+        final transport = ProviderTransport(
+          client: MockClient((_) async => _catalogResponse(incoming)),
+          hostInterval: Duration.zero,
+          maxRetries: 0,
+        );
+        final runtime = _runtime(
+          transport,
+          released: channel.isEmpty,
+          channel2: channel == '-v2',
+        );
+        final client = SourceCatalogClient(
+          runtime: runtime,
+          transport: transport,
+          loadBundled: () async => bundle,
+          readCache: () async => cached,
+          writeCache: (text) async {
+            cached = text;
+          },
+          endpoint: Uri.parse(
+            channel.isEmpty ? _releasedEndpoint : _channel2Endpoint,
+          ),
+        );
+        try {
+          await client.initialize();
+          final beforeIds = runtime.providers
+              .map((p) => p.definition.id)
+              .toList();
+          expect(await client.refresh(), false);
+          expect(cached, bundle);
+          expect(runtime.catalog!.revision, jsonDecode(bundle)['revision']);
+          expect(runtime.providers.map((p) => p.definition.id), beforeIds);
+          expect(
+            runtime.providers.any((p) => p.definition.id == 'amll'),
+            false,
+          );
+        } finally {
+          await transport.close();
+        }
+      }
+    },
+  );
+
+  test('explicit publisher override remains in effect on channel3', () async {
     final endpoint = Uri.parse('https://publisher.example/catalog.json');
+    final bundle = _bundle('-v3');
     final transport = ProviderTransport(
       client: MockClient((r) async {
         expect(r.url, endpoint);
-        return http.Response(_next(_bundle('-v2')), 200);
+        return _catalogResponse(_next(bundle));
       }),
       hostInterval: Duration.zero,
       maxRetries: 0,
@@ -274,13 +396,13 @@ void main() {
     final client = SourceCatalogClient(
       runtime: runtime,
       transport: transport,
-      loadBundled: () async => _bundle('-v2'),
+      loadBundled: () async => bundle,
       readCache: () async => null,
       writeCache: (_) async {},
       endpoint: endpoint,
     );
     try {
-      expect(await client.refresh(), true);
+      expect(await client.refresh(), true, reason: client.lastErrorCode);
     } finally {
       await transport.close();
     }
