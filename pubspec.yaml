@@ -55,6 +55,7 @@ flutter:
     - config/source-catalog-v4.json
     - config/source-catalog-v5.json
     - config/source-catalog-v6.json
+    - config/source-catalog-v7.json
     - assets/fonts/
     - assets/fonts/brand-candidates/Lora-OFL.txt
     - assets/branding/singbook-icon.png
