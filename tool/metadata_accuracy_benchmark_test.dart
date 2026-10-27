@@ -46,6 +46,135 @@ String _normalizedLyrics(String body) => _normalize(
       .replaceAll(RegExp(r'\[[^\]\n]*\]'), ''),
 );
 
+Map<String, Object?> _practicalLyricsTextAgreement(
+  String candidateBody,
+  String selectedBody,
+) {
+  List<String> words(String body) => foldLyricVowelAccents(
+    _normalizedLyrics(body),
+  ).split(' ').where((word) => word.isNotEmpty).toList();
+  Set<String> bigrams(List<String> values) => {
+    for (var i = 1; i < values.length; i++)
+      '${values[i - 1]}\u0000${values[i]}',
+  };
+  double coverage(Set<String> source, Set<String> reference) =>
+      source.isEmpty ? 0 : source.intersection(reference).length / source.length;
+
+  final candidateWords = words(candidateBody);
+  final selectedWords = words(selectedBody);
+  final candidateVocabulary = candidateWords.toSet();
+  final selectedVocabulary = selectedWords.toSet();
+  final candidateBigrams = bigrams(candidateWords);
+  final selectedBigrams = bigrams(selectedWords);
+  return {
+    'candidateWordCount': candidateWords.length,
+    'selectedWordCount': selectedWords.length,
+    'candidateVocabularyCoverageBySelectedLyrics':
+        coverage(candidateVocabulary, selectedVocabulary),
+    'selectedLyricsVocabularyCoverageByCandidate':
+        coverage(selectedVocabulary, candidateVocabulary),
+    'candidateOrderedBigramCoverageBySelectedLyrics':
+        coverage(candidateBigrams, selectedBigrams),
+    'selectedLyricsOrderedBigramCoverageByCandidate':
+        coverage(selectedBigrams, candidateBigrams),
+    'interpretation':
+        'Candidate-to-selected overlap indicates whether the candidate text belongs to the selected lyrics while tolerating repeats and formatting changes. Reverse overlap describes how much of the selected text the candidate covers; neither direction independently proves recording identity.',
+  };
+}
+
+Map<String, Object?> _practicalLyricsCandidateAgreementSummary(
+  List<Map<String, Object?>> rows,
+) {
+  final candidates = <({Map row, Map source, Map agreement})>[];
+  for (final row in rows) {
+    for (final source in (row['sourceSummary'] as List? ?? const [])
+        .whereType<Map>()) {
+      final contribution = source['combinedContribution'];
+      final agreement = source['practicalLyricsTextAgreement'];
+      if ((contribution is Map && contribution['selectedBaseLyrics'] == true) ||
+          source['lyricWordCount'] == 0 ||
+          agreement is! Map) {
+        continue;
+      }
+      candidates.add((row: row, source: source, agreement: agreement));
+    }
+  }
+
+  double? median(
+    Iterable<({Map row, Map source, Map agreement})> values,
+    String field,
+  ) {
+    final scores = values
+        .map((entry) => entry.agreement[field])
+        .whereType<num>()
+        .map((score) => score.toDouble())
+        .toList()
+      ..sort();
+    if (scores.isEmpty) return null;
+    final middle = scores.length ~/ 2;
+    return scores.length.isOdd
+        ? scores[middle]
+        : (scores[middle - 1] + scores[middle]) / 2;
+  }
+
+  final recordingCompatible = candidates
+      .where((entry) => entry.source['recordingCompatible'] == true)
+      .toList();
+  final identityCompatible = candidates
+      .where((entry) => _practicalLyricsSupportEligible(entry.source))
+      .toList();
+  bool aligned(({Map row, Map source, Map agreement}) entry) =>
+      (entry.agreement['candidateOrderedBigramCoverageBySelectedLyrics']
+              as num? ??
+          0) >=
+      .80;
+  int withCandidateTextMatch(Iterable<({Map row, Map source, Map agreement})> values) =>
+      values.where(aligned).length;
+  final alignedIdentityProvidersBySong = <String, Set<String>>{};
+  for (final entry in identityCompatible.where(aligned)) {
+    final songId = entry.row['id'];
+    final provider = entry.source['provider'];
+    if (songId is String && provider is String) {
+      alignedIdentityProvidersBySong
+          .putIfAbsent(songId, () => {})
+          .add(provider);
+    }
+  }
+
+  return {
+    'lyricCandidatesCompared': candidates.length,
+    'recordingCompatibleCandidatesCompared': recordingCompatible.length,
+    'identityCompatibleCandidatesCompared': identityCompatible.length,
+    'identityCompatibleCandidatesWithAtLeast80PercentTextMatch':
+        withCandidateTextMatch(identityCompatible),
+    'songsWithIdentityCompatibleCandidates': identityCompatible
+        .map((entry) => entry.row['id'])
+        .whereType<String>()
+        .toSet()
+        .length,
+    'songsWithAtLeastOne80PercentCandidateTextMatch':
+        alignedIdentityProvidersBySong.length,
+    'songsWith80PercentMatchesFromMultipleProviderLabels':
+        alignedIdentityProvidersBySong.values
+            .where((providers) => providers.length > 1)
+            .length,
+    'lyricCandidatesWithAtLeast80PercentCandidateTextMatch':
+        withCandidateTextMatch(candidates),
+    'recordingCompatibleCandidatesWithAtLeast80PercentCandidateTextMatch':
+        withCandidateTextMatch(recordingCompatible),
+    'medianCandidateToSelectedOrderedBigramCoverage': median(
+      candidates,
+      'candidateOrderedBigramCoverageBySelectedLyrics',
+    ),
+    'medianSelectedLyricCoverageByCandidate': median(
+      candidates,
+      'selectedLyricsOrderedBigramCoverageByCandidate',
+    ),
+    'interpretation':
+        'Candidate text alignment and candidate coverage are reported separately. Identity-compatible candidates require a same-song or same-recording match, compatible edition, and no pending or extra lyrics-agreement guard; this is programmatic eligibility, not external proof. A short candidate can align well while covering only part of the selected lyrics. Provider labels are not assumed to be independent source lineages.',
+  };
+}
+
 /// Compares the lyric text embedded in a chord chart with the selected lyrics.
 /// Repeated sections may differ, so this reports bidirectional vocabulary and
 /// ordered-bigram overlap rather than requiring an exact text hash. Only counts
@@ -1609,6 +1738,29 @@ void main() {
         0.25);
     expect(summary['interpretation'], contains('partial chart'));
   });
+  test('lyrics candidates compare for identity and excerpt coverage', () {
+    final excerpt = _practicalLyricsTextAgreement(
+      'Mi corazón vive aquí\nCarry me to the open door',
+      'Mi corazon vive aqui\nCarry me to the open door\n'
+          'Take me where the morning starts',
+    );
+    expect(excerpt['candidateVocabularyCoverageBySelectedLyrics'], 1);
+    expect(excerpt['candidateOrderedBigramCoverageBySelectedLyrics'], 1);
+    expect(
+      excerpt['selectedLyricsOrderedBigramCoverageByCandidate'],
+      lessThan(1),
+    );
+    expect(excerpt.containsKey('body'), isFalse);
+
+    final unrelated = _practicalLyricsTextAgreement(
+      'Silver roads are calling\nAcross the empty sea',
+      'Mi corazon vive aqui\nCarry me to the open door',
+    );
+    expect(
+      unrelated['candidateOrderedBigramCoverageBySelectedLyrics'],
+      lessThan(excerpt['candidateOrderedBigramCoverageBySelectedLyrics'] as num),
+    );
+  });
   test('practical chord key screen accounts for capo and flags mismatch', () {
     const chart = '''
 [E] [A/E] [C#m] [F#]
@@ -2026,17 +2178,25 @@ Future<void> _benchmark() async {
           .firstOrNull;
       if (selectedLyricsSource != null) {
         for (final summary in sourceSummaries) {
-          if ((summary['chordCount'] as num? ?? 0) == 0) continue;
           final identityHash = summary['sourceIdentitySha256'];
           final source = results
               .where((candidate) => _sha(candidate.id) == identityHash)
               .firstOrNull;
           if (source == null) continue;
-          summary['practicalChordLyricCorrespondence'] =
-              _practicalLyricCorrespondence(
+          if ((summary['lyricWordCount'] as num? ?? 0) > 0) {
+            summary['practicalLyricsTextAgreement'] =
+                _practicalLyricsTextAgreement(
+              source.body,
+              selectedLyricsSource.body,
+            );
+          }
+          if ((summary['chordCount'] as num? ?? 0) > 0) {
+            summary['practicalChordLyricCorrespondence'] =
+                _practicalLyricCorrespondence(
             source.body,
             selectedLyricsSource.body,
           );
+          }
         }
       }
       final normalizedLyrics = _normalizedLyrics(doc.body);
@@ -2127,6 +2287,26 @@ Future<void> _benchmark() async {
               .toList(),
           'interpretation':
               'Per-source word-order coverage measures whether contributed chart lines correspond to the selected lyric text. Repetition differences are tolerated; the metric does not prove exact recording or chord correctness.',
+        },
+        'practicalLyricsCandidateAgreement': {
+          'candidates': sourceSummaries
+              .where((source) {
+                final contribution = source['combinedContribution'];
+                return (contribution is! Map ||
+                        contribution['selectedBaseLyrics'] != true) &&
+                    (source['lyricWordCount'] as num? ?? 0) > 0;
+              })
+              .map(
+                (source) => {
+                  'provider': source['provider'],
+                  'match': source['match'],
+                  'recordingCompatible': source['recordingCompatible'],
+                  'agreement': source['practicalLyricsTextAgreement'],
+                },
+              )
+              .toList(),
+          'interpretation':
+              'Compare each lyric candidate against the selected lyrics without storing text. Candidate-to-selected overlap measures whether the candidate text appears to belong to the selected song; reverse overlap measures coverage, not correctness.',
         },
         'practicalChordKeyConsistency': _practicalChordKeySummary([
           row,
@@ -2661,6 +2841,8 @@ Future<void> _benchmark() async {
     ),
     'practicalChordLyricCorrespondence':
         _practicalChordLyricSummary(rows),
+    'practicalLyricsCandidateAgreement':
+        _practicalLyricsCandidateAgreementSummary(rows),
     'practicalChordKeyConsistency': _practicalChordKeySummary(rows),
     'cache': {
       'hits': client.hits,
@@ -2675,7 +2857,7 @@ Future<void> _benchmark() async {
     '${out.path}/report.json',
   ).writeAsStringSync(const JsonEncoder.withIndent('  ').convert(report));
   print(
-    'METADATA_ACCURACY ${jsonEncode({'coverage': report['coverage'], 'corpusSize': songs.length, 'unavailableCount': report['unavailableCount'], 'sourceCoverage': sourceCoverage, 'sourceAgreement': sourceAgreementSummary, 'crossProviderCandidateIdReuse': reusedCatalogIds, 'practicalLicensedChartReview': report['practicalLicensedChartReview'], 'practicalChordLyricCorrespondence': report['practicalChordLyricCorrespondence'], 'practicalChordKeyConsistency': report['practicalChordKeyConsistency'], 'accuracy': accuracy, 'cacheHits': client.hits, 'uncachedOffline': client.uncached})}',
+    'METADATA_ACCURACY ${jsonEncode({'coverage': report['coverage'], 'corpusSize': songs.length, 'unavailableCount': report['unavailableCount'], 'sourceCoverage': sourceCoverage, 'sourceAgreement': sourceAgreementSummary, 'crossProviderCandidateIdReuse': reusedCatalogIds, 'practicalLicensedChartReview': report['practicalLicensedChartReview'], 'practicalLyricsCandidateAgreement': report['practicalLyricsCandidateAgreement'], 'practicalChordLyricCorrespondence': report['practicalChordLyricCorrespondence'], 'practicalChordKeyConsistency': report['practicalChordKeyConsistency'], 'accuracy': accuracy, 'cacheHits': client.hits, 'uncachedOffline': client.uncached})}',
   );
   await transport.close();
 }
