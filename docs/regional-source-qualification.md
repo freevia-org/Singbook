@@ -172,6 +172,10 @@ test-selector failure, not a lost-song or provider failure.
 
 Remaining gates:
 
+This regional qualification records PR184 and its initial channel-5 revision
+16. The subsequent [artwork candidate](cover-art-qualification.md) revises only
+MusicBrainz in that channel; it does not change the regional evidence above.
+
 1. Integrate through the public-main owner, verify the served compatible catalog
    and release/install a new compatible app. Older released clients retain their
    existing catalogs and cannot gain native providers through configuration alone.

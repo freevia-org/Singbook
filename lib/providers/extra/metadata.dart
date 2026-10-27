@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import '../../domain/models.dart';
 import '../../domain/metadata_artist_credit.dart';
 import '../provider.dart';
@@ -8,17 +10,24 @@ import 'common.dart';
 const _metadataHeaders = <String, String>{};
 
 class MusicBrainzProvider implements LyricsProvider {
-  MusicBrainzProvider(this.transport);
+  MusicBrainzProvider(
+    this.transport, {
+    this.artworkTimeout = const Duration(seconds: 4),
+  });
   final ProviderTransport transport;
+
+  /// Total optional-release budget, including queue waits and retries.
+  final Duration artworkTimeout;
   // MusicBrainz requires <= 1 request/second per client. The shared transport's
   // generic host pacing is faster, so this adapter serializes its own requests.
   Future<void> _queue = Future.value();
   DateTime _next = DateTime.fromMillisecondsSinceEpoch(0);
+  final _releaseDetails = <String, ({JsonMap data, DateTime expiresAt})>{};
   @override
   final definition = const ProviderDefinition(
     id: 'musicbrainz',
     name: 'MusicBrainz',
-    capabilities: {'catalog', 'metadata'},
+    capabilities: {'catalog', 'metadata', 'artwork'},
     accessMode: 'noncommercialApi',
     website: 'https://musicbrainz.org/',
     description: 'recordingMetadataOnly',
@@ -43,6 +52,233 @@ class MusicBrainzProvider implements LyricsProvider {
     });
     _queue = result.then<void>((_) {}, onError: (Object _) {});
     return result;
+  }
+
+  static final _musicBrainzIdPattern = RegExp(
+    r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$',
+    caseSensitive: false,
+  );
+
+  String? _musicBrainzId(Object? value) {
+    if (value is! String || !_musicBrainzIdPattern.hasMatch(value)) return null;
+    return value.toLowerCase();
+  }
+
+  ({String? id, String? code}) _selectRelease(
+    JsonMap recording,
+    SongCandidate selection,
+  ) {
+    if (selection.metadata.containsKey('musicbrainzReleaseId')) {
+      final explicit = _musicBrainzId(
+        selection.metadata['musicbrainzReleaseId'],
+      );
+      return explicit == null
+          ? (id: null, code: 'invalid_explicit_release_id')
+          : (id: explicit, code: null);
+    }
+
+    final raw = recording['releases'];
+    if (raw is! List || raw.any((item) => item is! Map)) {
+      return (id: null, code: 'release_list_invalid');
+    }
+    // MusicBrainz linked entities are capped at 25. A visible subset cannot
+    // establish uniqueness, even when the desired title appears once in it.
+    final reportedCount = recording['release-count'];
+    if (raw.length >= 25 ||
+        reportedCount is int && reportedCount > raw.length) {
+      return (id: null, code: 'release_list_truncated');
+    }
+    final rows = maps(raw);
+    final album = selection.album?.trim();
+    final pool = album == null || album.isEmpty
+        ? rows
+        : rows
+              .where(
+                (release) =>
+                    normalized(stringValue(release['title'])) ==
+                    normalized(album),
+              )
+              .toList();
+    if (pool.isEmpty) return (id: null, code: 'release_not_found');
+    final ids = <String>{};
+    for (final row in pool) {
+      final id = _musicBrainzId(row['id']);
+      if (id == null) return (id: null, code: 'invalid_release_id');
+      ids.add(id);
+    }
+    if (ids.length != 1) return (id: null, code: 'release_ambiguous');
+    return (id: ids.single, code: null);
+  }
+
+  Future<JsonMap> _releaseDetail(String id, CancellationToken? cancel) async {
+    cancel?.throwIfCancelled();
+    final cached = _releaseDetails[id];
+    if (cached != null && DateTime.now().isBefore(cached.expiresAt)) {
+      cancel?.throwIfCancelled();
+      return cached.data;
+    }
+    final data = await _get(
+      Uri.https('musicbrainz.org', '/ws/2/release/$id', {
+        'fmt': 'json',
+        'inc': 'recordings',
+      }),
+      cancel,
+    );
+    if (_musicBrainzId(data['id']) != id) {
+      throw const ProviderException('invalid_response');
+    }
+    _releaseDetails[id] = (
+      data: data,
+      expiresAt: DateTime.now().add(const Duration(minutes: 15)),
+    );
+    if (_releaseDetails.length > 32) {
+      _releaseDetails.remove(_releaseDetails.keys.first);
+    }
+    return data;
+  }
+
+  bool _releaseContainsRecording(JsonMap release, String recordingId) {
+    final media = release['media'];
+    if (media is! List || media.isEmpty || media.any((item) => item is! Map)) {
+      return false;
+    }
+    var found = false;
+    for (final medium in maps(media)) {
+      final tracks = medium['tracks'];
+      if (tracks is! List ||
+          tracks.isEmpty ||
+          tracks.any((item) => item is! Map)) {
+        return false;
+      }
+      for (final track in maps(tracks)) {
+        final recording = track['recording'];
+        if (recording is! Map) return false;
+        final trackRecordingId = _musicBrainzId(jsonMap(recording)['id']);
+        if (trackRecordingId == null) return false;
+        if (trackRecordingId == recordingId) found = true;
+      }
+    }
+    return found;
+  }
+
+  Future<({String? url, String? album, JsonMap evidence})>
+  _boundedCoverArtForRecording({
+    required JsonMap recording,
+    required String recordingId,
+    required SongCandidate selection,
+    required CancellationToken? cancel,
+  }) async {
+    cancel?.throwIfCancelled();
+    final child = CancellationToken();
+    cancel?.cancelled.then((_) => child.cancel());
+    try {
+      return await _coverArtForRecording(
+        recording: recording,
+        recordingId: recordingId,
+        selection: selection,
+        cancel: child,
+      ).timeout(
+        artworkTimeout,
+        onTimeout: () {
+          child.cancel();
+          throw const ProviderException('timeout');
+        },
+      );
+    } on ProviderException catch (error) {
+      // Only the caller can cancel the recording operation. An optional
+      // deadline keeps already-resolved metadata usable and stops its child.
+      cancel?.throwIfCancelled();
+      return (
+        url: null,
+        album: null,
+        evidence: {
+          'status': 'omitted',
+          'code': error.code,
+          'recordingId': recordingId,
+        },
+      );
+    } finally {
+      child.cancel();
+    }
+  }
+
+  Future<({String? url, String? album, JsonMap evidence})>
+  _coverArtForRecording({
+    required JsonMap recording,
+    required String recordingId,
+    required SongCandidate selection,
+    required CancellationToken? cancel,
+  }) async {
+    final choice = _selectRelease(recording, selection);
+    if (choice.id == null) {
+      return (
+        url: null,
+        album: null,
+        evidence: {
+          'status': 'omitted',
+          'code': choice.code,
+          'recordingId': recordingId,
+        },
+      );
+    }
+    final releaseId = choice.id!;
+    JsonMap? release;
+    String? code;
+    String? url;
+    String? album;
+    try {
+      release = await _releaseDetail(releaseId, cancel);
+      cancel?.throwIfCancelled();
+      if (_musicBrainzId(release['id']) != releaseId) {
+        code = 'release_id_mismatch';
+      } else if (stringValue(release['title']).trim().isEmpty) {
+        code = 'release_title_missing';
+      } else if (selection.album?.trim().isNotEmpty == true &&
+          normalized(stringValue(release['title'])) !=
+              normalized(selection.album!)) {
+        code = 'release_album_mismatch';
+      } else if (!_releaseContainsRecording(release, recordingId)) {
+        code = 'recording_not_on_release';
+      } else {
+        final coverArtArchive = jsonMap(release['cover-art-archive']);
+        if (coverArtArchive['darkened'] == true) {
+          code = 'darkened_front_art';
+        } else if (coverArtArchive['artwork'] != true ||
+            coverArtArchive['count'] is int &&
+                (coverArtArchive['count'] as int) <= 0) {
+          code = 'cover_art_unavailable';
+        } else if (coverArtArchive['front'] != true) {
+          code = 'front_art_unavailable';
+        } else {
+          // This fixed Cover Art Archive URL is handed to the existing image
+          // renderer. ProviderTransport never fetches or follows its CDN hop.
+          url = 'https://coverartarchive.org/release/$releaseId/front-500';
+          album = stringValue(release['title']);
+        }
+      }
+    } on ProviderException catch (error) {
+      cancel?.throwIfCancelled();
+      code = error.code;
+    } catch (_) {
+      cancel?.throwIfCancelled();
+      code = 'invalid_response';
+    }
+    return (
+      url: url,
+      album: album,
+      evidence: {
+        'status': url == null ? 'omitted' : 'available',
+        'code': ?code,
+        'recordingId': recordingId,
+        'releaseId': releaseId,
+        if (release != null)
+          'releaseEvidence': {
+            'contentType': 'application/json',
+            'provenance': 'normalized MusicBrainz release response',
+            'data': release,
+          },
+      },
+    );
   }
 
   SongCandidate _candidate(JsonMap r) {
@@ -213,12 +449,56 @@ class MusicBrainzProvider implements LyricsProvider {
       'musicbrainzRecordingId': id,
       'relationships': maps(data['relations']),
     };
+    final coverArt = await _boundedCoverArtForRecording(
+      recording: data,
+      recordingId: id,
+      selection: candidate,
+      cancel: cancel,
+    );
+    final resolvedCandidate = coverArt.url == null
+        ? found
+        : SongCandidate(
+            providerId: found.providerId,
+            id: found.id,
+            title: found.title,
+            artist: found.artist,
+            album: coverArt.album,
+            durationSeconds: found.durationSeconds,
+            url: found.url,
+            metadata: {
+              ...found.metadata,
+              'musicbrainzReleaseId': coverArt.evidence['releaseId'],
+            },
+            recordingIds: found.recordingIds,
+            extra: found.extra,
+          );
+    final artworkAssets = coverArt.url == null
+        ? const <JsonMap>[]
+        : <JsonMap>[
+            {
+              'url': coverArt.url,
+              'sourceUrl':
+                  'https://musicbrainz.org/release/${coverArt.evidence['releaseId']}',
+              'credit':
+                  'Cover Art Archive (MusicBrainz release ${coverArt.evidence['releaseId']})',
+              'recordingId': id,
+              'releaseId': coverArt.evidence['releaseId'],
+              'role': 'frontCoverPreview',
+              'rights': {'status': 'unknown'},
+            },
+          ];
     return SourceResult(
-      candidate: found,
+      candidate: resolvedCandidate,
       body: '',
       metadata: {
         ...sanitizeExtraMetadata(metadata),
         'artistCredits': found.metadata['artistCredits'],
+        if (coverArt.url != null) ...{
+          'album': coverArt.album,
+          'artworkUrl': coverArt.url,
+          'musicbrainzReleaseId': coverArt.evidence['releaseId'],
+          'artworkAssets': artworkAssets,
+        },
       },
       attribution: 'MusicBrainz',
       retrievedAt: DateTime.now().toUtc(),
@@ -231,7 +511,20 @@ class MusicBrainzProvider implements LyricsProvider {
           permissions: {'status': 'field_specific', 'coreData': 'CC0'},
         ),
         'metadataOnly': true,
-        'artistIdentityEvidence': ?musicBrainzArtistCreditEvidence(candidate, found, normalized),
+        'artistIdentityEvidence': ?musicBrainzArtistCreditEvidence(
+          candidate,
+          found,
+          normalized,
+        ),
+        'coverArtArchive': coverArt.evidence,
+        'capabilityChecks': {
+          'artwork': {
+            'status': coverArt.url == null
+                ? 'unavailable'
+                : 'location_verified',
+            if (coverArt.evidence['code'] case final String code) 'code': code,
+          },
+        },
       },
     );
   }

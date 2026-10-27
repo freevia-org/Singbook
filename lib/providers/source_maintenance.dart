@@ -6,6 +6,7 @@ import 'package:crypto/crypto.dart';
 import '../domain/models.dart';
 import 'provider.dart';
 import 'source_catalog.dart';
+import 'sanitize.dart';
 
 /// Runs deterministic health probes against the current provider contracts.
 /// Reports contain source/probe identity and shape metadata, never song text.
@@ -398,6 +399,63 @@ class SourceMaintenanceHarness {
               .where((path) => !_hasMetadataPath(result.metadata, path))
               .toList();
       if (absentMetadataPaths.isNotEmpty) {
+        bool artworkPath(String path) =>
+            path == 'artworkUrl' ||
+            path == 'artworkAssets' ||
+            path.startsWith('artworkAssets.') ||
+            // This exact release is exposed only after the optional
+            // MusicBrainz art/release relation has been validated.
+            path == 'musicbrainzReleaseId';
+        final artworkRequired = absentMetadataPaths.any(artworkPath);
+        final unrelatedMissing = absentMetadataPaths
+            .where((p) => !artworkPath(p))
+            .toList();
+        final capabilityChecks = result.extra['capabilityChecks'];
+        final artworkCheck = capabilityChecks is Map
+            ? capabilityChecks['artwork']
+            : null;
+        if (artworkRequired &&
+            artworkCheck is Map &&
+            artworkCheck['status'] == 'unavailable') {
+          // Optional upstream failures must not masquerade as extraction-rule
+          // regressions. Only internal, known codes may enter the public report.
+          const failureCodes = {
+            'timeout',
+            'network',
+            'network_error',
+            'rate_limited',
+            'blocked',
+            'access_denied',
+            'forbidden',
+            'unavailable',
+            'not_found',
+            'gone',
+            'invalid_response',
+            'identity_mismatch',
+            'cancelled',
+          };
+          final rawCode = artworkCheck['code'];
+          final code = failureCodes.contains(rawCode)
+              ? rawCode as String
+              : 'unavailable';
+          final failure = _classify(ProviderException(code));
+          if (unrelatedMissing.isNotEmpty) {
+            return {
+              'id': id,
+              'status': 'changed_schema',
+              'reason': 'required_metadata_fields_missing',
+              'missingMetadataFields': absentMetadataPaths,
+              'capabilityFailures': {'artwork': failure},
+            };
+          }
+          return {
+            'id': id,
+            ...failure,
+            'capability': 'artwork',
+            'recordingMetadataAvailable': result.metadata.isNotEmpty,
+            'missingMetadataFields': absentMetadataPaths,
+          };
+        }
         return {
           'id': id,
           'status': 'changed_schema',
@@ -433,8 +491,9 @@ class SourceMaintenanceHarness {
         verifiedCapabilities.add('wordTiming');
       }
       if (entry.capabilities.contains('artwork') &&
-          result.metadata['licensedImages'] is List &&
-          (result.metadata['licensedImages'] as List).isNotEmpty) {
+          (result.metadata['licensedImages'] is List &&
+                  (result.metadata['licensedImages'] as List).isNotEmpty ||
+              _hasArtworkAssets(result.metadata['artworkAssets']))) {
         verifiedCapabilities.add('artwork');
       }
       final verified = verifiedCapabilities.toList()..sort();
@@ -465,6 +524,10 @@ class SourceMaintenanceHarness {
                   track.toJson()['raw'] == track.raw,
             ),
         'hasChords': result.hasChords,
+        if (_hasArtworkAssets(result.metadata['artworkAssets'])) ...{
+          'artworkEvidence': 'source_declared_location_and_provenance',
+          'artworkImageBytesValidated': false,
+        },
       };
     } catch (error) {
       return {'id': id, ..._classify(error)};
@@ -524,6 +587,30 @@ class SourceMaintenanceHarness {
       return 'result_shape_invalid';
     }
     return null;
+  }
+
+  bool _hasArtworkAssets(Object? raw) {
+    if (raw is! List) return false;
+    bool secureUrl(Object? value) {
+      final safe = safeHttpsUrl(value);
+      return safe != null && !Uri.parse(safe).hasFragment;
+    }
+
+    return raw.whereType<Map>().any(
+      (asset) =>
+          secureUrl(asset['url']) &&
+          secureUrl(asset['sourceUrl']) &&
+          asset['credit'] is String &&
+          (asset['credit'] as String).trim().isNotEmpty &&
+          asset['role'] is String &&
+          (asset['role'] as String).trim().isNotEmpty &&
+          asset['rights'] is Map &&
+          {
+            'unknown',
+            'source_declared',
+            'field_specific',
+          }.contains((asset['rights'] as Map)['status']),
+    );
   }
 
   Map<String, dynamic> _classify(Object error) {
