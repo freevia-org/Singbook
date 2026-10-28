@@ -1,0 +1,152 @@
+{
+  "schemaVersion": 1,
+  "measuredAt": "2026-10-28T13:32:25.445952+00:00",
+  "pr": "https://github.com/freevia-org/Singbook/pull/212",
+  "base": "4f957b023cacd303bf6fe757153d462396e58bd8",
+  "head": "07b960cf0b4706fa1920d0d0456956c90a4d0db5",
+  "files": [
+    "config/source-discovery.json",
+    "docs/source-discovery-review-20261027.md"
+  ],
+  "sha256": {
+    "config/source-discovery.json": "8820858cd8c5faeb3f5a3f1eca1978e18021b9d956611c5c43b961d852a14d16",
+    "docs/source-discovery-review-20261027.md": "d00beb9a0e3da0a8b74ce6d3e7df2e808f597f507f016a6ffb37a01ce5160eb5"
+  },
+  "preservation": {
+    "prior51ObjectsAndOrderByteExact": true,
+    "oldJsonAndDocumentPrefixesByteExact": true,
+    "bothApprovedFileBlobsByteExactAcrossMainMerge": true,
+    "acceptedSetUnchanged": true,
+    "uniqueRecords": 52,
+    "onlyNewCandidate": "acousticbrainz",
+    "newCandidateStatus": "deferred"
+  },
+  "hostedValidation": {
+    "applicableChecksPassed": 8,
+    "checks": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-28T13:18:51Z",
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/freevia-org/Singbook/actions/runs/40695276652/job/122840285959",
+        "name": "focused-regressions",
+        "startedAt": "2026-10-28T13:18:51Z",
+        "status": "COMPLETED",
+        "workflowName": "UX batch validation"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-28T13:19:45Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/freevia-org/Singbook/actions/runs/40695276669/job/122840283752",
+        "name": "analyze",
+        "startedAt": "2026-10-28T13:18:53Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-28T13:26:57Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/freevia-org/Singbook/actions/runs/40695276798/job/122840283379",
+        "name": "compile",
+        "startedAt": "2026-10-28T13:18:59Z",
+        "status": "COMPLETED",
+        "workflowName": "macOS compilation"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-28T13:26:16Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/freevia-org/Singbook/actions/runs/40695276669/job/122840284162",
+        "name": "test",
+        "startedAt": "2026-10-28T13:18:53Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-28T13:19:56Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/freevia-org/Singbook/actions/runs/40695276652/job/122840283210",
+        "name": "host-visuals",
+        "startedAt": "2026-10-28T13:18:54Z",
+        "status": "COMPLETED",
+        "workflowName": "UX batch validation"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-28T13:25:02Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/freevia-org/Singbook/actions/runs/40695276669/job/122840763451",
+        "name": "windows-build",
+        "startedAt": "2026-10-28T13:19:47Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-28T13:30:08Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/freevia-org/Singbook/actions/runs/40695276669/job/122840763546",
+        "name": "windows-test (1/2)",
+        "startedAt": "2026-10-28T13:19:47Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-28T13:28:36Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/freevia-org/Singbook/actions/runs/40695276669/job/122840763719",
+        "name": "windows-test (2/2)",
+        "startedAt": "2026-10-28T13:19:47Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-28T13:25:58Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/freevia-org/Singbook/actions/runs/40695276669/job/122840763802",
+        "name": "windows-journey",
+        "startedAt": "2026-10-28T13:19:48Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      }
+    ],
+    "linuxPassed": 3120,
+    "linuxSkipped": 13,
+    "metadataHelperCasesPassed": 39,
+    "runIds": [
+      40695276669,
+      40695276798,
+      40695276652
+    ],
+    "watcher27035": "completed_exit0",
+    "initialWatcher94467": "completed_exit0_for_prior413head"
+  },
+  "priorLiveFeasibility": "reports/source-maintenance/local/qualifications/2026-10-28T125818Z-acousticbrainz/report.json",
+  "priorBaseMergeProof": "reports/source-maintenance/local/qualifications/2026-10-28T132022Z-acousticbrainz-main-update/report.json",
+  "newLocalSdkDeviceProviderHttpOrCloudQualification": false,
+  "newSourceHttpRequests": 0,
+  "stateAtVerification": {
+    "state": "OPEN",
+    "draft": true,
+    "merged": false
+  },
+  "writerReservation": "Ready for handback to SB Integration; no further edits planned without reassignment. No SDK/device/runtime process remains.",
+  "scope": "DiscoveryJSON/docs only. No provider/model/runtime/factory/registry/catalog/preferences/version/store change and no source activation. Source goal remains active; ordinary user-flow recording-ID routing, rate-window policy and real app/cloud integration still need qualification.",
+  "separatePR213ReadOnlyReviewTransfer": {
+    "reviewedSourceHead": "d7eab27200e03e6c184b7b4276ab3b9ddf761450",
+    "currentHead": "bb2332c916754798b40900e61944c057850c3c86",
+    "all4ReviewedSourceConfigTestFileBlobsByteExact": true,
+    "deltaOnlyAcceptedVersionQuartetFromPR211": true,
+    "exactHeadHostedChecksStillRequired": true,
+    "rootSourceWritesSdkDeviceRequests": 0
+  },
+  "protectedLatestBlobs": {
+    "reports/source-maintenance/latest.json": "51668b5f3443b6ab33b4568565e253a2b4540c4f",
+    "reports/source-maintenance/local/latest.json": "0163da016906a8fe61d4305a99a6d528bafea371"
+  }
+}
