@@ -61,6 +61,17 @@ void main() {
     return app.saveResult(source: _savedSource);
   }
 
+  Future<void> replaceWithEmptyDiscovery() async {
+    ui.dispose();
+    app.dispose();
+    app = AppController(
+      repository: repository,
+      discovery: SourceDiscoveryService([]),
+    );
+    await app.initialize();
+    ui = AppControllerAdapter(app);
+  }
+
   test('Recent groups visits, counts opens, and survives restart', () async {
     await app.saveSong(
       SongDocument(id: 'a', title: 'Alpha', artist: 'Us', body: 'Our words'),
@@ -120,6 +131,7 @@ void main() {
   test(
     'a pending chart remains selectable and saves with pending provenance',
     () async {
+      await replaceWithEmptyDiscovery();
       const pendingChart = SourceResult(
         candidate: _reference,
         body: '[C]A provisional chart',
@@ -159,6 +171,7 @@ void main() {
   test(
     'an already saved chart can open during fresh chart validation',
     () async {
+      await replaceWithEmptyDiscovery();
       const savedChart = SourceResult(
         candidate: _reference,
         body: '[C]Our saved chart',
