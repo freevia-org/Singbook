@@ -59,3 +59,32 @@ runtime, timestamp and request accounting and is not inferred from this CLI.
 The latest available cloud evidence is separately dated2026-10-26 at23:11UTC,
 channel2 revision11 with22 entries. It cannot establish cloud coverage for
 the six deferred candidates in this PR. Local results do not replace cloud evidence.
+
+## 2026-10-28 documentation-only additions
+
+The incoming draft at `df651b9d58e658d4754117dac87a982401f207c3` contains
+46 records, including the separately recorded LiederNet lead. The earlier
+45-record totals above describe the previous stage and are preserved as dated
+evidence. This append adds five unique deferred records for **51 total**.
+All 46 existing records, their order and facts, and the existing document text
+remain unchanged. These research leads establish no current app availability,
+verified lyric/chord coverage or blanket content permission.
+
+| Candidate | Evidence and remaining qualification |
+| --- | --- |
+| Digital Tradition / Mudcat | [Publisher rules](https://mudcat.org/DigiTrad-rules.cfm) encourage database copying while retaining individual song copyright limits. The 7,800-song count is explicitly April 1999. [Current download documentation](https://mudcat.org/download.cfm) lists Spring 2002 packages; no archive or program was downloaded or executed. [Search documentation](https://mudcat.org/DigitradSearch.cfm) describes title/keyword/category and ballad searches. Current bounded extraction, per-item provenance/rights, identities and two canaries remain unqualified. |
+| Dutch Song Database | [Publisher homepage evidence](https://www.liederenbank.nl/) describes over 180,000 archival song descriptions; only some link complete text, melody or audio. This does not count full-lyric imports or unique recordings. Live homepage and [MTC documentation](https://www.liederenbank.nl/mtc/) reads returned 403 and were stopped. Cached MTC research-collection licensing and [archival collection 313](https://flat.meertens.knaw.nl/flat/islandora/object/lat%3A10744_c961bb4f_3169_4c68_a974_93501ff9e985) access restrictions have separate scopes. Neither establishes the whole database's app-access or reuse contract. |
+| The Session | [Publisher-maintained data license](https://github.com/adactio/TheSession-data/blob/main/LICENSE.md) includes an LLM-processing restriction with a narrow accessibility exception, alongside database-license provisions. The [API documentation](https://thesession.org/api) returned 403. No tune data, corpus, content transformation or extraction canary was requested. Defer this assistant-based qualification until an applicable permitted route and the remaining source contract are established. |
+| Śpiewnik Wywroty | [Publisher terms](https://spiewnik.wywrota.pl/blog/zasady-i-warunki) require prior administrator permission for automated access/extraction and reserve text/data-mining rights. No content extraction, alternative endpoint, account or outreach was attempted. Machine access, app persistence/export, identity and two canaries remain unqualified. |
+| fanart.tv | [API documentation](https://api.fanart.tv/) describes artist and album artwork using artist MBIDs and release-group MBIDs. A release-group image does not prove an exact-release cover. Its [developer key process](https://fanart.tv/get-an-api-key/) is distinct from personal keys; no credential was obtained or API/image request made. Per-image copyright can be unknown. Production key provisioning, intended offline/export use, attribution, exact identity and two asset-retention canaries remain unqualified. |
+
+These are documentation-only decisions. Publisher documentation reads and
+failures are distinct from source extraction or asset calls; no new extraction
+canary, source adapter, registry/catalog activation, cloud, release or Publishing
+operation is part of this append. The two redacted source packets remain on
+`codex/datasource-health`:
+
+- `reports/source-maintenance/local/qualifications/2026-10-28T065930Z-discovery/discovery-decisions.json`
+  (SHA-256 `22c44aebecebe8b6dc386fc1e5ff9ce2d7c15c932b5d935c5ee95e5889a48215`).
+- `reports/source-maintenance/local/qualifications/2026-10-28T115914Z-discovery/discovery-decisions.json`
+  (SHA-256 `39d00e1887b8218ebe06bba47c1410847b9519d5b1aee345b0a38afd9fd9229e`).
