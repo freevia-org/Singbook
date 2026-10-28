@@ -188,6 +188,18 @@ bool _idsConflict(SongCandidate a, SongCandidate b) =>
           b.recordingIds.containsKey(e.key) && b.recordingIds[e.key] != e.value,
     );
 
+bool _isArrangement(SongCandidate candidate) =>
+    candidate.metadata['identityScope'] == 'arrangement' ||
+    candidate.extra['identityScope'] == 'arrangement';
+
+/// Distinct charts from one provider are separate selectable arrangements,
+/// even when their title and artist describe the same song.
+bool _arrangementIdsConflict(SongCandidate a, SongCandidate b) =>
+    a.providerId == b.providerId &&
+    _isArrangement(a) &&
+    _isArrangement(b) &&
+    a.id != b.id;
+
 /// Artist identity as a sorted word set, so "Clapton, Eric" and "Eric
 /// Clapton" match.
 String _artistKey(String artist) =>
@@ -271,6 +283,15 @@ class _Group {
   int get first => members.first.index;
 
   void add(SongCandidate row, int index) {
+    if (_isArrangement(row) &&
+        members.any(
+          (member) =>
+              _isArrangement(member.row) &&
+              member.row.providerId == row.providerId &&
+              member.row.id == row.id,
+        )) {
+      return;
+    }
     members.add((row: row, index: index));
     album ??= _album(row);
     // Every member's label fits within the union, the group's most specific
@@ -281,6 +302,7 @@ class _Group {
   bool compatibleWith(SongCandidate row) => !members.any(
     (member) =>
         _idsConflict(member.row, row) ||
+        _arrangementIdsConflict(member.row, row) ||
         !explicitEditionsCompatible(member.row, row),
   );
 
