@@ -121,12 +121,16 @@ void main() {
   test('arrangements from different providers still group by recording', () {
     final groups = groupSearchRecordings([
       _row('lrclib', album: 'Demo Album', duration: 200),
-      _row('chordsandtabs', id: '/songs/sample-a', metadata: {
-        'identityScope': 'arrangement',
-      }),
-      _row('othercharts', id: 'chart-1', metadata: {
-        'identityScope': 'arrangement',
-      }),
+      _row(
+        'chordsandtabs',
+        id: '/songs/sample-a',
+        metadata: {'identityScope': 'arrangement'},
+      ),
+      _row(
+        'othercharts',
+        id: 'chart-1',
+        metadata: {'identityScope': 'arrangement'},
+      ),
     ]);
 
     expect(_ids(groups), [
