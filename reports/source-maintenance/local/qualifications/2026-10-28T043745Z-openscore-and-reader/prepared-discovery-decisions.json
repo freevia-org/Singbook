@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "atUtc": "2026-10-28T04:37:45.737820+00:00",
+  "scope": "Prepared evidence for the single writer of existing discovery PR192; config/source-discovery.json was not edited.",
+  "candidates": [
+    {
+      "id": "openscore-lieder",
+      "name": "OpenScore Lieder",
+      "firstSeen": "2026-10-28",
+      "lastChecked": "2026-10-28",
+      "status": "accepted",
+      "documentation": [
+        "https://github.com/OpenScore/Lieder",
+        "https://github.com/OpenScore/Lieder/blob/main/README.md",
+        "https://github.com/OpenScore/Lieder/blob/main/LICENSE.txt",
+        "https://github.com/OpenScore/Lieder/blob/main/data/index.html"
+      ],
+      "reason": "Qualified source-only native-adapter proposal in PR205, not registered, shipped or activated. Two independent live plaintext lyric canaries (Mayer6573780/German and Jaell6217099/French), Android normal UI import/save, physical SQLite and raw-source preservation, real network-off fresh-process readers and ChordPro source retention passed. Catalog supplies composer, lyricist, language, collection and references; composer is not a performer, collection is not an album, IDs identify source compositions/scores. Literal text preserved; no chord/timing/recording/harmonic inference. Corpus CC0 is source-declared, underlying poem rights unverified. Generated index1462 rows differs from summary1454; not a lyric-bearing count. Arne8835588 lacks .txt and remains unavailable, with no notation fallback. Single-line automatically extracted text has no invented stanza/accuracy claim. Separate PR206 fixes opening oversized paragraphs. Future compatible channel/registry/default/opt-out and cloud qualification remain pending; no release43 or production catalog change."
+    },
+    {
+      "id": "akordite",
+      "name": "Akordite Bulgarian song charts",
+      "firstSeen": "2026-10-28",
+      "lastChecked": "2026-10-28",
+      "status": "deferred",
+      "documentation": [
+        "https://akordite.com/",
+        "https://www.akordite.com/index.php?Itemid=25&id=31&option=com_content&task=view",
+        "https://www.akordite.com/index.php?Itemid=5&option=com_search"
+      ],
+      "reason": "New Bulgarian regional lead. Publisher index displays1961 song/chart rows; not independently counted, deduplicated or coverage-tested. Publisher copyright page identifies visitor by-ear interpretations, warns they may differ from originals and reserves underlying authors rights. Search pages include an ad-blocker notice; browser visibility/access behavior was not tested, so do not infer an actual native block or permission to bypass it. No documented third-party API, local source response, extraction parser, identity/notation handling, two live canaries, app or cloud qualification. Defer for a compatible public access/rights/attribution interface and real field checks. Only primary web documentation reviewed; no account, source-canary/local HTTP, media or bulk download."
+    },
+    {
+      "id": "ukrainian-wikisource",
+      "lastChecked": "2026-10-28",
+      "status": "deferred",
+      "reason": "Two HTTP503 responses with Retry-After13 then15, separated about59seconds. Generic transport reason rate_limited is compatibility terminology covering503; no quota exhaustion or excessive scheduling is established. No database-lag evidence was returned in diagnostics. This supplements the existing metadata-only discovery evidence, not extraction proof. No searches or text bodies requested. New regional adapter preparation paused after the two ordinary local service-busy responses; no activation."
+    }
+  ],
+  "registeredSourcesAdded": 0,
+  "productionCatalogsChanged": false
+}

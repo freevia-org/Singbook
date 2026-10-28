@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "atUtc": "2026-10-28T04:37:45.737820+00:00",
+  "scope": "Selected new regional capability investigation, not a production suite or extraction qualification.",
+  "attempts": [
+    {
+      "atUtc": "2026-10-28T03:43:46.627841Z",
+      "runtime": "local Windows Flutter-bundled Dart maintenance client",
+      "sourceCommit": "a4bf065337669731e617c78ec16a23c982183845",
+      "reason": "New regional capability investigation for already-deferred Ukrainian Wikisource: publisher identity, namespaces, and bounded historical-work search. Not a repeat production suite or extraction qualification.",
+      "credentialsCookiesOrWorkarounds": false,
+      "maxRetries": 0,
+      "rawResponsesPublished": false,
+      "extractionCanariesPassed": 0,
+      "reasonCode": "rate_limited",
+      "steps": [
+        {
+          "id": "siteinfo",
+          "url": "https://uk.wikisource.org/w/api.php?format=json&formatversion=2&maxlag=5&action=query&meta=siteinfo&siprop=general%7Crightsinfo%7Cnamespaces",
+          "startedAt": "2026-10-28T03:43:46.631845Z"
+        }
+      ],
+      "httpDiagnostics": {
+        "networkFailures": 0,
+        "hosts": {
+          "uk.wikisource.org": {
+            "requests": 1,
+            "statuses": {
+              "503": 1
+            },
+            "retryAfterSeconds": {
+              "13": 1
+            },
+            "databaseLag": {}
+          }
+        }
+      }
+    },
+    {
+      "atUtc": "2026-10-28T03:44:45.145110Z",
+      "runtime": "local Windows Flutter-bundled Dart maintenance client",
+      "sourceCommit": "a4bf065337669731e617c78ec16a23c982183845",
+      "reason": "New regional capability investigation for already-deferred Ukrainian Wikisource: publisher identity, namespaces, and bounded historical-work search. Not a repeat production suite or extraction qualification.",
+      "credentialsCookiesOrWorkarounds": false,
+      "maxRetries": 0,
+      "rawResponsesPublished": false,
+      "extractionCanariesPassed": 0,
+      "followupReason": "One bounded follow-up after the prior HTTP503 Retry-After13 deadline elapsed. No automatic retries; stop again if the server remains unavailable.",
+      "reasonCode": "rate_limited",
+      "steps": [
+        {
+          "id": "siteinfo",
+          "url": "https://uk.wikisource.org/w/api.php?format=json&formatversion=2&maxlag=5&action=query&meta=siteinfo&siprop=general%7Crightsinfo%7Cnamespaces",
+          "startedAt": "2026-10-28T03:44:45.150110Z"
+        }
+      ],
+      "httpDiagnostics": {
+        "networkFailures": 0,
+        "hosts": {
+          "uk.wikisource.org": {
+            "requests": 1,
+            "statuses": {
+              "503": 1
+            },
+            "retryAfterSeconds": {
+              "15": 1
+            },
+            "databaseLag": {}
+          }
+        }
+      }
+    }
+  ],
+  "totalLocalHttpRequests": 2,
+  "searchOrLyricRequests": 0,
+  "retriesAfterFollowup": 0,
+  "classification": "Two HTTP503 responses with Retry-After13 then15, separated about59seconds. Generic transport reason rate_limited is compatibility terminology covering503; no quota exhaustion or excessive scheduling is established. No database-lag evidence was returned in diagnostics.",
+  "resolved": false,
+  "next": "Await later service recovery; qualify local namespaces/rights/poem shape with two independent canaries before proposing an adapter. No credentials, alternate host, browser session or restriction workaround.",
+  "userAction": "None required for this external503 response."
+}

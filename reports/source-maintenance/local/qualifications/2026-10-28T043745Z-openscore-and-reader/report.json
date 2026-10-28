@@ -1,0 +1,458 @@
+{
+  "schemaVersion": 1,
+  "atUtc": "2026-10-28T04:37:45.737820+00:00",
+  "runtime": "local Windows host plus Android16/API36/x86_64/16384-byte-page isolated QA",
+  "stage": "native_qualified_source_only_proposal_pending_integration_and_future_channel",
+  "sourcePr": "https://github.com/freevia-org/Singbook/pull/205",
+  "sourceBase": "b06849a3ce9cd07e4d75f4580b7baaafba4b4bf8",
+  "sourceHead": "66d9f1970c0784640408ac6ed31f9ee643500136",
+  "sourceFiles": [
+    "lib/providers/extra/openscore_lieder.dart",
+    "test/providers/extra/openscore_lieder_test.dart",
+    "docs/openscore-lieder-qualification.md"
+  ],
+  "readerPr": "https://github.com/freevia-org/Singbook/pull/206",
+  "readerBase": "c77b221f1575236923b22dcea0f6672887bf11af",
+  "readerHead": "1eb30e8afce86e88ccebad1b1f129fb508ea1cb3",
+  "readerFiles": [
+    "lib/ui/player/player_screen.dart",
+    "test/ui/player_long_paragraph_test.dart"
+  ],
+  "sourceModuleSha256": "b9014a8a5cf7e0661800df994e1c235006629f5863342d0efab1a3c94b2eee0a",
+  "readerModuleSha256": "56c5c321a934fb3e8afe37a59018acb821651f846971f00301b6726037efe3d4",
+  "nativePrivateOverlay": "ebba987d6be9becfa254e13f78d6652970a22cd3",
+  "privatePackage": "org.freevia.singbook.qaopenscore43",
+  "privateCatalog": {
+    "path": "config/source-catalog-openscore-qa.json",
+    "revision": 21,
+    "sources": 31,
+    "previous30RowsExact": true,
+    "newSourceEnabledByDefault": false,
+    "privateExplicitOptIn": true,
+    "publishedOrServed": false,
+    "offlineStructuralGatePassed": true,
+    "structuralHttpRequests": 0
+  },
+  "appCatalogRefreshBoundary": "The private QA bootstrap supplies its candidate catalog in memory at the normal publisher URL. This is not published-server refresh proof. Provider index and lyric requests use the actual production Android native HTTP client.",
+  "sourceTests": {
+    "localFlutterCases": 19,
+    "focusedAnalysis": "clean",
+    "independentReview": "completed; literal-text and malformed-UTF8-reference findings fixed",
+    "hostedChecks": [
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40630075971/job/122624470143",
+        "name": "windows-journey",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40630075971/job/122624469987",
+        "name": "windows-build",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40630075971/job/122624470004",
+        "name": "windows-test (1/2)",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40630075971/job/122624470245",
+        "name": "windows-test (2/2)",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40630075971/job/122624161481",
+        "name": "analyze",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40630076041/job/122624161047",
+        "name": "compile",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40630075971/job/122624161452",
+        "name": "test",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40630075973/job/122624161215",
+        "name": "host-visuals",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40630075973/job/122624162750",
+        "name": "focused-regressions",
+        "state": "SKIPPED"
+      }
+    ]
+  },
+  "readerTests": {
+    "beforeFix": "Three oversized-layout regressions fail; ordinary-line regression passes. Native screenshot independently shows hidden beginning.",
+    "combinedFocusedCasesPassed": 91,
+    "finalTargetedCasesPassed": 5,
+    "focusedAnalysis": "clean",
+    "independentReview": "completed, no actionable findings",
+    "hostedChecks": [
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40632314280/job/122631589979",
+        "name": "windows-build",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40632314280/job/122631589972",
+        "name": "windows-test (1/2)",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40632314280/job/122631589959",
+        "name": "windows-test (2/2)",
+        "state": "IN_PROGRESS"
+      },
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40632314280/job/122631589903",
+        "name": "windows-journey",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40632314280/job/122631295989",
+        "name": "analyze",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40632314245/job/122631295713",
+        "name": "compile",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40632314280/job/122631294830",
+        "name": "test",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40632314272/job/122631295496",
+        "name": "host-visuals",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40632314272/job/122631298760",
+        "name": "focused-regressions",
+        "state": "SKIPPED"
+      }
+    ]
+  },
+  "nativeInitialApk": {
+    "bytes": 69215598,
+    "sha256": "bf67fd1039b371b2eea7939b1318776c3def757539c167e75c33055fb17991ee"
+  },
+  "nativeReaderFixApk": {
+    "bytes": 88818212,
+    "sha256": "a33f5e21e5b0f0961452114fae6a9425ed56019057a48f80c7c1f96254df1461",
+    "samePackageVersionAndSignerVerified": true,
+    "installMode": "adb install -r, no uninstall/clear/restore"
+  },
+  "nativeCanaries": [
+    {
+      "id": "cf8ec46e-0e9e-43e1-ae10-91117d06a9a2",
+      "title": "3 Clair de lune",
+      "artist": "Jaëll, Marie",
+      "sourceId": "6217099",
+      "sourceProvider": "openscorelieder",
+      "sourceUrl": "https://github.com/OpenScore/Lieder/blob/main/scores/Ja%C3%ABll,_Marie/Les_Orientales/3_Clair_de_lune/lc6217099.txt",
+      "documentSha256": "953e05345cc3511b87209732bd46525aae9eca6ade88e735d0ab0eba32a03aba",
+      "sourceFactsSha256": "91d1df99de98ecf2fe437d7e028a4932a48bc53b0e251743f2b5213e5ebdee84",
+      "bodySha256": "989325bcb088492d3c1d1ef813d3750decd69af34f2775fbe3cb16c16c5664e6",
+      "bodyCharacters": 966,
+      "hasChords": false,
+      "sourceMetadata": {
+        "identityScope": "composition",
+        "artistCreditRole": "composer",
+        "composer": "Jaëll, Marie",
+        "lyricist": "Victor Hugo",
+        "language": "FR",
+        "sourceWorkSet": "Les Orientales",
+        "credits": [
+          {
+            "role": "Composer",
+            "name": "Jaëll, Marie"
+          },
+          {
+            "role": "Lyricist",
+            "name": "Victor Hugo"
+          }
+        ],
+        "openScoreId": "6217099",
+        "openScoreTextPath": "scores/Jaëll,_Marie/Les_Orientales/3_Clair_de_lune/lc6217099.txt",
+        "openScoreCatalogSha256": "76a44791b366d84655642022959cdf5cc618a780084f22a8941890d2131f863c",
+        "openScoreCatalogFields": {
+          "composer": "Jaëll, Marie",
+          "workSet": "Les Orientales",
+          "title": "3 Clair de lune",
+          "lyricist": "Victor Hugo",
+          "language": "FR"
+        },
+        "openScoreReferences": [
+          {
+            "label": "MuseScore",
+            "url": "https://raw.githubusercontent.com/OpenScore/Lieder/refs/heads/main/scores/Ja%C3%ABll%2C_Marie/Les_Orientales/3_Clair_de_lune/lc6217099.mscz?raw=true"
+          },
+          {
+            "label": "MusicXML",
+            "url": "https://raw.githubusercontent.com/OpenScore/Lieder/refs/heads/main/scores/Ja%C3%ABll%2C_Marie/Les_Orientales/3_Clair_de_lune/lc6217099.mxl?raw=true"
+          },
+          {
+            "label": "IMSLP.org",
+            "url": "https://imslp.org/wiki/Special:ReverseLookup/632173"
+          },
+          {
+            "label": "MuseScore.com",
+            "url": "https://musescore.com/openscore-lieder-corpus/scores/6217099"
+          },
+          {
+            "label": "Lieder.net",
+            "url": "https://www.lieder.net/lieder/get_text.html%3FTextId%3D8483"
+          }
+        ],
+        "lyricsProvenance": "automatically_extracted_from_score_parts"
+      },
+      "recordingIdsEmpty": true,
+      "sourceAlbumAbsent": true,
+      "originalPayloadPresent": true,
+      "originalSourceBytes": 1004,
+      "originalSourceSha256": "1b65f182ec891d6ed39b3f995d7fb62b21599e0504958d8aa313b0ec2d8b983c",
+      "originalHttpBodyBytesExact": true,
+      "rightsLicense": "CC0-1.0 (publisher corpus dedication)",
+      "attributionRetained": true,
+      "chordProSourceFactsExact": true,
+      "repositoryMatchesController": true
+    },
+    {
+      "id": "08ad9478-0743-4c77-82e6-b036a9c040eb",
+      "title": "Der Erlkönig",
+      "artist": "Mayer, Emilie",
+      "sourceId": "6573780",
+      "sourceProvider": "openscorelieder",
+      "sourceUrl": "https://github.com/OpenScore/Lieder/blob/main/scores/Mayer,_Emilie/_/Der_Erlk%C3%B6nig/lc6573780.txt",
+      "documentSha256": "59986cb32561ba8db1857402322aa69740b57fb1be86158a959128354c0ce8d1",
+      "sourceFactsSha256": "02a7c50ab2da72c96918fbb12a48efcbeb0997ce0d84208e9b2861876d17e5ce",
+      "bodySha256": "4634d2b820c26c6c4e97d2a51e1e465c3ba52380cc9d59a2695d0ecac83b44ea",
+      "bodyCharacters": 1325,
+      "hasChords": false,
+      "sourceMetadata": {
+        "identityScope": "composition",
+        "artistCreditRole": "composer",
+        "composer": "Mayer, Emilie",
+        "lyricist": "Johann Wolfgang von Goethe",
+        "language": "DE",
+        "credits": [
+          {
+            "role": "Composer",
+            "name": "Mayer, Emilie"
+          },
+          {
+            "role": "Lyricist",
+            "name": "Johann Wolfgang von Goethe"
+          }
+        ],
+        "openScoreId": "6573780",
+        "openScoreTextPath": "scores/Mayer,_Emilie/_/Der_Erlkönig/lc6573780.txt",
+        "openScoreCatalogSha256": "76a44791b366d84655642022959cdf5cc618a780084f22a8941890d2131f863c",
+        "openScoreCatalogFields": {
+          "composer": "Mayer, Emilie",
+          "workSet": "—",
+          "title": "Der Erlkönig",
+          "lyricist": "Johann Wolfgang von Goethe",
+          "language": "DE"
+        },
+        "openScoreReferences": [
+          {
+            "label": "MuseScore",
+            "url": "https://raw.githubusercontent.com/OpenScore/Lieder/refs/heads/main/scores/Mayer%2C_Emilie/_/Der_Erlk%C3%B6nig/lc6573780.mscz?raw=true"
+          },
+          {
+            "label": "MusicXML",
+            "url": "https://raw.githubusercontent.com/OpenScore/Lieder/refs/heads/main/scores/Mayer%2C_Emilie/_/Der_Erlk%C3%B6nig/lc6573780.mxl?raw=true"
+          },
+          {
+            "label": "IMSLP.org",
+            "url": "https://imslp.org/wiki/Special:ReverseLookup/625520"
+          },
+          {
+            "label": "MuseScore.com",
+            "url": "https://musescore.com/openscore-lieder-corpus/scores/6573780"
+          }
+        ],
+        "lyricsProvenance": "automatically_extracted_from_score_parts"
+      },
+      "recordingIdsEmpty": true,
+      "sourceAlbumAbsent": true,
+      "originalPayloadPresent": true,
+      "originalSourceBytes": 1383,
+      "originalSourceSha256": "ee52496712de4f303d95e63c928e4d24ce93219182ebb6fcb49a3190a2cb4afb",
+      "originalHttpBodyBytesExact": true,
+      "rightsLicense": "CC0-1.0 (publisher corpus dedication)",
+      "attributionRetained": true,
+      "chordProSourceFactsExact": true,
+      "repositoryMatchesController": true
+    }
+  ],
+  "nativeSourceHttpRequests": [
+    {
+      "atUtc": "2026-10-28T04:16:12.541870Z",
+      "url": "https://raw.githubusercontent.com/OpenScore/Lieder/main/data/index.html",
+      "method": "GET",
+      "status": 200,
+      "responseBytes": 1346757,
+      "responseSha256": "76a44791b366d84655642022959cdf5cc618a780084f22a8941890d2131f863c",
+      "privateCaptureName": "request-1.bin"
+    },
+    {
+      "atUtc": "2026-10-28T04:16:39.191721Z",
+      "url": "https://raw.githubusercontent.com/OpenScore/Lieder/main/scores/Mayer,_Emilie/_/Der_Erlk%C3%B6nig/lc6573780.txt",
+      "method": "GET",
+      "status": 200,
+      "responseBytes": 1383,
+      "responseSha256": "ee52496712de4f303d95e63c928e4d24ce93219182ebb6fcb49a3190a2cb4afb",
+      "privateCaptureName": "request-2.bin"
+    },
+    {
+      "atUtc": "2026-10-28T04:20:09.502081Z",
+      "url": "https://raw.githubusercontent.com/OpenScore/Lieder/main/scores/Ja%C3%ABll,_Marie/Les_Orientales/3_Clair_de_lune/lc6217099.txt",
+      "method": "GET",
+      "status": 200,
+      "responseBytes": 1004,
+      "responseSha256": "1b65f182ec891d6ed39b3f995d7fb62b21599e0504958d8aa313b0ec2d8b983c",
+      "privateCaptureName": "request-3.bin"
+    }
+  ],
+  "requestAccounting": {
+    "localFieldDiscovery": {
+      "index200": 1,
+      "missingPlaintext404": 1,
+      "successfulPlaintext200": 2,
+      "total": 4
+    },
+    "nativeCanaryPhase": {
+      "index200": 1,
+      "successfulPlaintext200": 2,
+      "total": 3
+    },
+    "sourceAttemptTotal": 7,
+    "sourceRetries": 0,
+    "offlineRestartProviderRequests": 0,
+    "extraFullProductionLiveSuites": 0,
+    "researchDocumentationAndDirectoryReadsCountedSeparately": true
+  },
+  "offlineRestartProof": {
+    "atUtc": "2026-10-28T04:33:39.898969+00:00",
+    "device": "emulator-5554",
+    "package": "org.freevia.singbook.qaopenscore43",
+    "sourceHead": "66d9f1970c0784640408ac6ed31f9ee643500136",
+    "readerHead": "1eb30e8afce86e88ccebad1b1f129fb508ea1cb3",
+    "privateOverlay": "ebba987",
+    "scope": "Actual network-off fresh Android process; both saved library rows opened through normal UI, fresh reader frames visually inspected with paragraph beginnings visible.",
+    "checks": [
+      {
+        "sourceId": "6217099",
+        "savedSongId": "cf8ec46e-0e9e-43e1-ae10-91117d06a9a2",
+        "canonicalDocumentJsonSha256": "953e05345cc3511b87209732bd46525aae9eca6ade88e735d0ab0eba32a03aba",
+        "sourceFactsSha256": "91d1df99de98ecf2fe437d7e028a4932a48bc53b0e251743f2b5213e5ebdee84",
+        "canonicalBodyJsonSha256": "989325bcb088492d3c1d1ef813d3750decd69af34f2775fbe3cb16c16c5664e6",
+        "originalSourceSha256": "1b65f182ec891d6ed39b3f995d7fb62b21599e0504958d8aa313b0ec2d8b983c",
+        "documentSourceAndRawBytesUnchanged": true,
+        "libraryReaderOpenedOffline": true,
+        "beginningVisibleInFreshFrame": true
+      },
+      {
+        "sourceId": "6573780",
+        "savedSongId": "08ad9478-0743-4c77-82e6-b036a9c040eb",
+        "canonicalDocumentJsonSha256": "59986cb32561ba8db1857402322aa69740b57fb1be86158a959128354c0ce8d1",
+        "sourceFactsSha256": "02a7c50ab2da72c96918fbb12a48efcbeb0997ce0d84208e9b2861876d17e5ce",
+        "canonicalBodyJsonSha256": "4634d2b820c26c6c4e97d2a51e1e465c3ba52380cc9d59a2695d0ecac83b44ea",
+        "originalSourceSha256": "ee52496712de4f303d95e63c928e4d24ce93219182ebb6fcb49a3190a2cb4afb",
+        "documentSourceAndRawBytesUnchanged": true,
+        "libraryReaderOpenedOffline": true,
+        "beginningVisibleInFreshFrame": true
+      }
+    ],
+    "rawSourceOrLyricsPublished": false,
+    "offlineNetwork": {
+      "airplane": 1,
+      "wifi": 0,
+      "mobileData": 0
+    },
+    "sourceHttpRequestsInRestartedProcess": 0,
+    "networkRestored": true,
+    "passed": true
+  },
+  "independentPhysicalSqliteAudit": {
+    "atUtc": "2026-10-28T04:33:42.004318+00:00",
+    "scope": "Independent standard-library SQLite/base64/JSON audit of actual stopped Android app data; final after reader update and offline reopening.",
+    "status": "passed",
+    "savedSongs": 2,
+    "sqliteIntegrity": "ok",
+    "checks": [
+      {
+        "songId": "08ad9478-0743-4c77-82e6-b036a9c040eb",
+        "sourceId": "6573780",
+        "physicalSqliteSourceFactsExact": true,
+        "sourceFactsSha256": "02a7c50ab2da72c96918fbb12a48efcbeb0997ce0d84208e9b2861876d17e5ce",
+        "originalSourceSha256": "ee52496712de4f303d95e63c928e4d24ce93219182ebb6fcb49a3190a2cb4afb",
+        "nativeResponseCaptureMatches": true,
+        "allCatalogFieldsReferencesAndRightsRetained": true
+      },
+      {
+        "songId": "cf8ec46e-0e9e-43e1-ae10-91117d06a9a2",
+        "sourceId": "6217099",
+        "physicalSqliteSourceFactsExact": true,
+        "sourceFactsSha256": "91d1df99de98ecf2fe437d7e028a4932a48bc53b0e251743f2b5213e5ebdee84",
+        "originalSourceSha256": "1b65f182ec891d6ed39b3f995d7fb62b21599e0504958d8aa313b0ec2d8b983c",
+        "nativeResponseCaptureMatches": true,
+        "allCatalogFieldsReferencesAndRightsRetained": true
+      }
+    ],
+    "databaseSha256": "0cca8331eb4f17e56dfdaddd8cdf36d18419b65db6042cd63ef4893b238c1f53",
+    "archiveSha256": "ad805bd8b0dbf9a33f0c36cbcdbe0f14530991501ff042056524923e477663e9",
+    "networkRequests": 0,
+    "rawSourceOrLyricsPublished": false
+  },
+  "resources": {
+    "atUtc": "2026-10-28T04:34:51.0002242Z",
+    "ownEmulatorWrapperPid": 53308,
+    "ownEmulatorExited": true,
+    "ownAppStoppedAndBackedUp": true,
+    "originalNetworkRestored": true,
+    "ownVmForwardRemoved": true,
+    "flutterGradleBuildsCompleted": true,
+    "physicalDevicesAndOtherEmulatorsUntouched": true,
+    "release43ArtifactsUnchanged": true
+  },
+  "sourceRegisteredInPublicRuntime": false,
+  "publicCatalogChanged": false,
+  "release43Changed": false,
+  "capabilitiesQualified": [
+    "catalog",
+    "lyrics",
+    "metadata"
+  ],
+  "notClaimed": [
+    "recording identity",
+    "performer credit",
+    "album identity",
+    "chords",
+    "key/tempo/harmonic analysis",
+    "timing",
+    "complete catalog lyric availability",
+    "independent transcription or stanza accuracy",
+    "cloud reachability",
+    "released-app availability"
+  ],
+  "knownLimits": [
+    "The two live publisher lyric files are automatically extracted single-line text. No stanza boundaries or repeats were invented.",
+    "Arne8835588 plaintext returned404; publisher directory lists notation but no .txt. The missing-file result was retained, not retried or replaced by a score/media download.",
+    "Measured generated index has1462 rows; separately maintained publisher summary reports1454 scores/143 composers. Neither is a verified available-lyric count.",
+    "Publisher CC0 corpus dedication is retained with attribution; underlying third-party poem/translation rights remain explicitly unverified."
+  ],
+  "next": "Integration review only; keep both PRs draft and separate from release43. Future compatible channel, compiled registry/default/opt-out migration and managed-cloud gates remain before activation. No automatic merge.",
+  "rawSourceDocumentsLyricsSecretsOrScreenshotsPublished": false,
+  "productionLatestFilesReplaced": false
+}
