@@ -32,6 +32,7 @@ const _jitterSeed = int.fromEnvironment(
 const _maxNetwork = int.fromEnvironment('METADATA_BENCHMARK_MAX_NETWORK');
 const _runAudit = bool.fromEnvironment('METADATA_BENCHMARK_RUN');
 const _songIds = String.fromEnvironment('METADATA_BENCHMARK_SONG_IDS');
+const _asOfUtcInput = String.fromEnvironment('METADATA_BENCHMARK_AS_OF_UTC');
 const _cachePath = String.fromEnvironment(
   'METADATA_BENCHMARK_CACHE',
   defaultValue: 'artifacts/metadata-accuracy/cache',
@@ -41,6 +42,30 @@ const _reportOutputPath = String.fromEnvironment(
   defaultValue: 'build/metadata_accuracy',
 );
 const _fields = ['lyrics', 'key', 'chords'];
+
+DateTime? _benchmarkAsOfUtc() {
+  final value = _asOfUtcInput.trim();
+  if (value.isEmpty) return null;
+  if (!RegExp(
+    r'(?:Z|[+-]\d{2}:\d{2})$',
+    caseSensitive: false,
+  ).hasMatch(value)) {
+    throw ArgumentError.value(
+      value,
+      'METADATA_BENCHMARK_AS_OF_UTC',
+      'Use an ISO-8601 timestamp with an explicit UTC designator or offset.',
+    );
+  }
+  final parsed = DateTime.tryParse(value);
+  if (parsed == null) {
+    throw ArgumentError.value(
+      value,
+      'METADATA_BENCHMARK_AS_OF_UTC',
+      'Invalid ISO-8601 timestamp.',
+    );
+  }
+  return parsed.toUtc();
+}
 
 /// The requested song is a discovery query even when catalogs have no exact
 /// result. This fallback carries no catalog or recording evidence: providers
@@ -2875,6 +2900,8 @@ void main() {
 }
 
 Future<void> _benchmark() async {
+  final asOfUtc = _benchmarkAsOfUtc();
+  final effectiveAsOfUtc = asOfUtc ?? DateTime.now().toUtc();
   final data = _readCorpus();
   final allSongs = (data['songs'] as List).cast<Map<String, dynamic>>();
   final requestedIds = _songIds
@@ -2912,6 +2939,7 @@ Future<void> _benchmark() async {
     ...createCoreProviders(
       transport: transport,
       geniusToken: 'cached-benchmark-no-network',
+      clock: asOfUtc == null ? null : () => asOfUtc,
     ),
     ...createExtraProviders(transport: transport),
   ], recordingKeys: RecordingKeyService(transport));
@@ -3973,6 +4001,7 @@ Future<void> _benchmark() async {
   });
   final report = {
     'mode': 'offline-cache-first',
+    'effectiveAsOfUtc': effectiveAsOfUtc.toIso8601String(),
     'jitterSeed': _jitterSeed,
     'maxNetworkRequests': 0,
     'corpusSize': songs.length,
