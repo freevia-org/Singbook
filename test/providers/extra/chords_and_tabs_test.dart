@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -75,6 +76,23 @@ class _Harness {
   late final ChordsAndTabsProvider provider;
 
   Future<void> close() => transport.close();
+}
+
+class _ControlledSearchTransport extends ProviderTransport {
+  _ControlledSearchTransport()
+    : super(client: MockClient((_) async => http.Response('', 200)));
+
+  final response = Completer<String>();
+
+  @override
+  Future<String> getText(
+    Uri url, {
+    Map<String, String> headers = const {},
+    CancellationToken? cancel,
+    int? maxBytes,
+    Duration? timeout,
+    Set<String>? allowedHosts,
+  }) => response.future;
 }
 
 Matcher _failure(String code) =>
@@ -570,6 +588,19 @@ void main() {
       ),
       throwsA(_failure('blocked')),
     );
+  });
+
+  test('search surfaces cancellation after the response completes', () async {
+    final transport = _ControlledSearchTransport();
+    addTearDown(transport.close);
+    final provider = ChordsAndTabsProvider(transport);
+    final token = CancellationToken();
+
+    final pending = provider.search('Artist Test Song', cancel: token);
+    transport.response.complete(_search);
+    token.cancel();
+
+    await expectLater(pending, throwsA(_failure('cancelled')));
   });
 
   test(

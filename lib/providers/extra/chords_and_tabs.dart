@@ -197,6 +197,7 @@ class ChordsAndTabsProvider implements LyricsProvider {
       maxBytes: _maxPageBytes,
       allowedHosts: {_host},
     );
+    cancel?.throwIfCancelled();
     return parseSearch(source, cleanQuery);
   }
 
