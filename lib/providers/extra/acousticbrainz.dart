@@ -10,7 +10,7 @@ import '../provider.dart';
 import '../core/recording_context.dart';
 import 'common.dart' show normalized;
 
-/// Unregistered candidate. Uploaded analysis is evidence about a submission,
+/// Recording-ID enrichment. Uploaded analysis is evidence about a submission,
 /// not verified musical truth, recording alignment, or an authoritative offset.
 class AcousticBrainzProvider
     implements
