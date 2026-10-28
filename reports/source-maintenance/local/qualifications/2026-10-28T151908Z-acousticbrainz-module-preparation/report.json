@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "atUtc": "2026-10-28T15:18:12.957656+00:00",
+  "kind": "candidate-only unregistered module preparation; not runtime qualification",
+  "baseCommit": "bd4a651bc7b0d0ebc6629c12c81707f4ba0eaf4b",
+  "sourceCommit": "7ac529175e3eb4197b60725a6ecbd62ce8ffa87f",
+  "pullRequest": "https://github.com/freevia-org/Singbook/pull/217",
+  "draft": true,
+  "files": [
+    "docs/acousticbrainz-native-candidate.md",
+    "lib/providers/extra/acousticbrainz.dart",
+    "test/providers/extra/acousticbrainz_test.dart"
+  ],
+  "committedFileSha256": {
+    "docs/acousticbrainz-native-candidate.md": "08b5311df87fe9ca187a904980593c697e1d1f079495ad214836d84f18953145",
+    "lib/providers/extra/acousticbrainz.dart": "9f61a153ef90403c4ef584ae87f90750c24bd293bb4586c21fe686e5253b6311",
+    "test/providers/extra/acousticbrainz_test.dart": "879df94dda86893a2a7ed3fffbb054ef28765a870bd00cf5a842b9e1e17aef74"
+  },
+  "retainedShapeAudit": [
+    {
+      "file": "low-level-private.json",
+      "retainedBytesSha256": "f0d645cc2ba8c388839e42c38c954e04e6d6c20cfe3349d2678320460972db90",
+      "recordingMbid": "b5d7d380-f43a-4c1f-a5de-694150b093ac",
+      "offset": 0,
+      "plannedShapeAuditPassed": true
+    },
+    {
+      "file": "low-level-comparison-private.json",
+      "retainedBytesSha256": "009f49269b97cb5e9a8c94b18159c20958d92402ee9d61250229c74a5ba405fd",
+      "recordingMbid": "099b148e-fe99-4b79-be6e-5078e4bb7415",
+      "offset": 0,
+      "plannedShapeAuditPassed": true
+    },
+    {
+      "file": "low-level-comparison-private.json",
+      "retainedBytesSha256": "009f49269b97cb5e9a8c94b18159c20958d92402ee9d61250229c74a5ba405fd",
+      "recordingMbid": "b5d7d380-f43a-4c1f-a5de-694150b093ac",
+      "offset": 1,
+      "plannedShapeAuditPassed": true
+    }
+  ],
+  "findingAndRepair": "All3 retained samples encode file_name as a bounded scalar string; identity/credit tags still require lists. The authored fixture reflects this, and file paths are inert.",
+  "checks": {
+    "diffCheck": "pass",
+    "independentStaticReview": "no concrete blocker; not compiler/runtime proof",
+    "focusedTests": "authored only, not executed",
+    "analysis": "not run",
+    "compilation": "unproven"
+  },
+  "networkThisPreparation": {
+    "publisherDocumentationOpens": 3,
+    "providerCanaries": 0,
+    "sdkDeviceBuildOrWorkflowDispatch": 0
+  },
+  "scope": {
+    "registered": false,
+    "catalogOrFactoryChanges": false,
+    "transportRoutingModelChanges": false,
+    "releaseArtifactChanges": false,
+    "rights": "CC0 publisher analysis corpus only; no media/lyrics/artwork",
+    "sampleLimit": 2,
+    "estimates": "namespaced and unverified"
+  },
+  "requiredNext": [
+    "SDK compilation/focused tests/analysis before qualification",
+    "PR216 or equivalent validated dynamic publisher-window handling",
+    "two independently identified bounded live extraction canaries on exact compiled adapter",
+    "ordinary app late recording-context routing without speculative ID lookup",
+    "compatible registry/catalog and normal app save/offline persistence checks",
+    "managed-cloud reachability and coordinator review before activation"
+  ],
+  "limitations": [
+    "A Python retained-shape audit is not Dart parser execution.",
+    "Three earlier feasibility HTTP reads predate this implementation.",
+    "Authored combined fixtures are not original live bulk responses.",
+    "No broad source integration or independent musical/audio alignment claim."
+  ]
+}
