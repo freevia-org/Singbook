@@ -1303,6 +1303,7 @@ void main() {
         readerDurationEstimated: true,
         readerHasTiming: false,
         playbackSpeed: 1,
+        autoscroll: false,
       ),
     );
     addTearDown(controller.dispose);
@@ -1367,6 +1368,39 @@ void main() {
         tester.renderObject<RenderParagraph>(label).didExceedMaxLines,
         isFalse,
       );
+      // Exercise each visible control as well as its hit target. The fixture
+      // controller records the production widget's actions for each profile.
+      controller.lastSeekSeconds = null;
+      await tester.ensureVisible(next);
+      await tester.tap(next);
+      await tester.pumpAndSettle();
+      expect(controller.lastSeekSeconds, 30);
+      controller.lastSeekSeconds = null;
+      await tester.ensureVisible(previous);
+      await tester.tap(previous);
+      await tester.pumpAndSettle();
+      expect(controller.lastSeekSeconds, 0);
+      controller.playbackStarted = false;
+      controller.autoscrollEnabled = false;
+      await tester.ensureVisible(start);
+      await tester.tap(start);
+      await tester.pumpAndSettle();
+      expect(controller.playbackStarted, isTrue);
+      expect(controller.autoscrollEnabled, isTrue);
+      final previousSpeed = controller.state.playbackSpeed;
+      controller.selectedSpeed = null;
+      await tester.ensureVisible(speed);
+      await tester.tap(speed);
+      await tester.pumpAndSettle();
+      final speedSlider = find.byKey(const ValueKey('scroll-speed-slider'));
+      expect(speedSlider, findsOneWidget);
+      await tester.drag(speedSlider, const Offset(30, 0));
+      await tester.pumpAndSettle();
+      expect(controller.selectedSpeed, isNotNull);
+      expect(controller.state.playbackSpeed, isNot(previousSpeed));
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      expect(speedSlider, findsNothing);
       final layoutError = tester.takeException();
       final playerRect = tester.getRect(find.byType(PlayerScreen));
       final controlsRect = tester.getRect(
