@@ -1,0 +1,130 @@
+{
+  "schemaVersion": 1,
+  "measuredAt": "2026-10-28T14:59:58.073518+00:00",
+  "kind": "candidate-only channel9 inheritance repair qualification",
+  "runtime": "local Windows x64 / Flutter3.44.8 / Dart3.12.2",
+  "pullRequest": "https://github.com/freevia-org/Singbook/pull/207",
+  "draft": true,
+  "baseCommit": "bd4a651bc7b0d0ebc6629c12c81707f4ba0eaf4b",
+  "previousHead": "ad4cd0e99514ef7ad0975a1d747765aff0111f5c",
+  "sourceCommit": "a0eec6dffa9ff0f105a2a9eb623c26eb5b2b51de",
+  "testedImplementationCommit": "6a7cb128ab5e2829d146b6ff107999af0df406dc",
+  "postTestChanges": [
+    "docs/openscore-channel9-proposal.md"
+  ],
+  "catalogPath": "config/source-catalog-v9.json",
+  "catalogChannel": 9,
+  "catalogRevision": 22,
+  "compiledRegistryCount": 31,
+  "inheritedV8Revision": 21,
+  "inheritedRows": 30,
+  "inheritedRowsExactlyEqual": true,
+  "openScoreRowUnchangedDisabledOffDefault": true,
+  "servedChannels1Through8Unchanged": true,
+  "allPrFiles": [
+    "config/source-catalog-v9.json",
+    "docs/openscore-channel9-proposal.md",
+    "docs/openscore-lieder-qualification.md",
+    "lib/application/app_controller.dart",
+    "lib/providers/extra/extra_providers.dart",
+    "lib/providers/extra/openscore_lieder.dart",
+    "lib/providers/source_catalog_client.dart",
+    "pubspec.yaml",
+    "test/application/source_channel_upgrade_test.dart",
+    "test/providers/chords_and_tabs_channel8_test.dart",
+    "test/providers/extra/extra_providers_test.dart",
+    "test/providers/extra/openscore_lieder_test.dart",
+    "test/providers/openscore_channel9_test.dart",
+    "test/providers/source_catalog_channel_test.dart",
+    "test/providers/source_catalog_client_test.dart"
+  ],
+  "repairOwnedFiles": [
+    "config/source-catalog-v9.json",
+    "docs/openscore-channel9-proposal.md",
+    "test/application/source_channel_upgrade_test.dart",
+    "test/providers/openscore_channel9_test.dart"
+  ],
+  "checks": {
+    "offlineDefaultCli": {
+      "exitCode": 0,
+      "exactFinalHead": true,
+      "coverageGaps": 0,
+      "sourceIds": [
+        "genius",
+        "songsterr",
+        "ultimateguitar",
+        "lrclib",
+        "youtubemusic",
+        "lyricsovh",
+        "synclrc",
+        "betterlyrics",
+        "unison",
+        "ozbcoz",
+        "chordie",
+        "worshipcommons",
+        "openfilksongbook",
+        "seanmcgrathmusic",
+        "worshiptogether",
+        "musicbrainz",
+        "wikidata",
+        "wikimediacommons",
+        "wikisource",
+        "lrcred",
+        "roswellmusicjam",
+        "karamoe",
+        "amll",
+        "vocadb",
+        "touhoudb",
+        "utaitedb",
+        "startjamming",
+        "lyricsplus",
+        "chordsandtabs",
+        "pisni",
+        "openscorelieder"
+      ],
+      "httpRequests": 0
+    },
+    "focusedTests": {
+      "exitCode": 0,
+      "passed": 76,
+      "files": 7
+    },
+    "analysis": {
+      "exitCode": 0,
+      "paths": 11,
+      "result": "No issues found"
+    },
+    "diffCheck": "pass",
+    "independentReview": "bounded static review; no blocker"
+  },
+  "sdkLease": {
+    "grantedBy": "SB Integration",
+    "startedAt": "2026-10-28T14:56:25Z",
+    "releasedAt": "2026-10-28T14:59:08Z",
+    "elapsedSeconds": 163,
+    "limitSeconds": 300,
+    "released": true
+  },
+  "artifactsSha256": {
+    "analysis.log": "e4a9bd5a6eb05b5166374eaead745df51227061925fee590df9673dcba792700",
+    "final-head-offline.json": "096434758ec9c54e7796ebe4d68a255850123accadb19720472225471288b4d9",
+    "final-head-offline.log": "1cf787cd2546bdc70e48409a8ec6a7adaff31a49b2ba260b865aaf9039a24839",
+    "offline.json": "07c3313fca6152c514cf400698ff2ed69bd00263ee045672298260180237ce1d",
+    "offline.log": "1cf787cd2546bdc70e48409a8ec6a7adaff31a49b2ba260b865aaf9039a24839",
+    "pub-get.log": "c083f9ce64654caa4975b431c9e24916bd2b0af137a60f0e49f45dfb26fee81c",
+    "structural.json": "c067405b7097b0cb426c5f11eaac6483d34b5a03168c55fa08654ab17cb20bb6",
+    "tests.log": "367e0853b5c9ae9351000ea46a5d6cb75cc8356499a777f4e84ca7e679a382b9"
+  },
+  "existingChordsAndTabsEvidence": [
+    "2026-10-28T022253Z-candt-android/report.json",
+    "2026-10-28T025835Z-source-followups/candt-current-head-replay.json",
+    "2026-10-28T124528Z-integrated-followup/report.json"
+  ],
+  "limitations": [
+    "Earlier hosted checks apply to frozen ad4cd0e only; updated head has no hosted checks. Current workflows are manual and none was dispatched.",
+    "No new source HTTP, native app or managed-cloud qualification.",
+    "OpenScore remains disabled pending activation gates; compatible registry and cache behavior only were validated.",
+    "No merge or served catalog publication; production local/cloud latest reports unchanged."
+  ],
+  "next": "Coordinator review of existing draft PR207; no competing PR or automatic merge."
+}
