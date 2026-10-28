@@ -83,15 +83,18 @@ Channel 8 revision 21 activates Chords & Tabs at source revision 2 and enables
 it by default for compatible clients. Its two catalog health probes use the
 previously qualified Hey Jude and Bohemian Rhapsody arrangements. The Hey Jude
 probe retains its unconfirmed search-version hint; provider regressions
-separately cover legacy pages whose descriptor omits a version. Native QA
-covered normal search, selection, source
+separately cover legacy pages whose descriptor omits a version. Probe search
+terms match the exact title-only searches observed in canaries, with expected
+artist checks retained. Native QA covered normal search, selection, source
 preview, save, fresh-process offline reopen, and exact source-payload and
 attribution preservation. These checks establish behavior for those two
-arrangements only. Chords & Tabs charts are user-submitted; per-work rights are
-unknown, arrangement identity does not establish recording identity, and the
-canaries do not prove independent musical accuracy. The app retains provider
-attribution and the original source payload. Existing user opt-outs remain in
-force. Pisni stays disabled pending its separate qualification.
+arrangements only. A retained-response replay was captured before the later
+unknown-version fix; the merged provider regression set covers that fix. Neither
+replay nor the canaries establish general chart accuracy. Chords & Tabs charts
+are user-submitted; per-work rights are unknown, and arrangement identity does
+not establish recording identity. The app retains provider attribution and the
+original source payload. Existing user opt-outs remain in force. Pisni stays
+disabled pending its separate qualification.
 The lrc.red native adapter uses the publisher's identifying User-Agent,
 exact ISRC search/detail identity, same-host TTML/artwork references and visible
 attribution. Its explicit timing profile handles the publisher's bare-second

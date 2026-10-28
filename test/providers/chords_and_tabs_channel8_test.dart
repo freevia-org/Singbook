@@ -62,6 +62,12 @@ void main() {
     );
     final legacyChartProbe =
         (chordsAndTabs['probes'] as List).first as Map<String, dynamic>;
+    final queenProbe =
+        (chordsAndTabs['probes'] as List).last as Map<String, dynamic>;
+    expect(legacyChartProbe['query'], 'Hey Jude');
+    expect(legacyChartProbe['expectedArtist'], 'The Beatles');
+    expect(queenProbe['query'], 'Bohemian Rhapsody');
+    expect(queenProbe['expectedArtist'], 'Queen');
     expect(
       (legacyChartProbe['candidate'] as Map)['metadata'],
       containsPair('searchChartVersionHint', 4),

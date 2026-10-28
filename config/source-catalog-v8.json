@@ -1617,7 +1617,7 @@
       "probes": [
         {
           "id": "hey-jude-beatles-chart-v4",
-          "query": "Hey Jude The Beatles",
+          "query": "Hey Jude",
           "expectedTitle": "Hey Jude",
           "expectedArtist": "The Beatles",
           "candidate": {
@@ -1644,7 +1644,7 @@
         },
         {
           "id": "bohemian-rhapsody-queen-chart-v8",
-          "query": "Bohemian Rhapsody Queen",
+          "query": "Bohemian Rhapsody",
           "expectedTitle": "Bohemian rhapsody",
           "expectedArtist": "Queen",
           "candidate": {
@@ -1670,7 +1670,7 @@
           ]
         }
       ],
-      "changeReason": "Activated for channel 8 after two Android search/select/resolve/save/offline-reopen canaries and zero-network replay through the current provider code. ChordPro attribution and original payloads are retained; these checks do not establish independent musical accuracy or per-work rights, which remain unknown.",
+      "changeReason": "Activated for channel 8 after two Android search/select/resolve/save/offline-reopen canaries, a retained-response offline replay, and provider regression checks. ChordPro attribution and original payloads are retained; these checks do not establish independent musical accuracy or per-work rights, which remain unknown.",
       "description": "Community-submitted chord charts and lyrics. Source attribution and original payload are retained; per-work rights are not independently verified, and arrangement-specific charts do not establish recording identity or musical accuracy."
     },
     {
