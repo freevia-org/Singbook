@@ -11,7 +11,7 @@ import 'package:singbook/providers/extra/wikibooks_liederbuch.dart';
 import 'package:singbook/providers/provider.dart';
 
 const _pageId = 7123;
-const _pageTitle = 'Liederbuch/ Die Gedanken sind frei';
+const _pageTitle = 'Liederbuch/ Morgenwind am Silberhang';
 
 Map<String, Object?> _searchHit({
   Object? pageId = _pageId,
@@ -20,14 +20,14 @@ Map<String, Object?> _searchHit({
 }) => {'pageid': pageId, 'ns': namespace, 'title': title};
 
 String _pageHtml({
-  String title = 'Die Gedanken sind frei',
+  String title = 'Morgenwind am Silberhang',
   String body = '''
-<p class="source-credits">Text: Schlesisches Volkslied (um 1780)<br>Melodie: aus Bern (um 1815)<br>Bearbeitung: Mjchael</p>
+<p class="source-credits">Text: Liora Fen (synthetic fixture)<br>Melodie: K. Tarel (synthetic fixture)<br>Bearbeitung: Miri Falk (synthetic fixture)</p>
 <div class="poem"><p>
-  <span style="color:white;font-size:0.1em">[</span><span style="vertical-align:50%;font-family:sans-serif;font-weight:bold">[H]</span><span style="color:white;font-size:0.1em">]</span>Die Gedanken sind frei.<br>
-  Wer kann sie erraten? [Wort] {wörtlich} #Stern<br>
-</p><p><span style="vertical-align:50%;font-family:sans-serif;font-weight:bold">[B]</span>Sie fliegen vorbei.</p></div>
-<div class="poem"><p>Eine weitere Strophe.</p></div>
+  <span style="color:white;font-size:0.1em">[</span><span style="vertical-align:50%;font-family:sans-serif;font-weight:bold">[H]</span><span style="color:white;font-size:0.1em">]</span>Am Morgen glänzt der kupferne Bach.<br>
+  Unter sieben Zweigen ruht ein blauer Klang. [Wort] {wörtlich} #Stern<br>
+</p><p><span style="vertical-align:50%;font-family:sans-serif;font-weight:bold">[B]</span>Sie tanzen leis am Hang.</p></div>
+<div class="poem"><p>Ein kleiner Mond bewacht den Garten.</p></div>
 <div class="score"><img alt="Score image must not become lyric text"></div>
 <nav>Navigation must not become lyric text</nav>''',
 }) => '''
@@ -87,7 +87,7 @@ void main() {
             _searchHit(pageId: 0),
             _searchHit(namespace: 1),
             _searchHit(title: 'Hilfe: Liederbuch/ Example'),
-            _searchHit(title: 'Liederbuch: Die Gedanken sind frei'),
+            _searchHit(title: 'Liederbuch: Morgenwind am Silberhang'),
           ],
         },
       });
@@ -103,16 +103,16 @@ void main() {
         'metadata',
       }));
 
-      final results = await provider.search('Gedanken sind frei');
+      final results = await provider.search('Morgenwind am Silberhang');
       expect(results, hasLength(1));
       expect(results.single.id, '$_pageId');
       expect(results.single.providerId, 'wikibooksliederbuch');
-      expect(results.single.title, 'Die Gedanken sind frei');
+      expect(results.single.title, 'Morgenwind am Silberhang');
       expect(results.single.artist, isEmpty);
       expect(results.single.metadata['identityScope'], 'arrangement');
       expect(results.single.metadata['wikibooksPageId'], _pageId);
       expect(results.single.metadata['wikibooksPageTitle'], _pageTitle);
-      expect(results.single.url, contains('de.wikibooks.org/wiki/'));
+      expect(results.single.url, 'https://de.wikibooks.org/?curid=7123');
 
       final uri = seen.single;
       expect(uri.scheme, 'https');
@@ -142,7 +142,7 @@ void main() {
     });
     try {
       final provider = WikibooksLiederbuchProvider(transport);
-      final selected = (await provider.search('Gedanken sind frei')).single;
+      final selected = (await provider.search('Morgenwind am Silberhang')).single;
       final forged = SongCandidate(
         providerId: selected.providerId,
         id: selected.id,
@@ -157,23 +157,23 @@ void main() {
       );
       final result = await provider.resolve(forged);
 
-      expect(result.body, contains('[B]Die Gedanken sind frei.'));
-      expect(result.body, contains(r'Wer kann sie erraten? \[Wort\] \{wörtlich\} \#Stern'));
-      expect(result.body, contains('[Bb]Sie fliegen vorbei.'));
-      expect(result.body, contains('Eine weitere Strophe.'));
+      expect(result.body, contains('[B]Am Morgen glänzt der kupferne Bach.'));
+      expect(result.body, contains(r'Unter sieben Zweigen ruht ein blauer Klang. \[Wort\] \{wörtlich\} \#Stern'));
+      expect(result.body, contains('[Bb]Sie tanzen leis am Hang.'));
+      expect(result.body, contains('Ein kleiner Mond bewacht den Garten.'));
       expect(result.body, isNot(contains('[unresolved chorus]')));
       expect(result.body, isNot(contains('Score image must not become lyric text')));
       expect(result.body, isNot(contains('Navigation must not become lyric text')));
-      expect(plainLyrics(result.body), contains('Wer kann sie erraten? [Wort] {wörtlich} #Stern'));
+      expect(plainLyrics(result.body), contains('Unter sieben Zweigen ruht ein blauer Klang. [Wort] {wörtlich} #Stern'));
       expect(result.candidate.id, '$_pageId');
       expect(result.candidate.url, selected.url);
       expect(result.metadata['identityScope'], 'arrangement');
       expect(result.metadata['wikibooksPageId'], _pageId);
       expect(result.metadata['wikibooksPageTitle'], _pageTitle);
       expect(result.metadata['wikibooksRevisionId'], 98765);
-      expect(result.metadata['sourceTextCredit'], 'Schlesisches Volkslied (um 1780)');
-      expect(result.metadata['sourceMelodyCredit'], 'aus Bern (um 1815)');
-      expect(result.metadata['sourceArrangerCredits'], ['Mjchael']);
+      expect(result.metadata['sourceTextCredit'], 'Liora Fen (synthetic fixture)');
+      expect(result.metadata['sourceMelodyCredit'], 'K. Tarel (synthetic fixture)');
+      expect(result.metadata['sourceArrangerCredits'], ['Miri Falk (synthetic fixture)']);
       expect(result.metadata['language'], 'de');
       expect(result.metadata['sourceChordNotation'], 'german');
       expect(result.attribution, contains(_pageTitle));
@@ -223,7 +223,7 @@ void main() {
             ])));
       try {
         final provider = WikibooksLiederbuchProvider(transport);
-        final selected = (await provider.search('Gedanken sind frei')).single;
+        final selected = (await provider.search('Morgenwind am Silberhang')).single;
         final source = await provider.resolve(selected);
         expect(source.body, contains(testCase.expected));
         expect(source.metadata['sourceChordNotation'],
@@ -248,7 +248,7 @@ void main() {
         : _json(_parseResponse(html: html, categories: ['Liederbuch/_Lieder'])));
     try {
       final provider = WikibooksLiederbuchProvider(transport);
-      final selected = (await provider.search('Gedanken sind frei')).single;
+      final selected = (await provider.search('Morgenwind am Silberhang')).single;
       await expectLater(
         provider.resolve(selected),
         throwsA(
@@ -275,7 +275,7 @@ void main() {
         : _json(_parseResponse(html: html)));
     try {
       final provider = WikibooksLiederbuchProvider(transport);
-      final selected = (await provider.search('Gedanken sind frei')).single;
+      final selected = (await provider.search('Morgenwind am Silberhang')).single;
       final source = await provider.resolve(selected);
       expect(source.body, contains(r'\[G?\]Literal marker'));
       expect(jsonEncode(source.extra['unparsedChordAnnotations']), contains('G?'));
@@ -290,7 +290,7 @@ void main() {
         : _json(_parseResponse(html: _pageHtml(body: '<p>Not a poem.</p>'))));
     try {
       final provider = WikibooksLiederbuchProvider(transport);
-      final selected = (await provider.search('Gedanken sind frei')).single;
+      final selected = (await provider.search('Morgenwind am Silberhang')).single;
       await expectLater(
         provider.resolve(selected),
         throwsA(
@@ -314,7 +314,7 @@ void main() {
           : _json(response));
       try {
         final provider = WikibooksLiederbuchProvider(transport);
-        final selected = (await provider.search('Gedanken sind frei')).single;
+        final selected = (await provider.search('Morgenwind am Silberhang')).single;
         await expectLater(provider.resolve(selected), throwsA(isA<ProviderException>()));
       } finally {
         await transport.close();
@@ -331,14 +331,14 @@ void main() {
     try {
       final provider = WikibooksLiederbuchProvider(transport);
       await expectLater(
-        provider.search('Gedanken'),
+        provider.search('Morgenwind'),
         throwsA(
           isA<ProviderException>().having((error) => error.code, 'code', 'provider_busy'),
         ),
       );
       expect(calls, 1);
       await expectLater(
-        provider.search('Gedanken'),
+        provider.search('Morgenwind'),
         throwsA(
           isA<ProviderException>().having((error) => error.code, 'code', 'provider_busy'),
         ),
@@ -346,7 +346,7 @@ void main() {
       expect(calls, 2);
       final cancelled = CancellationToken()..cancel();
       await expectLater(
-        provider.search('Gedanken', cancel: cancelled),
+        provider.search('Morgenwind', cancel: cancelled),
         throwsA(
           isA<ProviderException>().having((error) => error.code, 'code', 'cancelled'),
         ),
@@ -363,7 +363,7 @@ void main() {
         : _json(_parseResponse()));
     try {
       final provider = WikibooksLiederbuchProvider(transport);
-      final selected = (await provider.search('Gedanken sind frei')).single;
+      final selected = (await provider.search('Morgenwind am Silberhang')).single;
       final source = await provider.resolve(selected);
       final document = SongDocument(
         id: 'wikibooks-portable-test',
@@ -385,14 +385,14 @@ void main() {
         'pageContributionsLicenseUrl': 'https://creativecommons.org/licenses/by-sa/4.0/',
         'underlyingLyricsAndMusic': 'unknown',
       });
-      expect(rights['sourceUrl'], contains('curid=$_pageId'));
+      expect(rights['sourceUrl'], 'https://de.wikibooks.org/?curid=7123');
       expect(rights['sourceId'], selected.id);
       expect(rights['evidenceUrl'], contains('oldid=98765'));
       expect(rights['attribution'], source.attribution);
       expect(rights['revision'], 98765);
       expect(retained.extra['originalPayload'], original);
       expect(retained.extra['revision'], '98765');
-      expect(jsonEncode(retained.extra['wikibooks']), contains('Die Gedanken sind frei'));
+      expect(jsonEncode(retained.extra['wikibooks']), contains('Morgenwind am Silberhang'));
       expect(
         base64Decode(original['base64'] as String),
         utf8.encode(jsonEncode(_parseResponse())),
@@ -420,13 +420,13 @@ void main() {
         transport,
         clock: () => now,
       );
-      final selected = (await provider.search('Gedanken')).single;
+      final selected = (await provider.search('Morgenwind')).single;
       await provider.resolve(selected);
-      expect((await provider.search('Gedanken')).single.id, selected.id);
+      expect((await provider.search('Morgenwind')).single.id, selected.id);
       await provider.resolve(selected);
       expect(calls, 2);
       now = now.add(const Duration(minutes: 16));
-      expect(await provider.search('Gedanken'), hasLength(1));
+      expect(await provider.search('Morgenwind'), hasLength(1));
       expect(calls, 3);
     } finally {
       await transport.close();
