@@ -3,6 +3,8 @@
 import 'app_device_test.dart' as app;
 import 'android_parity_features_device_test.dart' as parity;
 import 'ios_platform_device_test.dart' as platform;
+import 'ios_provider_parity_device_test.dart' as provider_parity;
+import 'player_fullscreen_device_test.dart' as fullscreen;
 import 'ios_native_layout_device_test.dart' as layouts;
 import 'ios_release23_device_test.dart' as release23;
 import 'provider_device_test.dart' as providers;
@@ -17,6 +19,8 @@ void main() {
   release23.main();
   transpose.main();
   platform.main();
+  provider_parity.main();
+  fullscreen.main();
   catalog.main();
   providers.main();
   layouts.main();
