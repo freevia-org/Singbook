@@ -78,16 +78,19 @@ credentials. Those were API contract/shape probes, not app extraction proof.
 The current adapter then passed a pure-Dart offline replay of the retained
 responses through ordinary production matching, combined-document generation
 and ChordPro export/import. Two independent reference extractions from the
-captured HTML matched every lyric line and chord sequence. Page revisions,
+captured HTML matched every lyric line, chord sequence and all 67 chord-anchor
+positions. Page revisions,
 credits, exact source bytes/hash, attribution and scoped rights survived the
-round trip. Four fixture requests and zero network requests were used. Actual
+round trip. The initial replay used four fixture requests; the separate anchor
+qualification used four more. Both made zero network requests. Actual
 source bodies and the independent lyric reference stay ignored and private;
 committed tests contain only invented text.
 
 Static review found and corrected a package-DOM API mistake before execution
 and tightened notation-specific validation. The subsequent static review found
-no remaining blocker. Focused Flutter tests and analysis have not run locally
-under the coordinator's no-SDK instruction. No native device, SQLite reopening,
+no remaining blocker. Focused Flutter tests and analysis have not run locally;
+the coordinator granted only the bounded pure-Dart retained-response replay.
+No native device, SQLite reopening,
 fresh live adapter probe, managed-cloud reachability, registry/catalog rollout
 or release is qualified by this replay. The captured search request used a
 five-row limit; the bounded adapter requests ten, so fresh exact-request canaries
