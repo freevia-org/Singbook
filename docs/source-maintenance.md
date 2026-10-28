@@ -1,14 +1,27 @@
 # Source catalog and daily maintenance
 
-`config/source-catalog.json` remains the complete channel-1 source list used by
-released clients through build 38. Keep this file and its URL compatible with
-those clients. `config/source-catalog-v2.json` remains the complete channel-2
-bundle and refresh URL for the compatible build-39 runtime.
-`config/source-catalog-v3.json` is the complete channel-3 bundle and refresh URL
-for the AMLL runtime. `config/source-catalog-v4.json` is the complete channel-4
-VocaDB bundle and refresh URL. `config/source-catalog-v5.json` adds TouhouDB and
-UtaiteDB as the complete channel-5 bundle and refresh URL. These are
-distribution channels; all five files use envelope/extraction schema version 1.
+Each catalog file is a complete snapshot for its distribution channel. Keep
+each served path and its channel-specific cache identity stable for compatible
+app builds; do not replace an older channel's roster with entries that require
+a newer compiled adapter. Compatible data corrections may advance a channel's
+`revision`; a new native provider capability requires a new channel snapshot.
+The catalog `revision` is independent of the distribution channel and schema
+versions. All eight files currently use `schemaVersion: 1` and
+`extractionSchemaVersion: 1`:
+
+| Channel | Catalog file | Revision | Sources | Roster changes from previous channel |
+| --- | --- | ---: | ---: | --- |
+| 1 | `config/source-catalog.json` | 7 | 19 | Initial catalog |
+| 2 | `config/source-catalog-v2.json` | 13 | 22 | Adds lrc.red, Roswell Music Jam and kara.moe; updates Synclrc and Sean McGrath Music |
+| 3 | `config/source-catalog-v3.json` | 14 | 23 | Adds AMLL |
+| 4 | `config/source-catalog-v4.json` | 15 | 24 | Adds VocaDB |
+| 5 | `config/source-catalog-v5.json` | 17 | 26 | Adds TouhouDB and UtaiteDB; updates MusicBrainz artwork metadata |
+| 6 | `config/source-catalog-v6.json` | 18 | 27 | Adds StartJamming |
+| 7 | `config/source-catalog-v7.json` | 19 | 28 | Adds LyricsPlus |
+| 8 | `config/source-catalog-v8.json` | 20 | 30 | Adds Chords & Tabs and Pisni |
+
+Roster membership alone does not show that a provider is enabled, qualified or
+live.
 `SINGBOOK_SOURCE_CATALOG_URL` can override
 the HTTPS publisher URL at build time. Settings → Sources → Refresh source list
 performs the same refresh manually. A new app build containing this implementation
@@ -21,11 +34,11 @@ and durable snapshot. Bundle and cache loading do not depend on a network call.
 No provider update changes saved songs, ChordPro provenance or user preferences.
 Catalog storage is separate from the user's synced application settings.
 Channel 3 reads/writes `sourceCatalog:v3` and never overwrites channel-2 or
-legacy cache streams, or provider preferences. Channel 4 reads/writes
-`sourceCatalog:v4`; channel 5 reads/writes `sourceCatalog:v5`. Each preserves
-older cache streams and provider preferences. Without a valid current-channel
-cache, offline startup validates the closest older cached channel against its
-own bundle and the current compiled adapters. It carries newer compatible source
+legacy cache streams, or provider preferences. Channels 4 through 8 each use
+their matching `sourceCatalog:vN` cache key. Every channel preserves older cache
+streams and provider preferences. Without a valid current-channel cache, offline
+startup validates the closest older cached channel against its own bundle and
+the current compiled adapters. It carries newer compatible source
 revisions, added declarative sources, disabled/retired entries and removals into
 an in-memory view of the new bundle. New compiled sources and newer bundled
 source revisions remain; a retired bundled source is never resurrected. The old
@@ -173,8 +186,12 @@ dart run tool/source_maintenance.dart --report artifacts/sources-live.json
 dart run tool/source_maintenance.dart --source lrclib --report artifacts/lrclib-live.json
 ```
 
-Options also include `--catalog path` to validate a candidate catalog. Both
-offline and live CLI defaults follow the app's current bundled channel (now 5).
+Options also include `--catalog path` to validate a candidate catalog. By
+default, offline and live CLI runs use the asset named by
+`SourceCatalogClient.bundledAsset` in `lib/providers/source_catalog_client.dart`.
+That compiled source of truth currently points to
+`config/source-catalog-v8.json`; do not hard-code a channel number in scheduled
+commands or reports.
 An explicit older `--catalog` still parses/applies that snapshot, but the full
 current registry reports newer compiled providers intentionally absent from it
 as coverage gaps; this is not evidence that an older app's source list is broken.
