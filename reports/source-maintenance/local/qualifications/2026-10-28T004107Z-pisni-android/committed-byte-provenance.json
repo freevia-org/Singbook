@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "atUtc": "2026-10-28T01:01:35.382267+00:00",
+  "originalHealthCommit": "089e64894c54a270b9e72ce873f252a812e4a852",
+  "scope": "Checksum correction only. Original reports and all qualification results remain unchanged.",
+  "cause": "Python Windows text output produced CRLF working files; Git committed UTF-8 LF. The earlier handoff hashed Windows working bytes. Use the committed blob hashes below for repository/API verification.",
+  "records": [
+    {
+      "path": "reports/source-maintenance/local/qualifications/2026-10-28T004107Z-pisni-android/report.json",
+      "committedUtf8LfBlobSha256": "de96416134330898a0f41a647c1664e2ac38f6b6f9a7bac37a6847084b518e25",
+      "windowsWorkingCrLfFileSha256": "1b08ca76bd17e0b692706422ea1ee778a6d14e4f229b2a95d1443897533a0a79",
+      "normalizedLfEqualsCommittedBlob": true,
+      "jsonContentsIdentical": true
+    },
+    {
+      "path": "reports/source-maintenance/local/qualifications/2026-10-28T004107Z-pisni-android/emulator-storage-recovery.json",
+      "committedUtf8LfBlobSha256": "bea5c5d1363b2516e846f2f8594aa5369f45e30e2e9d8a3ac988828c93d222b7",
+      "windowsWorkingCrLfFileSha256": "8c4c87b695013edc4194d8bc187f71b1d35dec1b2ae715bd7126f28f0fa82205",
+      "normalizedLfEqualsCommittedBlob": true,
+      "jsonContentsIdentical": true
+    },
+    {
+      "path": "reports/source-maintenance/local/qualifications/2026-10-28T004107Z-pisni-android/pr196-registry-catalog-finding.json",
+      "committedUtf8LfBlobSha256": "782ea7fcfda15f33dd9623d510736e48d82fe7e52737666e7c6a3e6ae85dd67b",
+      "windowsWorkingCrLfFileSha256": "29ce1d8780615a03a6f83f290f9cecd8d36cff48bc5f02ab879960cd0c2c4264",
+      "normalizedLfEqualsCommittedBlob": true,
+      "jsonContentsIdentical": true
+    }
+  ],
+  "newReceiptFileEncoding": "Explicit UTF-8 LF bytes; working file and committed blob hashes must match.",
+  "binaryApkDatabaseArchiveAndOriginalSourceHashesUnaffected": true,
+  "sourceCodeOrNativeTestResultsChanged": false,
+  "additionalLiveHttpRequests": 0
+}
