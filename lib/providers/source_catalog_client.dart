@@ -26,12 +26,13 @@ class SourceCatalogClient {
   static const defaultEndpoint = String.fromEnvironment(
     'SINGBOOK_SOURCE_CATALOG_URL',
     defaultValue:
-        'https://raw.githubusercontent.com/freevia-org/Singbook/main/config/source-catalog-v7.json',
+        'https://raw.githubusercontent.com/freevia-org/Singbook/main/config/source-catalog-v8.json',
   );
-  // Channel 7 adds LyricsPlus; older compiled rosters keep their
-  // own streams and are never promoted into this cache.
-  static const bundledAsset = 'config/source-catalog-v7.json';
-  static const cacheKey = 'sourceCatalog:v7';
+  // Channel 8 adds the Chords & Tabs adapter without changing the catalog
+  // consumed by channel-7 binaries. Keep each channel in its own cache.
+  static const bundledAsset = 'config/source-catalog-v8.json';
+  static const cacheKey = 'sourceCatalog:v8';
+  static const channel7CacheKey = 'sourceCatalog:v7';
   static const channel6CacheKey = 'sourceCatalog:v6';
   static const channel5CacheKey = 'sourceCatalog:v5';
   static const channel4CacheKey = 'sourceCatalog:v4';

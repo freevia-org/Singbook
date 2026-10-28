@@ -14,7 +14,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   sqfliteFfiInit();
   test(
-    'fresh offline bootstrap exposes channel7 LyricsPlus enabled by default',
+    'offline bootstrap uses channel8 with native sources disabled',
     () async {
       final repo = await LibraryRepository.open(
         path: inMemoryDatabasePath,
@@ -37,6 +37,8 @@ void main() {
         expect(app.providerEnabled('utaitedb'), true);
         expect(app.providerEnabled('startjamming'), true);
         expect(app.providerEnabled('lyricsplus'), true);
+        expect(app.providerEnabled('chordsandtabs'), false);
+        expect(app.providerEnabled('pisni'), false);
         for (final id in [
           'touhoudb',
           'utaitedb',
@@ -55,9 +57,9 @@ void main() {
         );
         expect(
           app.discovery.catalogClient!.runtime.catalog!.sources,
-          hasLength(28),
+          hasLength(30),
         );
-        expect(app.discovery.catalogClient!.runtime.catalog!.revision, 19);
+        expect(app.discovery.catalogClient!.runtime.catalog!.revision, 20);
         expect(requests, 0);
         await app.setProviderEnabled('amll', false);
         await app.setProviderEnabled('vocadb', false);
@@ -65,12 +67,16 @@ void main() {
         await app.setProviderEnabled('utaitedb', false);
         await app.setProviderEnabled('startjamming', false);
         await app.setProviderEnabled('lyricsplus', false);
+        await app.setProviderEnabled('chordsandtabs', false);
+        await app.setProviderEnabled('pisni', false);
         expect(app.providerEnabled('amll'), false);
         expect(app.providerEnabled('vocadb'), false);
         expect(app.providerEnabled('touhoudb'), false);
         expect(app.providerEnabled('utaitedb'), false);
         expect(app.providerEnabled('startjamming'), false);
         expect(app.providerEnabled('lyricsplus'), false);
+        expect(app.providerEnabled('chordsandtabs'), false);
+        expect(app.providerEnabled('pisni'), false);
         expect(
           ((await repo.getSetting('app') as Map)['providers'] as Map)['amll'],
           false,
@@ -88,7 +94,7 @@ void main() {
     },
   );
   test(
-    'real bootstrap upgrades populated libraries into channel7 without changing older streams or choices',
+    'bootstrap upgrades saved libraries to channel8 without changing old data',
     () async {
       final repo = await LibraryRepository.open(
         path: inMemoryDatabasePath,
@@ -140,6 +146,17 @@ void main() {
       cachedSource['name'] = 'Closest channel6 cached repair';
       final old6Text = jsonEncode(old6);
       await repo.setSetting(SourceCatalogClient.channel6CacheKey, old6Text);
+      final old7 =
+          jsonDecode(File('config/source-catalog-v7.json').readAsStringSync())
+              as Map<String, dynamic>;
+      old7['revision'] = 8000;
+      final old7Source = (old7['sources'] as List).cast<Map>().singleWhere(
+        (source) => source['id'] == 'lyricsovh',
+      );
+      old7Source['revision'] = 300;
+      old7Source['name'] = 'Closest channel7 cached repair';
+      final old7Text = jsonEncode(old7);
+      await repo.setSetting(SourceCatalogClient.channel7CacheKey, old7Text);
       await repo.setSetting('app', {
         'providers': {
           'lrclib': false,
@@ -226,18 +243,20 @@ void main() {
       try {
         await app.initialize();
         expect(await repo.getSetting(SourceCatalogClient.cacheKey), isNull);
-        expect(app.discovery.catalogClient!.runtime.catalog!.revision, 19);
+        expect(app.discovery.catalogClient!.runtime.catalog!.revision, 20);
         expect(
           app.discovery.catalogClient!.runtime.catalog!.sources,
-          hasLength(28),
+          hasLength(30),
         );
         expect(
           app.providers
               .singleWhere((provider) => provider.id == 'lyricsovh')
               .name,
-          'Closest channel6 cached repair',
+          'Closest channel7 cached repair',
         );
         expect(app.providerEnabled('lyricsplus'), false);
+        expect(app.providerEnabled('chordsandtabs'), false);
+        expect(app.providerEnabled('pisni'), false);
         expect(
           app.providers
               .singleWhere((provider) => provider.id == 'lyricsplus')
@@ -246,7 +265,7 @@ void main() {
         );
         await app.refreshSources();
         expect(app.discovery.catalogClient!.lastErrorCode, isNull);
-        expect(seen.single.path, endsWith('/source-catalog-v7.json'));
+        expect(seen.single.path, endsWith('/source-catalog-v8.json'));
         expect(
           app.discovery.catalogClient!.runtime.catalog!.revision,
           nextRevision,
@@ -260,6 +279,10 @@ void main() {
         expect(
           await repo.getSetting(SourceCatalogClient.channel6CacheKey),
           old6Text,
+        );
+        expect(
+          await repo.getSetting(SourceCatalogClient.channel7CacheKey),
+          old7Text,
         );
         expect(
           await repo.getSetting(SourceCatalogClient.channel3CacheKey),
@@ -281,11 +304,12 @@ void main() {
         expect(app.providerEnabled('utaitedb'), false);
         expect(app.providerEnabled('startjamming'), false);
         expect(app.providerEnabled('lyricsplus'), false);
+        expect(app.providerEnabled('chordsandtabs'), false);
         expect(
           app.providers
               .singleWhere((provider) => provider.id == 'lyricsovh')
               .name,
-          isNot('Closest channel6 cached repair'),
+          isNot('Closest channel7 cached repair'),
         );
         expect(
           app.discovery.catalogClient!.runtime.providers
@@ -356,7 +380,7 @@ void main() {
         );
         expect(
           app.discovery.catalogClient!.runtime.catalog!.sources,
-          hasLength(28),
+          hasLength(30),
         );
         expect(app.providerEnabled('amll'), false);
         expect(app.providerEnabled('vocadb'), false);
@@ -364,9 +388,15 @@ void main() {
         expect(app.providerEnabled('karamoe'), false);
         expect(app.providerEnabled('startjamming'), false);
         expect(app.providerEnabled('lyricsplus'), false);
+        expect(app.providerEnabled('chordsandtabs'), false);
+        expect(app.providerEnabled('pisni'), false);
         expect(
           await repo.getSetting(SourceCatalogClient.channel6CacheKey),
           old6Text,
+        );
+        expect(
+          await repo.getSetting(SourceCatalogClient.channel7CacheKey),
+          old7Text,
         );
         expect(jsonEncode((await repo.listSongs()).single.toJson()), before);
       } finally {

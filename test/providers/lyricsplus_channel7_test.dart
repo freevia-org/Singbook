@@ -8,7 +8,6 @@ import 'package:singbook/providers/configurable_provider.dart';
 import 'package:singbook/providers/core/core_providers.dart';
 import 'package:singbook/providers/extra/extra_providers.dart';
 import 'package:singbook/providers/source_catalog.dart';
-import 'package:singbook/providers/source_catalog_client.dart';
 import 'package:singbook/providers/source_maintenance.dart';
 import 'package:singbook/providers/transport.dart';
 
@@ -74,17 +73,10 @@ void main() {
         ]),
       );
     }
-    expect(SourceCatalogClient.bundledAsset, 'config/source-catalog-v7.json');
-    expect(SourceCatalogClient.cacheKey, 'sourceCatalog:v7');
-    expect(SourceCatalogClient.channel6CacheKey, 'sourceCatalog:v6');
-    expect(
-      SourceCatalogClient.defaultEndpoint,
-      endsWith('/source-catalog-v7.json'),
-    );
     final assets = File('pubspec.yaml').readAsStringSync();
     for (final asset in [
       'config/source-catalog.json',
-      for (var channel = 2; channel <= 7; channel++)
+      for (var channel = 2; channel <= 8; channel++)
         'config/source-catalog-v$channel.json',
     ]) {
       expect(assets, contains('    - $asset'));
@@ -101,7 +93,11 @@ void main() {
     final builtins = [
       ...createCoreProviders(transport: transport),
       ...createExtraProviders(transport: transport),
-    ];
+    ].where(
+      (provider) =>
+          provider.definition.id != 'chordsandtabs' &&
+          provider.definition.id != 'pisni',
+    ).toList();
     final native = builtins.whereType<LyricsPlusProvider>().single;
     expect(native.definition.enabledByDefault, isFalse);
     final runtime = SourceCatalogRuntime(
@@ -143,7 +139,12 @@ void main() {
       final builtins = [
         ...createCoreProviders(transport: transport),
         ...createExtraProviders(transport: transport),
-      ].where((provider) => provider.definition.id != 'lyricsplus').toList();
+      ].where(
+        (provider) =>
+            provider.definition.id != 'lyricsplus' &&
+            provider.definition.id != 'chordsandtabs' &&
+            provider.definition.id != 'pisni',
+      ).toList();
       final runtime = SourceCatalogRuntime(
         builtins: builtins,
         createProvider: (entry) => ConfigurableProvider(entry, transport),

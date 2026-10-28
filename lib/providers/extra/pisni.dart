@@ -6,8 +6,9 @@ import '../../domain/arrangement.dart' show chordPattern;
 import '../provider.dart';
 import 'common.dart';
 
-/// A document/arrangement catalog, never a recording authority. Deliberately
-/// unregistered until native, catalog, persistence and app qualification pass.
+/// A document/arrangement catalog, never a recording authority. This builtin
+/// remains unavailable unless a qualified source catalog explicitly enables
+/// it.
 class PisniProvider implements LyricsProvider, ContextualLyricsSearch {
   PisniProvider(this.transport, {DateTime Function()? clock})
     : _clock = clock ?? DateTime.now;
