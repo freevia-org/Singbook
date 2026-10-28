@@ -8,7 +8,6 @@ import 'package:singbook/providers/configurable_provider.dart';
 import 'package:singbook/providers/core/core_providers.dart';
 import 'package:singbook/providers/extra/extra_providers.dart';
 import 'package:singbook/providers/source_catalog.dart';
-import 'package:singbook/providers/source_catalog_client.dart';
 import 'package:singbook/providers/source_maintenance.dart';
 import 'package:singbook/providers/transport.dart';
 

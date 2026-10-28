@@ -7,7 +7,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/testing.dart';
 import 'package:singbook/providers/configurable_provider.dart';
 import 'package:singbook/providers/core/core_providers.dart';
-import 'package:singbook/providers/extra/chords_and_tabs.dart';
 import 'package:singbook/providers/extra/extra_providers.dart';
 import 'package:singbook/providers/source_catalog.dart';
 import 'package:singbook/providers/source_catalog_client.dart';
