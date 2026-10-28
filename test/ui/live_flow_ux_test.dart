@@ -1276,11 +1276,10 @@ void main() {
     }
   });
 
-  testWidgets('large text keeps landscape section transport controls usable', (
+  testWidgets('large text keeps section transport controls usable', (
     tester,
   ) async {
     tester.view.devicePixelRatio = 1;
-    tester.view.physicalSize = const Size(520, 390);
     addTearDown(tester.view.resetDevicePixelRatio);
     addTearDown(tester.view.resetPhysicalSize);
     final controller = _LiveFlowController(
@@ -1308,43 +1307,80 @@ void main() {
     );
     addTearDown(controller.dispose);
 
-    await _pumpPlayer(tester, controller, scale: 1.5);
-    final l10n = AppLocalizations.of(tester.element(find.byType(PlayerScreen)));
-    final start = find.byKey(const ValueKey('start-lyric-scroll'));
-    final previous = find.byTooltip(l10n.playerPreviousSection);
-    final next = find.byTooltip(l10n.playerNextSection);
-    final speed = find.byKey(const ValueKey('scroll-speed-toggle'));
-    expect(previous, findsOneWidget);
-    expect(next, findsOneWidget);
-    expect(speed, findsOneWidget);
-    expect(start, findsOneWidget);
-    for (final control in [previous, start, speed, next]) {
-      await tester.ensureVisible(control);
-      await tester.pumpAndSettle();
-      expect(control.hitTestable(), findsOneWidget);
-      final rect = tester.getRect(control);
-      expect(rect.left, greaterThanOrEqualTo(0));
-      expect(rect.right, lessThanOrEqualTo(520));
-      expect(rect.top, greaterThanOrEqualTo(0));
-      expect(rect.bottom, lessThanOrEqualTo(390));
+    const profiles = [
+      (size: Size(520, 390), scale: 1.5, locale: Locale('en')),
+      (size: Size(440, 956), scale: 1.6, locale: Locale('ar')),
+      (size: Size(956, 440), scale: 1.6, locale: Locale('ar')),
+    ];
+    for (final profile in profiles) {
+      tester.view.physicalSize = profile.size;
+      await _pumpPlayer(
+        tester,
+        controller,
+        scale: profile.scale,
+        locale: profile.locale,
+      );
+      final playerContext = tester.element(find.byType(PlayerScreen));
+      final l10n = AppLocalizations.of(playerContext);
+      expect(
+        Localizations.localeOf(playerContext).languageCode,
+        profile.locale.languageCode,
+      );
+      expect(
+        Directionality.of(playerContext),
+        profile.locale.languageCode == 'ar'
+            ? TextDirection.rtl
+            : TextDirection.ltr,
+      );
+      final start = find.byKey(const ValueKey('start-lyric-scroll'));
+      final previous = find.byTooltip(l10n.playerPreviousSection);
+      final next = find.byTooltip(l10n.playerNextSection);
+      final speed = find.byKey(const ValueKey('scroll-speed-toggle'));
+      expect(
+        previous,
+        findsOneWidget,
+        reason: '${profile.locale} ${profile.size}',
+      );
+      expect(next, findsOneWidget, reason: '${profile.locale} ${profile.size}');
+      expect(
+        speed,
+        findsOneWidget,
+        reason: '${profile.locale} ${profile.size}',
+      );
+      expect(
+        start,
+        findsOneWidget,
+        reason: '${profile.locale} ${profile.size}',
+      );
+      for (final control in [previous, start, speed, next]) {
+        await tester.ensureVisible(control);
+        await tester.pumpAndSettle();
+        expect(control.hitTestable(), findsOneWidget);
+        final rect = tester.getRect(control);
+        expect(rect.left, greaterThanOrEqualTo(-1e-6));
+        expect(rect.right, lessThanOrEqualTo(profile.size.width + 1e-6));
+        expect(rect.top, greaterThanOrEqualTo(-1e-6));
+        expect(rect.bottom, lessThanOrEqualTo(profile.size.height + 1e-6));
+      }
+      final label = find.descendant(of: start, matching: find.byType(Text));
+      expect(
+        tester.renderObject<RenderParagraph>(label).didExceedMaxLines,
+        isFalse,
+      );
+      final layoutError = tester.takeException();
+      final playerRect = tester.getRect(find.byType(PlayerScreen));
+      final controlsRect = tester.getRect(
+        find.ancestor(of: start, matching: find.byType(SafeArea)).first,
+      );
+      expect(
+        layoutError,
+        isNull,
+        reason:
+            'profile=${profile.locale}/${profile.size}/${profile.scale}; '
+            'player=$playerRect controls=$controlsRect; '
+            '${layoutError is FlutterError ? layoutError.toStringDeep() : layoutError}',
+      );
     }
-    final label = find.descendant(of: start, matching: find.byType(Text));
-    expect(
-      tester.renderObject<RenderParagraph>(label).didExceedMaxLines,
-      isFalse,
-    );
-    final layoutError = tester.takeException();
-    final playerRect = tester.getRect(find.byType(PlayerScreen));
-    final controlsRect = tester.getRect(
-      find.ancestor(of: start, matching: find.byType(SafeArea)).first,
-    );
-    expect(
-      layoutError,
-      isNull,
-      reason:
-          'player=$playerRect controls=$controlsRect; '
-          '${layoutError is FlutterError ? layoutError.toStringDeep() : layoutError}',
-    );
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
@@ -1781,6 +1817,7 @@ Future<void> _pumpPlayer(
   WidgetTester tester,
   _LiveFlowController controller, {
   double scale = 1,
+  Locale locale = const Locale('en'),
 }) async {
   await tester.pumpWidget(
     MaterialApp(
@@ -1791,6 +1828,7 @@ Future<void> _pumpPlayer(
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: AppLocalizations.supportedLocales,
+      locale: locale,
       theme: verseTheme(brightness: Brightness.light, palette: 'navy'),
       builder: (context, child) => MediaQuery(
         data: MediaQuery.of(
