@@ -38,13 +38,16 @@ and an explicit opt-out surviving a hypothetical later activation. Historical
 v8 tests simulate a v8 registry rather than claiming full-current coverage.
 
 The inheritance repair passed SDK-free structural checking and independent
-static diff review. Flutter/Dart qualification of the updated branch is pending
-a serialized host-only SDK slot. The planned checks use the ordinary default
-channel9 maintenance CLI offline with all 31 compiled providers, followed by
-focused channel/client/cache/bootstrap tests and analysis. Earlier hosted checks
-qualify only their recorded PR heads; they do not qualify this updated head.
-No device, build, source HTTP, credentials, cloud task or schedule is used.
-This proposal remains draft and requires coordinator review before integration.
+static diff review. A coordinator-granted host-only SDK slot validated the
+ordinary default channel9 maintenance CLI offline against all 31 compiled
+providers: zero HTTP requests and no coverage gaps. Seven focused
+channel/client/cache/bootstrap/provider test files passed 76 tests; analysis
+of the affected implementation and tests found no issues. Existing provider
+opt-outs, older cache preservation, and exact current-v8 inheritance are covered.
+Earlier hosted checks qualify only their recorded PR heads. Current main uses
+manual workflows; none was dispatched for this update. No device, build, source
+HTTP, credentials, cloud task or schedule is used. This proposal remains draft
+and requires coordinator review before integration.
 
 Prior native qualification belongs to source `66d9f19` plus reader `1eb30e8`;
 the cancellation amendment has its own final-head replay and concurrency tests.
