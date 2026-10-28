@@ -1,0 +1,140 @@
+{
+  "schemaVersion": 1,
+  "measuredAt": "2026-10-28T13:38:34.532003+00:00",
+  "runtime": "local Windows Git/raw-publisher catalog verification, no app/device use",
+  "mergeCommit": "043864658784cd596846456854a41741dd8d3df4",
+  "observedMain": "043864658784cd596846456854a41741dd8d3df4",
+  "catalogPath": "config/source-catalog-v8.json",
+  "catalogChannel": 8,
+  "catalogRevision": 21,
+  "sourceCount": 30,
+  "source": {
+    "id": "chordsandtabs",
+    "status": "active",
+    "enabledByDefault": true,
+    "revision": 2,
+    "probes": [
+      "hey-jude-beatles-chart-v4",
+      "bohemian-rhapsody-queen-chart-v8"
+    ]
+  },
+  "other29RowsAndOlderChannelsPreserved": true,
+  "compiledProviderCodeUnchanged": true,
+  "publicationRequests": 1,
+  "retries": 0,
+  "providerContentHttpRequests": 0,
+  "expectedSha256": "92aca68ba9395c89b6f78d29ae5a154f78996d3ab9c417b9b1fafa7ed850137c",
+  "releasedInstalledAppOrCloudQualificationClaim": false,
+  "scope": "Public catalog activates only compatible channel8 source list and retains user opt-out semantics. No claim every installed app has refreshed; olderchannels unchanged. Newappbuild/store rollout awaits integration postmerge gate.",
+  "httpStatus": 200,
+  "servedSha256": "92aca68ba9395c89b6f78d29ae5a154f78996d3ab9c417b9b1fafa7ed850137c",
+  "servedBytesMatchIntegratedCommit": true,
+  "servedRevision": 21,
+  "servedCandTStatus": "active",
+  "pr": "https://github.com/freevia-org/Singbook/pull/213",
+  "candidateHead": "bb2332c916754798b40900e61944c057850c3c86",
+  "mergedAt": "2026-10-28T13:35:36Z",
+  "hostedValidation": {
+    "applicableChecksPassed": 8,
+    "checks": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-28T13:22:50Z",
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/freevia-org/Singbook/actions/runs/40695882792/job/122842400274",
+        "name": "focused-regressions",
+        "startedAt": "2026-10-28T13:22:51Z",
+        "status": "COMPLETED",
+        "workflowName": "UX batch validation"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-28T13:23:54Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/freevia-org/Singbook/actions/runs/40695883126/job/122842398478",
+        "name": "analyze",
+        "startedAt": "2026-10-28T13:22:53Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-28T13:33:14Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/freevia-org/Singbook/actions/runs/40695882949/job/122842398016",
+        "name": "compile",
+        "startedAt": "2026-10-28T13:23:06Z",
+        "status": "COMPLETED",
+        "workflowName": "macOS compilation"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-28T13:30:20Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/freevia-org/Singbook/actions/runs/40695883126/job/122842398553",
+        "name": "test",
+        "startedAt": "2026-10-28T13:22:52Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-28T13:23:56Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/freevia-org/Singbook/actions/runs/40695882792/job/122842397396",
+        "name": "host-visuals",
+        "startedAt": "2026-10-28T13:22:53Z",
+        "status": "COMPLETED",
+        "workflowName": "UX batch validation"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-28T13:28:34Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/freevia-org/Singbook/actions/runs/40695883126/job/122842967237",
+        "name": "windows-build",
+        "startedAt": "2026-10-28T13:23:56Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-28T13:35:15Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/freevia-org/Singbook/actions/runs/40695883126/job/122842967295",
+        "name": "windows-test (1/2)",
+        "startedAt": "2026-10-28T13:23:56Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-28T13:30:44Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/freevia-org/Singbook/actions/runs/40695883126/job/122842967193",
+        "name": "windows-test (2/2)",
+        "startedAt": "2026-10-28T13:23:56Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-28T13:30:01Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/freevia-org/Singbook/actions/runs/40695883126/job/122842968050",
+        "name": "windows-journey",
+        "startedAt": "2026-10-28T13:23:57Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      }
+    ]
+  },
+  "protectedLatestBlobs": {
+    "reports/source-maintenance/latest.json": "51668b5f3443b6ab33b4568565e253a2b4540c4f",
+    "reports/source-maintenance/local/latest.json": "0163da016906a8fe61d4305a99a6d528bafea371"
+  },
+  "sourcePrivateNativeEvidence": "reports/source-maintenance/local/qualifications/2026-10-28T022253Z-candt-android/report.json",
+  "priorReplayEvidenceScope": "Earlier76ecb retained-response replay and laterPR210 regression/3-song evidence remain separately scoped; no new native/live test claim for activation.",
+  "sourceWriter": "SB Integration",
+  "rootActivity": "Read-only review, committed-byte comparison and one raw publisher catalog GET; no source edits or source-data requests."
+}
