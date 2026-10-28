@@ -34,9 +34,9 @@ void main() {
     expect(next['revision'], 20);
     expect(DateTime.parse(next['publishedAt']).isUtc, isTrue);
     expect(
-      DateTime.parse(next['publishedAt']).isAfter(
-        DateTime.parse(old['publishedAt']),
-      ),
+      DateTime.parse(
+        next['publishedAt'],
+      ).isAfter(DateTime.parse(old['publishedAt'])),
       isTrue,
     );
     final chordsAndTabs = sources[oldSources.length] as Map;
@@ -46,10 +46,12 @@ void main() {
     expect(chordsAndTabs['status'], 'disabled');
     expect(chordsAndTabs['enabledByDefault'], false);
     expect(chordsAndTabs['accessMode'], 'publicPage');
-    expect(
-      chordsAndTabs['capabilities'],
-      ['catalog', 'chords', 'lyrics', 'metadata'],
-    );
+    expect(chordsAndTabs['capabilities'], [
+      'catalog',
+      'chords',
+      'lyrics',
+      'metadata',
+    ]);
     expect(chordsAndTabs['website'], 'https://www.chords-and-tabs.net');
     expect(chordsAndTabs['hosts'], ['www.chords-and-tabs.net']);
     expect(chordsAndTabs['attribution'], 'Chords and Tabs');
@@ -61,10 +63,7 @@ void main() {
     expect(pisni['status'], 'disabled');
     expect(pisni['enabledByDefault'], false);
     expect(pisni['accessMode'], 'publicPage');
-    expect(
-      pisni['capabilities'],
-      ['catalog', 'chords', 'lyrics', 'metadata'],
-    );
+    expect(pisni['capabilities'], ['catalog', 'chords', 'lyrics', 'metadata']);
     expect(pisni['website'], 'https://www.pisni.org.ua/');
     expect(pisni['hosts'], ['www.pisni.org.ua']);
     expect(pisni['probes'], isEmpty);
@@ -154,13 +153,14 @@ void main() {
       builtins: providers,
       createProvider: (entry) => ConfigurableProvider(entry, transport),
     )..apply(catalog);
+    final allProviders = [...providers, ...runtime.providers];
     final report = await SourceMaintenanceHarness(
-      providers: [...providers, ...runtime.providers],
+      providers: allProviders,
     ).run(catalog, offline: true);
     final rows = (report['sources'] as List).cast<Map>();
     expect(
       rows.map((row) => row['id']).toSet(),
-      providers.map((provider) => provider.definition.id).toSet(),
+      allProviders.map((provider) => provider.definition.id).toSet(),
     );
     expect(rows.where((row) => row['status'] == 'coverage_gap'), isEmpty);
     expect(

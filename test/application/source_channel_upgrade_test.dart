@@ -14,7 +14,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   sqfliteFfiInit();
   test(
-    'offline bootstrap uses channel8 with Chords & Tabs disabled',
+    'offline bootstrap uses channel8 with native sources disabled',
     () async {
       final repo = await LibraryRepository.open(
         path: inMemoryDatabasePath,
@@ -38,6 +38,7 @@ void main() {
         expect(app.providerEnabled('startjamming'), true);
         expect(app.providerEnabled('lyricsplus'), true);
         expect(app.providerEnabled('chordsandtabs'), false);
+        expect(app.providerEnabled('pisni'), false);
         for (final id in [
           'touhoudb',
           'utaitedb',
@@ -56,7 +57,7 @@ void main() {
         );
         expect(
           app.discovery.catalogClient!.runtime.catalog!.sources,
-          hasLength(29),
+          hasLength(30),
         );
         expect(app.discovery.catalogClient!.runtime.catalog!.revision, 20);
         expect(requests, 0);
@@ -67,6 +68,7 @@ void main() {
         await app.setProviderEnabled('startjamming', false);
         await app.setProviderEnabled('lyricsplus', false);
         await app.setProviderEnabled('chordsandtabs', false);
+        await app.setProviderEnabled('pisni', false);
         expect(app.providerEnabled('amll'), false);
         expect(app.providerEnabled('vocadb'), false);
         expect(app.providerEnabled('touhoudb'), false);
@@ -74,6 +76,7 @@ void main() {
         expect(app.providerEnabled('startjamming'), false);
         expect(app.providerEnabled('lyricsplus'), false);
         expect(app.providerEnabled('chordsandtabs'), false);
+        expect(app.providerEnabled('pisni'), false);
         expect(
           ((await repo.getSetting('app') as Map)['providers'] as Map)['amll'],
           false,
@@ -243,7 +246,7 @@ void main() {
         expect(app.discovery.catalogClient!.runtime.catalog!.revision, 20);
         expect(
           app.discovery.catalogClient!.runtime.catalog!.sources,
-          hasLength(29),
+          hasLength(30),
         );
         expect(
           app.providers
@@ -253,6 +256,7 @@ void main() {
         );
         expect(app.providerEnabled('lyricsplus'), false);
         expect(app.providerEnabled('chordsandtabs'), false);
+        expect(app.providerEnabled('pisni'), false);
         expect(
           app.providers
               .singleWhere((provider) => provider.id == 'lyricsplus')
@@ -376,7 +380,7 @@ void main() {
         );
         expect(
           app.discovery.catalogClient!.runtime.catalog!.sources,
-          hasLength(29),
+          hasLength(30),
         );
         expect(app.providerEnabled('amll'), false);
         expect(app.providerEnabled('vocadb'), false);
@@ -385,6 +389,7 @@ void main() {
         expect(app.providerEnabled('startjamming'), false);
         expect(app.providerEnabled('lyricsplus'), false);
         expect(app.providerEnabled('chordsandtabs'), false);
+        expect(app.providerEnabled('pisni'), false);
         expect(
           await repo.getSetting(SourceCatalogClient.channel6CacheKey),
           old6Text,
