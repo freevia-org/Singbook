@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "measuredAt": "2026-10-28T12:17:31.370201+00:00",
+  "pr": "https://github.com/freevia-org/Singbook/pull/209",
+  "base": "f523dd1c98aac38052fbbbd4f5d3db95c16f1ee0",
+  "head": "89e5d224e862e56f1952ec6c7129cdaac3674f85",
+  "files": [
+    "lib/providers/source_maintenance.dart",
+    "test/providers/source_maintenance_artwork_test.dart"
+  ],
+  "fileSha256": {
+    "lib/providers/source_maintenance.dart": "966982e05584b9bd0979666f9d19547855d8c0535a8ce4642d7550cea5c6a111",
+    "test/providers/source_maintenance_artwork_test.dart": "b0970c466817887cdf521e93c7cc17e2fe88311fcd0be3d6bb18432be13786a4"
+  },
+  "hostedValidation": {
+    "checks": [
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40683567334/job/122800131319",
+        "name": "compile",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40683567349/job/122800541389",
+        "name": "windows-test (1/2)",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40683567349/job/122800541770",
+        "name": "windows-journey",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40683567349/job/122800541277",
+        "name": "windows-build",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40683567349/job/122800541335",
+        "name": "windows-test (2/2)",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40683567458/job/122800132549",
+        "name": "host-visuals",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40683567349/job/122800131959",
+        "name": "analyze",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40683567349/job/122800131521",
+        "name": "test",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40683567458/job/122800134528",
+        "name": "focused-regressions",
+        "state": "SKIPPED"
+      }
+    ],
+    "applicableChecksPassed": 8,
+    "linuxSuitePassed": 3118,
+    "linuxSuiteSkipped": 13,
+    "metadataToolTestsPassed": 39,
+    "artworkCheckerCasesObservedPassed": 14,
+    "newRegressionCasesObservedPassed": 6,
+    "watcher10034": "completed_exit0",
+    "runIds": [
+      40683567349,
+      40683567334,
+      40683567458
+    ]
+  },
+  "probeScope": "Synthetic artwork probes supply a selected candidate, including expected album/release metadata, without a query. They exercise direct resolution as in exact-release canaries; catalog search is separate.",
+  "localChecksReceipt": "reports/source-maintenance/local/qualifications/2026-10-28T073928Z-artwork-classification-guard/report.json",
+  "newSourceHttpRequests": 0,
+  "runtimeState": "No local SDK/device/build process or reservation retained.",
+  "state": "draft_pending_integration_review",
+  "scope": "Checker classification/tests only; conflicting identity stays strict. No provider, registry/catalog/preferences/version/release changes. Production measurement/recovery remain separate.",
+  "protectedLatestBlobIds": {
+    "reports/source-maintenance/latest.json": "51668b5f3443b6ab33b4568565e253a2b4540c4f",
+    "reports/source-maintenance/local/latest.json": "0163da016906a8fe61d4305a99a6d528bafea371"
+  }
+}
