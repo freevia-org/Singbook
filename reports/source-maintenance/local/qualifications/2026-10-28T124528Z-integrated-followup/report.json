@@ -1,0 +1,182 @@
+{
+  "schemaVersion": 1,
+  "measuredAt": "2026-10-28T12:45:28.594609+00:00",
+  "runtime": "local Windows publication/CI verification; no Flutter SDK or device use",
+  "publicMain": "3e1bfe20b2b6a574e22a1162d5c042a17a4b39f3",
+  "pr210": {
+    "url": "https://github.com/freevia-org/Singbook/pull/210",
+    "priorOwnerHead": "c217eb494448ff163bb79e0c0b6b141bfd774461",
+    "mainBase": "2e0a77d7a856f514a676e040fc6eafa52a7d69e1",
+    "head": "4c2d9124a7748da0976cff38afd47ca7426bd169",
+    "mergeCommit": "3e1bfe20b2b6a574e22a1162d5c042a17a4b39f3",
+    "mergedAt": "2026-10-28T12:39:11Z",
+    "files": [
+      "lib/providers/extra/chords_and_tabs.dart",
+      "test/providers/extra/chords_and_tabs_test.dart"
+    ],
+    "fileSha256": {
+      "lib/providers/extra/chords_and_tabs.dart": "9d6d22cc0efbbd6ea1063d8bcee2b4fed31cd408f2932ec95380d3d3de6057b4",
+      "test/providers/extra/chords_and_tabs_test.dart": "345746f08dd5c90e9018141435eab4eb4875722dc721c69127ebcb7db6ac80db"
+    },
+    "providerAndTestBlobsByteExactAcrossBaseMergeAndPublication": true,
+    "applicableChecksPassed": 8,
+    "checks": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-28T12:25:50Z",
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/freevia-org/Singbook/actions/runs/40687730150/job/122814313322",
+        "name": "focused-regressions",
+        "startedAt": "2026-10-28T12:25:50Z",
+        "status": "COMPLETED",
+        "workflowName": "UX batch validation"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-28T12:26:48Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/freevia-org/Singbook/actions/runs/40687730106/job/122814311227",
+        "name": "analyze",
+        "startedAt": "2026-10-28T12:25:52Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-28T12:33:06Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/freevia-org/Singbook/actions/runs/40687729900/job/122814309319",
+        "name": "compile",
+        "startedAt": "2026-10-28T12:25:52Z",
+        "status": "COMPLETED",
+        "workflowName": "macOS compilation"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-28T12:32:03Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/freevia-org/Singbook/actions/runs/40687730106/job/122814310633",
+        "name": "test",
+        "startedAt": "2026-10-28T12:25:52Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-28T12:26:47Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/freevia-org/Singbook/actions/runs/40687730150/job/122814310806",
+        "name": "host-visuals",
+        "startedAt": "2026-10-28T12:25:52Z",
+        "status": "COMPLETED",
+        "workflowName": "UX batch validation"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-28T12:32:04Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/freevia-org/Singbook/actions/runs/40687730106/job/122814773837",
+        "name": "windows-build",
+        "startedAt": "2026-10-28T12:26:51Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-28T12:35:58Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/freevia-org/Singbook/actions/runs/40687730106/job/122814773940",
+        "name": "windows-test (1/2)",
+        "startedAt": "2026-10-28T12:26:50Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-28T12:37:50Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/freevia-org/Singbook/actions/runs/40687730106/job/122814774041",
+        "name": "windows-test (2/2)",
+        "startedAt": "2026-10-28T12:26:51Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-28T12:32:18Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/freevia-org/Singbook/actions/runs/40687730106/job/122814773830",
+        "name": "windows-journey",
+        "startedAt": "2026-10-28T12:26:50Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      }
+    ],
+    "linuxPassed": 3120,
+    "linuxSkipped": 13,
+    "metadataHelperCasesPassed": 39,
+    "versionRegressionCasesObservedPassing": [
+      "search version hints constrain selection without becoming page facts",
+      "legacy chart accepts a search hint without claiming a page version",
+      "unknown search and page versions remain unknown"
+    ],
+    "watcher15498": "completed_exit0",
+    "evidenceScope": "Hosted exact-head checks plus unchanged provider/test blobs. Earlier 53 focused checks and 3-song cached replay remain scoped to c217eb4; the earlier 100-song workbook was not rerun. No new content HTTP or SDK/device work."
+  },
+  "pr192Publication": {
+    "url": "https://github.com/freevia-org/Singbook/pull/192",
+    "head": "d4c59b9c83db4d98b5cb04a6f7f182f3a9e6656a",
+    "mergeCommit": "39537f1e2e1e5628b2c9fba58ee876a08ded9472",
+    "mergedAt": "2026-10-28T12:38:57Z",
+    "files": [
+      "config/source-discovery.json",
+      "docs/source-discovery-review-20261027.md"
+    ],
+    "all51RecordsPreserved": true,
+    "priorFinalQualification": "reports/source-maintenance/local/qualifications/2026-10-28T123345Z-pr192-final/report.json",
+    "activationChange": false
+  },
+  "servedPublicationChecks": [
+    {
+      "path": "config/source-discovery.json",
+      "checkedAt": "2026-10-28T12:45:29.040912+00:00",
+      "requests": 1,
+      "retries": 0,
+      "expectedSha256": "9d44e84b8df6fe9dad73ce4edcd9e1ac95858cf8ec5fa27f0b9f88c46db753ce",
+      "httpStatus": 200,
+      "servedSha256": "9d44e84b8df6fe9dad73ce4edcd9e1ac95858cf8ec5fa27f0b9f88c46db753ce",
+      "matchesIntegratedBytes": true,
+      "recordCount": 51
+    },
+    {
+      "path": "docs/source-discovery-review-20261027.md",
+      "checkedAt": "2026-10-28T12:45:29.468308+00:00",
+      "requests": 1,
+      "retries": 0,
+      "expectedSha256": "b29bbc527b99a66365879912960bc60f11770a2fb7bd30544c83e5783741225b",
+      "httpStatus": 200,
+      "servedSha256": "b29bbc527b99a66365879912960bc60f11770a2fb7bd30544c83e5783741225b",
+      "matchesIntegratedBytes": true
+    },
+    {
+      "path": "config/source-catalog-v8.json",
+      "checkedAt": "2026-10-28T12:45:29.805209+00:00",
+      "requests": 1,
+      "retries": 0,
+      "expectedSha256": "e256881e2fda5b1d575f03189c392ff798a9ae471b951413d9633d24d17dfa13",
+      "httpStatus": 200,
+      "servedSha256": "e256881e2fda5b1d575f03189c392ff798a9ae471b951413d9633d24d17dfa13",
+      "matchesIntegratedBytes": true,
+      "catalogRevision": 20,
+      "sourceCount": 30
+    }
+  ],
+  "dailyProductionLiveSuitesThisInvocation": 1,
+  "additionalProviderContentRequestsForThisFollowup": 0,
+  "productionLocalMeasurementUnchanged": "reports/source-maintenance/local/2026-10-28T072235Z.json",
+  "protectedLatestBlobs": {
+    "reports/source-maintenance/latest.json": "51668b5f3443b6ab33b4568565e253a2b4540c4f",
+    "reports/source-maintenance/local/latest.json": "0163da016906a8fe61d4305a99a6d528bafea371"
+  },
+  "scope": "Append-only qualification/publication evidence. Production source catalog remains v8 revision20 with30 entries. Chords & Tabs and Pisni remain disabled; Wikibooks unregistered. No activation, cloud environment, credentials, scheduling or release changes."
+}

@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "measuredAt": "2026-10-28T12:45:28.594609+00:00",
+  "candidateId": "acousticbrainz",
+  "decision": "deferred_documentation_only",
+  "use": "Potential recording-MBID keyed algorithmic key, scale and BPM metadata enrichment. No lyrics/chord chart claim.",
+  "primaryDocumentation": [
+    {
+      "url": "https://acousticbrainz.org/data",
+      "observed": "Primary API link resolves. Low-level rhythm and tonal descriptors documented."
+    },
+    {
+      "url": "https://acousticbrainz.readthedocs.io/api.html",
+      "observed": "GET low-level by recording MBID and submission offset; multiple submissions sorted by submission time. Bulk response may silently omit absent MBIDs. Feature-filtered bulk requests retain audio-properties/version context."
+    }
+  ],
+  "constraints": [
+    "Treat algorithmic outputs as source analysis evidence, not verified musical truth or playback timing.",
+    "Do not choose the first submission as authoritative or cross recording/version identities.",
+    "A documented MBID lookup is not proof of free-text search support in the declarative grammar.",
+    "Two independent real canaries, exact identity, access/rate policy and licensing need qualification before implementation."
+  ],
+  "roadblocks": [
+    {
+      "step": "Additional primary licensing/status document",
+      "url": "https://musicbrainz.org/doc/AcousticBrainz",
+      "observedHttpStatus": 429,
+      "transport": "web research reader, separate from local maintenance CLI",
+      "attemptsThisFollowup": 1,
+      "retries": 0,
+      "resolved": false,
+      "safeAction": "Stopped this document request without retry or alternate access workaround. Used accessible primary API documentation only; no current legal/status conclusion asserted.",
+      "userActionNeeded": false
+    }
+  ],
+  "apiContentCanaries": 0,
+  "registrationOrSourceChanges": false,
+  "rawDocumentsPersisted": false
+}
