@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 1,
+  "atUtc": "2026-10-28T04:55:39.252564+00:00",
+  "sourcePr": "https://github.com/freevia-org/Singbook/pull/205",
+  "sourceHead": "70662134f6e739f71b3b708f1bb7d882f8a6b26c",
+  "sourceModuleSha256": "f58341a58bb1ce8bc763fa21328740a5c1f7ed08886cc6f45812b1d73672e337",
+  "priorNativeSourceHead": "66d9f1970c0784640408ac6ed31f9ee643500136",
+  "change": "Do not coalesce cancellation-sensitive catalog fetches. A canceled older search cannot abort a newer caller, and a canceled caller returns promptly while an unrelated fetch continues. Uncancelled cold calls still coalesce; warm calls reuse the24-hourcache.",
+  "reviewFindingReproduced": {
+    "newRegressionsFailedBeforeFix": 2,
+    "otherCasesPassedBeforeFix": 20
+  },
+  "finalFocusedFlutterCasesPassed": 22,
+  "focusedAnalysis": "clean",
+  "integrationReadOnlyReReview": "The reported cancellation issue is addressed; no new blocker found. Hosted CI was still in progress at review time.",
+  "scopeProof": {
+    "onlyLoadMethodChanged": true,
+    "definitionPrefixUnchanged": true,
+    "downloadParseSearchResolveSuffixByteExact": true,
+    "unchangedSuffixSha256": "7f749a916049ab77991cd04ffc6f762a1af64730d3ea45904f73bd8b69b18892"
+  },
+  "retainedResponseReplay": {
+    "networkRequests": 0,
+    "fixtureRequests": 3,
+    "callerCancellationTokensUsed": true,
+    "literalSyntaxDisplayRegressionPassed": true,
+    "cases": [
+      {
+        "id": "6573780",
+        "status": "passed",
+        "bodySha256": "ee15a53f5da8dc217fc208f34f62b6c615d6be06e17da8356df9800e81b838cf",
+        "plainLyricsCharacters": 1325,
+        "combinedBodyRetained": true,
+        "sourceMetadataRetainedInChordPro": true,
+        "sourcePayloadRetainedInChordPro": true,
+        "rightsRetainedInChordPro": true
+      },
+      {
+        "id": "6217099",
+        "status": "passed",
+        "bodySha256": "202b1ed60d23da43a6066fd7f57abc411a15d7a8afb23e679fb5aa0503f97b4b",
+        "plainLyricsCharacters": 966,
+        "combinedBodyRetained": true,
+        "sourceMetadataRetainedInChordPro": true,
+        "sourcePayloadRetainedInChordPro": true,
+        "rightsRetainedInChordPro": true
+      }
+    ],
+    "allSourceMetadataEqualNativeBaseline": true,
+    "fullLocalReportSha256": "f17099269fbc7bdd6416a8598d3114bd96199ecf8596c26af056ee5f77bb581f"
+  },
+  "hostedChecksObserved": [
+    {
+      "link": "https://github.com/freevia-org/Singbook/actions/runs/40634454204/job/122638393429",
+      "name": "windows-test (2/2)",
+      "state": "IN_PROGRESS"
+    },
+    {
+      "link": "https://github.com/freevia-org/Singbook/actions/runs/40634454204/job/122638393472",
+      "name": "windows-build",
+      "state": "IN_PROGRESS"
+    },
+    {
+      "link": "https://github.com/freevia-org/Singbook/actions/runs/40634454204/job/122638393487",
+      "name": "windows-journey",
+      "state": "IN_PROGRESS"
+    },
+    {
+      "link": "https://github.com/freevia-org/Singbook/actions/runs/40634454204/job/122638393402",
+      "name": "windows-test (1/2)",
+      "state": "IN_PROGRESS"
+    },
+    {
+      "link": "https://github.com/freevia-org/Singbook/actions/runs/40634454204/job/122638076379",
+      "name": "analyze",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/freevia-org/Singbook/actions/runs/40634454201/job/122638076018",
+      "name": "compile",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/freevia-org/Singbook/actions/runs/40634454204/job/122638076080",
+      "name": "test",
+      "state": "IN_PROGRESS"
+    },
+    {
+      "link": "https://github.com/freevia-org/Singbook/actions/runs/40634454186/job/122638076089",
+      "name": "host-visuals",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/freevia-org/Singbook/actions/runs/40634454186/job/122638077489",
+      "name": "focused-regressions",
+      "state": "SKIPPED"
+    }
+  ],
+  "hostedChecksBoundary": "The earlier8-green source receipt belongs to66d9f19, not this amendment. Await exact new-head checks before calling CI complete.",
+  "nativeBoundary": "The preserved Android APK/native source receipts remain tied to66d9f19 plus reader1eb30e8. No native rebuild or live provider call was made for this pure-Dart catalog-cancellation amendment. Final-head data-path replay and cancellation tests are explicit separate evidence.",
+  "readerPrHeadUnchanged": "1eb30e8afce86e88ccebad1b1f129fb508ea1cb3",
+  "sourceRegisteredOrActivated": false,
+  "release43Changed": false,
+  "productionLatestReportsReplaced": false,
+  "extraSourceHttpRequests": 0,
+  "extraFullProductionSuites": 0,
+  "allBuildDeviceReservationsReleased": true,
+  "rawSourceDocumentsLyricsOrSecretsPublished": false
+}
