@@ -1,8 +1,10 @@
 # AcousticBrainz metadata candidate
 
 This draft contains an unregistered module and authored contract tests. It is
-based on public main `bd4a651bc7b0d0ebc6629c12c81707f4ba0eaf4b` and changes no
-factory, catalog, transport, routing, model, release artifact or app setting.
+initially based on public main `bd4a651bc7b0d0ebc6629c12c81707f4ba0eaf4b`,
+then updated by a normal merge to main
+`6e56bb24e17da276a782878bebdcf320d85307ab`. Its diff against that main changes
+no factory, catalog, transport, routing, model, release artifact or app setting.
 It is not a working source in the current app. PR212 records discovery;
 PR216 separately prepares publisher-window handling in the shared transport.
 
@@ -68,14 +70,24 @@ not established its total count for the Cat Power example. The exact retained
 responses use different bulk combinations; an authored combined fixture is
 not presented as an unchanged live HTTP capture.
 
-Focused tests cover request bounds, identity and edition contradictions,
+Authored focused tests cover request bounds, identity and edition contradictions,
 multiple submissions, omission/schema failures, estimate isolation, raw-byte
 and ChordPro retention, cancellation and cache behavior. They are authored
-fixtures, not independent musical accuracy assessments. **No Dart/Flutter SDK,
-test, analysis, build, device or new live API call has been run for this draft**
-under the coordinator's explicit preparation-only resource instruction.
-Compilation and test success remain unproven. A static review cannot replace
-those checks.
+fixtures, not independent musical accuracy assessments. Initial preparation
+used no local SDK/test/analysis/build/device or new live API call, under the
+coordinator's preparation-only instruction. Subsequent coordinator-dispatched
+hosted validation at `7ac5291` passed analysis, UX, Wikisource, macOS compilation,
+Windows build and journey checks. Its Linux test suite exposed an incorrectly
+inferred integer-only map in the deliberately invalid-count fixture; the test
+failed before calling the provider. Commit `d91d3ff` replaces that row with an
+explicit dynamic-valued map. The adapter's executable code did not change.
+
+The draft then inherited current main's channel9/31-provider runtime without
+registering AcousticBrainz. Exact-head qualification of this updated baseline
+and fixture correction is pending; previous checks are not attributed to the
+new head. No local SDK/device/live requests were used for those repairs. A
+static review or a Python retained-shape audit cannot replace Dart tests,
+ordinary app discovery or managed-cloud source qualification.
 
 ## Required integration work
 
