@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "measuredAt": "2026-10-28T14:22:27.317702+00:00",
+  "kind": "shared-transport-prerequisite-qualification",
+  "runtime": {
+    "platform": "Windows host tests using Flutter-bundled Dart",
+    "dart": "FlutterbundledSDK",
+    "sdkLease": "All host-only leases were explicitly granted and released with the Android owner. No SDK process remains on this side.",
+    "sourceOrDeviceRuntimeUsed": false
+  },
+  "pr": "https://github.com/freevia-org/Singbook/pull/216",
+  "state": "open_draft_ready_for_coordinator_review_and_manual_checks",
+  "base": "bd4a651bc7b0d0ebc6629c12c81707f4ba0eaf4b",
+  "head": "971df61dc87fd12fc74dda43c0b63c1ef852dc0a",
+  "files": [
+    "lib/providers/transport.dart",
+    "test/providers/core/transport_test.dart"
+  ],
+  "fileSha256": {
+    "lib/providers/transport.dart": "59c58b0ab32061d986dc9800e94237d25e141cf3a67556133ed09f069b885b73",
+    "test/providers/core/transport_test.dart": "fbe5efa14201e8bba1c4304651337e9de1131ed027a0c1172a76948c5c08f8eb"
+  },
+  "patchSha256": "a9b3dcfd07d318f392089696792b88f9dcab736d19318855366b79370318890b",
+  "currentMainMergePreservation": {
+    "prior": "46532ff446d840ddd3ec8b24bf98e35ca72a0014",
+    "head": "971df61dc87fd12fc74dda43c0b63c1ef852dc0a",
+    "base": "bd4a651bc7b0d0ebc6629c12c81707f4ba0eaf4b",
+    "ownedBlobsByteExact": true,
+    "onlyOwned2FilesDifferFromCurrentMain": true,
+    "changesInheritedFromMain": "Accepted GitHub workflow dispatch/packagepins only; no runtime/source behavior changed."
+  },
+  "validation": {
+    "coreProviderTestsPassed": 249,
+    "explicitTestFiles": [
+      "test/providers/core\\youtube_music_test.dart",
+      "test/providers/core\\ug_numeric_path_test.dart",
+      "test/providers/core\\transport_test.dart",
+      "test/providers/core\\synclrc_lookup_test.dart",
+      "test/providers/core\\short_recording_chart_test.dart",
+      "test/providers/core\\reviewed_chart_artist_discovery_test.dart",
+      "test/providers/core\\recording_lyric_reference_test.dart",
+      "test/providers/core\\recording_key_test.dart",
+      "test/providers/core\\published_name_alias_discovery_test.dart",
+      "test/providers/core\\providers_test.dart",
+      "test/providers/core\\operation_diagnostics_test.dart",
+      "test/providers/core\\noisy_chart_test.dart",
+      "test/providers/core\\metadata_context_discovery_test.dart",
+      "test/providers/core\\hardening_test.dart",
+      "test/providers/core\\genius_source_facts_test.dart",
+      "test/providers/core\\genius_primary_credits_test.dart",
+      "test/providers/core\\contextual_chart_discovery_test.dart",
+      "test/providers/core\\conditional_transport_test.dart",
+      "test/providers/core\\chord_key_check_discovery_test.dart",
+      "test/providers/core\\candidate_fallback_test.dart",
+      "test/providers/core\\arrangement_identity_test.dart",
+      "test/providers/core\\adversarial_test.dart"
+    ],
+    "focusedTransportTestsIncluded": 30,
+    "newWindowCases": 8,
+    "liveSmokeScriptExcluded": true,
+    "focusedAnalysis": "No issues found",
+    "diffCheck": "passed",
+    "initialStyleInfo": "The formatter wrapped a pre-existing single-line if. Unrelated formatter changes were removed. Every original test is byte-identical; final analysis and the 249-test run passed against the cleaned current head.",
+    "logSha256": {
+      "coreProvider": "15ba820a2c8662142f71b376505ebbd8c8329acc2178a953ac257b92b3d4e295",
+      "analysis": "b11d26aeec095657a85c6b7292a8f0071cc6a88760c8ae671f482e4a894ee34d"
+    }
+  },
+  "changes": [
+    "Respect valid relative X-RateLimit reset windows when remaining is zero or a response is 429.",
+    "Use the longer of the window and Retry-After while preserving existing host pacing.",
+    "Remember cooldowns when headers arrive, before cancellation, timeout or body-size rejection.",
+    "Keep response headers private and preserve all public interfaces.",
+    "Cancel pending pacing/retry timers on close without waiting for a long reset."
+  ],
+  "review": {
+    "independentReadOnly": "No concrete blocker found.",
+    "actualDiffReviewed": "46532ff against 0438646; both owned file blobs are byte-identical in current head 971df61.",
+    "nonBlockingCoverageLimits": [
+      "No dedicated 503 reset-window case beyond the common helper and existing 503 Retry-After tests.",
+      "No dedicated redirect-window case beyond common per-host handling and existing redirect/privacy tests."
+    ]
+  },
+  "requestAccounting": {
+    "newProviderHttpRequests": 0,
+    "newLiveCanaries": 0,
+    "workflowDispatches": 0,
+    "automaticHostedChecksExpected": false,
+    "note": "The branch inherits the accepted manual-workflow policy. An empty hosted checklist is not a claim that CI passed."
+  },
+  "boundaries": {
+    "acousticBrainzAdapterImplemented": false,
+    "ordinaryUserSelectionRecordingIdRoutingImplemented": false,
+    "providerRegistryCatalogOrPreferencesChanged": false,
+    "releaseVersionLiteralChanged": false,
+    "frozenRelease44SourcePin": "043864658784cd596846456854a41741dd8d3df4",
+    "frozenArtifactsOrOtherWorktreesTouched": false,
+    "appOrCloudReachabilityClaim": false
+  },
+  "protectedLatestBlobs": {
+    "reports/source-maintenance/latest.json": "51668b5f3443b6ab33b4568565e253a2b4540c4f",
+    "reports/source-maintenance/local/latest.json": "0163da016906a8fe61d4305a99a6d528bafea371"
+  },
+  "next": "Independent coordinator review and appropriate explicitly dispatched validation before any main merge. No automatic merge or store action. Native AcousticBrainz extraction, persistence, ordinary-selection routing and cloud qualification remain; the source goal stays active."
+}
