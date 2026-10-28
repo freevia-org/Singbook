@@ -1,0 +1,51 @@
+{
+  "sourceCommit": "8c852e873f9c82c1fcf6fe336e22f7bc690de9c9",
+  "completed": true,
+  "case": "colors-and-the-kids",
+  "networkRequests": 0,
+  "nativeHttpClientConstructed": false,
+  "savedResponseReads": 2,
+  "replaySourceSha256": "91781df02025e275b8ca5d0fb366ac838f2439eb80a7e7abc3093aa692584476",
+  "readableDbFile": "qa-readable-library-1793230798975.sqlite",
+  "detailsOpenedBeforeSave": true,
+  "songSaveCalled": false,
+  "provenance": "exact saved native HTTP bytes; authored Genius and canonical MusicBrainz fixtures",
+  "schemaVersion": 1,
+  "qualificationType": "native-offline-cached-source-details",
+  "runtime": "Android16 API36 x86_64 16KiBpages;existing2048MiBAVD;x64AOTprivatepreview",
+  "screenshotInspected": true,
+  "uiEvidence": [
+    "Source/artist/album/exactrecording identity",
+    "Unverified submitted-analysis label",
+    "2of44submissionsshown",
+    "Sample1estimatedkeyFm/BPM117.968910217",
+    "Sample2estimatedkeyA/BPM120.136474609",
+    "Nooverflow/rawtags/SystemUIoverlay"
+  ],
+  "independentDatabaseAudit": {
+    "quickCheck": "ok",
+    "songs": 2,
+    "savedSongIdsDocumentsAndHashesUnchangedFromPriorExport": true,
+    "all4RawByteHashesVerified": true,
+    "sha256": "9d01b58c195b0aaca2ae01f42a6282ee9f50937441dfde60706efc6a8ad7290c"
+  },
+  "liveBeforeSendEvents": 0,
+  "rawNativeReportAndSourceUnchanged": true,
+  "nativeApiRequestProof": "Separate preceding native run returned2HTTP200/0retries; this UI phase adds0newrequests",
+  "sdkReleasedAtUtc": "2026-10-28T23:42:00Z",
+  "avdStoppedAtUtc": "2026-10-28T23:41:37Z",
+  "assignedAvdProcessCountAfterShutdown": 0,
+  "otherDevicesUntouched": true,
+  "remainingGates": [
+    "Managedcloud reachability",
+    "Exacthead hostedchecks/infrastructure",
+    "Integration andservedcatalogreview"
+  ],
+  "screenshotSha256": "c46ca7dcb2573d3d3ceedbc719bdc44549430237846cb2dd09c5dbfd0002f798",
+  "apk": {
+    "sourceCommit": "8c852e873f9c82c1fcf6fe336e22f7bc690de9c9",
+    "apkSha256": "e60bf5e155d9ddf04b6eb12383ace0bbf26f0cdd54bba3d5c6b80aef79d77d02",
+    "unconditionalSavedClient": true,
+    "savedSourceHashCompiled": true
+  }
+}
