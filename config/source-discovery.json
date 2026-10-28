@@ -508,6 +508,169 @@
       ],
       "endpoint": "https://www.songsterr.com",
       "reason": "Publisher terms describe a large user-contributed tab archive (80,000+ songs is the terms-page claim, not an independent count). The current machine-readable agent policy was fetched by one ordinary TLS-verified documentation GET, HTTP200, SHA256239732eeafed182917b11fcf7898b352f2e1fcb98e3a16019fbc45c14752c4e9. It permits viewing tab title/artist/tuning/notes and basic playback, while downloads/printing and other Plus features require subscription and may not be emulated through automation. A supported public programmatic search/extraction contract and app offline-use scope were not established. No tab/body/API canaries, accounts, downloads, purchases or paid-feature workaround were attempted. Defer a machine chart adapter; preserve permitted read-only linking/viewing as distinct from qualified app import. Corpus overlap and lyric/chord schema remain unmeasured."
+    },
+    {
+      "id": "jamendo",
+      "name": "Jamendo API",
+      "firstSeen": "2026-10-27",
+      "lastChecked": "2026-10-27",
+      "status": "deferred",
+      "documentation": [
+        "https://developer.jamendo.com/v3.0/tracks",
+        "https://developer.jamendo.com/v3.0/authentication",
+        "https://devportal.jamendo.com/api_terms_of_use"
+      ],
+      "endpoint": "https://api.jamendo.com/v3.0",
+      "reason": "Publisher documents track search, optional lyrics/musicinfo/licenses and artwork, with a required application client ID. The published test ID is limited to read testing. API Terms section3.3 restrict applications designed for offline access, which conflicts with Singbook saved-library behavior without further permission. No developer account, production credential, API content request or source activation was created. Per-track licenses and attribution would require preservation; no corpus size, lyric availability or two-canary extraction claim."
+    },
+    {
+      "id": "audius",
+      "name": "Audius public track metadata",
+      "firstSeen": "2026-10-27",
+      "lastChecked": "2026-10-27",
+      "status": "deferred",
+      "documentation": [
+        "https://docs.audius.co/api/",
+        "https://api.audius.co/v1",
+        "https://docs.audius.co/sdk/tracks/"
+      ],
+      "endpoint": "https://api.audius.co/v1",
+      "reason": "Three ordinary anonymous requests at17:28UTC returned HTTP200: trending limit2 and details for observed IDs mzXmz1/PQaKgB1. Exact IDs resolved to On The Floor (Ciara Graves) and Kill Your Utopia - paranoia (Phuture Collective upload with Kill Your Utopia collaborator). Both supply artwork URLs, duration, release, genre/mood/tags/BPM/key; neither observed detail supplies lyrics/chords or an album name. One source claims ISRC QZQAY2630197 and All rights reserved, the other lacks ISRC/license. Upload/creator identity is not verified performer or recording identity. Deferred for explicit creator/collaborator roles, native cross-recording metadata/artwork authorization and app qualification. No audio/image/media URL was followed, no credentials/retries/activation or blanket-rights/corpus claim."
+    },
+    {
+      "id": "ozbcoz",
+      "name": "Ozbcoz native search upgrade",
+      "documentation": [
+        "https://ozbcoz.com/Songs/cp/",
+        "https://ozbcoz.com/myfaq/doku.php/chordpro_index",
+        "https://ozbcoz.com/terms"
+      ],
+      "endpoint": "https://ozbcoz.com/Songs/cp/",
+      "reason": "Existing file-import provider remains supported: two host and two Android native-picker canaries already passed. Publisher Help documents clicking a song to download ChordPro for other song apps. New local index-readiness checks returned403 for the initial default client and for actual Singbook project identification; the identified response contains a browser challenge. No session, cookies, browser impersonation, access workaround or further index request was used. Automatic catalog search is deferred until ordinary native access or a publisher-supported integration is available. This does not retire the import route or establish a permanent outage. Terms reserve site rights and require checking each song; no blanket lyric/chart reuse license is inferred.",
+      "firstSeen": "2026-10-27",
+      "lastChecked": "2026-10-27",
+      "status": "deferred"
+    },
+    {
+      "id": "karalyr",
+      "name": "Karalyr word lyrics and detected chords",
+      "documentation": [
+        "https://www.karalyr.com/docs",
+        "https://www.karalyr.com/",
+        "https://www.karalyr.com/takedown",
+        "https://github.com/lemara98/karalyr"
+      ],
+      "endpoint": "https://karalyr.com/api",
+      "reason": "Official docs provide anonymous LRCLIB-compatible search/get, word-synced lyrics, revision tiers, and separate machine-detected chord segments with confidence. Read limits are600 per5minutes/IP and300/minute burst, with429/Retry-After; client identification is encouraged and misses should be cached. Homepage currently reports52 library songs, so this is a small emerging source rather than a large-corpus coverage claim. No API-content, media, publishing, feedback, queue or account request was made. Native payload/chord semantics, exact identity, two live canaries and app persistence are unqualified. MIT covers code rather than contributed song text; per-item rights and machine-generation provenance must remain explicit. Deferred, no activation.",
+      "firstSeen": "2026-10-27",
+      "lastChecked": "2026-10-27",
+      "status": "deferred"
+    },
+    {
+      "id": "music-utils",
+      "name": "music-utils metadata and artwork API",
+      "documentation": [
+        "https://github.com/sillygru/music-utils",
+        "https://github.com/sillygru/music-utils/blob/main/API.md"
+      ],
+      "endpoint": "https://music.gru0.dev/api",
+      "reason": "Publisher documents a no-authentication metadata/lyrics/artwork API with local instance IDs, upstream provenance, descriptive User-Agent/contact and Retry-After behavior. Two distinct identified metadata GETs for Paranoid Android/Radiohead and Dreams/Fleetwood Mac each returned530 edge pages rather than JSON metadata. No retries, other endpoints, lyrics/image/audio requests, credentials or environment changes were made. Availability is unresolved; this is not a parser regression, credential rejection or proof of new corpus coverage. Metadata source identity, release context, upstream overlap and two successful extraction canaries must be qualified before activation. Software MIT licensing does not grant underlying lyric rights.",
+      "firstSeen": "2026-10-27",
+      "lastChecked": "2026-10-27",
+      "status": "deferred"
+    },
+    {
+      "id": "pisni",
+      "name": "Українські пісні / Pisni.org.ua",
+      "documentation": [
+        "https://www.pisni.org.ua/articles/12.html",
+        "https://www.pisni.org.ua/articles/34.html",
+        "https://www.pisni.org.ua/page.php?chapter=stats",
+        "https://www.pisni.org.ua/articles/11.html"
+      ],
+      "endpoint": "https://www.pisni.org.ua",
+      "reason": "Ukrainian-language regional catalog. Publisher statistics display55,929 songs and2,873 chord-bearing entries; these are publisher-reported figures, not an independent or synchronized census. Four bounded identified local GETs returned200: homepage, observed song IDs3424/8878 and one actual publisher-form search. Windows-1251 decoding/re-encoding preserved exact bytes; the correctly encoded Cyrillic form query returned expected3424. Offline parsing located h1 and pre.songwords and isolated1,253/1,279-character song bodies without scraping discussion blocks. These are field-discovery checks, not full native extraction or app qualification. Multiple performer credits must remain distinct from writer/composer roles and recording identity; original regional H/B chord labels require qualified notation conversion, not guessing. No media, authentication, bulk enumeration or write action occurred. Robots rules were unavailable through the research tool; no permission is inferred from that. Native adapter, two complete search/resolve/identity/notation canaries, attribution/rights and persistence are pending. No catalog entry or source activation.",
+      "firstSeen": "2026-10-27",
+      "lastChecked": "2026-10-27",
+      "status": "deferred"
+    },
+    {
+      "id": "liedernet",
+      "name": "The LiederNet Archive",
+      "documentation": [
+        "https://www.lieder.net/lieder/intro.html",
+        "https://www.lieder.net/lieder/copyright.html",
+        "https://www.lieder.net/lieder/register.html"
+      ],
+      "endpoint": "https://www.lieder.net",
+      "reason": "Publisher overview documents multilingual art-song texts and translations; potential overlap with pending OpenScore/Wikibooks research has not been enumerated. Counts vary between indexed and opened pages, so no synchronized census is claimed. Publisher states database/pages are copyrighted, many texts are public domain in Canada/US, and protected texts/translations require permission and author/translator/archive credit. Site viewing does not establish permission for systematic API ingestion or offline reprint/export. No supported public content API or permitted automated extraction contract was established. Only publisher documentation was read; no lyric page, account, credential, media or content canary request was made. Deferred pending explicit permitted access, per-work/jurisdiction/translation rights, stable work/setting identity, compatible adapter and two independent actual extraction canaries. No catalog or source activation.",
+      "firstSeen": "2026-10-28",
+      "lastChecked": "2026-10-28",
+      "status": "deferred"
+    },
+    {
+      "id": "mudcat-digital-tradition",
+      "name": "Digital Tradition / Mudcat",
+      "firstSeen": "2026-10-28",
+      "lastChecked": "2026-10-28",
+      "status": "deferred",
+      "documentation": [
+        "https://mudcat.org/DigiTrad-rules.cfm",
+        "https://mudcat.org/AboutDigiTrad.cfm",
+        "https://mudcat.org/download.cfm",
+        "https://mudcat.org/DigitradSearch.cfm"
+      ],
+      "reason": "Potential English-language folk lyric and source-provenance supplement. Publisher rules encourage database copying but explicitly separate individual song copyrights; corpus inclusion does not establish public-domain status or commercial permission. The7800 count is dated April1999, not current usable coverage. Current download documentation lists Spring2002 DOS/Windows/Mac packages, not a verified modern plain-text/API contract. Do not execute supplied programs or infer current extraction from historical downloads. Search documentation describes phrases, operators, categories and ballad identifiers. No archive, installer, tune, audio, selected lyric response or extraction canary fetched; incidental search snippets were not used as source qualification. Defer pending current bounded access/schema, per-item provenance/rights handling, correct arrangement identities and two independently validated live canaries. Overlap with existing folk catalogs and incremental coverage unmeasured."
+    },
+    {
+      "id": "dutch-song-database",
+      "name": "Nederlandse Liederenbank / Dutch Song Database",
+      "firstSeen": "2026-10-28",
+      "lastChecked": "2026-10-28",
+      "status": "deferred",
+      "documentation": [
+        "https://www.liederenbank.nl/",
+        "https://www.liederenbank.nl/mtc/",
+        "https://flat.meertens.knaw.nl/flat/islandora/object/lat%3A10744_c961bb4f_3169_4c68_a974_93501ff9e985"
+      ],
+      "reason": "Institutional Dutch historical-song metadata lead. Publisher homepage search evidence describes180000+ song descriptions spanning medieval to twentieth-century sources; only some records link complete text, melody or audio. This is not180000 verified full-lyric imports or unique recordings. Live web reads of homepage and MTC documentation returned403; stopped without alternate-host/proxy or authentication workaround. Cached primary MTC documentation identifies research collections under CC-BY-NC-SA3.0; that is a separate collection scope, not a blanket license for the whole database or all underlying works. Archival collection313 has its own restricted-access status, not proof every public database record is restricted. No content/API/asset/archive calls, credentials, accounts or canaries. Defer until current public machine access, intended app-use rights, attribution, stable work/variant identity, compatible extraction and two canaries are established. Incremental overlap unmeasured."
+    },
+    {
+      "id": "the-session",
+      "name": "The Session",
+      "firstSeen": "2026-10-28",
+      "lastChecked": "2026-10-28",
+      "status": "deferred",
+      "documentation": [
+        "https://thesession.org/api",
+        "https://github.com/adactio/TheSession-data/blob/main/LICENSE.md"
+      ],
+      "reason": "Irish traditional tune lead. Publisher API documentation returned403 to the web reader; no alternate access attempted. The publisher-maintained data license adds an explicit restriction on LLM processing with a narrow accessibility exception, alongside database-license provisions. Do not process its tune datasets in this assistant workflow absent an applicable permitted route. No tune rows, API canaries, corpus download, content transformation or account requests were made. Content rights, usable chord/lyric coverage, identity/schema, quota and intended app persistence remain unqualified; no numeric corpus or incremental coverage claim."
+    },
+    {
+      "id": "wywrota",
+      "name": "Spiewnik Wywroty",
+      "firstSeen": "2026-10-28",
+      "lastChecked": "2026-10-28",
+      "status": "deferred",
+      "documentation": [
+        "https://spiewnik.wywrota.pl/blog/zasady-i-warunki"
+      ],
+      "reason": "Polish song-arrangement lead. Publisher terms, updated22June2025, explicitly require prior administrator permission for automated access/extraction and separately reserve text/data-mining rights. No extraction, alternate endpoint, mobile-client reverse engineering, API content, keys, accounts, outreach or two canaries were attempted. No machine-access agreement or applicable app storage/export permission established. Size, overlap and incremental language benefit remain unmeasured. Defer a machine adapter pending explicit publisher permission and full access/identity/rights qualification."
+    },
+    {
+      "id": "fanart-tv",
+      "name": "fanart.tv",
+      "firstSeen": "2026-10-28",
+      "lastChecked": "2026-10-28",
+      "status": "deferred",
+      "documentation": [
+        "https://api.fanart.tv/",
+        "https://fanart.tv/get-an-api-key/",
+        "https://fanart.tv/"
+      ],
+      "endpoint": "https://webservice.fanart.tv/v3.2/music",
+      "reason": "Artwork API lead with publisher-documented artist MBIDs and album release-group MBIDs. v3.2 returns album arrays, dimensions and per-image copyright/source-link fields; unknown holders remain possible. A release-group image does not establish exact-release artwork. Official integration uses a project key; personal keys are separate. Free project access has a seven-day new-image delay; optional paid access is not necessary to evaluate old images. Honor Retry-After on429. Main publisher site returned403 in the web reader; the intended offline/export and attribution contract was not established. No credentials sought/created/read, API/image calls, accounts, subscriptions, canaries, registration or activation. Defer pending approved key provisioning, readable intended-use terms, exact identity and two asset/retention canaries."
     }
   ]
 }
