@@ -101,8 +101,8 @@ class ChordsAndTabsProvider implements LyricsProvider {
 
   static List<SongCandidate> parseSearch(String source, String query) {
     final document = parseHtml(source);
-    final results = <SongCandidate>[];
-    final seen = <String>{};
+    final results = <String, SongCandidate>{};
+    final ambiguousPaths = <String>{};
     final anchors = document.querySelectorAll('a[href]');
     if (anchors.length > 10000) {
       throw const ProviderException('invalid_response');
@@ -117,12 +117,9 @@ class ChordsAndTabsProvider implements LyricsProvider {
         continue;
       }
       final labels = anchor.querySelectorAll('.songtype');
-      if (labels.isEmpty ||
-          !labels.any(
-            (label) =>
-                label.classes.contains('typechords') ||
-                label.classes.contains('typeukulele'),
-          )) {
+      if (labels.length != 1 ||
+          labels.single.classes.contains('typechords') ==
+              labels.single.classes.contains('typeukulele')) {
         // Tabs and bass tabs do not provide the chord-and-lyric chart format.
         continue;
       }
@@ -136,23 +133,50 @@ class ChordsAndTabsProvider implements LyricsProvider {
       if (artist.isEmpty ||
           title.isEmpty ||
           !_matchesQuery(query, '$artist $title') ||
-          !seen.add(path)) {
+          ambiguousPaths.contains(path)) {
         continue;
       }
-      results.add(
-        SongCandidate(
-          providerId: 'chordsandtabs',
-          id: path,
-          title: title,
-          artist: artist,
-          url: '$_base$path',
-          metadata: const {'identityScope': 'arrangement'},
-        ),
+      final kind = labels.single.classes.contains('typeukulele')
+          ? 'ukulele'
+          : 'chords';
+      final versionLabel = anchor.querySelector('.version');
+      final versionMatch = versionLabel == null
+          ? null
+          : RegExp(
+              r'^ver\.?\s*([1-9]\d{0,3})$',
+              caseSensitive: false,
+            ).firstMatch(clean(versionLabel.text, 30) ?? '');
+      if (versionLabel != null && versionMatch == null) continue;
+      final version = versionMatch == null ? null : int.parse(versionMatch[1]!);
+      final existing = results[path];
+      final priorVersion = existing?.metadata['searchChartVersionHint'];
+      if (existing != null &&
+          (existing.metadata['searchChartTypeHint'] != kind ||
+              (priorVersion != null &&
+                  version != null &&
+                  priorVersion != version) ||
+              _matchText(existing.title) != _matchText(title) ||
+              _matchText(existing.artist) != _matchText(artist))) {
+        results.remove(path);
+        ambiguousPaths.add(path);
+        continue;
+      }
+      results[path] = SongCandidate(
+        providerId: 'chordsandtabs',
+        id: path,
+        title: title,
+        artist: artist,
+        url: '$_base$path',
+        metadata: {
+          'identityScope': 'arrangement',
+          'searchChartTypeHint': kind,
+          if (version != null || priorVersion != null)
+            'searchChartVersionHint': version ?? priorVersion,
+        },
       );
-      if (results.length >= _maxSearchResults) break;
     }
     if (results.isEmpty) throwIfBlocked(source);
-    return results;
+    return results.values.take(_maxSearchResults).toList();
   }
 
   @override
@@ -177,6 +201,13 @@ class ChordsAndTabsProvider implements LyricsProvider {
   }
 
   static SourceResult parsePage(String source, SongCandidate selected) {
+    if (source.length > _maxPageBytes) {
+      throw const ProviderException('invalid_response');
+    }
+    final snapshot = utf8.encode(source);
+    if (snapshot.length > _maxPageBytes) {
+      throw const ProviderException('invalid_response');
+    }
     if (selected.providerId != 'chordsandtabs') {
       throw const ProviderException('invalid_selection');
     }
@@ -228,27 +259,48 @@ class ChordsAndTabsProvider implements LyricsProvider {
     final header = document.querySelector('h1');
     if (header == null) throw const ProviderException('extraction_failed');
     final schema = _musicRecording(document);
-    final pageTitle = clean(schema?['name']) ?? _titleFromHeading(header);
-    final pageArtist =
-        clean(
-          (schema?['byArtist'] is Map)
-              ? jsonMap(schema!['byArtist'])['name']
-              : null,
-        ) ??
-        _artistFromHeading(header);
-    if (pageTitle == null || pageArtist == null) {
+    final headingTitle = _titleFromHeading(header);
+    final headingArtist = _artistFromHeading(header);
+    if (headingTitle == null || headingArtist == null) {
       throw const ProviderException('extraction_failed');
     }
+    final structuredTitle = clean(schema?['name']);
+    final structuredArtist = clean(
+      (schema?['byArtist'] is Map)
+          ? jsonMap(schema!['byArtist'])['name']
+          : null,
+    );
+    if ((structuredTitle != null &&
+            _matchText(headingTitle) != _matchText(structuredTitle)) ||
+        (structuredArtist != null &&
+            _matchText(headingArtist) != _matchText(structuredArtist))) {
+      throw const ProviderException('identity_mismatch');
+    }
+    final pageTitle = structuredTitle ?? headingTitle;
+    final pageArtist = structuredArtist ?? headingArtist;
     if (_matchText(pageTitle) != _matchText(selected.title) ||
         _matchText(pageArtist) != _matchText(selected.artist)) {
       throw const ProviderException('identity_mismatch');
     }
 
-    final chartType = document.querySelector('.songtype');
-    if (chartType == null ||
-        !(chartType.classes.contains('typechords') ||
-            chartType.classes.contains('typeukulele'))) {
-      throw const ProviderException('unavailable');
+    final chartDescriptor = _selectedChart(document);
+    final chartType = chartDescriptor.type;
+    final kind = chartType.classes.contains('typeukulele')
+        ? 'ukulele'
+        : 'chords';
+    final versionHint = selected.metadata['searchChartVersionHint'];
+    final typeHint = selected.metadata['searchChartTypeHint'];
+    if ((versionHint != null &&
+            (versionHint is! int || versionHint < 1 || versionHint > 9999)) ||
+        (typeHint != null && typeHint != 'chords' && typeHint != 'ukulele')) {
+      throw const ProviderException('invalid_selection');
+    }
+    if (versionHint != null && chartDescriptor.version == null) {
+      throw const ProviderException('extraction_failed');
+    }
+    if ((versionHint != null && versionHint != chartDescriptor.version) ||
+        (typeHint != null && typeHint != kind)) {
+      throw const ProviderException('identity_mismatch');
     }
     final chart = document.querySelector('#snippet--snippetXteView');
     if (chart == null) throw const ProviderException('extraction_failed');
@@ -277,7 +329,14 @@ class ChordsAndTabsProvider implements LyricsProvider {
     if (body.trim().isEmpty || body.length > _maxBodyCharacters) {
       throw const ProviderException('invalid_response');
     }
-    final metadata = _explicitMetadata(document);
+    final metadata = {
+      ..._explicitMetadata(document),
+      'sourceChartType': chartType.classes.contains('typeukulele')
+          ? 'ukulele'
+          : 'chords',
+      if (chartDescriptor.version != null)
+        'sourceChartVersion': chartDescriptor.version,
+    };
     final candidate = SongCandidate(
       providerId: 'chordsandtabs',
       id: path,
@@ -302,6 +361,14 @@ class ChordsAndTabsProvider implements LyricsProvider {
               'unknown. Sharing or exporting the text is the user\'s '
               'responsibility.',
         ),
+        'parserVersion': 'chordsandtabs-2',
+        // A String parser receives decoded text, not original HTTP bytes.
+        'originalPayload': {
+          'contentType': 'text/html',
+          'encoding': 'utf-8',
+          'base64': base64Encode(snapshot),
+          'httpBodyBytesExact': false,
+        },
         'chartInstrument': chartType.classes.contains('typeukulele')
             ? 'ukulele'
             : 'guitar',
@@ -325,15 +392,91 @@ class ChordsAndTabsProvider implements LyricsProvider {
     if (candidate.url != '$_base$path') {
       throw const ProviderException('invalid_selection');
     }
-    final source = await transport.getText(
+    final bytes = await transport.getBytes(
       Uri.https(_host, path),
       cancel: cancel,
       maxBytes: _maxPageBytes,
       allowedHosts: {_host},
     );
     cancel?.throwIfCancelled();
-    return parsePage(source, candidate);
+    final String source;
+    try {
+      source = utf8.decode(bytes);
+    } on FormatException {
+      throw const ProviderException('invalid_response');
+    }
+    final result = parsePage(source, candidate);
+    return result.copyWith(
+      extra: {
+        ...result.extra,
+        'originalPayload': {
+          'contentType': 'text/html',
+          'encoding': 'utf-8',
+          'base64': base64Encode(bytes),
+          'httpBodyBytesExact': true,
+        },
+      },
+    );
   }
+}
+
+({dom.Element type, int? version}) _selectedChart(dom.Document document) {
+  // The selected dropdown label identifies this page. Links inside the
+  // song-versions menu identify other arrangements and must not supply facts.
+  final selected = document
+      .querySelectorAll('.x-ddm-but.sub-title')
+      .where((element) => element.querySelector('.songtype') != null)
+      .toList();
+  dom.Element? type;
+  int? version;
+  String? descriptor;
+  for (final element in selected) {
+    final labels = element.querySelectorAll('.songtype');
+    if (labels.length != 1) {
+      throw const ProviderException('invalid_response');
+    }
+    final label = clean(element.text, 100);
+    final match = label == null
+        ? null
+        : RegExp(
+            r'^(chords|ukulele)\s*ver\.?\s*([1-9]\d{0,3})$',
+            caseSensitive: false,
+          ).firstMatch(label);
+    final kind = labels.single.classes.contains('typeukulele')
+        ? 'ukulele'
+        : 'chords';
+    if (match == null || match[1]!.toLowerCase() != kind) {
+      throw const ProviderException('invalid_response');
+    }
+    final current = '$kind:${match[2]}';
+    if (descriptor != null && current != descriptor) {
+      throw const ProviderException('invalid_response');
+    }
+    descriptor = current;
+    type = labels.single;
+    version = int.parse(match[2]!);
+  }
+  if (type == null) {
+    // Legacy pages may have a standalone current-chart label. Exclude the
+    // alternate-arrangement menu even when it precedes the actual chart.
+    final labels = document.querySelectorAll('.songtype').where((label) {
+      dom.Element? ancestor = label.parent;
+      while (ancestor != null) {
+        if (ancestor.classes.contains('song-versions')) return false;
+        ancestor = ancestor.parent;
+      }
+      return true;
+    }).toList();
+    if (labels.length != 1) {
+      throw const ProviderException('extraction_failed');
+    }
+    type = labels.single;
+  }
+  if (type.classes.contains('typechords') ==
+      type.classes.contains('typeukulele')) {
+    throw const ProviderException('unavailable');
+  }
+  return (type: type, version: version);
 }
 
 Map<String, dynamic>? _musicRecording(dom.Document document) {
