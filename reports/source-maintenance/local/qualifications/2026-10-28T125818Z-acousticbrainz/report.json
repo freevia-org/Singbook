@@ -1,0 +1,212 @@
+{
+  "schemaVersion": 1,
+  "measuredAt": "2026-10-28T12:58:18.339355+00:00",
+  "kind": "new-source-metadata-feasibility-and-discovery-proposal",
+  "sourceCommit": "3e1bfe20b2b6a574e22a1162d5c042a17a4b39f3",
+  "productionCatalog": "v8 revision20 unchanged",
+  "pr": "https://github.com/freevia-org/Singbook/pull/212",
+  "head": "4138596bb355badb8ca90ce32b233b3065459071",
+  "state": "draft_initial_hosted_checks_running_held_for_pr211_integration",
+  "proof": {
+    "base": "3e1bfe20b2b6a574e22a1162d5c042a17a4b39f3",
+    "head": "4138596bb355badb8ca90ce32b233b3065459071",
+    "paths": [
+      "config/source-discovery.json",
+      "docs/source-discovery-review-20261027.md"
+    ],
+    "old51ObjectsAndOrderUnchanged": true,
+    "oldJsonAndDocumentPrefixesByteExact": true,
+    "uniqueRecords": 52,
+    "newDeferredId": "acousticbrainz",
+    "acceptedSetUnchanged": true,
+    "jsonRequiredFieldsHttpsLfAndDiffChecks": "passed",
+    "fileSha256": {
+      "config/source-discovery.json": "8820858cd8c5faeb3f5a3f1eca1978e18021b9d956611c5c43b961d852a14d16",
+      "docs/source-discovery-review-20261027.md": "d00beb9a0e3da0a8b74ce6d3e7df2e808f597f507f016a6ffb37a01ce5160eb5"
+    },
+    "noNewProviderRuntimeRegistryCatalogPreferencesOrVersionChange": true,
+    "sourceRequestsAfterWriterAssignment": 0,
+    "sdkAndDeviceUse": false
+  },
+  "providerApiRequests": [
+    {
+      "endpoint": "count",
+      "timestamp": "2026-10-28T12:49:32.292762+00:00",
+      "httpStatus": 200,
+      "rateLimit": {
+        "X-RateLimit-Limit": "100",
+        "X-RateLimit-Remaining": "99",
+        "X-RateLimit-Reset-In": "8"
+      },
+      "bytes": 73,
+      "sha256": "866f605adbdc88f63e7d8cfaa8cf71e261e9926792952c6b816b8ad18f8ee306",
+      "contentType": "application/json"
+    },
+    {
+      "endpoint": "low-level",
+      "timestamp": "2026-10-28T12:49:33.614485+00:00",
+      "httpStatus": 200,
+      "rateLimit": {
+        "X-RateLimit-Limit": "100",
+        "X-RateLimit-Remaining": "98",
+        "X-RateLimit-Reset-In": "7"
+      },
+      "bytes": 1993,
+      "sha256": "f0d645cc2ba8c388839e42c38c954e04e6d6c20cfe3349d2678320460972db90",
+      "contentType": "application/json"
+    },
+    {
+      "endpoint": "low-level",
+      "timestamp": "2026-10-28T12:50:26.063109+00:00",
+      "httpStatus": 200,
+      "bytes": 3541,
+      "sha256": "009f49269b97cb5e9a8c94b18159c20958d92402ee9d61250229c74a5ba405fd",
+      "rateLimit": {
+        "X-RateLimit-Limit": "100",
+        "X-RateLimit-Remaining": "99",
+        "X-RateLimit-Reset-In": "4"
+      }
+    }
+  ],
+  "providerApiRequestCount": 3,
+  "providerApiStatusCounts": {
+    "200": 3
+  },
+  "retries": 0,
+  "requestReason": "Specific new recording-analysis metadata capability qualification, separate from daily production suite. All three requests preceded discovery writer assignment.",
+  "counts": {
+    "b5d7d380-f43a-4c1f-a5de-694150b093ac": {
+      "count": 148
+    },
+    "mbid_mapping": {}
+  },
+  "observations": {
+    "first": {
+      "b5d7d380-f43a-4c1f-a5de-694150b093ac": {
+        "present": true,
+        "tags": {
+          "album": [
+            "Dummy"
+          ],
+          "artist": [
+            "Portishead"
+          ],
+          "musicbrainz_recordingid": [
+            "b5d7d380-f43a-4c1f-a5de-694150b093ac"
+          ],
+          "title": [
+            "Mysterons"
+          ]
+        },
+        "audioProperties": {
+          "length": 306.973327637
+        },
+        "bpm": 164.019683838,
+        "tonal": {
+          "key_key": "D#",
+          "key_scale": "minor",
+          "key_strength": 0.61598700285
+        },
+        "version": {
+          "essentia": "2.1-beta1",
+          "essentia_build_sha": "7598a69e7b456135ce4c070efb04a3d0ebb71fdd",
+          "essentia_git_sha": "v2.1_beta1-6-g5578087",
+          "extractor": "music 1.0"
+        }
+      }
+    },
+    "comparison": [
+      {
+        "recordingMbid": "099b148e-fe99-4b79-be6e-5078e4bb7415",
+        "offset": 0,
+        "present": true,
+        "tags": {
+          "album": [
+            "Moon Pix"
+          ],
+          "artist": [
+            "Cat Power"
+          ],
+          "musicbrainz_recordingid": [
+            "099b148e-fe99-4b79-be6e-5078e4bb7415"
+          ],
+          "title": [
+            "Colors and the Kids"
+          ]
+        },
+        "length": 395.728973389,
+        "bpm": 117.968910217,
+        "tonal": {
+          "key_key": "F",
+          "key_scale": "minor",
+          "key_strength": 0.591552376747
+        }
+      },
+      {
+        "recordingMbid": "b5d7d380-f43a-4c1f-a5de-694150b093ac",
+        "offset": 1,
+        "present": true,
+        "tags": {
+          "album": [
+            "Dummy"
+          ],
+          "artist": [
+            "Portishead"
+          ],
+          "musicbrainz_recordingid": [
+            "b5d7d380-f43a-4c1f-a5de-694150b093ac"
+          ],
+          "title": [
+            "Mysterons"
+          ]
+        },
+        "length": 306.973327637,
+        "bpm": 163.974990845,
+        "tonal": {
+          "key_key": "D#",
+          "key_scale": "minor",
+          "key_strength": 0.616016805172
+        }
+      }
+    ]
+  },
+  "provenance": {
+    "runtime": "local Windows Python HTTP with HTTPS/host-fixed URL,512KiB maximum,25s timeout,no redirects,no retries",
+    "rawCaptures": "private ignored artifacts, not included in report",
+    "credentialsAccountsAudioMediaOrCorpusDownloads": false,
+    "apiSourceLicenseEvidence": "https://acousticbrainz.org/",
+    "apiContract": "https://acousticbrainz.readthedocs.io/api.html",
+    "independentSecondIdentityPage": "https://acousticbrainz.org/099b148e-fe99-4b79-be6e-5078e4bb7415"
+  },
+  "reviewedDesign": {
+    "metadataOnlyDirectResolveFitsCurrentModels": true,
+    "contextualLyricsSearchNeeded": false,
+    "sourceIdentityMustBeValidatedFromActualTags": true,
+    "proposedStorage": "namespaced source analysis estimates with MBID, submissionoffset, raw hash/bytes, extractor version, alternatives and timestamp",
+    "forbiddenInference": "No authoritative offset0, no inferred all-submission consensus, no source-to-top-level chart key/tempo/timing promotion, no synthesized selected identity to hide contradicting tags",
+    "sharedTransportGap": "Current ProviderTransport does not expose X-RateLimit headers or honor reset-window fields; separate coordinated shared-host cooldown prerequisite needed. PR211 owns transport version edit.",
+    "reviewMode": "Read-only bounded subagent review plus parent inspection; no delegated writes, tests or HTTP."
+  },
+  "remainingQualification": [
+    "dynamic rate-window cooldown contract",
+    "bounded submission selection/alternatives and strict identity/edition validation",
+    "native adapter tests and two real extraction canaries",
+    "combined/source-payload/SQLite/ChordPro retention",
+    "compatible registry/catalog and coordinated app release",
+    "independent cloud reachability"
+  ],
+  "rollout": "Not implemented or activated. Draft discovery-only, hold until PR211 integrates; then ordinary current-main merge and exact-head checks before separate review.",
+  "hostedWatcher": {
+    "sessionId": 94467,
+    "status": "confirmed live",
+    "initialRuns": [
+      40692075119,
+      40692075238,
+      40692075088
+    ]
+  },
+  "protectedLatestBlobs": {
+    "reports/source-maintenance/latest.json": "51668b5f3443b6ab33b4568565e253a2b4540c4f",
+    "reports/source-maintenance/local/latest.json": "0163da016906a8fe61d4305a99a6d528bafea371"
+  }
+}
