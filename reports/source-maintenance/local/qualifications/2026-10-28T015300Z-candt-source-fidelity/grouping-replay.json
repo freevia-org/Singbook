@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "atUtc": "2026-10-28T02:02:15.893201+00:00",
+  "qualificationOnly": true,
+  "runtime": "Flutter-bundled Dart3.12.2 Windows host",
+  "combinedCandidateCommit": "f63516a3c4c6188072874871d6e32fe2a6b9b4f5",
+  "combinedCandidateLocalOnly": true,
+  "groupingPr": {
+    "url": "https://github.com/freevia-org/Singbook/pull/202",
+    "head": "4932d616f5167203fdbea2d2d7dbb6a35b07c830"
+  },
+  "sourcePr": {
+    "url": "https://github.com/freevia-org/Singbook/pull/201",
+    "head": "c79e8ee6212ef9d74962e47991d49703fcde25c1"
+  },
+  "exactCodeGitBlobSha256": {
+    "lib/providers/extra/chords_and_tabs.dart": "427ba1e1262ae83b01b9d4ed4066b97f302b4b66a19f926ca613a9848dbd9755",
+    "lib/domain/search_grouping.dart": "f951948ed20c20ab3bc6fe1428f9208f3a76ef200a73fca45f760f53b011206b"
+  },
+  "sourceAndGroupingFilesExactRespectivePrHeads": true,
+  "input": {
+    "provenance": "Exact privately retained nativeAndroidCronet search HTTP200 response on2026-10-28T01:48:58Z; no source text published.",
+    "sha256": "e4f525530a2bf45cf53255e1f29d23095d972a382cbb4fc0589ec242c01cd6f7",
+    "bytes": 29424,
+    "query": "Hey Jude",
+    "source": "chordsandtabs"
+  },
+  "beforeGroupingRepair": {
+    "networkRequests": 0,
+    "candidateCount": 41,
+    "groupCount": 15,
+    "targetId": "/song/name/the-beatles-hey-jude-7",
+    "targetMetadata": {
+      "identityScope": "arrangement",
+      "searchChartTypeHint": "chords",
+      "searchChartVersionHint": 4
+    },
+    "targetVisibleAsRepresentative": false,
+    "targetResultNonLyricLabels": [
+      {
+        "class": "songtype typechords",
+        "label": "chords"
+      },
+      {
+        "class": "version",
+        "label": "ver. 4"
+      },
+      {
+        "class": "",
+        "label": "30"
+      }
+    ]
+  },
+  "afterGroupingRepair": {
+    "networkRequests": 0,
+    "candidateCount": 41,
+    "groupCount": 41,
+    "targetId": "/song/name/the-beatles-hey-jude-7",
+    "targetMetadata": {
+      "identityScope": "arrangement",
+      "searchChartTypeHint": "chords",
+      "searchChartVersionHint": 4
+    },
+    "targetVisibleAsRepresentative": true,
+    "targetResultNonLyricLabels": [
+      {
+        "class": "songtype typechords",
+        "label": "chords"
+      },
+      {
+        "class": "version",
+        "label": "ver. 4"
+      },
+      {
+        "class": "",
+        "label": "30"
+      }
+    ]
+  },
+  "combinedTests": {
+    "command": "flutter test --no-pub test/domain/search_grouping_test.dart test/providers/extra/chords_and_tabs_test.dart",
+    "passed": 35,
+    "privateOutputSha256": "2c2d82d3d5b2df5f2476761b8f64bff8e776ccb2364cc50f9ee03179dd29ba53"
+  },
+  "replay": {
+    "command": "dart run artifacts/replay_native_search_boundary.dart",
+    "runnerSha256": "308d96d7f891dab2da07d29838b6cdf3c824993209a24497017cb11e53e731d7",
+    "additionalHttpRequests": 0
+  },
+  "limits": [
+    "Host replay proves grouping of the captured response; Android acceptance remains pending a reviewed merged grouping repair and one updated private QA build.",
+    "No native resolve/save/offline acceptance inferred from host tests. Public catalog remains disabled."
+  ],
+  "versionCatalogOrSharedSourceFilesEditedByReviewer": false,
+  "rawSourceDocumentsOrLyricsPublished": false
+}
