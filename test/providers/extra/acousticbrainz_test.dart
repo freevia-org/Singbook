@@ -233,7 +233,7 @@ void main() {
   });
 
   test('invalid submission count is rejected before low-level request', () async {
-    counts[mbid]['count'] = '148';
+    counts[mbid] = <String, dynamic>{'count': '148'};
     await expectLater(provider.resolve(selection()), throwsA(code('invalid_response')));
     expect(requests, hasLength(1));
   });
