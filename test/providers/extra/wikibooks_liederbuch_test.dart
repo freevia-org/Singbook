@@ -392,6 +392,19 @@ void main() {
       expect(rights['revision'], 98765);
       expect(retained.extra['originalPayload'], original);
       expect(retained.extra['revision'], '98765');
+      final historyUrl = retained.extra['wikibooks']['historyUrl'] as String;
+      expect(historyUrl, source.extra['wikibooks']['historyUrl']);
+      final history = Uri.parse(historyUrl);
+      expect(history.scheme, 'https');
+      expect(history.host, 'de.wikibooks.org');
+      expect(history.path, '/w/index.php');
+      expect(history.queryParameters['action'], 'history');
+      expect(history.queryParameters['title'], _pageTitle);
+      expect(
+        retained.attribution,
+        contains('https://creativecommons.org/licenses/by-sa/4.0/'),
+      );
+      expect(retained.attribution, contains('converted to ChordPro'));
       expect(jsonEncode(retained.extra['wikibooks']), contains('Morgenwind am Silberhang'));
       expect(
         base64Decode(original['base64'] as String),
