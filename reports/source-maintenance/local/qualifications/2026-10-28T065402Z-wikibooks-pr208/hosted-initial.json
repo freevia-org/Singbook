@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "measuredAt": "2026-10-28T06:54:02.296678+00:00",
+  "runtime": "github-actions-hosted-validation",
+  "candidateOnly": true,
+  "pr": "https://github.com/freevia-org/Singbook/pull/208",
+  "base": "c77b221f1575236923b22dcea0f6672887bf11af",
+  "testedHead": "d8020f9f153edcea272ab8d6e62575d3485a2213",
+  "currentHead": "aeee560ce81593862c5a35eb269178b07c89e1e7",
+  "files": [
+    "lib/providers/extra/wikibooks_liederbuch.dart",
+    "test/providers/extra/wikibooks_liederbuch_test.dart",
+    "docs/wikibooks-liederbuch-qualification.md"
+  ],
+  "moduleSha256": {
+    "tested": "fb90072b3d2c178a3f56cbe1ff3a0e036bf436196ac87097c1fc76e7de92b581",
+    "revised": "d1e7c9361d587c4bd5fb98ff52467be732c651661c4d21827d14aad60f14963a"
+  },
+  "initialHosted": {
+    "ciRun": 40645817867,
+    "testJob": 122674247487,
+    "testConclusion": "success",
+    "linuxTestsPassed": 3112,
+    "linuxTestsSkipped": 13,
+    "metadataToolTestsPassed": 39,
+    "wikibooksCasesObservedPassed": 14,
+    "portableHistoryLicenseModificationAssertions": "passed",
+    "analysisConclusion": "failure",
+    "analysisFindings": [
+      "use_null_aware_elements",
+      "curly_braces_in_flow_control_structures:2"
+    ],
+    "macCompileRun": 40645817756,
+    "macCompileConclusion": "success",
+    "visualRun": 40645817688,
+    "visualConclusion": "success",
+    "windowsJobs": "skipped_after_analysis_failure"
+  },
+  "correction": {
+    "description": "Equivalent null-aware map element and braced JSON traversal loops; qualification note now links reviewed draft.",
+    "pushed": true,
+    "currentHeadChecks": "pending",
+    "runIds": [
+      40646595160,
+      40646595155,
+      40646595203
+    ],
+    "currentHeadSuccessClaimed": false
+  },
+  "retainedResponseEvidence": {
+    "receipt": "reports/source-maintenance/local/qualifications/2026-10-28T063727Z-wikibooks-adapter/report.json",
+    "canaries": 2,
+    "independentlyVerifiedChordAnchors": 67,
+    "testedModuleSha256": "fb90072b3d2c178a3f56cbe1ff3a0e036bf436196ac87097c1fc76e7de92b581"
+  },
+  "sourceHttpRequestsThisAmendment": 0,
+  "rawSourceDocumentsPublished": false,
+  "scope": {
+    "registered": false,
+    "enabled": false,
+    "catalogChanged": false,
+    "productionLatestChanged": false,
+    "cloudLatestChanged": false,
+    "freshExactAdapterHttpQualified": false,
+    "nativeOrSqliteQualified": false,
+    "cloudReachabilityQualified": false,
+    "merged": false,
+    "released": false
+  },
+  "next": "Observe existing exact revised-head hosted run, then hand off for review. No merge or activation authorized by this receipt."
+}
