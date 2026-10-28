@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "atUtc": "2026-10-28T15:31:31.001812+00:00",
+  "kind": "served catalog verification after coordinator PR207 integration",
+  "pullRequest": "https://github.com/freevia-org/Singbook/pull/207",
+  "qualifiedProposalHead": "4726d87fb360822b5407221d3092250b9ec023d0",
+  "mergeCommit": "6e56bb24e17da276a782878bebdcf320d85307ab",
+  "mergedAt": "2026-10-28T15:30:02Z",
+  "servedUrl": "https://raw.githubusercontent.com/freevia-org/Singbook/main/config/source-catalog-v9.json",
+  "httpStatus": 200,
+  "bytes": 54962,
+  "sha256": "c361ab09416dd2f774fedb62bd167ec9de9231074e4f623565241571a5e58b78",
+  "matchesProposalBytes": true,
+  "catalogChannel": 9,
+  "catalogRevision": 22,
+  "catalogEntries": 31,
+  "chordsAndTabs": "source2 active/default-on inherited",
+  "openScore": "disabled/default-off",
+  "pisni": "disabled/default-off",
+  "requestBudget": {
+    "configurationGet": 1,
+    "providerCanaries": 0,
+    "sdkDeviceBuildCalls": 0
+  },
+  "limits": [
+    "Catalog availability is not source activation, app installation/release or fresh source reachability.",
+    "Only the new channel9 file was read; no production latest health result was replaced."
+  ]
+}

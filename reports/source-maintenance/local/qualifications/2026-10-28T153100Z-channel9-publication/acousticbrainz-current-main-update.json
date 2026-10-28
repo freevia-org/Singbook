@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "atUtc": "2026-10-28T15:33:14.959216+00:00",
+  "kind": "history-preserving current-main update for exact-head validation",
+  "pullRequest": "https://github.com/freevia-org/Singbook/pull/217",
+  "baseCommit": "6e56bb24e17da276a782878bebdcf320d85307ab",
+  "sourceCommit": "f8f31a9b0fbdff201337e3f342ac1ef3063250b7",
+  "fixtureRepairHead": "d91d3ff2ac4ba542e6f9974e9e7a8c9a322fe4f2",
+  "method": "normal merge, not history rewrite/force-push",
+  "files": [
+    "docs/acousticbrainz-native-candidate.md",
+    "lib/providers/extra/acousticbrainz.dart",
+    "test/providers/extra/acousticbrainz_test.dart"
+  ],
+  "adapterAndFixtureBlobsUnchangedSinceRepair": true,
+  "committedFileSha256": {
+    "docs/acousticbrainz-native-candidate.md": "e53d2382a8e81cf111ac026b6f5544c9ce4e31c3b2511e15e50fab41bbf35881",
+    "lib/providers/extra/acousticbrainz.dart": "9f61a153ef90403c4ef584ae87f90750c24bd293bb4586c21fe686e5253b6311",
+    "test/providers/extra/acousticbrainz_test.dart": "418f23682592320fa2fae99fe95aa4666f92bccd5eb12a5606d1e7fd77abd1c2"
+  },
+  "acceptedMainRuntime": "channel9 revision22 /31 compiled source IDs; AcousticBrainz remains unregistered",
+  "diffCheck": "pass",
+  "newHeadChecks": "pending coordinator exact-head rerun",
+  "rootSdkDeviceLiveOrWorkflowCalls": 0,
+  "draft": true,
+  "catalogFactoryRoutingModelOrReleaseChangesInDiff": false
+}
