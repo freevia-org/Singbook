@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "atUtc": "2026-10-28T05:05:35.613422+00:00",
+  "status": "all_applicable_checks_passed",
+  "pr": "https://github.com/freevia-org/Singbook/pull/205",
+  "head": "70662134f6e739f71b3b708f1bb7d882f8a6b26c",
+  "baseRefObserved": "c77b221f1575236923b22dcea0f6672887bf11af",
+  "draft": true,
+  "jobs": [
+    {
+      "link": "https://github.com/freevia-org/Singbook/actions/runs/40634454204/job/122638393429",
+      "name": "windows-test (2/2)",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/freevia-org/Singbook/actions/runs/40634454204/job/122638393472",
+      "name": "windows-build",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/freevia-org/Singbook/actions/runs/40634454204/job/122638393487",
+      "name": "windows-journey",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/freevia-org/Singbook/actions/runs/40634454204/job/122638393402",
+      "name": "windows-test (1/2)",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/freevia-org/Singbook/actions/runs/40634454204/job/122638076379",
+      "name": "analyze",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/freevia-org/Singbook/actions/runs/40634454201/job/122638076018",
+      "name": "compile",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/freevia-org/Singbook/actions/runs/40634454204/job/122638076080",
+      "name": "test",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/freevia-org/Singbook/actions/runs/40634454186/job/122638076089",
+      "name": "host-visuals",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/freevia-org/Singbook/actions/runs/40634454186/job/122638077489",
+      "name": "focused-regressions",
+      "state": "SKIPPED"
+    }
+  ],
+  "focusedLocalTestsPassed": 22,
+  "focusedAnalysis": "clean",
+  "independentReReview": "Cancellation finding addressed; no new blocker found.",
+  "nativeEvidenceBoundary": "Native Android import and offline reader evidence remains tied to source 66d9f1970c0784640408ac6ed31f9ee643500136 and reader 1eb30e8afce86e88ccebad1b1f129fb508ea1cb3. This cache-only amendment has separate token-aware replay and concurrency tests, with unchanged download/parser/search/resolve code and no native rebuild.",
+  "readerHeadUnchanged": "1eb30e8afce86e88ccebad1b1f129fb508ea1cb3",
+  "extraSourceHttpRequests": 0,
+  "extraProductionSuiteRuns": 0,
+  "sourceRegisteredOrActivated": false,
+  "release43Changed": false,
+  "productionLatestReportsReplaced": false,
+  "rawDocumentsLyricsOrSecretsPublished": false,
+  "allBuildDeviceReservationsReleased": true
+}
