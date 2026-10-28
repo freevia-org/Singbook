@@ -5,6 +5,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:singbook/domain/arrangement.dart';
+import 'package:singbook/domain/chordpro.dart';
+import 'package:singbook/domain/combine.dart';
 import 'package:singbook/providers/core/service.dart';
 import 'package:singbook/providers/extra/openscore_lieder.dart';
 import 'package:singbook/providers/provider.dart';
@@ -137,7 +139,15 @@ void main() {
         expect(result.extra['originalPayload']['httpBodyBytesExact'], isTrue);
         expect(
           result.extra['rights']['permissions']['status'],
-          'source_declared_underlying_rights_unverified',
+          'field_specific',
+        );
+        expect(result.extra['rights']['license'], 'unknown');
+        expect(result.extra['rights'].containsKey('licenseUrl'), isFalse);
+        expect(result.extra['rights']['permissions']['corpus'], 'CC0-1.0');
+        expect(result.extra['rights']['permissions']['lyrics'], 'unknown');
+        expect(
+          result.extra['rights']['permissions']['underlyingPoemsAndTranslations'],
+          'unknown',
         );
       }
       expect(seen, hasLength(3));
@@ -145,6 +155,52 @@ void main() {
       expect(seen.skip(1).every((u) => u.path.endsWith('.txt')), isTrue);
       expect((await provider.search('A Poet')), hasLength(2));
       expect(seen, hasLength(3));
+    },
+  );
+
+  test(
+    'corpus dedication stays separate from document rights in portable sources',
+    () async {
+      final transport = _transport(
+        (request) => http.Response(
+          request.url.path.endsWith('/index.html') ? _index() : _lyrics,
+          200,
+        ),
+      );
+      addTearDown(transport.close);
+      final provider = OpenScoreLiederProvider(transport);
+      final selected = (await provider.search('Test Song')).single;
+      final source = await findMatchingSource(provider, selected);
+      final document = combineSources(
+        selected,
+        [source],
+        preferredSourceId: source.id,
+      );
+      final codec = ChordProCodec();
+      final reopened = codec.decode(codec.encode(document));
+      final retained = reopened.sources.singleWhere((s) => s.id == source.id);
+      final rights = retained.extra['rights'];
+      expect(rights['license'], 'unknown');
+      expect(rights.containsKey('licenseUrl'), isFalse);
+      expect(rights['permissions'], {
+        'status': 'field_specific',
+        'corpus': 'CC0-1.0',
+        'corpusLicenseScope': 'publisher_contributed_corpus',
+        'corpusLicenseUrl':
+            'https://github.com/OpenScore/Lieder/blob/main/LICENSE.txt',
+        'lyrics': 'unknown',
+        'underlyingPoemsAndTranslations': 'unknown',
+      });
+      expect(jsonEncode(rights), jsonEncode(source.extra['rights']));
+      expect(plainLyrics(reopened.body), plainLyrics(source.body));
+      expect(retained.body, source.body);
+      expect(retained.metadata, source.metadata);
+      expect(retained.extra['originalPayload'], source.extra['originalPayload']);
+      expect(retained.attribution, source.attribution);
+      expect(
+        rights['evidenceUrl'],
+        'https://github.com/OpenScore/Lieder/blob/main/README.md',
+      );
     },
   );
 
