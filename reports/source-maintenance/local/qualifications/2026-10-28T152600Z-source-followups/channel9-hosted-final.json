@@ -1,0 +1,112 @@
+{
+  "schemaVersion": 1,
+  "atUtc": "2026-10-28T15:26:18.047698+00:00",
+  "kind": "exact-head manual hosted validation receipt",
+  "pullRequest": "https://github.com/freevia-org/Singbook/pull/207",
+  "sourceCommit": "a0eec6dffa9ff0f105a2a9eb623c26eb5b2b51de",
+  "runs": [
+    {
+      "runId": 40712008715,
+      "headSha": "a0eec6dffa9ff0f105a2a9eb623c26eb5b2b51de",
+      "name": "CI",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/freevia-org/Singbook/actions/runs/40712008715",
+      "jobs": [
+        {
+          "name": "test",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "analyze",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "windows-journey",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "windows-build",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "windows-test (2/2)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "windows-test (1/2)",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "runId": 40712008434,
+      "headSha": "a0eec6dffa9ff0f105a2a9eb623c26eb5b2b51de",
+      "name": "UX batch validation",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/freevia-org/Singbook/actions/runs/40712008434",
+      "jobs": [
+        {
+          "name": "focused-regressions",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "host-visuals",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "runId": 40712008658,
+      "headSha": "a0eec6dffa9ff0f105a2a9eb623c26eb5b2b51de",
+      "name": "Wikisource validation",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/freevia-org/Singbook/actions/runs/40712008658",
+      "jobs": [
+        {
+          "name": "Wikisource provider-domain",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Wikisource cached-comparison",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Wikisource historical-import",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "runId": 40712010071,
+      "headSha": "a0eec6dffa9ff0f105a2a9eb623c26eb5b2b51de",
+      "name": "macOS compilation",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/freevia-org/Singbook/actions/runs/40712010071",
+      "jobs": [
+        {
+          "name": "compile",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ],
+  "checksObservedDirectlyBy": "gh run view, no workflow restarted/dispatched by datasource owner",
+  "changes": "No source/provider/catalog activation or merge performed; all serving/publication remains coordinator-owned.",
+  "productionLatestReportsChanged": false
+}

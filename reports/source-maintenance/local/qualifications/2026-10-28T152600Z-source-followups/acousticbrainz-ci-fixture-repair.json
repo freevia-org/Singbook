@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "atUtc": "2026-10-28T15:30:08.557318+00:00",
+  "kind": "hosted CI fixture failure and narrow repair",
+  "pullRequest": "https://github.com/freevia-org/Singbook/pull/217",
+  "priorHead": "7ac529175e3eb4197b60725a6ecbd62ce8ffa87f",
+  "sourceCommit": "d91d3ff2ac4ba542e6f9974e9e7a8c9a322fe4f2",
+  "priorRun": {
+    "runId": 40714922819,
+    "status": "in_progress",
+    "conclusion": "",
+    "jobs": [
+      {
+        "jobId": 122909895942,
+        "name": "analyze",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "jobId": 122909896598,
+        "name": "test",
+        "status": "completed",
+        "conclusion": "failure"
+      },
+      {
+        "jobId": 122910499685,
+        "name": "windows-test (1/2)",
+        "status": "in_progress",
+        "conclusion": ""
+      },
+      {
+        "jobId": 122910499719,
+        "name": "windows-build",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "jobId": 122910499897,
+        "name": "windows-test (2/2)",
+        "status": "in_progress",
+        "conclusion": ""
+      },
+      {
+        "jobId": 122910499975,
+        "name": "windows-journey",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "failure": "Linux invalid-count test assigned String into inferred Map<String,int>, failing before the provider assertion.",
+  "repair": "Replace the malformed count row with explicit Map<String,dynamic>, preserving invalid String response for the parser check.",
+  "changedFiles": [
+    "test/providers/extra/acousticbrainz_test.dart"
+  ],
+  "adapterAndDocumentationBlobsUnchanged": true,
+  "diffCheck": "pass",
+  "newHeadTestResult": "pending coordinator exact-head rerun",
+  "rootSdkDeviceLiveOrWorkflowCalls": 0,
+  "draft": true,
+  "registrationOrActivation": false
+}

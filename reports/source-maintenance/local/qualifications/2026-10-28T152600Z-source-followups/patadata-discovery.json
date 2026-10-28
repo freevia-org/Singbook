@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "atUtc": "2026-10-28T15:27:31.952311+00:00",
+  "kind": "documentation-only new chord/lyric source lead",
+  "baseCommit": "bd4a651bc7b0d0ebc6629c12c81707f4ba0eaf4b",
+  "sourceId": "patadata",
+  "decision": "deferred, no acceptance/registration/activation",
+  "existingDiscoveryIdsChecked": 51,
+  "alreadyRegistered": false,
+  "documentation": [
+    "https://patacrep.fr/en/",
+    "https://github.com/patacrep/patadata/blob/master/README.md",
+    "https://patacrep.readthedocs.io/fr/latest/book/introduction.html"
+  ],
+  "evidence": [
+    "Publisher homepage describes guitar songbooks/community selection and hundreds of charts; no synchronized census performed.",
+    "Publisher homepage footer explicitly describes noncommercial songbooks and takedown; intended app persistence/reuse permissions unproven.",
+    "Connected GitHub read of public patadata README confirms data separate from renderer and clients.",
+    "Primary documentation describes .csg/.tsg plus templates/LaTeX and optional LilyPond; current app has no qualified grammar for this contract."
+  ],
+  "researchAccounting": {
+    "webSearchQueries": 3,
+    "primaryWebDocumentationOpens": 2,
+    "publicRepositoryReadmeReads": 2,
+    "sourceCanaries": 0,
+    "sdkDeviceBuildAccountCredentialsOrMedia": 0
+  },
+  "trackedDiscoveryOrCatalogEdits": 0,
+  "next": "Send append-only proposed entry to Integration/discovery writer; preserve existing PR212 work and do not create competing discovery PR."
+}

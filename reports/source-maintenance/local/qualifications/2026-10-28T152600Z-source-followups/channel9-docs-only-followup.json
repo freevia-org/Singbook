@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "atUtc": "2026-10-28T15:28:50.766369+00:00",
+  "kind": "coordinator-requested docs-only followup",
+  "pullRequest": "https://github.com/freevia-org/Singbook/pull/207",
+  "priorHead": "a0eec6dffa9ff0f105a2a9eb623c26eb5b2b51de",
+  "sourceCommit": "4726d87fb360822b5407221d3092250b9ec023d0",
+  "remoteBranchHeadVerified": "4726d87fb360822b5407221d3092250b9ec023d0",
+  "files": [
+    "docs/openscore-lieder-qualification.md"
+  ],
+  "change": "Replace obsolete release43 rollout reference with0.2.30+44 and preserve frozen artifacts.",
+  "runtimeCatalogAdapterAndTestBlobsUnchanged": true,
+  "checks": "git diff --check passes; all4 manual hosted workflows passed at parenta0eec6d; not falsely attributed to new docs-only head.",
+  "sourceSuitesRepeated": false,
+  "sdkDeviceLiveCalls": 0,
+  "draft": true,
+  "activationOrMerge": false
+}
