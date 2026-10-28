@@ -593,6 +593,20 @@
       "firstSeen": "2026-10-27",
       "lastChecked": "2026-10-27",
       "status": "deferred"
+    },
+    {
+      "id": "liedernet",
+      "name": "The LiederNet Archive",
+      "documentation": [
+        "https://www.lieder.net/lieder/intro.html",
+        "https://www.lieder.net/lieder/copyright.html",
+        "https://www.lieder.net/lieder/register.html"
+      ],
+      "endpoint": "https://www.lieder.net",
+      "reason": "Publisher overview documents multilingual art-song texts and translations; potential overlap with pending OpenScore/Wikibooks research has not been enumerated. Counts vary between indexed and opened pages, so no synchronized census is claimed. Publisher states database/pages are copyrighted, many texts are public domain in Canada/US, and protected texts/translations require permission and author/translator/archive credit. Site viewing does not establish permission for systematic API ingestion or offline reprint/export. No supported public content API or permitted automated extraction contract was established. Only publisher documentation was read; no lyric page, account, credential, media or content canary request was made. Deferred pending explicit permitted access, per-work/jurisdiction/translation rights, stable work/setting identity, compatible adapter and two independent actual extraction canaries. No catalog or source activation.",
+      "firstSeen": "2026-10-28",
+      "lastChecked": "2026-10-28",
+      "status": "deferred"
     }
   ]
 }
