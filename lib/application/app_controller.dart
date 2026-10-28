@@ -557,7 +557,7 @@ class AppController extends ChangeNotifier {
           final current = int.tryParse(
             SourceCatalogClient.cacheKey.split(':v').last,
           );
-          if (current == null || current < 2 || current > 8) return [];
+          if (current == null || current < 2) return [];
           final previous = <PreviousSourceCatalogCache>[];
           for (var channel = current - 1; channel >= 1; channel--) {
             final key = channel == 1
