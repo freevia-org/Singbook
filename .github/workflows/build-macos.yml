@@ -17,7 +17,7 @@ env:
 
 jobs:
   compile:
-    runs-on: macos-latest
+    runs-on: singbook-macmini
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v7
