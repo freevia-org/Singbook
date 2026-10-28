@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "extractionSchemaVersion": 1,
   "revision": 20,
-  "publishedAt": "2026-10-28T00:49:03Z",
+  "publishedAt": "2026-10-28T00:56:07Z",
   "sources": [
     {
       "id": "genius",
@@ -1616,6 +1616,27 @@
       ],
       "probes": [],
       "changeReason": "Introduce a compatible catalog channel for the native adapter; keep it disabled until source qualification is complete."
+    },
+    {
+      "id": "pisni",
+      "name": "Українські пісні",
+      "adapter": "builtin",
+      "status": "disabled",
+      "revision": 1,
+      "capabilities": [
+        "catalog",
+        "chords",
+        "lyrics",
+        "metadata"
+      ],
+      "enabledByDefault": false,
+      "accessMode": "publicPage",
+      "website": "https://www.pisni.org.ua/",
+      "hosts": [
+        "www.pisni.org.ua"
+      ],
+      "probes": [],
+      "changeReason": "Include the merged native adapter in the compatible roster, but keep it disabled pending managed-cloud qualification and rights review."
     }
   ]
 }

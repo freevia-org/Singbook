@@ -93,7 +93,11 @@ void main() {
     final builtins = [
       ...createCoreProviders(transport: transport),
       ...createExtraProviders(transport: transport),
-    ].where((provider) => provider.definition.id != 'chordsandtabs').toList();
+    ].where(
+      (provider) =>
+          provider.definition.id != 'chordsandtabs' &&
+          provider.definition.id != 'pisni',
+    ).toList();
     final native = builtins.whereType<LyricsPlusProvider>().single;
     expect(native.definition.enabledByDefault, isFalse);
     final runtime = SourceCatalogRuntime(
@@ -138,7 +142,8 @@ void main() {
       ].where(
         (provider) =>
             provider.definition.id != 'lyricsplus' &&
-            provider.definition.id != 'chordsandtabs',
+            provider.definition.id != 'chordsandtabs' &&
+            provider.definition.id != 'pisni',
       ).toList();
       final runtime = SourceCatalogRuntime(
         builtins: builtins,

@@ -40,6 +40,7 @@ SourceCatalogRuntime _runtime(
           .where(
             (p) =>
                 p.definition.id != 'chordsandtabs' &&
+                p.definition.id != 'pisni' &&
                 !(released
                         ? {
                             'lrcred',
