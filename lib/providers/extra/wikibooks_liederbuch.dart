@@ -234,7 +234,7 @@ class WikibooksLiederbuchProvider implements LyricsProvider {
       if (body.isEmpty) continue;
       blocks.add({
         'index': index,
-        if (headings[poems[index]] case final heading?) 'sourceHeading': heading,
+        'sourceHeading': ?headings[poems[index]],
         'body': body,
       });
     }
@@ -532,9 +532,13 @@ void _validateJson(Object? value) {
     final (item, depth) = pending.removeLast();
     if (++count > 20000 || depth > 16) throw const ProviderException('invalid_response');
     if (item is Map) {
-      for (final child in item.values) pending.add((child, depth + 1));
+      for (final child in item.values) {
+        pending.add((child, depth + 1));
+      }
     } else if (item is List) {
-      for (final child in item) pending.add((child, depth + 1));
+      for (final child in item) {
+        pending.add((child, depth + 1));
+      }
     }
   }
 }

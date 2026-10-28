@@ -1,6 +1,6 @@
 # Wikibooks Liederbuch source proposal
 
-This unregistered, local proposal is based on public main
+This unregistered proposal is based on public main
 `c77b221f1575236923b22dcea0f6672887bf11af`. Its only product changes are the new
 adapter and synthetic tests. No registry, catalog, client, cache channel,
 existing provider, version or release artifact is changed. The provider's
@@ -94,6 +94,8 @@ No native device, SQLite reopening,
 fresh live adapter probe, managed-cloud reachability, registry/catalog rollout
 or release is qualified by this replay. The captured search request used a
 five-row limit; the bounded adapter requests ten, so fresh exact-request canaries
-remain necessary when that phase is authorized. Keep this proposal unpushed
-until coordinator review. It must not change or delay the separate release-43
+remain necessary when that phase is authorized. Coordinator review approved
+[draft PR 208](https://github.com/freevia-org/Singbook/pull/208) for hosted
+validation. It remains unregistered and inactive pending those checks and
+further qualification. It must not change or delay the separate release-43
 work or the frozen OpenScore proposals.
