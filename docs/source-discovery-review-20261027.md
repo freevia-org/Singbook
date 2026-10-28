@@ -133,3 +133,22 @@ and independent managed-cloud reachability remain unqualified. No media,
 audio upload, credentials, account, source activation or extra daily suite was
 used. An earlier MusicBrainz documentation read returned 429 in the web reader
 and was stopped without retry; it is separate from these three API 200s.
+
+
+## 2026-10-28 additional public-source contract review
+
+These four documentation-only leads supplement the existing 52 discovery
+records. The configuration is unchanged; this append does not register,
+activate or qualify a provider. No extraction canaries, credentials, accounts,
+cloud jobs, uploads or content downloads were used for this review.
+
+| Candidate | Primary evidence and decision |
+| --- | --- |
+| ChordWiki | The [publisher homepage](https://ja.chordwiki.org/) and [help](https://ja.chordwiki.org/help.html) describe Japanese ChordPro charts. Its [terms](https://ja.chordwiki.org/TermOfUse.html) limit JASRAC-managed lyrics to on-site streaming and prohibit download, copying and printing; other contributions retain separate rights. An indexed chart count is not a verified current usable corpus count. Defer app import until the intended access, storage/export and rights contract is established. No chart extraction was attempted. |
+| Jam Jam | The [developer documentation](https://jam-jam.org/developers/) describes API-key access and a social:read scope for public-profile songs. This does not establish an anonymous global lyric/chord catalog; private songbooks and conversion endpoints have separate scopes. The linked OpenAPI URL was unavailable to the web reader and no alternate route was attempted. Defer pending intended app access, source identity, attribution and two canaries. |
+| KSoft Lyrics | The [API documentation](https://docs.ksoft.si/api/lyrics-api) requires an Authorization token. Its example result total is not evidence of current corpus size. A direct documentation read returned 502 while indexed documentation remained visible; this does not establish an API outage. No token or API call was made. Defer pending supported production credentials, content retention/rights, identity and two canaries. |
+| Tuned Global | The [lyrics documentation](https://docs.tunedglobal.com/api-docs/tracks-songs-and-voice/songs/content/get-song-lyrics) and [chord-chart documentation](https://docs.tunedglobal.com/api-docs/tracks-songs-and-voice/songs/content/get-chord-chart) describe partner StoreId access. Chord charts require an enabled service and customer/third-party supplied content, so the endpoint does not establish an independent new chart corpus. Defer pending a concrete partner catalog, access and persistence/rights contract, attribution and two canaries. |
+
+These decisions preserve the distinction between publisher documentation,
+actual extraction evidence and production availability. No current source,
+older served channel, provider default, user preference or saved data changed.
