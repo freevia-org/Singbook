@@ -1,0 +1,21 @@
+{
+  "logAvailable": true,
+  "logSha256": "45e5dfe8614a4188ee549671c94efb48a43f9f24e1bc9ba90021eae6511b2c7f",
+  "exactHead": "94f56fece4f678790a2b22b9fe59034b169d3026",
+  "compatibilityTestsObserved": [
+    "all eight historical catalog files retain their original LF bytes",
+    "v9 preserves v8 rows and adds one disabled, off-default source",
+    "known disabled source loads without becoming an active provider",
+    "v8 runtime rejects disabled OpenScore without cache mutation",
+    "v8 runtime rejects active OpenScore without cache mutation",
+    "unknown disabled builtin still rejects atomically in v9",
+    "offline maintenance derives the complete v9 registry without HTTP"
+  ],
+  "additionalOptOutActivationTestObserved": true,
+  "hostedJobConclusion": "SUCCESS",
+  "summaryFormatBoundary": "Test discovery/execution names observed in successful hosted job; no reliance on obsolete All tests passed wording.",
+  "fullFlutterSuitePassed": 3128,
+  "fullFlutterSuiteSkipped": 13,
+  "additionalMetadataToolTestsPassed": 39,
+  "rawTestLogPublished": false
+}
