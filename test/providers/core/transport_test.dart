@@ -107,6 +107,223 @@ void main() {
     });
   });
 
+  group('publisher request windows', () {
+    test('an exhausted successful window paces its host only', () async {
+      final clock = Stopwatch()..start();
+      final attempts = <String, int>{};
+      final t = wire((request) async {
+        attempts[request.url.host + request.url.path] =
+            clock.elapsedMicroseconds;
+        return http.Response(
+          'ok',
+          200,
+          headers: request.url.path == '/quota'
+              ? {'X-RateLimit-Remaining': '0', 'X-RateLimit-Reset-In': '1'}
+              : {},
+        );
+      });
+      try {
+        expect(await t.getText(Uri.parse('https://example.org/quota')), 'ok');
+        final next = t.getText(Uri.parse('https://example.org/next'));
+        expect(
+          await t.getText(Uri.parse('https://other.example.org/free')),
+          'ok',
+        );
+        expect(await next, 'ok');
+        expect(attempts, hasLength(3));
+        expect(
+          attempts['other.example.org/free']!,
+          lessThan(attempts['example.org/next']!),
+        );
+        expect(
+          attempts['example.org/next']! - attempts['example.org/quota']!,
+          greaterThanOrEqualTo(950000),
+        );
+      } finally {
+        await t.close();
+      }
+    });
+
+    test('429 reset window without Retry-After paces the retry', () async {
+      final clock = Stopwatch()..start();
+      final attempts = <int>[];
+      final t = wire((_) async {
+        attempts.add(clock.elapsedMicroseconds);
+        return attempts.length == 1
+            ? http.Response('busy', 429, headers: {'x-ratelimit-reset-in': '1'})
+            : http.Response('ok', 200);
+      });
+      try {
+        expect(await t.getText(Uri.parse('https://example.org/')), 'ok');
+        expect(attempts, hasLength(2));
+        expect(attempts[1] - attempts[0], greaterThanOrEqualTo(950000));
+      } finally {
+        await t.close();
+      }
+    });
+
+    for (final headers in [
+      {'retry-after': '0', 'x-ratelimit-reset-in': '1'},
+      {'retry-after': '1', 'x-ratelimit-reset-in': '0'},
+    ]) {
+      test('the longer publisher delay wins: $headers', () async {
+        final clock = Stopwatch()..start();
+        final attempts = <int>[];
+        final t = wire((_) async {
+          attempts.add(clock.elapsedMicroseconds);
+          return attempts.length == 1
+              ? http.Response('busy', 429, headers: headers)
+              : http.Response('ok', 200);
+        });
+        try {
+          expect(await t.getText(Uri.parse('https://example.org/')), 'ok');
+          expect(attempts, hasLength(2));
+          expect(attempts[1] - attempts[0], greaterThanOrEqualTo(950000));
+        } finally {
+          await t.close();
+        }
+      });
+    }
+
+    test(
+      'a reset beyond the retry budget is retained without a retry',
+      () async {
+        var calls = 0;
+        final t = wire((_) async {
+          calls++;
+          return http.Response(
+            'busy',
+            429,
+            headers: {'retry-after': '0', 'x-ratelimit-reset-in': '86401'},
+          );
+        }, maxRetryDelay: const Duration(seconds: 5));
+        try {
+          await expectLater(
+            t.getText(Uri.parse('https://example.org/')),
+            throwsA(errorCode('rate_limited')),
+          );
+          expect(calls, 1);
+        } finally {
+          await t.close();
+        }
+      },
+    );
+
+    test(
+      'non-exhausted, malformed and conflicting windows do not delay success',
+      () async {
+        for (final headers in [
+          {'x-ratelimit-remaining': '1', 'x-ratelimit-reset-in': '3600'},
+          {'x-ratelimit-remaining': '-1', 'x-ratelimit-reset-in': '3600'},
+          {'x-ratelimit-remaining': 'unknown', 'x-ratelimit-reset-in': '3600'},
+          {'x-ratelimit-remaining': '0', 'x-ratelimit-reset-in': '-1'},
+          {'x-ratelimit-remaining': '0', 'x-ratelimit-reset-in': '1.5'},
+          {'x-ratelimit-remaining': '0', 'x-ratelimit-reset-in': 'NaN'},
+          {
+            'x-ratelimit-remaining': '0',
+            'x-ratelimit-reset-in': '99999999999999999999999999',
+          },
+          {
+            'x-ratelimit-remaining': '0',
+            'X-RateLimit-Remaining': '1',
+            'x-ratelimit-reset-in': '3600',
+          },
+        ]) {
+          var calls = 0;
+          final t = wire((_) async {
+            calls++;
+            return http.Response('ok', 200, headers: headers);
+          });
+          try {
+            await t.getText(Uri.parse('https://example.org/'));
+            expect(
+              await t
+                  .getText(Uri.parse('https://example.org/next'))
+                  .timeout(const Duration(seconds: 1)),
+              'ok',
+            );
+            expect(calls, 2);
+          } finally {
+            await t.close();
+          }
+        }
+      },
+    );
+
+    test(
+      'headers retain the window when reading the body is cancelled',
+      () async {
+        final body = StreamController<List<int>>();
+        final headersReceived = Completer<void>();
+        final cancel = CancellationToken();
+        final clock = Stopwatch()..start();
+        final attempts = <int>[];
+        final t = wire((_) async {
+          attempts.add(clock.elapsedMicroseconds);
+          if (attempts.length == 1) {
+            headersReceived.complete();
+            return http.StreamedResponse(
+              body.stream,
+              200,
+              headers: {
+                'x-ratelimit-remaining': '0',
+                'x-ratelimit-reset-in': '1',
+              },
+            );
+          }
+          return http.Response('ok', 200);
+        });
+        try {
+          final first = expectLater(
+            t.getText(Uri.parse('https://example.org/first'), cancel: cancel),
+            throwsA(errorCode('cancelled')),
+          );
+          await headersReceived.future;
+          await Future<void>.delayed(const Duration(milliseconds: 50));
+          cancel.cancel();
+          await first;
+          await body.close();
+          expect(await t.getText(Uri.parse('https://example.org/next')), 'ok');
+          expect(attempts, hasLength(2));
+          expect(attempts[1] - attempts[0], greaterThanOrEqualTo(950000));
+        } finally {
+          await t.close();
+        }
+      },
+    );
+
+    test(
+      'close interrupts a queued window wait without another send',
+      () async {
+        var calls = 0;
+        final t = wire((_) async {
+          calls++;
+          return http.Response(
+            'ok',
+            200,
+            headers: {
+              'x-ratelimit-remaining': '0',
+              'x-ratelimit-reset-in': '3600',
+            },
+          );
+        });
+        try {
+          await t.getText(Uri.parse('https://example.org/first'));
+          final queued = expectLater(
+            t.getText(Uri.parse('https://example.org/next')),
+            throwsA(errorCode('transport_closed')),
+          );
+          await Future<void>.delayed(Duration.zero);
+          await t.close().timeout(const Duration(seconds: 1));
+          await queued;
+          expect(calls, 1);
+        } finally {
+          await t.close();
+        }
+      },
+    );
+  });
+
   group('rate limits', () {
     test('Retry-After survives cancellation of an optional retry', () async {
       final firstResponse = Completer<void>();
