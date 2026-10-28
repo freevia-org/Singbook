@@ -114,7 +114,7 @@ networking (Cronet) and Google sign-in on a release APK before publishing.
 
 ### Google Play release
 
-Current source candidate: `0.2.29+43` (based on main `5979814`; platform packages are not yet
+Current source candidate: `0.2.29+43` (based on main `e25658f`; platform packages are not yet
 built or submitted). Every new release increments both the visible patch version and the
 build number: `0.2.28+42`, `0.2.29+43`, and so on. The number after
 `+` is the Play versionCode and must always increase; never reset it when the
