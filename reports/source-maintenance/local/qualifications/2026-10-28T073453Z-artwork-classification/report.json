@@ -1,0 +1,143 @@
+{
+  "schemaVersion": 1,
+  "measuredAt": "2026-10-28T07:34:53.176885+00:00",
+  "kind": "candidate-checker-classification-repair",
+  "base": "f523dd1c98aac38052fbbbd4f5d3db95c16f1ee0",
+  "head": "e5b9ab7be5731b69b0fdd9f864a5d5765c9508cd",
+  "files": [
+    "lib/providers/source_maintenance.dart",
+    "test/providers/source_maintenance_artwork_test.dart"
+  ],
+  "fileSha256": {
+    "lib/providers/source_maintenance.dart": "963688445b9567f1a7d7a1e1a24544bd5882e4052528c0d0b1d7cebae8ed0fe1",
+    "test/providers/source_maintenance_artwork_test.dart": "07841e3f42f8bbf9e1fa033f06837bdd8ec1955fdddf3ce26e5de98a7c291640"
+  },
+  "patchSha256": "75597f7adf0b1c1167b3747cb49bb47beaffe6535e9648aee4f5f158df5bab6d",
+  "originalProductionReport": "reports/source-maintenance/local/2026-10-28T072235Z.json",
+  "selectedLiveDiagnostic": {
+    "reasonForSelectedRecheck": "New production resolved_identity_mismatch and one MusicBrainz transport failure; inspect exact canary, not repeat full suite.",
+    "runtime": "local-dart-desktop-maintenance",
+    "sourceCommit": "f523dd1c98aac38052fbbbd4f5d3db95c16f1ee0",
+    "status": "resolved",
+    "expectedAlbum": "Dummy",
+    "resolvedAlbum": "Dummy",
+    "expectedDuration": 306.2,
+    "resolvedDuration": 306.2,
+    "titleMatches": true,
+    "artistMatches": true,
+    "releaseIdPresent": true,
+    "artworkStatus": "available",
+    "artworkCode": null,
+    "capabilityChecks": {
+      "artwork": {
+        "status": "location_verified"
+      }
+    },
+    "measuredAt": "2026-10-28T07:25:56.034135Z",
+    "httpDiagnostics": {
+      "networkFailures": 0,
+      "hosts": {
+        "musicbrainz.org": {
+          "requests": 2,
+          "statuses": {
+            "200": 2
+          },
+          "retryAfterSeconds": {},
+          "databaseLag": {}
+        }
+      }
+    }
+  },
+  "beforeOfflineReplay": {
+    "schemaVersion": 1,
+    "catalogRevision": 20,
+    "measuredAt": "2026-10-28T07:27:47.398046Z",
+    "offline": false,
+    "summary": {
+      "identity_mismatch": 1
+    },
+    "sources": [
+      {
+        "id": "musicbrainz",
+        "name": "MusicBrainz",
+        "status": "identity_mismatch",
+        "coverage": {
+          "status": "partial",
+          "verifiedCapabilities": [],
+          "unverifiedCapabilities": [
+            "artwork",
+            "catalog",
+            "metadata"
+          ]
+        },
+        "probes": [
+          {
+            "id": "exact-release-artwork-b5d7d380-f43a-4c1f-a5de-694150b093ac",
+            "status": "identity_mismatch",
+            "reason": "resolved_identity_mismatch"
+          }
+        ]
+      }
+    ],
+    "runtime": "offline-retained-metadata-release-network-failure",
+    "networkRequests": 0,
+    "fixtureCalls": 2,
+    "sourceCommit": "f523dd1c98aac38052fbbbd4f5d3db95c16f1ee0"
+  },
+  "finalHeadOfflineReplay": {
+    "schemaVersion": 1,
+    "catalogRevision": 20,
+    "measuredAt": "2026-10-28T07:33:42.402308Z",
+    "offline": false,
+    "summary": {
+      "transient_error": 1
+    },
+    "sources": [
+      {
+        "id": "musicbrainz",
+        "name": "MusicBrainz",
+        "status": "transient_error",
+        "coverage": {
+          "status": "partial",
+          "verifiedCapabilities": [],
+          "unverifiedCapabilities": [
+            "artwork",
+            "catalog",
+            "metadata"
+          ]
+        },
+        "probes": [
+          {
+            "id": "exact-release-artwork-b5d7d380-f43a-4c1f-a5de-694150b093ac",
+            "status": "transient_error",
+            "reason": "network",
+            "capability": "artwork",
+            "recordingMetadataAvailable": true,
+            "missingMetadataFields": [
+              "musicbrainzReleaseId",
+              "artworkUrl",
+              "artworkAssets"
+            ],
+            "missingIdentityFields": [
+              "album"
+            ]
+          }
+        ]
+      }
+    ],
+    "runtime": "offline-retained-metadata-release-network-failure",
+    "networkRequests": 0,
+    "fixtureCalls": 2,
+    "sourceCommit": "e5b9ab7be5731b69b0fdd9f864a5d5765c9508cd"
+  },
+  "tests": {
+    "focusedPassed": 63,
+    "analysis": "no issues",
+    "sourceHttpRequests": 0
+  },
+  "boundaries": "Present wrong album and all title/artist/duration/recording checks stay strict. Only missing exact art-dependent album follows explicit artwork failure; unrelated missing metadata remains changed_schema. No extraction/provider/catalog/registry changes.",
+  "codePushed": false,
+  "codeMerged": false,
+  "resourcesReleased": true,
+  "runtimeNote": "Analysis implicitly performed dependency resolution because --no-pub was omitted; no tracked dependency/lockfile changes. Future analysis uses --no-pub. Provider HTTP counts exclude tool dependency resolution."
+}

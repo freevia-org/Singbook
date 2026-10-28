@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "runtime": "host-flutter-test",
+  "measuredAt": "2026-10-28T07:24:14.239306Z",
+  "userLibraryAccessed": false,
+  "documentsRetained": false,
+  "httpDiagnostics": {
+    "networkFailures": 0,
+    "hosts": {
+      "ozbcoz.com": {
+        "requests": 2,
+        "statuses": {
+          "200": 2
+        },
+        "retryAfterSeconds": {},
+        "databaseLag": {}
+      }
+    }
+  },
+  "probes": [
+    {
+      "id": "2941",
+      "source": "ozbcoz",
+      "sourceUrl": "https://ozbcoz.com/Songs/cp/get_pro.php?ID=2941&instr=guitar",
+      "expectedTitle": "Wild Rover [C]",
+      "expectedArtist": "The Dubliners",
+      "measuredAt": "2026-10-28T07:24:12.642606Z",
+      "nativeFilePickerTested": false,
+      "status": "healthy",
+      "downloadedBytes": 2110,
+      "downloadedTextSha256": "2babd7545e39e10c463775f1e7b6da454160963f59ef9a8cba5de0fb87052ee4",
+      "chordTokensRetained": 79,
+      "metadataFields": [
+        "key"
+      ],
+      "commentLinesRetained": 11,
+      "sourceRecordCount": 0,
+      "saveReopenExact": true,
+      "exportBodyMetadataIdentityExact": true,
+      "verifiedCapabilities": [
+        "fileImport",
+        "lyrics",
+        "chords",
+        "metadata"
+      ]
+    },
+    {
+      "id": "1683",
+      "source": "ozbcoz",
+      "sourceUrl": "https://ozbcoz.com/Songs/cp/get_pro.php?ID=1683&instr=guitar",
+      "expectedTitle": "Banana Boat Song",
+      "expectedArtist": "Harry Belafonte",
+      "measuredAt": "2026-10-28T07:24:13.168488Z",
+      "nativeFilePickerTested": false,
+      "status": "healthy",
+      "downloadedBytes": 1648,
+      "downloadedTextSha256": "4c37793866fb8c37f1f05eef968eff072b0498af4cf4d51d1aa8e45e306b8e57",
+      "chordTokensRetained": 65,
+      "metadataFields": [
+        "key"
+      ],
+      "commentLinesRetained": 10,
+      "sourceRecordCount": 0,
+      "saveReopenExact": true,
+      "exportBodyMetadataIdentityExact": true,
+      "verifiedCapabilities": [
+        "fileImport",
+        "lyrics",
+        "chords",
+        "metadata"
+      ]
+    }
+  ],
+  "sourceCommit": "f523dd1c98aac38052fbbbd4f5d3db95c16f1ee0",
+  "phase": "Separate opt-in host import; two providerHTTP200, no native picker."
+}
