@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
@@ -10,7 +13,7 @@ const _search = '''
 </form>
 <a href="/song/name/artist-test-song">
   <span class="songtype typechords">chords</span>
-  <b>Artist - Test Song</b><span class="version">ver. 1</span>
+  <b>Artist - Test Song</b>
 </a>
 <a href="/song/name/artist-tab-song">
   <span class="songtype typetabs">tabs</span><b>Artist - Tab Song</b>
@@ -44,14 +47,18 @@ ${canonical == null ? '' : '<link rel="canonical" href="$canonical">'}
 ''';
 
 class _Harness {
-  _Harness({required String search, required String page}) {
+  _Harness({
+    required String search,
+    required String page,
+    List<int>? pageBytes,
+  }) {
     client = MockClient((request) async {
       requests.add(request);
       if (request.url.path.startsWith('/songs/search/')) {
         return http.Response(search, 200);
       }
       if (request.url.path == '/song/name/artist-test-song') {
-        return http.Response(page, 200);
+        return http.Response.bytes(pageBytes ?? utf8.encode(page), 200);
       }
       return http.Response('not found', 404);
     });
@@ -69,6 +76,23 @@ class _Harness {
   late final ChordsAndTabsProvider provider;
 
   Future<void> close() => transport.close();
+}
+
+class _ControlledSearchTransport extends ProviderTransport {
+  _ControlledSearchTransport()
+    : super(client: MockClient((_) async => http.Response('', 200)));
+
+  final response = Completer<String>();
+
+  @override
+  Future<String> getText(
+    Uri url, {
+    Map<String, String> headers = const {},
+    CancellationToken? cancel,
+    int? maxBytes,
+    Duration? timeout,
+    Set<String>? allowedHosts,
+  }) => response.future;
 }
 
 Matcher _failure(String code) =>
@@ -155,6 +179,7 @@ void main() {
     expect(absentKey.candidate.extra, isEmpty);
     expect(absentKey.metadata, {
       'identityScope': 'arrangement',
+      'sourceChartType': 'chords',
       'tuning': ['E', 'A', 'D', 'G', 'B', 'E'],
     });
 
@@ -168,6 +193,209 @@ void main() {
     expect(pageKey.metadata, isNot(contains('artworkUrl')));
     expect(pageKey.metadata, isNot(contains('artistEvidence')));
     expect(pageKey.metadata, isNot(contains('mediaLinks')));
+  });
+
+  test('visible title and artist cannot contradict structured identity', () {
+    final candidate = ChordsAndTabsProvider.parseSearch(
+      _search,
+      'Artist Test Song',
+    ).single;
+    for (final heading in [
+      '<h1><a>Wrong Artist</a> - Test Song</h1>',
+      '<h1><a>Artist</a> - Wrong Song</h1>',
+    ]) {
+      expect(
+        () => ChordsAndTabsProvider.parsePage(
+          _page().replaceFirst('<h1><a>Artist</a> - Test Song</h1>', heading),
+          candidate,
+        ),
+        throwsA(_failure('identity_mismatch')),
+      );
+    }
+    expect(
+      () => ChordsAndTabsProvider.parsePage(
+        _page().replaceFirst(
+          '<h1><a>Artist</a> - Test Song</h1>',
+          '<h1>Wrong visible title</h1>',
+        ),
+        candidate,
+      ),
+      throwsA(_failure('extraction_failed')),
+    );
+  });
+
+  test('legacy chart type excludes alternate arrangement labels', () {
+    final candidate = ChordsAndTabsProvider.parseSearch(
+      _search,
+      'Test Song',
+    ).single;
+    final page = _page().replaceFirst(
+      '<body>',
+      '<body><div class="song-versions"><a><span class="songtype typeukulele">'
+          'ukulele</span>ver. 3</a></div>',
+    );
+    final result = ChordsAndTabsProvider.parsePage(page, candidate);
+    expect(result.metadata['sourceChartType'], 'chords');
+    expect(result.extra['chartInstrument'], 'guitar');
+  });
+
+  String versionPage(String label) => _page().replaceFirst(
+    '<span class="songtype typechords">chords</span>',
+    '<a class="x-ddm-but sub-title">'
+        '<span class="songtype typechords">chords</span><span>$label</span></a>'
+        '<div class="song-versions">'
+        '<a><span class="songtype typetabs">tabs</span>ver. 4</a>'
+        '<a><span class="songtype typechords">chords</span>ver. 99</a></div>',
+  );
+
+  test(
+    'search version hints constrain selection without becoming page facts',
+    () {
+      final search = _search.replaceFirst(
+        '<b>Artist - Test Song</b>',
+        '<b>Artist - Test Song</b><span class="version">ver. 4</span>',
+      );
+      final candidate = ChordsAndTabsProvider.parseSearch(
+        search,
+        'Test Song',
+      ).single;
+      expect(candidate.metadata['searchChartVersionHint'], 4);
+      expect(candidate.metadata['searchChartTypeHint'], 'chords');
+      final result = ChordsAndTabsProvider.parsePage(
+        versionPage('ver. 4'),
+        candidate,
+      );
+      expect(result.metadata['sourceChartVersion'], 4);
+      expect(result.metadata, isNot(contains('searchChartVersionHint')));
+      expect(
+        () => ChordsAndTabsProvider.parsePage(versionPage('ver. 5'), candidate),
+        throwsA(_failure('identity_mismatch')),
+      );
+      expect(
+        () => ChordsAndTabsProvider.parsePage(_page(), candidate),
+        throwsA(_failure('extraction_failed')),
+      );
+      expect(
+        ChordsAndTabsProvider.parseSearch('$search$search', 'Test Song'),
+        hasLength(1),
+      );
+      expect(
+        ChordsAndTabsProvider.parseSearch(
+          '$search${search.replaceFirst('ver. 4', 'ver. 5')}',
+          'Test Song',
+        ),
+        isEmpty,
+      );
+    },
+  );
+
+  test(
+    'selected chart version is independent of other arrangements and caller',
+    () {
+      final candidate = ChordsAndTabsProvider.parseSearch(
+        _search,
+        'Artist Test Song',
+      ).single;
+      final selected = SongCandidate.fromJson({
+        ...candidate.toJson(),
+        'metadata': {'sourceChartVersion': 88, 'sourceChartType': 'tabs'},
+      });
+      final result = ChordsAndTabsProvider.parsePage(
+        versionPage('ver. 4'),
+        selected,
+      );
+      expect(result.metadata['sourceChartVersion'], 4);
+      expect(result.metadata['sourceChartType'], 'chords');
+      expect(result.candidate.metadata, result.metadata);
+      expect(result.candidate.id, candidate.id);
+      expect(
+        ChordsAndTabsProvider.parsePage(_page(), candidate).metadata,
+        isNot(contains('sourceChartVersion')),
+      );
+    },
+  );
+
+  test(
+    'invalid or contradictory selected versions fail without choosing first',
+    () {
+      final candidate = ChordsAndTabsProvider.parseSearch(
+        _search,
+        'Artist Test Song',
+      ).single;
+      for (final label in ['ver. 0', 'ver. -1', 'ver. 10000', 'ver. unknown']) {
+        expect(
+          () => ChordsAndTabsProvider.parsePage(versionPage(label), candidate),
+          throwsA(_failure('invalid_response')),
+        );
+      }
+      expect(
+        () => ChordsAndTabsProvider.parsePage(
+          versionPage('ver. 4').replaceFirst(
+            '</body>',
+            '<a class="x-ddm-but sub-title"><span class="songtype typechords">'
+                'chords</span>ver. 5</a></body>',
+          ),
+          candidate,
+        ),
+        throwsA(_failure('invalid_response')),
+      );
+    },
+  );
+
+  test(
+    'decoded parser snapshot is retained without claiming exact HTTP bytes',
+    () {
+      final candidate = ChordsAndTabsProvider.parseSearch(
+        _search,
+        'Test Song',
+      ).single;
+      final page = _page();
+      final result = ChordsAndTabsProvider.parsePage(page, candidate);
+      final payload = result.extra['originalPayload'] as Map;
+      expect(utf8.decode(base64Decode(payload['base64'] as String)), page);
+      expect(payload['httpBodyBytesExact'], isFalse);
+      expect(payload['contentType'], 'text/html');
+      expect(result.extra['parserVersion'], 'chordsandtabs-2');
+      final reopened = SourceResult.fromJson(
+        jsonDecode(jsonEncode(result.toJson())),
+      );
+      expect(reopened.extra['originalPayload'], payload);
+    },
+  );
+
+  test(
+    'resolve retains exact UTF-8 HTTP bytes including BOM and accents',
+    () async {
+      final page = _page(
+        chart: '<div class="song"><sup>C</sup>Caf\u00e9 morning.</div>',
+      );
+      final bytes = [0xef, 0xbb, 0xbf, ...utf8.encode(page)];
+      final harness = _Harness(search: _search, page: page, pageBytes: bytes);
+      addTearDown(harness.close);
+      final selected = (await harness.provider.search('Test Song')).single;
+      final result = await harness.provider.resolve(selected);
+      final payload = result.extra['originalPayload'] as Map;
+      expect(base64Decode(payload['base64'] as String), bytes);
+      expect(payload['httpBodyBytesExact'], isTrue);
+      expect(result.body, '[C]Caf\u00e9 morning.');
+    },
+  );
+
+  test('malformed UTF-8 and oversized decoded source are rejected', () async {
+    final candidate = ChordsAndTabsProvider.parseSearch(
+      _search,
+      'Test Song',
+    ).single;
+    final harness = _Harness(search: _search, page: _page(), pageBytes: [0xff]);
+    addTearDown(harness.close);
+    await expectLater(
+      harness.provider.resolve(candidate),
+      throwsA(_failure('invalid_response')),
+    );
+    expect(
+      () => ChordsAndTabsProvider.parsePage('\u00e9' * (600 * 1024), candidate),
+      throwsA(_failure('invalid_response')),
+    );
   });
 
   test('canonical evidence is validated and request fallback is identified', () {
@@ -360,6 +588,19 @@ void main() {
       ),
       throwsA(_failure('blocked')),
     );
+  });
+
+  test('search surfaces cancellation after the response completes', () async {
+    final transport = _ControlledSearchTransport();
+    addTearDown(transport.close);
+    final provider = ChordsAndTabsProvider(transport);
+    final token = CancellationToken();
+
+    final pending = provider.search('Artist Test Song', cancel: token);
+    transport.response.complete(_search);
+    token.cancel();
+
+    await expectLater(pending, throwsA(_failure('cancelled')));
   });
 
   test(
