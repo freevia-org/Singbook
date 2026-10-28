@@ -39,6 +39,7 @@ SourceCatalogRuntime _runtime(
           ]
           .where(
             (p) =>
+                p.definition.id != 'chordsandtabs' &&
                 !(released
                         ? {
                             'lrcred',
@@ -154,10 +155,10 @@ void main() {
           await client.initialize();
           expect(
             SourceCatalogClient.bundledAsset,
-            'config/source-catalog-v7.json',
+            'config/source-catalog-v8.json',
           );
-          expect(SourceCatalogClient.cacheKey, 'sourceCatalog:v7');
-          expect(client.endpoint.path, endsWith('/source-catalog-v7.json'));
+          expect(SourceCatalogClient.cacheKey, 'sourceCatalog:v8');
+          expect(client.endpoint.path, endsWith('/source-catalog-v8.json'));
           expect(runtime.catalog!.sources, hasLength(26));
           for (final previous in SourceCatalog.parse(_bundle('-v4')).sources) {
             final current = runtime.catalog!.sources.singleWhere(

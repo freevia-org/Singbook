@@ -74,17 +74,10 @@ void main() {
         ]),
       );
     }
-    expect(SourceCatalogClient.bundledAsset, 'config/source-catalog-v7.json');
-    expect(SourceCatalogClient.cacheKey, 'sourceCatalog:v7');
-    expect(SourceCatalogClient.channel6CacheKey, 'sourceCatalog:v6');
-    expect(
-      SourceCatalogClient.defaultEndpoint,
-      endsWith('/source-catalog-v7.json'),
-    );
     final assets = File('pubspec.yaml').readAsStringSync();
     for (final asset in [
       'config/source-catalog.json',
-      for (var channel = 2; channel <= 7; channel++)
+      for (var channel = 2; channel <= 8; channel++)
         'config/source-catalog-v$channel.json',
     ]) {
       expect(assets, contains('    - $asset'));
@@ -101,7 +94,7 @@ void main() {
     final builtins = [
       ...createCoreProviders(transport: transport),
       ...createExtraProviders(transport: transport),
-    ];
+    ].where((provider) => provider.definition.id != 'chordsandtabs').toList();
     final native = builtins.whereType<LyricsPlusProvider>().single;
     expect(native.definition.enabledByDefault, isFalse);
     final runtime = SourceCatalogRuntime(
@@ -143,7 +136,11 @@ void main() {
       final builtins = [
         ...createCoreProviders(transport: transport),
         ...createExtraProviders(transport: transport),
-      ].where((provider) => provider.definition.id != 'lyricsplus').toList();
+      ].where(
+        (provider) =>
+            provider.definition.id != 'lyricsplus' &&
+            provider.definition.id != 'chordsandtabs',
+      ).toList();
       final runtime = SourceCatalogRuntime(
         builtins: builtins,
         createProvider: (entry) => ConfigurableProvider(entry, transport),
