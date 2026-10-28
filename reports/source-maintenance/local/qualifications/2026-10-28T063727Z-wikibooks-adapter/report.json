@@ -1,0 +1,129 @@
+{
+  "schemaVersion": 1,
+  "atUtc": "2026-10-28T06:37:27.999652+00:00",
+  "kind": "unregistered_candidate_adapter_retained_response_qualification",
+  "status": "two_retained_response_extraction_and_portable_source_canaries_passed",
+  "base": "c77b221f1575236923b22dcea0f6672887bf11af",
+  "candidateHead": "c62c8e414f06f0c8b5565311c0d13afcabb4bc46",
+  "candidateBranch": "codex/wikibooks-liederbuch-20261028",
+  "sourceId": "wikibooksliederbuch",
+  "ownedFileSha256": {
+    "lib/providers/extra/wikibooks_liederbuch.dart": "fb90072b3d2c178a3f56cbe1ff3a0e036bf436196ac87097c1fc76e7de92b581",
+    "test/providers/extra/wikibooks_liederbuch_test.dart": "e655e812243a624ed86391158cd76ea9fef6cca08668ec7d9607ce62e40a63f5",
+    "docs/wikibooks-liederbuch-qualification.md": "f38dc724b10474f5e9d40d081d748df12e2f3abac0fc56cdf2299515dbd58250"
+  },
+  "allOtherTrackedFilesUnchanged": true,
+  "codeBranchPushed": false,
+  "pullRequestCreated": false,
+  "runtime": {
+    "kind": "local_pure_Dart",
+    "sdkVersion": "3.12.2",
+    "command": "dart.exe --disable-dart-dev --packages=artifacts/wikibooks.package_config.json artifacts/replay_wikibooks.dart --anchors",
+    "dependencyMode": "Local package-config mapping to already cached roots; no pub/Flutter/cache mutation"
+  },
+  "replayProvenance": {
+    "initialContextHead": "4eaf5399959b16a5ba79bd3531a3e46a272204d1",
+    "anchorContextHead": "64f30bf37af2312824e94f386f91d6866d4505b1",
+    "committedModuleMatchesBothExecutedReplays": true,
+    "boundary": "Commit after the initial replay added the identical validated module; later changes were documentation only. Qualification is bound to the module hash, not a claim that Flutter tests or a full candidate app ran.",
+    "initialReportSha256": "a75e5f58c0e8e40451b01f6358739d72e30b5bcd28ec2f00d80f6e84aa6d2a5a",
+    "anchorReportSha256": "cb2c3bed95a9ed6da9386afe9fcd6dbc2ea9c8b0c291ec2c51c1fd18fd8df4a8",
+    "independentPrivateAnchorReferenceSha256": "3e3753054969738deb881e4d6012c558fa966fb16849fc9680c697ba41cbd039"
+  },
+  "cases": [
+    {
+      "pageId": 118857,
+      "revision": 1036453,
+      "status": "passed",
+      "plainLyricsSha256": "53e2f069045d236cbd8b2d9bfad26d137ca7a5d477ff38b6cecd86d7b480517e",
+      "lyricLines": 20,
+      "chordCount": 28,
+      "bodySha256": "56aeefa41362e4e4b001efd82fd07958b25c0c2f10c408290bcdaeef0b0db66c",
+      "metadataSha256": "4b0565a48b82e78fac8fdae2b9ca6009593e53a431988e6a85225cde74e3a3f5",
+      "originalApiBytesSha256": "9d9f991c707bf3435aa6551f9ebe25d1ea4ced101d8bfb2599e719298cb0e197",
+      "originalApiBytes": 10647,
+      "normalProductionMatcherAccepted": true,
+      "independentLyricsAndChordSequenceReferenceMatched": true,
+      "independentChordAnchorPositionsMatched": true,
+      "combinedAndChordProSourceFactsRetained": true,
+      "metadataFields": [
+        "identityScope",
+        "language",
+        "sourceAlternativeTitles",
+        "sourceArrangerCredits",
+        "sourceChordNotation",
+        "sourceCreditLinks",
+        "sourceHeaderBlocks",
+        "sourceMelodyCredit",
+        "sourceTextCredit",
+        "wikibooksCategories",
+        "wikibooksPageId",
+        "wikibooksPageTitle",
+        "wikibooksRevisionId"
+      ],
+      "language": "de",
+      "sourceChordNotation": "german",
+      "arrangerCreditCount": 2
+    },
+    {
+      "pageId": 115615,
+      "revision": 1083680,
+      "status": "passed",
+      "plainLyricsSha256": "56de7dedfb7f73e686ba4ef4e22fc9f315650b9a52e1c9f516b7847f62b63147",
+      "lyricLines": 12,
+      "chordCount": 39,
+      "bodySha256": "b34554b119309a349a80c0d1ae4f717f1a625dbc205d688932bded489a792934",
+      "metadataSha256": "91aa065351ad21bb3601807d56cb54522299d74082ec9453b01fbd4413b0d8b6",
+      "originalApiBytesSha256": "5ba40ed537e8219c741e7f514fad8ef1987b8bba2379f3a6ea8ec23c22745f4d",
+      "originalApiBytes": 17202,
+      "normalProductionMatcherAccepted": true,
+      "independentLyricsAndChordSequenceReferenceMatched": true,
+      "independentChordAnchorPositionsMatched": true,
+      "combinedAndChordProSourceFactsRetained": true,
+      "metadataFields": [
+        "identityScope",
+        "language",
+        "sourceArrangerCredits",
+        "sourceChordNotation",
+        "sourceCreditLinks",
+        "sourceHeaderBlocks",
+        "sourceMelodyCredit",
+        "sourceTextCredit",
+        "wikibooksCategories",
+        "wikibooksPageId",
+        "wikibooksPageTitle",
+        "wikibooksRevisionId"
+      ],
+      "language": "de",
+      "sourceChordNotation": "german",
+      "arrangerCreditCount": 2
+    }
+  ],
+  "requestAccounting": {
+    "initialFixtureRequests": 4,
+    "anchorFixtureRequests": 4,
+    "newSourceHttpRequests": 0,
+    "fullProductionLiveSuites": 0
+  },
+  "originalLiveAccessEvidence": "reports/source-maintenance/local/qualifications/2026-10-28T055134Z-openscore-rights-and-wikibooks/wikibooks-access.json",
+  "originalLiveAccessBoundary": "Five identified HTTP200 responses from2026-10-28T05:39Z establish siteinfo/search/parse shapes; no fresh adapter HTTP requests were made.",
+  "rights": {
+    "documentLicense": "unknown",
+    "pageContributions": "CC-BY-SA-4.0",
+    "underlyingLyricsAndMusic": "unknown",
+    "revisionHistoryAttributionAndModificationNoticeRetained": true
+  },
+  "staticReview": "No blocker found after parentNode API fix and notation-specific validation. Only invented snippets are committed in tests.",
+  "validationBoundaries": {
+    "syntheticFlutterCases": "Written, not run under no-Flutter-tool boundary",
+    "analysis": "Not run; pure-Dart replay compiled and executed the adapter and domain path",
+    "freshExactAdapterHttp": "Pending; captured search used5rows, adapter requests10",
+    "nativeSqliteDevice": "Not tested",
+    "managedCloud": "Not tested",
+    "sourceRegistryCatalogRelease": "Unchanged; source remains unregistered/off by default",
+    "wholeCorpusAccuracyOrCoverage": "Not established; missing/unsupported page content remains item-level failure"
+  },
+  "rawDocumentsLyricsReferencesCredentialsPublished": false,
+  "productionLatestReportsReplaced": false,
+  "allLocalSdkBuildDeviceReservationsReleased": true
+}
