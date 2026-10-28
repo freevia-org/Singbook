@@ -14,7 +14,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   sqfliteFfiInit();
   test(
-    'offline bootstrap uses channel9 with native sources disabled',
+    'offline channel9 enables qualified Chords and Tabs and keeps OpenScore off',
     () async {
       final repo = await LibraryRepository.open(
         path: inMemoryDatabasePath,
@@ -37,7 +37,7 @@ void main() {
         expect(app.providerEnabled('utaitedb'), true);
         expect(app.providerEnabled('startjamming'), true);
         expect(app.providerEnabled('lyricsplus'), true);
-        expect(app.providerEnabled('chordsandtabs'), false);
+        expect(app.providerEnabled('chordsandtabs'), true);
         expect(app.providerEnabled('pisni'), false);
         expect(app.providerEnabled('openscorelieder'), false);
         for (final id in [
@@ -57,10 +57,14 @@ void main() {
           true,
         );
         expect(
+          app.providers.singleWhere((p) => p.id == 'chordsandtabs').configured,
+          true,
+        );
+        expect(
           app.discovery.catalogClient!.runtime.catalog!.sources,
           hasLength(31),
         );
-        expect(app.discovery.catalogClient!.runtime.catalog!.revision, 21);
+        expect(app.discovery.catalogClient!.runtime.catalog!.revision, 22);
         expect(requests, 0);
         await app.setProviderEnabled('amll', false);
         await app.setProviderEnabled('vocadb', false);
@@ -181,6 +185,7 @@ void main() {
           'utaitedb': false,
           'startjamming': false,
           'lyricsplus': false,
+          'chordsandtabs': false,
           'worshiptogether': true,
           'openscorelieder': false,
         },
@@ -258,7 +263,7 @@ void main() {
       try {
         await app.initialize();
         expect(await repo.getSetting(SourceCatalogClient.cacheKey), isNull);
-        expect(app.discovery.catalogClient!.runtime.catalog!.revision, 21);
+        expect(app.discovery.catalogClient!.runtime.catalog!.revision, 22);
         expect(
           app.discovery.catalogClient!.runtime.catalog!.sources,
           hasLength(31),
@@ -271,6 +276,12 @@ void main() {
         );
         expect(app.providerEnabled('lyricsplus'), false);
         expect(app.providerEnabled('chordsandtabs'), false);
+        expect(
+          app.providers
+              .singleWhere((provider) => provider.id == 'chordsandtabs')
+              .configured,
+          true,
+        );
         expect(app.providerEnabled('pisni'), false);
         expect(app.providerEnabled('openscorelieder'), false);
         expect(

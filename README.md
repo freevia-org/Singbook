@@ -114,9 +114,9 @@ networking (Cronet) and Google sign-in on a release APK before publishing.
 
 ### Google Play release
 
-Current source candidate: `0.2.29+43` (based on main `b06849a`; platform packages are not yet
+Current source candidate: `0.2.30+44` (based on main `3e1bfe2`; platform packages are not yet
 built or submitted). Every new release increments both the visible patch version and the
-build number: `0.2.28+42`, `0.2.29+43`, and so on. The number after
+build number: `0.2.28+42`, `0.2.29+43`, `0.2.30+44`, and so on. The number after
 `+` is the Play versionCode and must always increase; never reset it when the
 visible version changes. Rebuilds of the same release and promotion between
 internal testing and production keep the same version. Update `pubspec.yaml`,
@@ -131,7 +131,7 @@ a locale config for all 34 app languages (one per `lib/l10n/app_*.arb`; keep
 
 ```powershell
 .\scripts\build-android.ps1 -Bundle -Production   # signed .aab + symbols + SHA-256 in artifacts\
-.\scripts\verify-release.ps1 -Path artifacts\singbook-0.2.29+43-release.aab
+.\scripts\verify-release.ps1 -Path artifacts\singbook-0.2.30+44-release.aab
 ```
 
 The build script refuses to overwrite an existing artifact of the same version

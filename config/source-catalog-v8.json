@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "extractionSchemaVersion": 1,
-  "revision": 20,
-  "publishedAt": "2026-10-28T00:56:07Z",
+  "revision": 21,
+  "publishedAt": "2026-10-28T12:56:56Z",
   "sources": [
     {
       "id": "genius",
@@ -1599,23 +1599,79 @@
       "id": "chordsandtabs",
       "name": "Chords and Tabs",
       "adapter": "builtin",
-      "status": "disabled",
-      "revision": 1,
+      "status": "active",
+      "revision": 2,
       "capabilities": [
         "catalog",
         "chords",
         "lyrics",
         "metadata"
       ],
-      "enabledByDefault": false,
+      "enabledByDefault": true,
       "accessMode": "publicPage",
       "website": "https://www.chords-and-tabs.net",
       "attribution": "Chords and Tabs",
       "hosts": [
         "www.chords-and-tabs.net"
       ],
-      "probes": [],
-      "changeReason": "Introduce a compatible catalog channel for the native adapter; keep it disabled until source qualification is complete."
+      "probes": [
+        {
+          "id": "hey-jude-beatles-chart-v4",
+          "query": "Hey Jude",
+          "expectedTitle": "Hey Jude",
+          "expectedArtist": "The Beatles",
+          "candidate": {
+            "providerId": "chordsandtabs",
+            "id": "/song/name/the-beatles-hey-jude-7",
+            "title": "Hey Jude",
+            "artist": "The Beatles",
+            "url": "https://www.chords-and-tabs.net/song/name/the-beatles-hey-jude-7",
+            "metadata": {
+              "identityScope": "arrangement",
+              "searchChartTypeHint": "chords",
+              "searchChartVersionHint": 4
+            }
+          },
+          "requiredFields": [
+            "body",
+            "chords",
+            "metadata"
+          ],
+          "requiredMetadataFields": [
+            "identityScope",
+            "sourceChartType"
+          ]
+        },
+        {
+          "id": "bohemian-rhapsody-queen-chart-v8",
+          "query": "Bohemian Rhapsody",
+          "expectedTitle": "Bohemian rhapsody",
+          "expectedArtist": "Queen",
+          "candidate": {
+            "providerId": "chordsandtabs",
+            "id": "/song/name/queen-bohemian-rhapsody-37",
+            "title": "Bohemian rhapsody",
+            "artist": "Queen",
+            "url": "https://www.chords-and-tabs.net/song/name/queen-bohemian-rhapsody-37",
+            "metadata": {
+              "identityScope": "arrangement",
+              "searchChartTypeHint": "chords",
+              "searchChartVersionHint": 8
+            }
+          },
+          "requiredFields": [
+            "body",
+            "chords",
+            "metadata"
+          ],
+          "requiredMetadataFields": [
+            "identityScope",
+            "sourceChartType"
+          ]
+        }
+      ],
+      "changeReason": "Activated for channel 8 after two Android search/select/resolve/save/offline-reopen canaries, a retained-response offline replay, and provider regression checks. ChordPro attribution and original payloads are retained; these checks do not establish independent musical accuracy or per-work rights, which remain unknown.",
+      "description": "Community-submitted chord charts and lyrics. Source attribution and original payload are retained; per-work rights are not independently verified, and arrangement-specific charts do not establish recording identity or musical accuracy."
     },
     {
       "id": "pisni",

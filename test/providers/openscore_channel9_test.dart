@@ -44,7 +44,7 @@ void main() {
       '17b80d9ad891e2447b9dfbade1ba7d9b3e048f2f2ea53751672258a4dc7da90b',
       'bc698ebbbe0bdec8583a44d1dd05422a9e0d423228d61ccd7be20ea80c5f932d',
       'b192e129d56664ddc04fea41be863cbb9e4c9f92eb7b3e5b76717e2a0b171e76',
-      'e256881e2fda5b1d575f03189c392ff798a9ae471b951413d9633d24d17dfa13',
+      '92aca68ba9395c89b6f78d29ae5a154f78996d3ab9c417b9b1fafa7ed850137c',
     ];
     for (var channel = 1; channel <= hashes.length; channel++) {
       final bytes = File(_catalogPath(channel)).readAsBytesSync();
@@ -59,7 +59,7 @@ void main() {
     final rows = next['sources'] as List;
     expect(rows.take(oldRows.length).toList(), oldRows);
     expect(rows.length, oldRows.length + 1);
-    expect(next['revision'], 21);
+    expect(next['revision'], 22);
     expect(
       DateTime.parse(next['publishedAt'] as String).isAfter(
         DateTime.parse(old['publishedAt'] as String),
@@ -176,7 +176,7 @@ void main() {
     final prior = runtime.catalog;
     final providers = runtime.providers;
     final next = jsonDecode(_bundle(9)) as Map<String, dynamic>;
-    next['revision'] = 22;
+    next['revision'] = 23;
     (next['sources'] as List).add({
       ...((next['sources'] as List).last as Map),
       'id': 'uncompiledcandidate',
