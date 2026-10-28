@@ -1,0 +1,42 @@
+{
+  "sourceCommit": "8c852e873f9c82c1fcf6fe336e22f7bc690de9c9",
+  "localesChecked": 34,
+  "allArbKeysAndMetadataMatchTemplate": true,
+  "allLocaleRootsMatch": true,
+  "newAnalysisPlaceholderNamesExact": true,
+  "generatedDartUnchangedFromPreviouslyTestedHead": true,
+  "priorHeadIsAncestor": true,
+  "currentMainIsAncestor": true,
+  "schemaVersion": 1,
+  "qualificationType": "candidate-localization-ci-repair",
+  "sourceTree": "1326923ee6e38bed2c1df58763d561b4685b9eb4",
+  "publicMainMerged": "bdf42a442475614e2291d1bb5ce0fac47f06b901",
+  "historyPreserved": true,
+  "changedLocaleFiles": 33,
+  "changes": "Two missing placeholder metadata objects copied unchanged from English; all previous translated values preserved",
+  "generation": {
+    "command": "flutter gen-l10n",
+    "exitCode": 0,
+    "generatedDartChanges": false
+  },
+  "focusedTest": {
+    "command": "flutter test --no-pub test/ui/l10n_test.dart --reporter expanded",
+    "exitCode": 0,
+    "passed": 13,
+    "logSha256": "421c2f4bd2d320b0fc0902b45aaea7ea171cb68c52fba28417f3657c38c18ce3"
+  },
+  "sdkReservation": {
+    "type": "SDK-only",
+    "maxMinutes": 5,
+    "releasedAtUtc": "2026-10-28T19:44:00Z",
+    "emulatorUsed": false,
+    "gradleUsed": false,
+    "providerHttp": 0
+  },
+  "remaining": [
+    "Exact-head hosted CI verification by Integration",
+    "AcousticBrainz native second recording and version-details qualification",
+    "Managed-cloud qualification and cooldown/catalog publication gates"
+  ],
+  "productionLatestChanged": false
+}
