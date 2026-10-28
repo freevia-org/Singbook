@@ -44,6 +44,65 @@ void main() {
   });
 
   test(
+    'ambient curl config cannot add cookies or follow an unmeasured redirect',
+    () async {
+      final config = await Directory.systemTemp.createTemp('singbook-curl-test-');
+      const contents =
+          'header = "X-Ambient-Curl: synthetic"\n'
+          'cookie = "ambient=synthetic"\n'
+          'location\n';
+      for (final name in ['.curlrc', '_curlrc', 'curlrc']) {
+        await File('${config.path}${Platform.pathSeparator}$name')
+            .writeAsString(contents);
+      }
+      final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+      final paths = <String>[];
+      final cookies = <String?>[];
+      final ambientHeaders = <String?>[];
+      server.listen((request) async {
+        paths.add(request.uri.path);
+        cookies.add(request.headers.value('cookie'));
+        ambientHeaders.add(request.headers.value('x-ambient-curl'));
+        if (request.uri.path == '/start') {
+          request.response
+            ..statusCode = 302
+            ..headers.set('location', '/followed');
+        }
+        request.response.write('Synthetic local response');
+        await request.response.close();
+      });
+      final client = DesktopMaintenanceClient(
+        curlExecutable: Platform.isWindows ? 'curl.exe' : 'curl',
+        processStarter: (executable, arguments) {
+          expect(arguments.first, '--disable');
+          return Process.start(
+            executable,
+            arguments,
+            environment: {
+              'CURL_HOME': config.path,
+              'XDG_CONFIG_HOME': config.path,
+            },
+          );
+        },
+      );
+      try {
+        final response = await client.get(
+          Uri.parse('http://127.0.0.1:${server.port}/start'),
+        );
+        expect(response.statusCode, 302);
+        expect(response.headers['location'], '/followed');
+        expect(paths, ['/start']);
+        expect(cookies, [null]);
+        expect(ambientHeaders, [null]);
+      } finally {
+        client.close();
+        await server.close(force: true);
+        await config.delete(recursive: true);
+      }
+    },
+  );
+
+  test(
     'real curl preserves a same-host redirect for transport validation',
     () async {
       final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
