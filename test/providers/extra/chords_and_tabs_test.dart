@@ -28,11 +28,13 @@ String _page({
       '<div class="song"><sup>C</sup>Morning light<sup>G7</sup> shines.</div>'
       '<div class="song"><sup>F</sup>Bright skies.</div>',
   String badges = '<span class="x-badge">Tuning: E A D G B E</span>',
+  String? canonical =
+      'https://www.chords-and-tabs.net/song/name/artist-test-song',
 }) =>
     '''
 <!doctype html>
 <html><head>
-<link rel="canonical" href="https://www.chords-and-tabs.net/song/name/artist-test-song">
+${canonical == null ? '' : '<link rel="canonical" href="$canonical">'}
 <script type="application/ld+json">{"@type":"MusicRecording","name":"$title","byArtist":{"@type":"MusicGroup","name":"$artist"}}</script>
 </head><body>
 <h1><a>$artist</a> - $title</h1>
@@ -115,6 +117,131 @@ void main() {
       expect(result.body, contains('[C]Morning'));
     },
   );
+
+  test('resolved metadata comes only from the validated chart page', () {
+    final parsed = ChordsAndTabsProvider.parseSearch(
+      _search,
+      'Artist Test Song',
+    ).single;
+    final selected = SongCandidate(
+      providerId: parsed.providerId,
+      id: parsed.id,
+      title: parsed.title,
+      artist: parsed.artist,
+      url: parsed.url,
+      album: 'Caller Album',
+      durationSeconds: 222,
+      metadata: const {
+        'key': 'F#m',
+        'isrc': 'CALLER-ISRC',
+        'album': 'Caller Metadata Album',
+        'artworkUrl': 'https://caller.example/artwork.jpg',
+        'artistEvidence': {'name': 'Caller Artist'},
+        'mediaLinks': [
+          {'url': 'https://caller.example/recording'},
+        ],
+        'identityScope': 'recording',
+      },
+      recordingIds: const {'isrc': 'CALLER-ISRC'},
+      extra: const {'callerEvidence': true},
+    );
+
+    final absentKey = ChordsAndTabsProvider.parsePage(_page(), selected);
+    expect(absentKey.candidate.title, 'Test Song');
+    expect(absentKey.candidate.artist, 'Artist');
+    expect(absentKey.candidate.album, isNull);
+    expect(absentKey.candidate.durationSeconds, isNull);
+    expect(absentKey.candidate.recordingIds, isEmpty);
+    expect(absentKey.candidate.extra, isEmpty);
+    expect(absentKey.metadata, {
+      'identityScope': 'arrangement',
+      'tuning': ['E', 'A', 'D', 'G', 'B', 'E'],
+    });
+
+    final pageKey = ChordsAndTabsProvider.parsePage(
+      _page(badges: '<span class="x-badge">Key: C</span>'),
+      selected,
+    );
+    expect(pageKey.metadata['key'], 'C');
+    expect(pageKey.metadata, isNot(contains('isrc')));
+    expect(pageKey.metadata, isNot(contains('album')));
+    expect(pageKey.metadata, isNot(contains('artworkUrl')));
+    expect(pageKey.metadata, isNot(contains('artistEvidence')));
+    expect(pageKey.metadata, isNot(contains('mediaLinks')));
+  });
+
+  test('canonical evidence is validated and request fallback is identified', () {
+    final candidate = ChordsAndTabsProvider.parseSearch(
+      _search,
+      'Artist Test Song',
+    ).single;
+    final noCanonical = ChordsAndTabsProvider.parsePage(
+      _page(canonical: null),
+      candidate,
+    );
+    expect(noCanonical.extra['pageIdentityEvidence'], {
+      'basis': 'validated_request_url',
+      'url': candidate.url,
+    });
+
+    final duplicate = _page().replaceFirst(
+      '<link rel="canonical" href="https://www.chords-and-tabs.net/song/name/artist-test-song">',
+      '<link rel="canonical" href="https://www.chords-and-tabs.net/song/name/artist-test-song">'
+          '<link rel="canonical" href="https://www.chords-and-tabs.net/song/name/artist-test-song">',
+    );
+    final canonical = ChordsAndTabsProvider.parsePage(duplicate, candidate);
+    expect(canonical.extra['pageIdentityEvidence'], {
+      'basis': 'publisher_canonical',
+      'url': candidate.url,
+    });
+
+    expect(
+      () => ChordsAndTabsProvider.parsePage(
+        _page(canonical: 'https://evil.example/song/name/artist-test-song'),
+        candidate,
+      ),
+      throwsA(_failure('invalid_selection')),
+    );
+    expect(
+      () => ChordsAndTabsProvider.parsePage(
+        _page(canonical: '/song/name/artist-test-song'),
+        candidate,
+      ),
+      throwsA(_failure('invalid_selection')),
+    );
+    expect(
+      () => ChordsAndTabsProvider.parsePage(
+        _page(canonical: 'https://www.chords-and-tabs.net/song/name/other'),
+        candidate,
+      ),
+      throwsA(_failure('identity_mismatch')),
+    );
+    final conflicting = _page().replaceFirst(
+      '</head>',
+      '<link rel="canonical" href="https://www.chords-and-tabs.net/song/name/other"></head>',
+    );
+    expect(
+      () => ChordsAndTabsProvider.parsePage(conflicting, candidate),
+      throwsA(_failure('identity_mismatch')),
+    );
+    expect(
+      () => ChordsAndTabsProvider.parsePage(
+        _page(canonical: 'https://www.chords-and-tabs.net/song/name/bad%zz'),
+        candidate,
+      ),
+      throwsA(_failure('invalid_selection')),
+    );
+    expect(
+      () => ChordsAndTabsProvider.parsePage(
+        _page().replaceFirst(
+          ' href="https://www.chords-and-tabs.net/song/name/artist-test-song"',
+          '',
+        ),
+        candidate,
+      ),
+      throwsA(_failure('invalid_selection')),
+    );
+  });
 
   test(
     'search returns chord sheets with exact artist and title identity',

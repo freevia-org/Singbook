@@ -85,6 +85,7 @@ class ChordsAndTabsProvider implements LyricsProvider {
     final uri = Uri.tryParse(value);
     final path = uri == null ? value : uri.path;
     if (value.length > 1500 ||
+        RegExp(r'%(?![0-9a-f]{2})', caseSensitive: false).hasMatch(value) ||
         uri == null ||
         (uri.isAbsolute
             ? (uri.origin != _base || uri.userInfo.isNotEmpty)
@@ -185,11 +186,43 @@ class ChordsAndTabsProvider implements LyricsProvider {
       throw const ProviderException('invalid_selection');
     }
     final document = parseHtml(source);
-    final canonical = document
-        .querySelector('link[rel="canonical"]')
-        ?.attributes['href'];
-    if (canonical != null && _checkedPath(canonical) != path) {
-      throw const ProviderException('identity_mismatch');
+    final canonicalLinks = document
+        .querySelectorAll('link[rel]')
+        .where(
+          (link) => (link.attributes['rel'] ?? '')
+              .split(RegExp(r'\s+'))
+              .any((relation) => relation.toLowerCase() == 'canonical'),
+        )
+        .toList();
+    String? canonicalUrl;
+    if (canonicalLinks.isNotEmpty) {
+      final declaredUrls = canonicalLinks
+          .map((link) => link.attributes['href'])
+          .toList();
+      if (declaredUrls.any(
+        (value) => value == null || value.isEmpty || value != value.trim(),
+      )) {
+        throw const ProviderException('invalid_selection');
+      }
+      final urls = declaredUrls.cast<String>();
+      if (urls.toSet().length != 1) {
+        throw const ProviderException('identity_mismatch');
+      }
+      canonicalUrl = urls.toSet().single;
+      final canonicalUri = Uri.tryParse(canonicalUrl);
+      if (canonicalUri == null ||
+          !canonicalUri.isAbsolute ||
+          !canonicalUri.hasAuthority ||
+          RegExp(
+            r'%(?![0-9a-f]{2})',
+            caseSensitive: false,
+          ).hasMatch(canonicalUri.path)) {
+        throw const ProviderException('invalid_selection');
+      }
+      final canonicalPath = _checkedPath(canonicalUrl);
+      if (canonicalPath != path) {
+        throw const ProviderException('identity_mismatch');
+      }
     }
 
     final header = document.querySelector('h1');
@@ -246,13 +279,12 @@ class ChordsAndTabsProvider implements LyricsProvider {
     }
     final metadata = _explicitMetadata(document);
     final candidate = SongCandidate(
-      providerId: selected.providerId,
-      id: selected.id,
-      title: selected.title,
-      artist: selected.artist,
-      album: selected.album,
+      providerId: 'chordsandtabs',
+      id: path,
+      title: pageTitle,
+      artist: pageArtist,
       url: expectedUrl,
-      metadata: {...selected.metadata, ...metadata},
+      metadata: {'identityScope': 'arrangement', ...metadata},
     );
     const attribution = 'Chords and Tabs';
     return SourceResult(
@@ -273,6 +305,12 @@ class ChordsAndTabsProvider implements LyricsProvider {
         'chartInstrument': chartType.classes.contains('typeukulele')
             ? 'ukulele'
             : 'guitar',
+        'pageIdentityEvidence': {
+          'basis': canonicalUrl == null
+              ? 'validated_request_url'
+              : 'publisher_canonical',
+          'url': canonicalUrl ?? expectedUrl,
+        },
       },
     );
   }
