@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "atUtc": "2026-10-28T03:38:21.350627+00:00",
+  "sourcePr": "https://github.com/freevia-org/Singbook/pull/201",
+  "sourceFinalHead": "76ecb5641ffd57736dffef282ac124cd4902db01",
+  "sourceMergeCommit": "e25658fb194f1d21ce919f2c8498811e8a6ba684",
+  "sourceMergedAt": "2026-10-28T02:54:31Z",
+  "currentMainObserved": "b06849a3ce9cd07e4d75f4580b7baaafba4b4bf8",
+  "acceptance": "Final source head passed eight applicable hosted checks. Two native Android canaries passed search/select/save/offline-reopen on the preceding source body; all four retained native HTTP packets and the added cancellation guard passed exact-final-head offline replay with zero network requests.",
+  "nativeReceipt": "reports/source-maintenance/local/qualifications/2026-10-28T022253Z-candt-android/report.json",
+  "finalHeadReplayReceipt": "reports/source-maintenance/local/qualifications/2026-10-28T025835Z-source-followups/candt-current-head-replay.json",
+  "catalogBoundary": "Current main still selects config/source-catalog-v8.json, revision20, 30 rows. Chords & Tabs and Pisni remain disabled/default false. Revision21 activation packet is review-only, not a served catalog change.",
+  "cloudBoundary": "A distinct retained managed-cloud LyricsPlus qualification succeeded on 2026-10-27T21:36:12Z. It does not establish current 30-source production coverage or cloud Chords & Tabs/Pisni reachability. Existing cloud owner route handed to Integration; no new cloud task or schedule created.",
+  "productionLatestFilesReplaced": false,
+  "additionalFullProductionLiveSuites": 0,
+  "additionalSongContentRequests": 0,
+  "resources": "All own SDK/build/emulator/file reservations released; user libraries and unrelated devices preserved.",
+  "rawSourceDocumentsOrSecretsPublished": false
+}

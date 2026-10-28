@@ -1,0 +1,32 @@
+{
+  "atUtc": "2026-10-28T03:27:09.676001Z",
+  "runtime": "local Windows Flutter-bundled Dart maintenance HTTP client",
+  "sourceCommit": "a4bf065337669731e617c78ec16a23c982183845",
+  "url": "https://ws-export.wmcloud.org/",
+  "method": "GET",
+  "maximumResponseBytes": 524288,
+  "maxRetries": 0,
+  "scope": "publisher_documented_export_entry_only",
+  "reason": "Previously incomplete Wikisource file-import coverage had web-research denial evidence only. Check local access and exposed formats without downloading a song/book or inferring local failure from cloud/web observations.",
+  "fullProductionSuiteRepeated": false,
+  "cookiesCredentialsOrChallengeWorkarounds": false,
+  "outcome": "export_entry_access_not_qualified",
+  "reasonCode": "timeout",
+  "httpDiagnostics": {
+    "networkFailures": 0,
+    "hosts": {
+      "ws-export.wmcloud.org": {
+        "requests": 1,
+        "statuses": {},
+        "retryAfterSeconds": {},
+        "databaseLag": {}
+      }
+    }
+  },
+  "bookOrLyricDownloads": 0,
+  "rawResponsePublished": false,
+  "resolved": false,
+  "interpretation": "One local export-entry request timed out. This neither identifies a proxy/CAPTCHA block nor invalidates separately passing Wikisource lookup/extraction canaries.",
+  "next": "Keep fileImport unverified until a supported accessible export and real import canaries pass. Do not substitute successful HTML lookup or a synthetic decoder test for export/import evidence.",
+  "userAction": "None required for this timeout; no unattended browser/session workaround."
+}
