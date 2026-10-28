@@ -1,8 +1,11 @@
 # OpenScore compatible-channel proposal
 
-This is a local, unmerged proposal based on public main
+This is an unmerged draft proposal based on public main
 `c77b221f1575236923b22dcea0f6672887bf11af` plus the exact reviewed adapter
-commits from PR205 (`66d9f19`, `7066213`). The adapter files are unchanged.
+commits from PR205 (`66d9f19`, `7066213`, `a23beba`). The adapter files match
+that source dependency exactly. The last amendment records document rights as
+unknown and scopes CC0 to the publisher's contributed corpus; its retained-response
+replay preserves both canaries' body, metadata, attribution and original bytes.
 The reader repair in PR206 is separate and is not included. Release 43's
 version, signing, package identity and verified artifacts are unchanged.
 
@@ -32,9 +35,11 @@ v8 tests simulate a v8 registry rather than claiming full-current coverage.
 
 Local verification is SDK-free Python structural checking and diff review.
 Flutter/Dart tests and analysis are written but not run in this worktree under
-the coordinator's no-SDK instruction. No device, build, source HTTP, credentials,
-cloud task or schedule is used. This proposal must receive exact-head runtime
-checks and coordinator review before a draft PR is pushed or integration occurs.
+the coordinator's no-SDK instruction. Hosted checks qualify only their recorded
+PR head; results before the rights amendment do not qualify the amended head.
+No local device, build, source HTTP, credentials, cloud task or schedule is used.
+This proposal requires passing exact-head hosted checks and coordinator review
+before integration.
 
 Prior native qualification belongs to source `66d9f19` plus reader `1eb30e8`;
 the cancellation amendment has its own final-head replay and concurrency tests.
