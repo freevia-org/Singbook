@@ -494,16 +494,23 @@ class SourceCatalogEntry {
 }
 
 /// Exposes the catalog definition while preserving an existing builtin's work.
+/// The factory preserves optional capabilities instead of advertising them
+/// for delegates that do not implement them.
 class ConfiguredBuiltinProvider
-    implements
-        LyricsProvider,
-        ContextualLyricsSearch,
-        PublishedTitleAliasEvidence {
-  ConfiguredBuiltinProvider(this.entry, this.delegate) {
+    implements LyricsProvider, PublishedTitleAliasEvidence {
+  factory ConfiguredBuiltinProvider(
+    SourceCatalogEntry entry,
+    LyricsProvider delegate,
+  ) {
     if (entry.adapter != 'builtin' || entry.id != delegate.definition.id) {
       throw ArgumentError('Builtin entry and delegate ids must match');
     }
+    return delegate is ContextualLyricsSearch
+        ? _ConfiguredContextualBuiltinProvider(entry, delegate)
+        : ConfiguredBuiltinProvider._(entry, delegate);
   }
+
+  ConfiguredBuiltinProvider._(this.entry, this.delegate);
 
   final SourceCatalogEntry entry;
   final LyricsProvider delegate;
@@ -533,35 +540,6 @@ class ConfiguredBuiltinProvider
   }) => delegate.search(query, cancel: cancel);
 
   @override
-  bool canReuseSearchForSelection(
-    SongCandidate selection,
-    List<SongCandidate> candidates,
-  ) {
-    final inner = delegate;
-    return inner is! ContextualLyricsSearch ||
-        (inner as ContextualLyricsSearch).canReuseSearchForSelection(
-          selection,
-          candidates,
-        );
-  }
-
-  @override
-  Future<List<SongCandidate>> searchForSelection(
-    SongCandidate selection, {
-    required String fallbackQuery,
-    CancellationToken? cancel,
-  }) {
-    final inner = delegate;
-    return inner is ContextualLyricsSearch
-        ? (inner as ContextualLyricsSearch).searchForSelection(
-            selection,
-            fallbackQuery: fallbackQuery,
-            cancel: cancel,
-          )
-        : inner.search(fallbackQuery, cancel: cancel);
-  }
-
-  @override
   String? publishedTitleAliasForSelection(
     SongCandidate selection,
     SongCandidate candidate,
@@ -578,6 +556,30 @@ class ConfiguredBuiltinProvider
     SongCandidate candidate, {
     CancellationToken? cancel,
   }) => delegate.resolve(candidate, cancel: cancel);
+}
+
+class _ConfiguredContextualBuiltinProvider extends ConfiguredBuiltinProvider
+    implements ContextualLyricsSearch {
+  _ConfiguredContextualBuiltinProvider(super.entry, super.delegate) : super._();
+
+  ContextualLyricsSearch get contextual => delegate as ContextualLyricsSearch;
+
+  @override
+  bool canReuseSearchForSelection(
+    SongCandidate selection,
+    List<SongCandidate> candidates,
+  ) => contextual.canReuseSearchForSelection(selection, candidates);
+
+  @override
+  Future<List<SongCandidate>> searchForSelection(
+    SongCandidate selection, {
+    required String fallbackQuery,
+    CancellationToken? cancel,
+  }) => contextual.searchForSelection(
+    selection,
+    fallbackQuery: fallbackQuery,
+    cancel: cancel,
+  );
 }
 
 /// Applies whole catalog snapshots atomically; omitted and inactive entries are

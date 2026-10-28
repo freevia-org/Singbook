@@ -5,6 +5,7 @@ import 'package:singbook/domain/combine.dart';
 import 'package:singbook/domain/models.dart' show jsonMap;
 import 'package:singbook/providers/core/service.dart';
 import 'package:singbook/providers/provider.dart';
+import 'package:singbook/providers/source_catalog.dart';
 
 const _selected = SongCandidate(
   providerId: 'genius',
@@ -174,6 +175,51 @@ class _LatinLyricsProvider implements LyricsProvider {
         'Another invented line keeps the fixture away from real song text',
   );
 }
+
+class _ContextualLatinLyricsProvider extends _LatinLyricsProvider
+    implements ContextualLyricsSearch {
+  final selections = <String>[];
+
+  @override
+  bool canReuseSearchForSelection(
+    SongCandidate selection,
+    List<SongCandidate> candidates,
+  ) {
+    selections.add('reuse:${selection.id}:${candidates.length}');
+    return false;
+  }
+
+  @override
+  Future<List<SongCandidate>> searchForSelection(
+    SongCandidate selection, {
+    required String fallbackQuery,
+    CancellationToken? cancel,
+  }) {
+    selections.add('search:${selection.id}:$fallbackQuery');
+    return search(fallbackQuery, cancel: cancel);
+  }
+}
+
+Map<String, Object?> _builtinEntry(String id) => {
+  'id': id,
+  'name': id,
+  'adapter': 'builtin',
+  'status': 'active',
+  'revision': 1,
+  'capabilities': ['catalog', 'lyrics', if (id == 'chordcatalog') 'chords'],
+  'enabledByDefault': true,
+  'accessMode': 'public',
+  'website': 'https://example.org/',
+  'hosts': <String>[],
+};
+
+SourceCatalog _catalogFor(List<String> providerIds) => SourceCatalog.fromJson({
+  'schemaVersion': 1,
+  'extractionSchemaVersion': 1,
+  'revision': 1,
+  'publishedAt': '2026-10-28T00:00:00Z',
+  'sources': [for (final id in providerIds) _builtinEntry(id)],
+});
 
 void main() {
   test(
@@ -394,6 +440,71 @@ void main() {
         isFalse,
       );
       expect(restored.hasChords, isTrue);
+    },
+  );
+
+  test(
+    'configured runtime chart wrapper keeps Latin alias fallback available',
+    () async {
+      final japanese = _JapaneseRecordingLyricsProvider();
+      final chartProvider = _RomanizedChordProvider();
+      final runtime = SourceCatalogRuntime(
+        builtins: [japanese, chartProvider],
+        createProvider: (_) => throw StateError('No dynamic adapters expected'),
+      )..apply(_catalogFor(['genius', 'chordcatalog']));
+      final configuredChart = runtime.providers.singleWhere(
+        (provider) => provider.definition.id == 'chordcatalog',
+      );
+
+      expect(configuredChart.definition.enabledByDefault, isTrue);
+      expect(configuredChart, isNot(isA<ContextualLyricsSearch>()));
+      final sources = await SourceDiscoveryService(
+        runtime.providers,
+      ).discover(_selected);
+      final native = sources.singleWhere(
+        (source) => source.candidate.providerId == 'genius',
+      );
+      final chart = sources.singleWhere(
+        (source) => source.candidate.providerId == 'chordcatalog',
+      );
+
+      expect(chartProvider.queries, [
+        '上を向いて歩こう (SUKIYAKI) 坂本九 (Kyu Sakamoto)',
+        'SUKIYAKI Kyu Sakamoto',
+      ]);
+      expect(chart.matchKind, MatchKind.sameSong);
+      expect(chart.body, _romanizedChartBody);
+      expect(native.body, _nativeJapaneseLyrics);
+      expect(chart.candidate.title, 'Sukiyaki');
+      expect(chart.candidate.artist, 'Kyu Sakamoto');
+    },
+  );
+
+  test(
+    'configured contextual delegates retain and forward their capability',
+    () async {
+      final delegate = _ContextualLatinLyricsProvider();
+      final runtime = SourceCatalogRuntime(
+        builtins: [delegate],
+        createProvider: (_) => throw StateError('No dynamic adapters expected'),
+      )..apply(_catalogFor(['latinlyrics']));
+      final configured = runtime.providers.single;
+
+      expect(configured, isA<ContextualLyricsSearch>());
+      final contextual = configured as ContextualLyricsSearch;
+      expect(
+        contextual.canReuseSearchForSelection(_selected, const []),
+        isFalse,
+      );
+      final result = await contextual.searchForSelection(
+        _selected,
+        fallbackQuery: 'Sukiyaki Kyu Sakamoto',
+      );
+      expect(delegate.selections, [
+        'reuse:${_selected.id}:0',
+        'search:${_selected.id}:Sukiyaki Kyu Sakamoto',
+      ]);
+      expect(result.single.id, _latinCandidate.id);
     },
   );
 
