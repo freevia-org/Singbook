@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "measuredAt": "2026-10-28T12:47:39.159878+00:00",
+  "runtime": "local Windows followup to scheduled2026-10-28 run",
+  "productionReport": "reports/source-maintenance/local/2026-10-28T072235Z.json",
+  "requestBudget": {
+    "productionSuites": 1,
+    "productionProviderHttpAttempts": 101,
+    "productionHttp429": 0,
+    "selectedMusicBrainzDiagnosticRequests": 2,
+    "separateOzbcozImportRequests": 2,
+    "additionalContentHttpForCurrentFollowup": 0,
+    "publicationRawGitHubRequests": 3,
+    "publicationStatuses": {
+      "200": 3
+    },
+    "documentationReader429": "separate research request, not provider CLI evidence"
+  },
+  "roadblocks": [
+    {
+      "step": "LRCLIB local canaries",
+      "safeReason": "Three HTTP503 responses with Retry-After1, not HTTP429 or evidence of a daily quota.",
+      "tried": "Ordinary bounded CLI retries; four HTTP200 responses; canaries passed.",
+      "resolved": true,
+      "userAction": "None."
+    },
+    {
+      "step": "MusicBrainz optional release/artwork canary",
+      "safeReason": "One transport failure omitted artwork-dependent album; checker wrongly called this identity_mismatch.",
+      "tried": "Two targeted diagnostic HTTP200 responses recovered exact expected identity. Offline replay and64 focused regressions verified repair; PR209 merged as2e0a77d.",
+      "resolved": true,
+      "limitation": "Original dated measurement retained unchanged; it is not retroactively rewritten healthy.",
+      "userAction": "None."
+    },
+    {
+      "step": "SyncLRC catalog search",
+      "safeReason": "HTTP200 search response had no results for declared canary; timed direct retrieval canaries passed.",
+      "tried": "Scheduled catalog and direct extraction probes only; no extra full-suite retry.",
+      "resolved": false,
+      "userAction": "None requested. Await publisher/search evidence before changing the adapter."
+    },
+    {
+      "step": "BetterLyrics",
+      "safeReason": "Endpoint returned HTTP401, preventing all claimed capabilities from being validated.",
+      "tried": "One scheduled request; recorded access failure and stopped. No token substitution or unofficial access workaround.",
+      "resolved": false,
+      "userAction": "None requested; publisher-supported access must be established before claiming repair."
+    },
+    {
+      "step": "Chordie fileImport capability",
+      "safeReason": "Ordinary lyrics/chords extraction passes locally; independent publisher copy/download ingestion has not been qualified.",
+      "tried": "Existing primary workflow documentation research found no qualified download; preserved separate fileImport gap.",
+      "resolved": false,
+      "userAction": "None. A real supported copy/download workflow and import canaries remain engineering work."
+    },
+    {
+      "step": "Wikisource fileImport capability",
+      "safeReason": "Direct historical-text lookup passes; separate export-entry local request timed out. Documented export formats also lack a qualified app import path.",
+      "tried": "One bounded export-entry request at03:27Z, no retry, no book/lyric download, cookies or challenge workaround.",
+      "resolved": false,
+      "userAction": "None. Accessible supported export and real ingestion canaries are required."
+    },
+    {
+      "step": "Ozbcoz host import setup",
+      "safeReason": "Initial isolated Flutter host test lacked generated package graph; no provider HTTP was issued before setup recovery.",
+      "tried": "Restored same-lock generated package graph in ignored local runtime metadata. Then two real HTTP200 downloads passed decoder/controller/SQLite reopen/export checks with144 chord tokens retained.",
+      "resolved": true,
+      "limitation": "Supplemental host imports establish file ingestion, not native picker or general catalog search; ordinary CLI accurately remains import_only.",
+      "userAction": "None."
+    },
+    {
+      "step": "Chords & Tabs and Pisni production rollout",
+      "safeReason": "Current v8 catalog explicitly disables both pending coordinated app/catalog qualification. No disabled-source canary is called healthy.",
+      "tried": "Existing separate candidate/native evidence retained; PR210 unknown-version fix passed all8 hosted checks and merged.",
+      "resolved": false,
+      "userAction": "None. Integration/release gates remain; this maintenance turn did not enable sources."
+    },
+    {
+      "step": "Cloud-only network coverage",
+      "safeReason": "Latest independent cloud run records network failures for Genius, Ultimate Guitar, YouTube Music and Chordie; these pass locally. Cloud Ozbcoz import returned400 while local host imports pass.",
+      "tried": "Compared cloud07:03Z and local07:22Z evidence without inferring one runtime from the other or rerunning the cloud job.",
+      "resolved": false,
+      "userAction": "None requested. Cloud transport/import qualification remains separate work."
+    },
+    {
+      "step": "Additional AcousticBrainz licensing/status documentation",
+      "safeReason": "One web research read of MusicBrainz documentation returned429, outside the maintenance CLI runtime.",
+      "tried": "Stopped without retry. Read accessible primary API reference only; no data API calls, provider implementation, legal-status conclusion or activation.",
+      "resolved": false,
+      "userAction": "None."
+    }
+  ],
+  "worshipTogether": "Intentionally retired per user instruction; not a new failure.",
+  "historyAndLatestReportsPreserved": true
+}
