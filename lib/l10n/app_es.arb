@@ -891,6 +891,23 @@
   },
   "sourceAnalysisHeading": "Análisis del audio enviado (sin verificar)",
   "sourceAnalysisCoverage": "Se muestran {shown} de {total} envíos",
+  "@sourceAnalysisCoverage": {
+    "placeholders": {
+      "shown": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
   "sourceAnalysisSample": "Muestra {number}",
+  "@sourceAnalysisSample": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
   "sourceAnalysisEstimatedTempo": "Tempo estimado (BPM)"
 }

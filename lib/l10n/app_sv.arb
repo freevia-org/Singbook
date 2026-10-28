@@ -892,6 +892,23 @@
   },
   "sourceAnalysisHeading": "Analys av inskickat ljud (overifierad)",
   "sourceAnalysisCoverage": "Visar {shown} av {total} inskickade bidrag",
+  "@sourceAnalysisCoverage": {
+    "placeholders": {
+      "shown": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
   "sourceAnalysisSample": "Prov {number}",
+  "@sourceAnalysisSample": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
   "sourceAnalysisEstimatedTempo": "Uppskattat tempo (BPM)"
 }

@@ -891,6 +891,23 @@
   },
   "sourceAnalysisHeading": "Beküldött hang elemzése (nem ellenőrzött)",
   "sourceAnalysisCoverage": "{shown} / {total} beküldés megjelenítve",
+  "@sourceAnalysisCoverage": {
+    "placeholders": {
+      "shown": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
   "sourceAnalysisSample": "Minta {number}",
+  "@sourceAnalysisSample": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
   "sourceAnalysisEstimatedTempo": "Becsült tempó (BPM)"
 }

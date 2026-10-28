@@ -891,6 +891,23 @@
   },
   "sourceAnalysisHeading": "सबमिट किए गए ऑडियो का विश्लेषण (असत्यापित)",
   "sourceAnalysisCoverage": "{total} में से {shown} सबमिशन दिखाए गए",
+  "@sourceAnalysisCoverage": {
+    "placeholders": {
+      "shown": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
   "sourceAnalysisSample": "नमूना {number}",
+  "@sourceAnalysisSample": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
   "sourceAnalysisEstimatedTempo": "अनुमानित टेम्पो (BPM)"
 }

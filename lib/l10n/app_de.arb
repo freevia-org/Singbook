@@ -891,6 +891,23 @@
   },
   "sourceAnalysisHeading": "Analyse der eingereichten Audiodaten (nicht verifiziert)",
   "sourceAnalysisCoverage": "{shown} von {total} eingereichten Aufnahmen angezeigt",
+  "@sourceAnalysisCoverage": {
+    "placeholders": {
+      "shown": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
   "sourceAnalysisSample": "Stichprobe {number}",
+  "@sourceAnalysisSample": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
   "sourceAnalysisEstimatedTempo": "Geschätztes Tempo (BPM)"
 }

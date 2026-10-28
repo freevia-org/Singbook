@@ -892,6 +892,23 @@
   },
   "sourceAnalysisHeading": "Phân tích âm thanh đã gửi (chưa xác minh)",
   "sourceAnalysisCoverage": "Đang hiển thị {shown}/{total} nội dung gửi",
+  "@sourceAnalysisCoverage": {
+    "placeholders": {
+      "shown": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
   "sourceAnalysisSample": "Mẫu {number}",
+  "@sourceAnalysisSample": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
   "sourceAnalysisEstimatedTempo": "Tempo ước tính (BPM)"
 }

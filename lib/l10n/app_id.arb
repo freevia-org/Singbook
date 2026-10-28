@@ -891,6 +891,23 @@
   },
   "sourceAnalysisHeading": "Analisis audio yang dikirim (belum terverifikasi)",
   "sourceAnalysisCoverage": "Menampilkan {shown} dari {total} kiriman",
+  "@sourceAnalysisCoverage": {
+    "placeholders": {
+      "shown": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
   "sourceAnalysisSample": "Sampel {number}",
+  "@sourceAnalysisSample": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
   "sourceAnalysisEstimatedTempo": "Tempo perkiraan (BPM)"
 }

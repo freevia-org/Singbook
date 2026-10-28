@@ -891,6 +891,23 @@
   },
   "sourceAnalysisHeading": "Esitatud heli analüüs (kinnitamata)",
   "sourceAnalysisCoverage": "Kuvatakse {shown} esitatud salvestist {total}-st",
+  "@sourceAnalysisCoverage": {
+    "placeholders": {
+      "shown": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
   "sourceAnalysisSample": "Näidis {number}",
+  "@sourceAnalysisSample": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
   "sourceAnalysisEstimatedTempo": "Hinnanguline tempo (BPM)"
 }

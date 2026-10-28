@@ -891,6 +891,23 @@
   },
   "sourceAnalysisHeading": "Analiza poslanog zvuka (nepotvrđena)",
   "sourceAnalysisCoverage": "Prikazano je {shown} od {total} poslanih snimki",
+  "@sourceAnalysisCoverage": {
+    "placeholders": {
+      "shown": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
   "sourceAnalysisSample": "Uzorak {number}",
+  "@sourceAnalysisSample": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
   "sourceAnalysisEstimatedTempo": "Procijenjeni tempo (BPM)"
 }

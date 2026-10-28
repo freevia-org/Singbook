@@ -892,6 +892,23 @@
   },
   "sourceAnalysisHeading": "Analiza poslanega zvoka (nepreverjena)",
   "sourceAnalysisCoverage": "Prikazanih je {shown} od {total} poslanih prispevkov",
+  "@sourceAnalysisCoverage": {
+    "placeholders": {
+      "shown": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
   "sourceAnalysisSample": "Vzorec {number}",
+  "@sourceAnalysisSample": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
   "sourceAnalysisEstimatedTempo": "Ocenjeni tempo (BPM)"
 }

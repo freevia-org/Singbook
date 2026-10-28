@@ -892,6 +892,23 @@
   },
   "sourceAnalysisHeading": "تحليل الصوت المُقدَّم (غير موثّق)",
   "sourceAnalysisCoverage": "{shown} من أصل {total} من الإرسالات المعروضة",
+  "@sourceAnalysisCoverage": {
+    "placeholders": {
+      "shown": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
   "sourceAnalysisSample": "العينة {number}",
+  "@sourceAnalysisSample": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
   "sourceAnalysisEstimatedTempo": "الإيقاع المقدّر (نبضة في الدقيقة)"
 }

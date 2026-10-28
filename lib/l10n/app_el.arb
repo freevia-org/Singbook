@@ -891,6 +891,23 @@
   },
   "sourceAnalysisHeading": "Ανάλυση υποβλημένου ήχου (μη επαληθευμένη)",
   "sourceAnalysisCoverage": "Εμφανίζονται {shown} από {total} υποβολές",
+  "@sourceAnalysisCoverage": {
+    "placeholders": {
+      "shown": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
   "sourceAnalysisSample": "Δείγμα {number}",
+  "@sourceAnalysisSample": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
   "sourceAnalysisEstimatedTempo": "Εκτιμώμενος ρυθμός (BPM)"
 }

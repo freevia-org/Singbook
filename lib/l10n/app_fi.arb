@@ -891,6 +891,23 @@
   },
   "sourceAnalysisHeading": "Lähetetyn äänen analyysi (vahvistamaton)",
   "sourceAnalysisCoverage": "Näytetään {shown} / {total} lähetetystä tallenteesta",
+  "@sourceAnalysisCoverage": {
+    "placeholders": {
+      "shown": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
   "sourceAnalysisSample": "Näyte {number}",
+  "@sourceAnalysisSample": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
   "sourceAnalysisEstimatedTempo": "Arvioitu tempo (BPM)"
 }

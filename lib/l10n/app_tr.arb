@@ -892,6 +892,23 @@
   },
   "sourceAnalysisHeading": "Gönderilen ses analizi (doğrulanmamış)",
   "sourceAnalysisCoverage": "{total} gönderinin {shown} tanesi gösteriliyor",
+  "@sourceAnalysisCoverage": {
+    "placeholders": {
+      "shown": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
   "sourceAnalysisSample": "Örnek {number}",
+  "@sourceAnalysisSample": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
   "sourceAnalysisEstimatedTempo": "Tahmini tempo (BPM)"
 }

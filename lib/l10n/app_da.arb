@@ -891,6 +891,23 @@
   },
   "sourceAnalysisHeading": "Analyse af indsendt lyd (uverificeret)",
   "sourceAnalysisCoverage": "{shown} af {total} indsendelser vises",
+  "@sourceAnalysisCoverage": {
+    "placeholders": {
+      "shown": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
   "sourceAnalysisSample": "Prøve {number}",
+  "@sourceAnalysisSample": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
   "sourceAnalysisEstimatedTempo": "Anslået tempo (BPM)"
 }

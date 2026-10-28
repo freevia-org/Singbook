@@ -345,6 +345,23 @@
   },
   "sourceAnalysisHeading": "Анализ на подаденото аудио (непотвърден)",
   "sourceAnalysisCoverage": "Показани са {shown} от {total} подадени записа",
+  "@sourceAnalysisCoverage": {
+    "placeholders": {
+      "shown": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
   "sourceAnalysisSample": "Запис {number}",
+  "@sourceAnalysisSample": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
   "sourceAnalysisEstimatedTempo": "Ориентировъчно темпо (BPM)"
 }
