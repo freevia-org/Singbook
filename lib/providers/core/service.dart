@@ -26,6 +26,7 @@ import '../provider.dart';
 import '../source_catalog_client.dart';
 import '../catalog_search.dart';
 import 'recording_key.dart';
+import 'recording_context.dart';
 
 const _diagnosticCodes = <String>{
   'blocked',
@@ -1207,6 +1208,19 @@ class SourceDiscoveryService {
     final lookupCancellation = <String, CancellationToken>{};
     final wordCounts = <SourceResult, int>{};
     final agreementCache = <SourceResult, Map<SourceResult, bool>>{};
+    final deferredRecordingReceivers = <String, String>{};
+    final recordingContextPlans = <String, RecordingContextPlan>{};
+    bool contextProviderEligible(String id) =>
+        (enabledIds?.contains(id) ?? true) &&
+        providerCancellation[id]?.isCancelled != true &&
+        lookupCancellation[id]?.isCancelled != true;
+    bool liveRecordingContext(SourceResult result) =>
+        recordingContextPlans[result.id]?.isCurrent(
+          results,
+          original: selection,
+          eligible: contextProviderEligible,
+        ) ??
+        true;
     bool agreesWithReference(SourceResult chart, SourceResult reference) =>
         _agreement(
           chart.body,
@@ -1326,7 +1340,13 @@ class SourceDiscoveryService {
     }) {
       // A closed comparison must not receive delayed provider callbacks.
       if (cancel?.isCancelled == true ||
-          providerCancellation[providerId]?.isCancelled == true) {
+          providerCancellation[providerId]?.isCancelled == true &&
+              !(state == 'cancelled' && result == null)) {
+        return;
+      }
+      if (result != null &&
+          result.matchKind != MatchKind.rejected &&
+          !liveRecordingContext(result)) {
         return;
       }
       if (result != null &&
@@ -1511,6 +1531,37 @@ class SourceDiscoveryService {
       }
     }
 
+    void invalidateRecordingContextResults() {
+      var changed = true;
+      while (changed) {
+        cancel?.throwIfCancelled();
+        changed = false;
+        for (var i = 0; i < results.length; i++) {
+          final result = results[i];
+          if (result.matchKind == MatchKind.rejected ||
+              liveRecordingContext(result)) {
+            continue;
+          }
+          final rejected = _matched(
+            result,
+            MatchKind.rejected,
+            'identity_required',
+          );
+          results[i] = rejected;
+          final id = result.candidate.providerId;
+          providerResults[id] = rejected;
+          providerChecksState[id] = 'unavailable';
+          publish(
+            id,
+            'unavailable',
+            code: 'identity_required',
+            result: rejected,
+          );
+          changed = true;
+        }
+      }
+    }
+
     for (final provider in active) {
       final id = provider.definition.id;
       traceOpen[id] = true;
@@ -1529,6 +1580,15 @@ class SourceDiscoveryService {
             providerCancellation[provider.definition.id] ?? CancellationToken();
         lookupCancellation[provider.definition.id] = local;
         cancel?.cancelled.then((_) => local.cancel());
+        final namespace = provider is RecordingContextReceiver
+            ? (provider as RecordingContextReceiver)
+                  .requiredRecordingIdNamespace
+            : null;
+        if (namespace != null &&
+            !selection.recordingIds.containsKey(namespace)) {
+          deferredRecordingReceivers[provider.definition.id] = namespace;
+          continue;
+        }
         void retainCandidate(SourceResult result) {
           if (local.isCancelled || cancel?.isCancelled == true) return;
           final previous = results.indexWhere((item) => item.id == result.id);
@@ -2196,6 +2256,139 @@ class SourceDiscoveryService {
       timeout: alternativeTimeout,
     );
     invalidateLyricDependentResults();
+    // One late pass only, after existing recording metadata retries and chart
+    // checks settle. Missing context never triggers another donor search.
+    for (final provider in active) {
+      final id = provider.definition.id;
+      final namespace = deferredRecordingReceivers[id];
+      if (namespace == null) continue;
+      cancel?.throwIfCancelled();
+      if (!contextProviderEligible(id)) {
+        providerChecksState[id] = 'cancelled';
+        traceOpen[id] = false;
+        publish(id, 'cancelled', code: 'cancelled');
+        continue;
+      }
+      final plan = planRecordingContext(
+        selection,
+        results,
+        namespace: namespace,
+        eligible: contextProviderEligible,
+      );
+      if (plan == null) {
+        providerChecksState[id] = 'unavailable';
+        publish(id, 'unavailable', code: 'identity_required');
+        continue;
+      }
+      final contextCancel = CancellationToken();
+      final dependencies = <CancellationToken?>[
+        cancel,
+        lookupCancellation[id],
+        providerCancellation[id],
+        for (final witness in plan.witnesses) ...[
+          lookupCancellation[witness.candidate.providerId],
+          providerCancellation[witness.candidate.providerId],
+        ],
+      ];
+      for (final dependency in dependencies) {
+        dependency?.cancelled.then((_) => contextCancel.cancel());
+      }
+      void checkContext() {
+        for (final dependency in dependencies) {
+          dependency?.throwIfCancelled();
+        }
+        contextCancel.throwIfCancelled();
+        if (!contextProviderEligible(id) ||
+            !plan.isCurrent(
+              results,
+              original: selection,
+              eligible: contextProviderEligible,
+            )) {
+          throw const ProviderException('identity_required');
+        }
+      }
+
+      traceOpen[id] = true;
+      providerChecksState[id] = 'pending';
+      publish(id, 'pending');
+      try {
+        checkContext();
+        final result =
+            await Future.any<SourceResult>([
+              findMatchingSource(
+                provider,
+                plan.selection,
+                cancel: contextCancel,
+                operationPrefix: 'recording-context',
+                onOperation: (operation) {
+                  if (!contextCancel.isCancelled) {
+                    try {
+                      checkContext();
+                      recordOperation(id, operation);
+                      // A synchronous operation callback can withdraw a donor
+                      // before the adapter starts its HTTP request.
+                      checkContext();
+                    } on ProviderException {
+                      contextCancel.cancel();
+                      rethrow;
+                    }
+                  }
+                },
+              ),
+              contextCancel.cancelled.then<SourceResult>(
+                (_) => throw const ProviderException('cancelled'),
+              ),
+            ]).timeout(
+              alternativeTimeout,
+              onTimeout: () {
+                contextCancel.cancel();
+                throw const ProviderException('timeout');
+              },
+            );
+        checkContext();
+        if (result.matchKind != MatchKind.sameRecording ||
+            !recordingCompatible(plan.selection, result)) {
+          throw const ProviderException('identity_mismatch');
+        }
+        final enriched = result.copyWith(
+          extra: {...result.extra, 'recordingContext': plan.provenance},
+        );
+        recordingContextPlans[enriched.id] = plan;
+        results.add(enriched);
+        preferredResultIds[id] = enriched.id;
+        providerResults[id] = enriched;
+        providerChecksState[id] = 'found';
+        publish(id, 'found', result: enriched);
+        invalidateRecordingContextResults();
+      } on ProviderException catch (error) {
+        providerChecksState[id] =
+            error.code == 'identity_required' || error.code == 'unavailable'
+            ? 'unavailable'
+            : 'failed';
+        finalizePending(
+          id,
+          'failed',
+          error.code,
+          operationIdPrefix: '$id:recording-context:',
+        );
+        publish(id, providerChecksState[id]!, code: error.code);
+        cancel?.throwIfCancelled();
+      } catch (_) {
+        providerChecksState[id] = 'failed';
+        finalizePending(
+          id,
+          'failed',
+          'invalid_response',
+          operationIdPrefix: '$id:recording-context:',
+        );
+        publish(id, 'failed', code: 'invalid_response');
+        cancel?.throwIfCancelled();
+      } finally {
+        contextCancel.cancel();
+        traceOpen[id] = false;
+      }
+    }
+    invalidateRecordingContextResults();
     for (final provider in active) {
       final id = provider.definition.id;
       final accepted = results
@@ -2229,6 +2422,7 @@ class SourceDiscoveryService {
       traceOpen[provider.definition.id] = false;
     }
     invalidateLyricDependentResults();
+    invalidateRecordingContextResults();
     return results
         .where(
           (result) =>

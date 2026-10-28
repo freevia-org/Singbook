@@ -6,6 +6,12 @@ import '../../domain/combine.dart' show recordingCompatible;
 import '../../domain/edition_identity.dart';
 import '../../domain/models.dart';
 
+/// Optional native dependency. Catalog JSON cannot invent a new lookup mode.
+/// Wrappers return null when their compiled delegate needs no recording ID.
+abstract interface class RecordingContextReceiver {
+  String? get requiredRecordingIdNamespace;
+}
+
 /// An independently proved identifier handoff. This is lookup context, not a
 /// claim that the receiving publisher supplied the donor's metadata.
 class RecordingContextPlan {
