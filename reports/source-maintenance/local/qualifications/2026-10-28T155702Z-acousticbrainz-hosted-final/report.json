@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 1,
+  "atUtc": "2026-10-28T15:47:41.388592+00:00",
+  "kind": "exact-head hosted code validation, not live source qualification",
+  "pullRequest": "https://github.com/freevia-org/Singbook/pull/217",
+  "sourceCommit": "f8f31a9b0fbdff201337e3f342ac1ef3063250b7",
+  "runs": [
+    {
+      "runId": 40717144228,
+      "headSha": "f8f31a9b0fbdff201337e3f342ac1ef3063250b7",
+      "name": "CI",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/freevia-org/Singbook/actions/runs/40717144228",
+      "jobs": [
+        {
+          "name": "test",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "analyze",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "windows-test (1/2)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "windows-build",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "windows-journey",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "windows-test (2/2)",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "runId": 40717143889,
+      "headSha": "f8f31a9b0fbdff201337e3f342ac1ef3063250b7",
+      "name": "macOS compilation",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/freevia-org/Singbook/actions/runs/40717143889",
+      "jobs": [
+        {
+          "name": "compile",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "runId": 40717143470,
+      "headSha": "f8f31a9b0fbdff201337e3f342ac1ef3063250b7",
+      "name": "UX batch validation",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/freevia-org/Singbook/actions/runs/40717143470",
+      "jobs": [
+        {
+          "name": "host-visuals",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "focused-regressions",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "runId": 40717143965,
+      "headSha": "f8f31a9b0fbdff201337e3f342ac1ef3063250b7",
+      "name": "Wikisource validation",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/freevia-org/Singbook/actions/runs/40717143965",
+      "jobs": [
+        {
+          "name": "Wikisource historical-import",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Wikisource provider-domain",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Wikisource cached-comparison",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ],
+  "fixtureFailureResolvedBy": "explicit dynamic-valued malformed-count fixture in d91d3ff",
+  "sourceRegistered": false,
+  "localSdkDeviceLiveRequests": 0,
+  "remaining": [
+    "bounded real compiled-adapter canaries",
+    "PR216 dynamic-rate-window contract",
+    "validated late recording-context routing",
+    "ordinary-app save/reopen/combined source-fact qualification",
+    "compatible registry/catalog and cloud reachability before activation"
+  ]
+}

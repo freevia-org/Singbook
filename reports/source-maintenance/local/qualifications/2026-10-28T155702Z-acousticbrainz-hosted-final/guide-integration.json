@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "atUtc": "2026-10-28T15:57:03.096353+00:00",
+  "kind": "coordinator maintenance-guide integration receipt",
+  "pullRequest": "https://github.com/freevia-org/Singbook/pull/218",
+  "sourceHead": "5f7a5600e9919b4d2142474c279ceae3f61faae3",
+  "mergeCommit": "829744a2eb47737efa20ca2513d9eb46b176dd41",
+  "mergedAt": "2026-10-28T15:42:35Z",
+  "file": "docs/source-maintenance.md",
+  "validation": "diff-check only as requested for docs-only change",
+  "runtimeCatalogProviderActivationChanges": 0,
+  "currentGuide": "v9/revision22/31rows, nine catalogfiles, matchingcachethrough9/fallback8through1, OpenScore/Pisni separate off gates"
+}
