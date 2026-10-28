@@ -889,5 +889,9 @@
   },
   "@settingsStartupLastView": {
     "description": "Option that opens the last view used before the app was closed."
-  }
+  },
+  "sourceAnalysisHeading": "제출된 오디오 분석(미검증)",
+  "sourceAnalysisCoverage": "{total}개 제출 중 {shown}개 표시",
+  "sourceAnalysisSample": "샘플 {number}",
+  "sourceAnalysisEstimatedTempo": "추정 템포 (BPM)"
 }

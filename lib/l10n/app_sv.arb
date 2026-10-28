@@ -889,5 +889,9 @@
   },
   "@settingsStartupLastView": {
     "description": "Option that opens the last view used before the app was closed."
-  }
+  },
+  "sourceAnalysisHeading": "Analys av inskickat ljud (overifierad)",
+  "sourceAnalysisCoverage": "Visar {shown} av {total} inskickade bidrag",
+  "sourceAnalysisSample": "Prov {number}",
+  "sourceAnalysisEstimatedTempo": "Uppskattat tempo (BPM)"
 }

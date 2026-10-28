@@ -889,5 +889,9 @@
   },
   "@settingsStartupLastView": {
     "description": "Option that opens the last view used before the app was closed."
-  }
+  },
+  "sourceAnalysisHeading": "Analiżi tal-awdjo sottomess (mhux ivverifikata)",
+  "sourceAnalysisCoverage": "Intwerew {shown} minn {total} sottomissjonijiet",
+  "sourceAnalysisSample": "Kampjun {number}",
+  "sourceAnalysisEstimatedTempo": "Tempo stmat (BPM)"
 }

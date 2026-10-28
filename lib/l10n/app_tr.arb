@@ -889,5 +889,9 @@
   },
   "@settingsStartupLastView": {
     "description": "Option that opens the last view used before the app was closed."
-  }
+  },
+  "sourceAnalysisHeading": "Gönderilen ses analizi (doğrulanmamış)",
+  "sourceAnalysisCoverage": "{total} gönderinin {shown} tanesi gösteriliyor",
+  "sourceAnalysisSample": "Örnek {number}",
+  "sourceAnalysisEstimatedTempo": "Tahmini tempo (BPM)"
 }

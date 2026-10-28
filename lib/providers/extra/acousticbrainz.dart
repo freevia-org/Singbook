@@ -7,11 +7,16 @@ import 'package:crypto/crypto.dart';
 import '../../domain/edition_identity.dart';
 import '../../domain/models.dart' show JsonMap;
 import '../provider.dart';
+import '../core/recording_context.dart';
 import 'common.dart' show normalized;
 
 /// Unregistered candidate. Uploaded analysis is evidence about a submission,
 /// not verified musical truth, recording alignment, or an authoritative offset.
-class AcousticBrainzProvider implements LyricsProvider, ContextualLyricsSearch {
+class AcousticBrainzProvider
+    implements
+        LyricsProvider,
+        ContextualLyricsSearch,
+        RecordingContextReceiver {
   AcousticBrainzProvider(
     this.transport, {
     DateTime Function()? clock,
@@ -44,6 +49,9 @@ class AcousticBrainzProvider implements LyricsProvider, ContextualLyricsSearch {
 
   static String? _recordingId(String? value) =>
       value != null && _mbid.hasMatch(value) ? value.toLowerCase() : null;
+
+  @override
+  String get requiredRecordingIdNamespace => 'musicbrainz';
 
   @override
   Future<List<SongCandidate>> search(
@@ -103,7 +111,10 @@ class AcousticBrainzProvider implements LyricsProvider, ContextualLyricsSearch {
     cancel?.throwIfCancelled();
     final id = _selectionId(candidate);
     if (id == null) {
-      throw const ProviderException('unavailable', 'recording_context_required');
+      throw const ProviderException(
+        'unavailable',
+        'recording_context_required',
+      );
     }
     _checkSelectionText(candidate);
     final recording = await _load(id, cancel);
@@ -152,7 +163,10 @@ class AcousticBrainzProvider implements LyricsProvider, ContextualLyricsSearch {
       'acousticbrainz': {
         'recordingMbid': recording.id,
         'submissionCount': recording.count,
-        'sampledOffsets': List<int>.generate(recording.samples.length, (i) => i),
+        'sampledOffsets': List<int>.generate(
+          recording.samples.length,
+          (i) => i,
+        ),
         'sampleLimit': 2,
         'allSubmissionsRetrieved': recording.count == recording.samples.length,
         'selectionPolicy': 'bounded first two submission offsets; no authority',
@@ -199,7 +213,9 @@ class AcousticBrainzProvider implements LyricsProvider, ContextualLyricsSearch {
         now.difference(cached.at) < const Duration(minutes: 15)) {
       return cached;
     }
-    final countBytes = await _get('/api/v1/count', {'recording_ids': id}, cancel);
+    final countBytes = await _get('/api/v1/count', {
+      'recording_ids': id,
+    }, cancel);
     final counts = _object(_decode(countBytes));
     final countRow = counts[id];
     if (countRow == null) throw const ProviderException('unavailable');
@@ -233,7 +249,14 @@ class AcousticBrainzProvider implements LyricsProvider, ContextualLyricsSearch {
     }
     cancel?.throwIfCancelled();
     final result = _ArchiveRecording(
-      id, title, artist, count, samples, countBytes, analysisBytes, _clock().toUtc(),
+      id,
+      title,
+      artist,
+      count,
+      samples,
+      countBytes,
+      analysisBytes,
+      _clock().toUtc(),
     );
     _cache[id] = result;
     if (_cache.length > 32) _cache.remove(_cache.keys.first);
@@ -258,7 +281,9 @@ class AcousticBrainzProvider implements LyricsProvider, ContextualLyricsSearch {
     // Bounded cancellation polling avoids retaining callbacks on a long-lived
     // token after each completed pacing wait. Canceled reservations stay spaced.
     while (wait > Duration.zero) {
-      final slice = Duration(milliseconds: math.min(wait.inMilliseconds + 1, 50));
+      final slice = Duration(
+        milliseconds: math.min(wait.inMilliseconds + 1, 50),
+      );
       await Future<void>.delayed(slice);
       cancel?.throwIfCancelled();
       wait -= slice;
@@ -282,8 +307,10 @@ JsonMap _payload(String role, List<int> bytes) => {
 };
 
 void _checkSelectionText(SongCandidate selection) {
-  if (selection.title.trim().isEmpty || selection.artist.trim().isEmpty ||
-      selection.title.length > 500 || selection.artist.length > 500) {
+  if (selection.title.trim().isEmpty ||
+      selection.artist.trim().isEmpty ||
+      selection.title.length > 500 ||
+      selection.artist.length > 500) {
     throw const ProviderException('invalid_selection');
   }
 }
@@ -312,7 +339,10 @@ JsonMap _sample(String id, int offset, Object? value) {
   }
   _singleTag(tags, 'title');
   _singleTag(tags, 'artist');
-  final length = _number(_object(metadata['audio_properties'])['length'], 86400);
+  final length = _number(
+    _object(metadata['audio_properties'])['length'],
+    86400,
+  );
   final version = _object(metadata['version']);
   if (version.isEmpty ||
       version.length > 32 ||
@@ -326,13 +356,29 @@ JsonMap _sample(String id, int offset, Object? value) {
   final scale = tonal['key_scale'];
   final strength = tonal['key_strength'];
   if (!const {
-        'A', 'A#', 'Bb', 'B', 'C', 'C#', 'Db', 'D', 'D#', 'Eb',
-        'E', 'F', 'F#', 'Gb', 'G', 'G#', 'Ab',
+        'A',
+        'A#',
+        'Bb',
+        'B',
+        'C',
+        'C#',
+        'Db',
+        'D',
+        'D#',
+        'Eb',
+        'E',
+        'F',
+        'F#',
+        'Gb',
+        'G',
+        'G#',
+        'Ab',
       }.contains(key) ||
       !const {'major', 'minor'}.contains(scale) ||
       strength is! num ||
       !strength.isFinite ||
-      strength < 0 || strength > 1) {
+      strength < 0 ||
+      strength > 1) {
     _invalid();
   }
   return {
@@ -349,7 +395,8 @@ JsonMap _sample(String id, int offset, Object? value) {
 String? _singleTag(JsonMap tags, String name, {bool required = true}) {
   final value = tags[name];
   if (!required && value == null) return null;
-  if (value is! List || value.length != 1 ||
+  if (value is! List ||
+      value.length != 1 ||
       value.single is! String ||
       (value.single as String).trim().isEmpty ||
       (value.single as String).length > 500) {
@@ -381,8 +428,14 @@ Never _invalid() => throw const ProviderException('invalid_response');
 
 class _ArchiveRecording {
   _ArchiveRecording(
-    this.id, this.title, this.artist, this.count, this.samples,
-    this.countBytes, this.analysisBytes, this.at,
+    this.id,
+    this.title,
+    this.artist,
+    this.count,
+    this.samples,
+    this.countBytes,
+    this.analysisBytes,
+    this.at,
   );
   final String id, title, artist;
   final int count;

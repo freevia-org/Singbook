@@ -2076,4 +2076,21 @@ class AppLocalizationsFi extends AppLocalizations {
   @override
   String get settingsShowPlayerControlsHint =>
       'Voit näyttää tai piilottaa soitinpaneelin myös napauttamalla tai pyyhkäisemällä sitä.';
+
+  @override
+  String get sourceAnalysisHeading =>
+      'Lähetetyn äänen analyysi (vahvistamaton)';
+
+  @override
+  String sourceAnalysisCoverage(int shown, int total) {
+    return 'Näytetään $shown / $total lähetetystä tallenteesta';
+  }
+
+  @override
+  String sourceAnalysisSample(int number) {
+    return 'Näyte $number';
+  }
+
+  @override
+  String get sourceAnalysisEstimatedTempo => 'Arvioitu tempo (BPM)';
 }

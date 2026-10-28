@@ -889,5 +889,9 @@
   },
   "@settingsStartupLastView": {
     "description": "Option that opens the last view used before the app was closed."
-  }
+  },
+  "sourceAnalysisHeading": "Анализ отправленного аудио (не проверен)",
+  "sourceAnalysisCoverage": "Показано {shown} из {total} отправленных записей",
+  "sourceAnalysisSample": "Образец {number}",
+  "sourceAnalysisEstimatedTempo": "Предполагаемый темп (BPM)"
 }

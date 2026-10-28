@@ -888,5 +888,9 @@
   },
   "@settingsStartupLastView": {
     "description": "Option that opens the last view used before the app was closed."
-  }
+  },
+  "sourceAnalysisHeading": "Analyse af indsendt lyd (uverificeret)",
+  "sourceAnalysisCoverage": "{shown} af {total} indsendelser vises",
+  "sourceAnalysisSample": "Prøve {number}",
+  "sourceAnalysisEstimatedTempo": "Anslået tempo (BPM)"
 }

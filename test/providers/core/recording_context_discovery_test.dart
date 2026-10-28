@@ -86,9 +86,10 @@ class _MusicBrainz implements LyricsProvider {
 }
 
 class _Receiver implements LyricsProvider, RecordingContextReceiver {
-  _Receiver({this.hold = false, this.error});
+  _Receiver({this.hold = false, this.error, this.resultMbid = _mbid});
   final bool hold;
   final String? error;
+  final String? resultMbid;
   final seen = <SongCandidate>[];
   final started = Completer<CancellationToken?>();
   final release = Completer<void>();
@@ -116,7 +117,7 @@ class _Receiver implements LyricsProvider, RecordingContextReceiver {
     cancel?.throwIfCancelled();
     if (error != null) throw ProviderException(error!);
     return SourceResult(
-      candidate: _song(definition.id, _mbid, mbid: _mbid),
+      candidate: _song(definition.id, _mbid, mbid: resultMbid),
       body: '',
       metadata: const {'analysis': 'unverified'},
     );
@@ -140,6 +141,29 @@ LyricsProvider _configured(_Receiver receiver) => ConfiguredBuiltinProvider(
 );
 
 void main() {
+  for (final resultMbid in [null, '099b148e-fe99-4b79-be6e-5078e4bb7415']) {
+    test(
+      'receiver must demonstrate the exact consumed recording ID ($resultMbid)',
+      () async {
+        final receiver = _Receiver(resultMbid: resultMbid);
+        final results = await SourceDiscoveryService([
+          _Genius(),
+          _MusicBrainz(),
+          receiver,
+        ]).discover(_selection);
+        expect(receiver.seen, hasLength(1));
+        expect(
+          results.any(
+            (s) =>
+                s.candidate.providerId == receiver.definition.id &&
+                s.matchKind != MatchKind.rejected,
+          ),
+          false,
+        );
+      },
+    );
+  }
+
   test(
     'operation callback withdrawing donor prevents receiver invocation',
     () async {

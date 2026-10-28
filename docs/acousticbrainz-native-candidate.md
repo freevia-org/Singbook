@@ -1,12 +1,15 @@
 # AcousticBrainz metadata candidate
 
-This draft contains an unregistered module and authored contract tests. It is
-initially based on public main `bd4a651bc7b0d0ebc6629c12c81707f4ba0eaf4b`,
-then updated by a normal merge to main
-`6e56bb24e17da276a782878bebdcf320d85307ab`. Its diff against that main changes
-no factory, catalog, transport, routing, model, release artifact or app setting.
-It is not a working source in the current app. PR212 records discovery;
-PR216 separately prepares publisher-window handling in the shared transport.
+PR217 prepared and qualified the standalone adapter; PR223 connects it to a
+compatible channel10 registry, bounded recording-context discovery, and the
+existing source-details panel. PR212 records discovery. PR216 separately
+prepares publisher-window handling in the shared transport. Frozen release45
+and all nine older catalogs are untouched by this candidate.
+
+The candidate is not a published or installed app release. The app/controller
+and portable-storage checks below use authored HTTP fixtures, while the
+separate retained compiled-adapter canaries use real publisher responses.
+Neither establishes managed-cloud reachability or native-device qualification.
 
 ## Access and scope
 
@@ -82,27 +85,50 @@ inferred integer-only map in the deliberately invalid-count fixture; the test
 failed before calling the provider. Commit `d91d3ff` replaces that row with an
 explicit dynamic-valued map. The adapter's executable code did not change.
 
-The draft then inherited current main's channel9/31-provider runtime without
-registering AcousticBrainz. Exact-head qualification of this updated baseline
-and fixture correction is pending; previous checks are not attributed to the
-new head. No local SDK/device/live requests were used for those repairs. A
-static review or a Python retained-shape audit cannot replace Dart tests,
-ordinary app discovery or managed-cloud source qualification.
+Exact standalone head `f8f31a9b0fbdff201337e3f342ac1ef3063250b7` subsequently
+passed hosted CI (Linux and both Windows suites), macOS, UX and Wikisource
+validation. Two actual compiled-adapter canaries passed on 2026-10-28 using four
+HTTP200 requests, zero transport retries: Mysterons / Portishead (148 submissions)
+and Colors and the Kids / Cat Power (44 submissions). Both retained offsets0/1,
+raw response bytes/hashes, source tags and extractor estimates. The sanitized
+receipt is on `codex/datasource-health` at
+`reports/source-maintenance/local/qualifications/2026-10-28T162355Z-acousticbrainz-compiled-live/report.json`.
+This branch adds the compiled receiver capability without changing extraction
+semantics; it does not repeat unchanged live canaries.
 
-## Required integration work
+## Ordinary app integration
 
-Ordinary app selections often lack a recording MBID. The discovery service
-currently starts providers against its original selection and has specialized
-MusicBrainz context handling. This module does not change that service. A
-validated late recording-context route is required before normal app use;
-direct-ID lookup alone does not complete integration. The route must preserve
-source enablement, cancellation, ambiguity/edition checks and provenance,
-without duplicate speculative MusicBrainz searches or invented identifiers.
+Discovery defers native receivers missing a recording identifier, completes
+existing source work and the established bounded MusicBrainz context retry,
+then permits one receiver lookup. An accepted donor must already be an
+unambiguous canonical MusicBrainz recording, independently associated with the
+original selection through resolved recording evidence. No extra MusicBrainz
+search is issued; a same-song-only donor, conflicting identifiers/editions or
+cumulative duration drift cannot supply context. Existing IDs use the ordinary
+initial lookup, without a duplicate late pass.
 
-Before registration or activation: run and review the focused SDK tests and
-analysis, qualify the exact compiled adapter against two real independent
-recordings using a bounded documented request budget, test ordinary app
-discovery/save/offline reopening and complete source-fact retention, establish
-managed-cloud reachability, and introduce the compatible registry/catalog
-channel atomically. Preserve older served channels and saved opt-outs. None
-of these gates is satisfied merely by merging an unregistered module.
+The receiver must return the exact consumed MBID. Dependency cancellation,
+opt-out and synchronous progress callbacks are checked before/after operations
+and completion; withdrawn proof rejects dependent results. Original selection
+and full source hashes remain bound during discovery. UI revalidation checks
+current eligible witnesses, normalizing only controller-owned merge/history
+bookkeeping and duplicate facts already present in the still-hashed candidate.
+It cannot substitute archived payloads as active recording proof.
+
+The existing version-details panel shows both sample estimates, explicit
+unverified status and shown/total submission coverage. Its bounded projection
+excludes uploaded filenames and arbitrary tags/URLs. It does not copy estimates
+into canonical key, tempo, duration or timing. Four labels are localized in all
+34 supported locales.
+
+The authored ordinary-controller test uses the configured native adapter,
+checks two bounded mock HTTP responses, safe UI mapping and recording proof,
+then saves the combined document, reopens SQLite and round-trips ChordPro.
+Every source fact, raw response and attribution/provenance envelope survives.
+Fresh widget screenshots cover phone, large text, Arabic RTL/dark, Ukrainian
+dark and landscape layouts. These are host widget captures, not device proof.
+
+Remaining publication gates: exact final-head hosted checks, native-device app
+qualification, managed-cloud reachability and integration review/public-main
+publication. Older channels and saved opt-outs remain protected. Candidate
+catalog activation is not evidence those external gates have passed.

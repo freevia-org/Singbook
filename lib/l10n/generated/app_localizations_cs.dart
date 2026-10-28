@@ -2093,4 +2093,20 @@ class AppLocalizationsCs extends AppLocalizations {
   @override
   String get settingsShowPlayerControlsHint =>
       'Panel přehrávače můžete také zobrazit nebo skrýt klepnutím či přejetím.';
+
+  @override
+  String get sourceAnalysisHeading => 'Analýza zaslaného audia (neověřená)';
+
+  @override
+  String sourceAnalysisCoverage(int shown, int total) {
+    return 'Zobrazeno $shown z $total zaslaných nahrávek';
+  }
+
+  @override
+  String sourceAnalysisSample(int number) {
+    return 'Vzorek $number';
+  }
+
+  @override
+  String get sourceAnalysisEstimatedTempo => 'Odhadované tempo (BPM)';
 }

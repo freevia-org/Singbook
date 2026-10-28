@@ -1,4 +1,6 @@
 import 'dart:async';
+import '../domain/acousticbrainz_analysis.dart';
+import '../providers/core/recording_context.dart';
 import '../providers/core/diagnostics.dart';
 
 import 'package:flutter/foundation.dart';
@@ -342,7 +344,9 @@ class AppControllerAdapter extends VerseUiController {
     final setlist = currentSetlist;
     final trustedReaderKey = displayedKey;
     final estimatedReaderKey = trustedReaderKey == null && song != null
-        ? rankedChordKeyEstimate(song) ?? estimateChordKey(song.body)?.key ?? checkedChordKeyEstimate(song)
+        ? rankedChordKeyEstimate(song) ??
+              estimateChordKey(song.body)?.key ??
+              checkedChordKeyEstimate(song)
         : null;
     final readerKey =
         trustedReaderKey ??
@@ -570,9 +574,14 @@ class AppControllerAdapter extends VerseUiController {
       editor: _editorData,
       editorDirty: _editorDirty,
       readerKey: readerKey,
-      readerKeyEstimated: estimatedReaderKey != null ||
+      readerKeyEstimated:
+          estimatedReaderKey != null ||
           song != null &&
-              activeSetlistEntry?.overrides['key']?.toString().trim().isNotEmpty != true &&
+              activeSetlistEntry?.overrides['key']
+                      ?.toString()
+                      .trim()
+                      .isNotEmpty !=
+                  true &&
               rankedKeyNeedsReview(song),
       readerTranspose: _transpose.round(),
       readerCapo: displayedCapo?.toString(),
@@ -1262,7 +1271,13 @@ class AppControllerAdapter extends VerseUiController {
         !isChecking &&
         result.matchKind == MatchKind.sameRecording &&
         app.selection != null &&
-        recordingCompatible(app.selection!, result);
+        (recordingCompatible(app.selection!, result) ||
+            recordingContextCompatible(
+              app.selection!,
+              result,
+              app.results,
+              eligible: app.providerEnabled,
+            ));
     return SourceVersionData(
       id: result.id,
       providerId: candidate.providerId,
@@ -1278,7 +1293,7 @@ class AppControllerAdapter extends VerseUiController {
       metadata: _diagnosticMetadata({
         ...candidate.metadata,
         ...result.metadata,
-      }),
+      }, providerId: candidate.providerId),
       album: display.album,
       durationSeconds: display.durationSeconds,
       artworkUrl: display.artworkUrl,
@@ -3321,7 +3336,10 @@ String? _metaString(Object? value) => switch (value) {
   _ => null,
 };
 
-Map<String, Object?> _diagnosticMetadata(Map<String, Object?> values) {
+Map<String, Object?> _diagnosticMetadata(
+  Map<String, Object?> values, {
+  String? providerId,
+}) {
   const aliases = <String, List<String>>{
     'timeSignature': ['timeSignature', 'time_signature', 'time'],
     'tuning': ['tuning', 'tuningStrings', 'tuning_strings'],
@@ -3346,6 +3364,11 @@ Map<String, Object?> _diagnosticMetadata(Map<String, Object?> values) {
     'mediaLinks',
   };
   final output = <String, Object?>{};
+  final analysis = AcousticBrainzAnalysis.fromMetadata(
+    providerId ?? '',
+    values,
+  );
+  if (analysis != null) output['acousticbrainz'] = analysis.toMetadata();
   for (final key in allowed) {
     Object? value = values[key];
     if (value == null) {

@@ -2061,4 +2061,20 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get settingsShowPlayerControlsHint =>
       'You can also tap or swipe the player panel to show or hide it.';
+
+  @override
+  String get sourceAnalysisHeading => 'Submitted audio analysis (unverified)';
+
+  @override
+  String sourceAnalysisCoverage(int shown, int total) {
+    return '$shown of $total submissions shown';
+  }
+
+  @override
+  String sourceAnalysisSample(int number) {
+    return 'Sample $number';
+  }
+
+  @override
+  String get sourceAnalysisEstimatedTempo => 'Estimated tempo (BPM)';
 }

@@ -889,5 +889,9 @@
   },
   "@settingsStartupLastView": {
     "description": "Option that opens the last view used before the app was closed."
-  }
+  },
+  "sourceAnalysisHeading": "Analiza audio-ului trimis (neverificată)",
+  "sourceAnalysisCoverage": "Se afișează {shown} din {total} trimiteri",
+  "sourceAnalysisSample": "Eșantionul {number}",
+  "sourceAnalysisEstimatedTempo": "Tempo estimat (BPM)"
 }

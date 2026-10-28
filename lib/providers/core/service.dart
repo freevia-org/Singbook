@@ -2347,6 +2347,8 @@ class SourceDiscoveryService {
             );
         checkContext();
         if (result.matchKind != MatchKind.sameRecording ||
+            result.candidate.recordingIds[plan.namespace] !=
+                plan.selection.recordingIds[plan.namespace] ||
             !recordingCompatible(plan.selection, result)) {
           throw const ProviderException('identity_mismatch');
         }

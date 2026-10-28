@@ -888,5 +888,9 @@
   },
   "@settingsStartupLastView": {
     "description": "Option that opens the last view used before the app was closed."
-  }
+  },
+  "sourceAnalysisHeading": "Analýza zaslaného audia (neověřená)",
+  "sourceAnalysisCoverage": "Zobrazeno {shown} z {total} zaslaných nahrávek",
+  "sourceAnalysisSample": "Vzorek {number}",
+  "sourceAnalysisEstimatedTempo": "Odhadované tempo (BPM)"
 }

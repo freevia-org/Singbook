@@ -889,5 +889,9 @@
   },
   "@settingsStartupLastView": {
     "description": "Option that opens the last view used before the app was closed."
-  }
+  },
+  "sourceAnalysisHeading": "Phân tích âm thanh đã gửi (chưa xác minh)",
+  "sourceAnalysisCoverage": "Đang hiển thị {shown}/{total} nội dung gửi",
+  "sourceAnalysisSample": "Mẫu {number}",
+  "sourceAnalysisEstimatedTempo": "Tempo ước tính (BPM)"
 }

@@ -889,5 +889,9 @@
   },
   "@settingsStartupLastView": {
     "description": "Option that opens the last view used before the app was closed."
-  }
+  },
+  "sourceAnalysisHeading": "Pateikto garso analizė (nepatvirtinta)",
+  "sourceAnalysisCoverage": "Rodoma {shown} iš {total} pateiktų įrašų",
+  "sourceAnalysisSample": "Pavyzdys {number}",
+  "sourceAnalysisEstimatedTempo": "Numatomas tempas (BPM)"
 }

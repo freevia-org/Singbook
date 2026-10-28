@@ -888,5 +888,9 @@
   },
   "@settingsStartupLastView": {
     "description": "Option that opens the last view used before the app was closed."
-  }
+  },
+  "sourceAnalysisHeading": "Anailís ar fhuaim a cuireadh isteach (neamhfhíoraithe)",
+  "sourceAnalysisCoverage": "Taispeántar {shown} as {total} taifeadadh a cuireadh isteach",
+  "sourceAnalysisSample": "Sampla {number}",
+  "sourceAnalysisEstimatedTempo": "Luas measta (BPM)"
 }

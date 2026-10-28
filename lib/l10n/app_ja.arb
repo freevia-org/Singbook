@@ -889,5 +889,9 @@
   },
   "@settingsStartupLastView": {
     "description": "Option that opens the last view used before the app was closed."
-  }
+  },
+  "sourceAnalysisHeading": "提出された音源の分析（未検証）",
+  "sourceAnalysisCoverage": "{total} 件中 {shown} 件の投稿を表示",
+  "sourceAnalysisSample": "サンプル {number}",
+  "sourceAnalysisEstimatedTempo": "推定テンポ (BPM)"
 }

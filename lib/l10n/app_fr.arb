@@ -888,5 +888,9 @@
   },
   "@settingsStartupLastView": {
     "description": "Option that opens the last view used before the app was closed."
-  }
+  },
+  "sourceAnalysisHeading": "Analyse de l’audio soumis (non vérifiée)",
+  "sourceAnalysisCoverage": "{shown} envois affichés sur {total}",
+  "sourceAnalysisSample": "Échantillon {number}",
+  "sourceAnalysisEstimatedTempo": "Tempo estimé (BPM)"
 }

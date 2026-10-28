@@ -2114,4 +2114,21 @@ class AppLocalizationsUk extends AppLocalizations {
   @override
   String get settingsShowPlayerControlsHint =>
       'Панель програвача також можна показати або приховати дотиком чи свайпом.';
+
+  @override
+  String get sourceAnalysisHeading =>
+      'Аналіз надісланого аудіо (не перевірено)';
+
+  @override
+  String sourceAnalysisCoverage(int shown, int total) {
+    return 'Показано $shown із $total надісланих записів';
+  }
+
+  @override
+  String sourceAnalysisSample(int number) {
+    return 'Зразок $number';
+  }
+
+  @override
+  String get sourceAnalysisEstimatedTempo => 'Орієнтовний темп (BPM)';
 }

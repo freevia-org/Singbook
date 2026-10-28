@@ -889,5 +889,9 @@
   },
   "@settingsStartupLastView": {
     "description": "Option that opens the last view used before the app was closed."
-  }
+  },
+  "sourceAnalysisHeading": "تحليل الصوت المُقدَّم (غير موثّق)",
+  "sourceAnalysisCoverage": "{shown} من أصل {total} من الإرسالات المعروضة",
+  "sourceAnalysisSample": "العينة {number}",
+  "sourceAnalysisEstimatedTempo": "الإيقاع المقدّر (نبضة في الدقيقة)"
 }

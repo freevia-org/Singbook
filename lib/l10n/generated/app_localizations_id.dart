@@ -2082,4 +2082,21 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get settingsShowPlayerControlsHint =>
       'Ketuk atau geser panel pemutar untuk menampilkan atau menyembunyikannya.';
+
+  @override
+  String get sourceAnalysisHeading =>
+      'Analisis audio yang dikirim (belum terverifikasi)';
+
+  @override
+  String sourceAnalysisCoverage(int shown, int total) {
+    return 'Menampilkan $shown dari $total kiriman';
+  }
+
+  @override
+  String sourceAnalysisSample(int number) {
+    return 'Sampel $number';
+  }
+
+  @override
+  String get sourceAnalysisEstimatedTempo => 'Tempo perkiraan (BPM)';
 }

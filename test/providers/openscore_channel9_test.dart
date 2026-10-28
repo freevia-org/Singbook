@@ -21,16 +21,19 @@ String _bundle(int channel) => File(_catalogPath(channel)).readAsStringSync();
 
 List<LyricsProvider> _providers(ProviderTransport transport) => [
   ...createCoreProviders(transport: transport),
-  ...createExtraProviders(transport: transport),
+  // Simulate the historical channel9 compiled registry.
+  ...createExtraProviders(
+    transport: transport,
+  ).where((p) => p.definition.id != 'acousticbrainz'),
 ];
 
 SourceCatalogRuntime _runtime(
   ProviderTransport transport, {
   bool oldRuntime = false,
 }) => SourceCatalogRuntime(
-  builtins: _providers(transport)
-      .where((p) => !oldRuntime || p.definition.id != 'openscorelieder')
-      .toList(),
+  builtins: _providers(
+    transport,
+  ).where((p) => !oldRuntime || p.definition.id != 'openscorelieder').toList(),
   createProvider: (entry) => ConfigurableProvider(entry, transport),
 );
 
@@ -61,9 +64,9 @@ void main() {
     expect(rows.length, oldRows.length + 1);
     expect(next['revision'], 22);
     expect(
-      DateTime.parse(next['publishedAt'] as String).isAfter(
-        DateTime.parse(old['publishedAt'] as String),
-      ),
+      DateTime.parse(
+        next['publishedAt'] as String,
+      ).isAfter(DateTime.parse(old['publishedAt'] as String)),
       isTrue,
     );
     final candidate = rows.last as Map;
@@ -87,12 +90,12 @@ void main() {
         containsAll(['identityScope', 'artistCreditRole', 'composer']),
       );
     }
-    expect(SourceCatalogClient.bundledAsset, 'config/source-catalog-v9.json');
-    expect(SourceCatalogClient.cacheKey, 'sourceCatalog:v9');
+    expect(SourceCatalogClient.bundledAsset, 'config/source-catalog-v10.json');
+    expect(SourceCatalogClient.cacheKey, 'sourceCatalog:v10');
     expect(SourceCatalogClient.channel8CacheKey, 'sourceCatalog:v8');
     expect(
       SourceCatalogClient.defaultEndpoint,
-      endsWith('/source-catalog-v9.json'),
+      endsWith('/source-catalog-v10.json'),
     );
     expect(
       File('pubspec.yaml').readAsStringSync(),
@@ -108,8 +111,7 @@ void main() {
     final providers = _providers(transport);
     final native = providers.whereType<OpenScoreLiederProvider>().single;
     expect(native.definition.enabledByDefault, isFalse);
-    final runtime = _runtime(transport)
-      ..apply(SourceCatalog.parse(_bundle(9)));
+    final runtime = _runtime(transport)..apply(SourceCatalog.parse(_bundle(9)));
     expect(
       runtime.catalog!.sources
           .where((s) => s.adapter == 'builtin')
@@ -171,8 +173,7 @@ void main() {
       client: MockClient((_) async => throw StateError('No HTTP permitted')),
     );
     addTearDown(transport.close);
-    final runtime = _runtime(transport)
-      ..apply(SourceCatalog.parse(_bundle(9)));
+    final runtime = _runtime(transport)..apply(SourceCatalog.parse(_bundle(9)));
     final prior = runtime.catalog;
     final providers = runtime.providers;
     final next = jsonDecode(_bundle(9)) as Map<String, dynamic>;
@@ -186,32 +187,35 @@ void main() {
     expect(identical(runtime.providers, providers), isTrue);
   });
 
-  test('offline maintenance derives the complete v9 registry without HTTP', () async {
-    var calls = 0;
-    final transport = ProviderTransport(
-      client: MockClient((_) async {
-        calls++;
-        throw StateError('Offline gate must not issue HTTP');
-      }),
-    );
-    addTearDown(transport.close);
-    final providers = _providers(transport);
-    final runtime = _runtime(transport)
-      ..apply(SourceCatalog.parse(_bundle(9)));
-    final allProviders = [...providers, ...runtime.providers];
-    final report = await SourceMaintenanceHarness(
-      providers: allProviders,
-    ).run(runtime.catalog!, offline: true);
-    final rows = (report['sources'] as List).cast<Map>();
-    expect(
-      rows.map((r) => r['id']).toSet(),
-      allProviders.map((p) => p.definition.id).toSet(),
-    );
-    expect(rows.where((r) => r['status'] == 'coverage_gap'), isEmpty);
-    expect(
-      rows.singleWhere((r) => r['id'] == 'openscorelieder')['status'],
-      'disabled',
-    );
-    expect(calls, 0);
-  });
+  test(
+    'offline maintenance derives the complete v9 registry without HTTP',
+    () async {
+      var calls = 0;
+      final transport = ProviderTransport(
+        client: MockClient((_) async {
+          calls++;
+          throw StateError('Offline gate must not issue HTTP');
+        }),
+      );
+      addTearDown(transport.close);
+      final providers = _providers(transport);
+      final runtime = _runtime(transport)
+        ..apply(SourceCatalog.parse(_bundle(9)));
+      final allProviders = [...providers, ...runtime.providers];
+      final report = await SourceMaintenanceHarness(
+        providers: allProviders,
+      ).run(runtime.catalog!, offline: true);
+      final rows = (report['sources'] as List).cast<Map>();
+      expect(
+        rows.map((r) => r['id']).toSet(),
+        allProviders.map((p) => p.definition.id).toSet(),
+      );
+      expect(rows.where((r) => r['status'] == 'coverage_gap'), isEmpty);
+      expect(
+        rows.singleWhere((r) => r['id'] == 'openscorelieder')['status'],
+        'disabled',
+      );
+      expect(calls, 0);
+    },
+  );
 }

@@ -71,6 +71,32 @@ RecordingContextPlan? _plan(
 
 void main() {
   test(
+    'presentation requires the receiver to retain the exact planned MBID',
+    () {
+      final witnesses = [_anchor(), _donor()];
+      final plan = _plan(witnesses)!;
+      for (final id in [null, _otherId, _id]) {
+        final result = SourceResult(
+          candidate: _candidate(
+            providerId: 'acousticbrainz',
+            ids: id == null ? {} : {'musicbrainz': id},
+          ),
+          body: '',
+          matchKind: MatchKind.sameRecording,
+          extra: {'recordingContext': plan.provenance},
+        );
+        expect(
+          recordingContextCompatible(_original, result, [
+            ...witnesses,
+            result,
+          ], eligible: (_) => true),
+          id == _id,
+        );
+      }
+    },
+  );
+
+  test(
     'a conflicting duplicate witness cannot hide beside the pinned result',
     () {
       final anchor = _anchor(), donor = _donor();

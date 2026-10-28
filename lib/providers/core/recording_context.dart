@@ -73,6 +73,7 @@ class RecordingContextPlan {
           'sourceId': witness.id,
           'providerId': witness.candidate.providerId,
           'sha256': _hashes[witness.id],
+          'identitySha256': _recordingWitnessHash(witness),
         },
     ],
   };
@@ -145,7 +146,7 @@ RecordingContextPlan? planRecordingContext(
   if (accepted.map((pair) => pair.id).toSet().length != 1) return null;
   final witnesses = {
     for (final pair in accepted) ...[pair.anchor, pair.donor],
-  }.toList();
+  }.toList()..sort((a, b) => a.id.compareTo(b.id));
   if (!_factsAgree([
     SourceResult(candidate: original, body: ''),
     ...witnesses,
@@ -280,8 +281,106 @@ String _normalize(String text) => text
     .replaceAll(RegExp(r'[^\p{L}\p{N}]+', unicode: true), ' ')
     .trim();
 
-String _sourceHash(SourceResult source) =>
-    sha256.convert(utf8.encode(jsonEncode(source.toJson()))).toString();
+String _sourceHash(SourceResult source) => sha256
+    .convert(utf8.encode(jsonEncode(_canonical(source.toJson()))))
+    .toString();
 
-String _candidateHash(SongCandidate candidate) =>
-    sha256.convert(utf8.encode(jsonEncode(candidate.toJson()))).toString();
+String _candidateHash(SongCandidate candidate) => sha256
+    .convert(utf8.encode(jsonEncode(_canonical(candidate.toJson()))))
+    .toString();
+
+/// Revalidate retained proof for presentation after controller merges or a
+/// portable round trip. This does not promote estimates into musical truth.
+bool recordingContextCompatible(
+  SongCandidate original,
+  SourceResult result,
+  Iterable<SourceResult> sources, {
+  required bool Function(String providerId) eligible,
+}) {
+  if (!eligible(result.candidate.providerId) ||
+      result.matchKind != MatchKind.sameRecording ||
+      result.hasPendingMatchCheck ||
+      result.extra['recordingContext'] is! Map) {
+    return false;
+  }
+  final plan = planRecordingContext(
+    original,
+    sources.where((source) => source.id != result.id),
+    namespace: 'musicbrainz',
+    eligible: eligible,
+  );
+  return plan != null &&
+      result.candidate.recordingIds[plan.namespace] ==
+          plan.selection.recordingIds[plan.namespace] &&
+      jsonEncode(_canonical(_contextBinding(plan.provenance))) ==
+          jsonEncode(
+            _canonical(
+              _contextBinding(result.extra['recordingContext'] as Map),
+            ),
+          ) &&
+      recordingCompatible(plan.selection, result);
+}
+
+Map<String, Object?> _contextBinding(Map proof) => {
+  for (final key in [
+    'selectedIdentity',
+    'namespace',
+    'identifier',
+    'anchorSourceId',
+    'donorSourceId',
+  ])
+    key: proof[key],
+  'witnesses': [
+    if (proof['witnesses'] is List)
+      for (final witness in proof['witnesses'] as List)
+        if (witness is Map)
+          {
+            'sourceId': witness['sourceId'],
+            'providerId': witness['providerId'],
+            'identitySha256': witness['identitySha256'],
+          },
+  ],
+};
+
+// Controller merging archives old envelopes and may repeat an unchanged
+// candidate fact in metadata. Normalize those containers only; active facts,
+// source identity, body, raw payloads, editions and conflicts remain bound.
+// Discovery's live mutation guard continues using the full _sourceHash.
+String _recordingWitnessHash(SourceResult source) {
+  final payload = {...source.toJson()};
+  for (final key in [
+    'previousSourceVersions',
+    'unparsedSourceHistory',
+    'metadataPayloadOrigins',
+    'retainedPreviousPayload',
+    'retrievedAt',
+  ]) {
+    payload.remove(key);
+  }
+  final metadata = {...source.metadata};
+  final candidateFacts = {
+    ...source.candidate.metadata,
+    if (source.candidate.album != null) 'album': source.candidate.album,
+    if (source.candidate.durationSeconds != null)
+      'durationSeconds': source.candidate.durationSeconds,
+  };
+  metadata.removeWhere(
+    (key, value) =>
+        candidateFacts.containsKey(key) &&
+        jsonEncode(_canonical(value)) ==
+            jsonEncode(_canonical(candidateFacts[key])),
+  );
+  payload['metadata'] = metadata;
+  return sha256
+      .convert(utf8.encode(jsonEncode(_canonical(payload))))
+      .toString();
+}
+
+Object? _canonical(Object? value) {
+  if (value is Map) {
+    final keys = value.keys.cast<String>().toList()..sort();
+    return {for (final key in keys) key: _canonical(value[key])};
+  }
+  if (value is List) return value.map(_canonical).toList();
+  return value;
+}

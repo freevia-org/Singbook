@@ -888,5 +888,9 @@
   },
   "@settingsStartupLastView": {
     "description": "Option that opens the last view used before the app was closed."
-  }
+  },
+  "sourceAnalysisHeading": "Beküldött hang elemzése (nem ellenőrzött)",
+  "sourceAnalysisCoverage": "{shown} / {total} beküldés megjelenítve",
+  "sourceAnalysisSample": "Minta {number}",
+  "sourceAnalysisEstimatedTempo": "Becsült tempó (BPM)"
 }

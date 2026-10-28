@@ -889,5 +889,9 @@
   },
   "@settingsStartupLastView": {
     "description": "Option that opens the last view used before the app was closed."
-  }
+  },
+  "sourceAnalysisHeading": "Analiza poslanega zvoka (nepreverjena)",
+  "sourceAnalysisCoverage": "Prikazanih je {shown} od {total} poslanih prispevkov",
+  "sourceAnalysisSample": "Vzorec {number}",
+  "sourceAnalysisEstimatedTempo": "Ocenjeni tempo (BPM)"
 }
