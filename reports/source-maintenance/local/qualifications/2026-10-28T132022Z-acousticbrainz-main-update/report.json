@@ -1,0 +1,136 @@
+{
+  "schemaVersion": 1,
+  "measuredAt": "2026-10-28T13:20:22.717345+00:00",
+  "runtime": "local Windows Git/hosted-CI evidence only",
+  "pr": "https://github.com/freevia-org/Singbook/pull/212",
+  "priorHeadValidation": {
+    "head": "4138596bb355badb8ca90ce32b233b3065459071",
+    "applicableChecksPassed": 8,
+    "checks": [
+      {
+        "name": "windows-test (1/2)",
+        "status": "completed",
+        "conclusion": "success",
+        "completedAt": "2026-10-28T13:08:26Z",
+        "url": "https://github.com/freevia-org/Singbook/actions/runs/40692075119/job/122829595483"
+      },
+      {
+        "name": "windows-build",
+        "status": "completed",
+        "conclusion": "success",
+        "completedAt": "2026-10-28T13:02:13Z",
+        "url": "https://github.com/freevia-org/Singbook/actions/runs/40692075119/job/122829595412"
+      },
+      {
+        "name": "windows-journey",
+        "status": "completed",
+        "conclusion": "success",
+        "completedAt": "2026-10-28T13:02:55Z",
+        "url": "https://github.com/freevia-org/Singbook/actions/runs/40692075119/job/122829595348"
+      },
+      {
+        "name": "windows-test (2/2)",
+        "status": "completed",
+        "conclusion": "success",
+        "completedAt": "2026-10-28T13:18:19Z",
+        "url": "https://github.com/freevia-org/Singbook/actions/runs/40692075119/job/122829595284"
+      },
+      {
+        "name": "focused-regressions",
+        "status": "completed",
+        "conclusion": "skipped",
+        "completedAt": "2026-10-28T12:57:02Z",
+        "url": "https://github.com/freevia-org/Singbook/actions/runs/40692075088/job/122829165965"
+      },
+      {
+        "name": "analyze",
+        "status": "completed",
+        "conclusion": "success",
+        "completedAt": "2026-10-28T12:57:56Z",
+        "url": "https://github.com/freevia-org/Singbook/actions/runs/40692075119/job/122829164367"
+      },
+      {
+        "name": "test",
+        "status": "completed",
+        "conclusion": "success",
+        "completedAt": "2026-10-28T13:02:54Z",
+        "url": "https://github.com/freevia-org/Singbook/actions/runs/40692075119/job/122829163869"
+      },
+      {
+        "name": "compile",
+        "status": "completed",
+        "conclusion": "success",
+        "completedAt": "2026-10-28T13:05:30Z",
+        "url": "https://github.com/freevia-org/Singbook/actions/runs/40692075238/job/122829163780"
+      },
+      {
+        "name": "host-visuals",
+        "status": "completed",
+        "conclusion": "success",
+        "completedAt": "2026-10-28T12:58:10Z",
+        "url": "https://github.com/freevia-org/Singbook/actions/runs/40692075088/job/122829163445"
+      }
+    ],
+    "linuxPassed": 3120,
+    "linuxSkipped": 13,
+    "metadataHelperCasesPassed": 39,
+    "watcher94467": "completed_exit0_after_all8success"
+  },
+  "currentMainMerge": {
+    "priorHead": "4138596bb355badb8ca90ce32b233b3065459071",
+    "mainBase": "4f957b023cacd303bf6fe757153d462396e58bd8",
+    "head": "07b960cf0b4706fa1920d0d0456956c90a4d0db5",
+    "files": [
+      "config/source-discovery.json",
+      "docs/source-discovery-review-20261027.md"
+    ],
+    "fileBlobsByteExactAcrossMainMerge": true,
+    "bothPriorHeadAndCurrentMainAncestors": true,
+    "records": 52,
+    "sha256": {
+      "config/source-discovery.json": "8820858cd8c5faeb3f5a3f1eca1978e18021b9d956611c5c43b961d852a14d16",
+      "docs/source-discovery-review-20261027.md": "d00beb9a0e3da0a8b74ce6d3e7df2e808f597f507f016a6ffb37a01ce5160eb5"
+    },
+    "newSdkOrSourceHttp": false
+  },
+  "pr211": {
+    "mergeCommit": "4f957b023cacd303bf6fe757153d462396e58bd8",
+    "mergedAt": "2026-10-28T13:17:44Z"
+  },
+  "newExactHeadValidation": {
+    "head": "07b960cf0b4706fa1920d0d0456956c90a4d0db5",
+    "status": "running_not_claimed_passed",
+    "runIds": [
+      40695276669,
+      40695276798,
+      40695276652
+    ],
+    "watcherSession": 27035,
+    "reason": "Actual current-main base merge afterPR211, not timeout/restart. Initial watcher already terminal exit0."
+  },
+  "newSourceHttpRequests": 0,
+  "protectedLatestBlobs": {
+    "reports/source-maintenance/latest.json": "51668b5f3443b6ab33b4568565e253a2b4540c4f",
+    "reports/source-maintenance/local/latest.json": "0163da016906a8fe61d4305a99a6d528bafea371"
+  },
+  "scope": "Same52-record append-only discovery proposal, both owned file blobs byte-exact across ordinary nonforced main merge. Draft remains for separate coordinator review; no provider or catalog activation.",
+  "separateReadOnlyActivationReview": {
+    "pr": "https://github.com/freevia-org/Singbook/pull/213",
+    "head": "d7eab27200e03e6c184b7b4276ab3b9ddf761450",
+    "reviewResult": "pass_after_owner_corrections",
+    "inspected": [
+      "v8revision21/source2active/default-on",
+      "olderchannels1-7byte-exact",
+      "other29v8rows/orderunchanged",
+      "twoobservedtitle-onlyquerieswithartist/stableIDguards",
+      "actualsearchtype/versionhintkeys",
+      "opt-outprecedenceandcompiledfallbackdefault",
+      "accurateoldreplayandlegacyregressionwording",
+      "unknownper-workrights/arrangement/accuracyboundaries"
+    ],
+    "rootWritesSdkDeviceSourceRequests": 0,
+    "mergeOwner": "SB Integration; exact-final-headchecks stillrequired"
+  },
+  "transportPrerequisiteDesign": "Prefer validated bounded transport-owned exhausted-window/reset-in cooldown alongsideRetry-After over exposing arbitrary responseheaders. Proposal only; no transport/model/service implementation or writer reservation. WaitsforPR211postmergechecks/ownerassignment.",
+  "newSourceHttpLocalSdkDeviceOrProviderCloudQualification": false
+}
