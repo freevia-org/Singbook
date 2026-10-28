@@ -39,7 +39,9 @@ than declaring every embedded poem or translation public domain everywhere.
   retained as source metadata. References are links only and are not followed.
 - Search parses at most 2 MiB / 5,000 catalog rows and returns at most 30 matches.
   An instance caches a successful index for 24 hours. Failed or cancelled refreshes
-  do not replace the cache. Concurrent initial searches share the fetch.
+  do not replace the cache. Concurrent uncancelled initial calls share a fetch;
+  cancellation-sensitive calls own their transport request so an older search
+  cannot abort a newer one or delay its cancellation. Warm calls reuse the cache.
 - Resolve revalidates ID, title and composer against the catalog. Caller URLs,
   paths and recording metadata cannot supply source facts or network targets.
   Conflicting duplicate IDs are omitted. Only the fixed publisher repository and
