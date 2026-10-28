@@ -41,7 +41,9 @@ jobs:
           -derivedDataPath build/macos CODE_SIGNING_ALLOWED=NO build
       - name: Verify universal executable
         run: |
-          lipo build/macos/Build/Products/Release/Singbook.app/Contents/MacOS/Singbook -verify_arch arm64 x86_64
+          # This runner verifies one required architecture per invocation.
+          lipo build/macos/Build/Products/Release/Singbook.app/Contents/MacOS/Singbook -verify_arch arm64
+          lipo build/macos/Build/Products/Release/Singbook.app/Contents/MacOS/Singbook -verify_arch x86_64
       - name: Preserve compile output
         uses: actions/upload-artifact@v7
         with:
