@@ -296,10 +296,11 @@ class ChordsAndTabsProvider implements LyricsProvider {
         (typeHint != null && typeHint != 'chords' && typeHint != 'ukulele')) {
       throw const ProviderException('invalid_selection');
     }
-    if (versionHint != null && chartDescriptor.version == null) {
-      throw const ProviderException('extraction_failed');
-    }
-    if ((versionHint != null && versionHint != chartDescriptor.version) ||
+    // Legacy pages can identify the chart without declaring its version.
+    // Missing page metadata cannot contradict an unconfirmed search hint.
+    if ((versionHint != null &&
+            chartDescriptor.version != null &&
+            versionHint != chartDescriptor.version) ||
         (typeHint != null && typeHint != kind)) {
       throw const ProviderException('identity_mismatch');
     }
@@ -363,6 +364,8 @@ class ChordsAndTabsProvider implements LyricsProvider {
               'responsibility.',
         ),
         'parserVersion': 'chordsandtabs-2',
+        if (versionHint != null)
+          'searchChartVersionHint': {'value': versionHint, 'confirmed': false},
         // A String parser receives decoded text, not original HTTP bytes.
         'originalPayload': {
           'contentType': 'text/html',

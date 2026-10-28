@@ -271,10 +271,12 @@ void main() {
         () => ChordsAndTabsProvider.parsePage(versionPage('ver. 5'), candidate),
         throwsA(_failure('identity_mismatch')),
       );
-      expect(
-        () => ChordsAndTabsProvider.parsePage(_page(), candidate),
-        throwsA(_failure('extraction_failed')),
-      );
+      final legacy = ChordsAndTabsProvider.parsePage(_page(), candidate);
+      expect(legacy.metadata, isNot(contains('sourceChartVersion')));
+      expect(legacy.extra['searchChartVersionHint'], {
+        'value': 4,
+        'confirmed': false,
+      });
       expect(
         ChordsAndTabsProvider.parseSearch('$search$search', 'Test Song'),
         hasLength(1),
@@ -288,6 +290,52 @@ void main() {
       );
     },
   );
+
+  test('legacy chart accepts a search hint without claiming a page version', () {
+    final candidate = ChordsAndTabsProvider.parseSearch(
+      _search.replaceFirst(
+        '<b>Artist - Test Song</b>',
+        '<b>Artist - Test Song</b><span class="version">ver. 1</span>',
+      ),
+      'Artist Test Song',
+    ).single;
+    final page = _page().replaceFirst(
+      '<body>',
+      '<body><div class="song-versions"><a><span class="songtype typeukulele">'
+          'ukulele</span>ver. 3</a></div>',
+    );
+    final result = ChordsAndTabsProvider.parsePage(page, candidate);
+    expect(result.body, contains('[C]Morning light[G7] shines.'));
+    expect(result.metadata['sourceChartType'], 'chords');
+    expect(result.metadata, isNot(contains('sourceChartVersion')));
+    expect(result.candidate.metadata, isNot(contains('sourceChartVersion')));
+    expect(result.metadata, isNot(contains('searchChartVersionHint')));
+    expect(result.extra['searchChartVersionHint'], {
+      'value': 1,
+      'confirmed': false,
+    });
+
+    final wrongType = SongCandidate.fromJson({
+      ...candidate.toJson(),
+      'metadata': {...candidate.metadata, 'searchChartTypeHint': 'ukulele'},
+    });
+    expect(
+      () => ChordsAndTabsProvider.parsePage(page, wrongType),
+      throwsA(_failure('identity_mismatch')),
+    );
+  });
+
+  test('unknown search and page versions remain unknown', () {
+    final candidate = ChordsAndTabsProvider.parseSearch(
+      _search,
+      'Artist Test Song',
+    ).single;
+    final result = ChordsAndTabsProvider.parsePage(_page(), candidate);
+    expect(result.body, isNotEmpty);
+    expect(result.metadata, isNot(contains('sourceChartVersion')));
+    expect(result.candidate.metadata, isNot(contains('sourceChartVersion')));
+    expect(result.extra, isNot(contains('searchChartVersionHint')));
+  });
 
   test(
     'selected chart version is independent of other arrangements and caller',
