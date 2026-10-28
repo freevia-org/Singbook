@@ -8,7 +8,7 @@ name: Package and smoke test Microsoft Store release
 # Adding a release: add a `release` choice and a matching block in the
 # "Resolve release pins" step. Releases whose CI artifact pins were supplied at
 # dispatch time (29, 30) still require all five artifact inputs; releases with
-# frozen pins (32, 33, 34, 35, 36, 37, 38) reject overrides.
+# frozen pins (32, 33, 34, 35, 36, 37, 38, 44) reject overrides.
 #
 # Pull requests that change this workflow or the Store scripts package and
 # smoke test the default (newest frozen) release as a self-test.
@@ -18,9 +18,9 @@ on:
       release:
         description: Store release build number to package
         required: true
-        default: '38'
+        default: '44'
         type: choice
-        options: ['29', '30', '32', '33', '34', '35', '36', '37', '38']
+        options: ['29', '30', '32', '33', '34', '35', '36', '37', '38', '44']
       ci_run_id:
         description: Successful CI run ID for the pinned release commit (releases 29 and 30 only)
         required: false
@@ -58,11 +58,11 @@ concurrency:
 
 jobs:
   package-and-smoke:
-    name: package-and-smoke (release ${{ inputs.release || '38' }})
+    name: package-and-smoke (release ${{ inputs.release || '44' }})
     runs-on: windows-latest
     timeout-minutes: 25
     env:
-      RELEASE: ${{ inputs.release || '38' }}
+      RELEASE: ${{ inputs.release || '44' }}
       INPUT_CI_RUN_ID: ${{ inputs.ci_run_id }}
       INPUT_CI_ARTIFACT_ID: ${{ inputs.ci_artifact_id }}
       INPUT_CI_ARTIFACT_DIGEST: ${{ inputs.ci_artifact_digest }}
@@ -223,6 +223,23 @@ jobs:
                 CI_ARTIFACT_DIGEST = 'sha256:c7b249c8312ae0fcc8b5b788d88f536714bb33c534e159f5720c7bef7e57910d'
                 PORTABLE_MANIFEST_SHA256 = 'a6229972795ef1450eed540890a72e2ae2a5bda1d171e012e4ebcab08fc30259'
                 PORTABLE_ZIP_SHA256 = 'a0717d87b11573bf5081dcf31603e6e025ff0c07b9606374ef7bf52a7e49e6ec'
+              }
+            }
+            '44' {
+              # Exact successful main-branch CI artifact for product 0.2.30+44.
+              $pins = [ordered]@{
+                RELEASE_HEAD_SHA = '043864658784cd596846456854a41741dd8d3df4'
+                RELEASE_COMPILED_SOURCE_SHA = '043864658784cd596846456854a41741dd8d3df4'
+                RELEASE_SOURCE_TREE = 'bf81dac356b4eaa88e40a8a650353ee7174fd233'
+                RELEASE_PRODUCT_VERSION = '0.2.30+44'
+                RELEASE_CI_BRANCH = 'main'
+              }
+              $artifactPins = [ordered]@{
+                CI_RUN_ID = '40697854793'
+                CI_ARTIFACT_ID = '12820846640'
+                CI_ARTIFACT_DIGEST = 'sha256:87b3e8802431125d3e24ba659eb2965ac2a494a89e99e5bb7ffcd80794e8db01'
+                PORTABLE_MANIFEST_SHA256 = '21FEAF1CB18ED35648F58BBCCF1FC8B25D371CC22DBC9F1748BE55C48C9639E5'
+                PORTABLE_ZIP_SHA256 = '1206A84A49A3A1DF27A636EA9DD75CCD0CFC6F24CA0A3E61E534D5139AB352CB'
               }
             }
             default { throw "Unknown Store release '$($env:RELEASE)'." }
