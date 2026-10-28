@@ -671,6 +671,20 @@
       ],
       "endpoint": "https://webservice.fanart.tv/v3.2/music",
       "reason": "Artwork API lead with publisher-documented artist MBIDs and album release-group MBIDs. v3.2 returns album arrays, dimensions and per-image copyright/source-link fields; unknown holders remain possible. A release-group image does not establish exact-release artwork. Official integration uses a project key; personal keys are separate. Free project access has a seven-day new-image delay; optional paid access is not necessary to evaluate old images. Honor Retry-After on429. Main publisher site returned403 in the web reader; the intended offline/export and attribution contract was not established. No credentials sought/created/read, API/image calls, accounts, subscriptions, canaries, registration or activation. Defer pending approved key provisioning, readable intended-use terms, exact identity and two asset/retention canaries."
+    },
+    {
+      "id": "acousticbrainz",
+      "name": "AcousticBrainz",
+      "firstSeen": "2026-10-28",
+      "lastChecked": "2026-10-28",
+      "status": "deferred",
+      "documentation": [
+        "https://acousticbrainz.org/",
+        "https://acousticbrainz.org/data",
+        "https://acousticbrainz.readthedocs.io/api.html"
+      ],
+      "endpoint": "https://acousticbrainz.org/api/v1",
+      "reason": "Publisher identifies the archived acoustic-analysis data as CC0 and says its API remains available after collection stopped in2022. It is recording-MBID/submission-scoped metadata, not lyrics, chord charts, musical ground truth or verified playback timing. Three bounded local API GETs on2026-10-28T12:49-12:50Z returned200 without retries: one bulk count and two feature-filtered bulk documents. Exact Mysterons/Portishead MBID returned148submissions; observed offsets0/1 retained matching source MBID/title/artist/album and length306.973s, keyD#minor with strength around0.616, but BPM164.01968/163.97499 differs. Colors and the Kids/Cat Power offset0 returned matching source tags and length395.729s, BPM117.969/Fminor. Exact Wonderwall/Oasis canary MBID was omitted by count; omission is unavailable coverage, not a zero-submission claim. Samples prove basic API feasibility only: no native extraction, independent musical accuracy, all-submission consensus, corpus coverage or app/cloud qualification. Never make offset0 authoritative or invent identity from selected text. Validate source tags/MBID, duration and edition; retain submission offset, raw bytes/hash, extractor version and estimated values in namespaced provenance rather than top-level chart key/tempo. API requires dynamic rate-limit headers; current app transport hides them, so a coordinated bounded cooldown contract is a prerequisite. Actual sampled headers advertised100/window; documentation says the policy may vary. One earlier MusicBrainz documentation web read returned429 and was stopped; this is separate from these3API200s. Defer pending transport policy, bounded submission/identity contract, native two-canary persistence/combination tests, coordinated compatible registry/catalog and app/cloud rollout. No audio, media, credentials, account, corpus download or activation."
     }
   ]
 }
