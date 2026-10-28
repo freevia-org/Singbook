@@ -1,6 +1,6 @@
 # Singbook Privacy Policy
 
-**Effective date:** 24 October 2026
+**Effective date:** 28 October 2026
 **App:** Singbook (Android package and iOS bundle ID `org.freevia.singbook`)
 **Publisher:** Freevia EOOD, contact privacy@freevia.org
 **Policy URL:** https://freevia.org/singbook/privacy/
@@ -31,6 +31,10 @@ There is no Singbook backend. When you search for a song, open a song, or when t
 
 When you search, Singbook may send your query to several available song catalogs enabled in settings. It remembers your preferred catalog and shows its results first when available. Otherwise it uses the normal fallback, preferring Genius when configured and available. Wikisource searches historical texts separately and is searched only when you select it. Results that arrive without artwork may be looked up by artist and title in enabled artwork catalogs (Lyrics.ovh and YouTube Music). After you choose a song, Singbook may check enabled sources for lyrics, chords, and metadata. To check a song's key, Singbook may send the chosen recording's Spotify track ID or ISRC (never your account or library) to ReccoBeats (api.reccobeats.com), which returns a key measured from the recording.
 
+When AcousticBrainz is enabled, after you choose a song Singbook may send its verified MusicBrainz recording ID to acousticbrainz.org to retrieve submitted audio-analysis metadata, including key and tempo estimates. This source is on by default in compatible builds and can be turned off in Settings → Sources. The API requests contain the recording ID, selected submission positions and a fixed list of requested analysis fields; the service also receives your IP address and Singbook User-Agent. Song title, artist, album and duration are checked locally against the response, not sent to this API. No audio, local files, library, account identity or saved browser cookies are uploaded for this lookup.
+
+AcousticBrainz responses may be reused from an in-memory cache for up to 15 minutes, with at most 32 recordings retained by that provider instance; this is a reuse limit, not a promise that memory is erased after 15 minutes. When you save a song, its retrieved analysis and original response metadata remain with that song in the local library and any exports or optional library sync you choose. Turning the source off stops future checks and does not delete saved copies. [MetaBrainz’s privacy policy](https://metabrainz.org/privacy) describes logging request IP addresses, User-Agent and requested endpoints/parameters; it does not state a fixed retention period for these request logs.
+
 What each service can receive: the **search text or the song title/artist/album/duration you looked up**, standard request information such as your **IP address**, device network details, and a User-Agent header of the form `Singbook/<version>` (with the publisher's contact URL if configured). Singbook does not send your library or Google Drive account identity to song-source services, and it does not log in to them (except the token below).
 
 | Host | Purpose |
@@ -43,6 +47,7 @@ What each service can receive: the **search text or the song title/artist/album/
 | `lyrics.ovh`, `api.deezer.com` (and Deezer image hosts) | Lyrics and song suggestions with album, duration and artwork. |
 | `synclrc.dev` | Synchronised lyric search. |
 | `better-lyrics.boidu.dev` | Cached word-timed lyrics (TTML). |
+| `acousticbrainz.org` | Optional recording-ID audio-analysis metadata; unverified key/tempo estimates. Sends a MusicBrainz recording ID and fixed lookup parameters, with normal IP/User-Agent information. |
 | `musicbrainz.org`, `www.wikidata.org`, `commons.wikimedia.org` (and `upload.wikimedia.org`), `en.wikisource.org` | Recording, work and artwork metadata; optional public-domain text. |
 | `raw.githubusercontent.com`, `github.com` | Open-licensed WorshipCommons catalogue. |
 | `seanmcgrathmusic.com`, `filksongbook.com` | Open-licensed songs. |
