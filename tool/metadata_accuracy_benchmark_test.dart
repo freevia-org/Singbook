@@ -1043,6 +1043,56 @@ Map<String, Object?> _practicalChordAnchorAudit(
 String _keyClaimScope(SongDocument doc) {
   final estimate = jsonMap(doc.extra['chordKeyEstimate']);
   if (_hasMeaningfulMetadata(doc.metadata['key'])) {
+    final applied = jsonMap(
+      jsonMap(doc.extra['evidenceRanking'])['appliedFields'],
+    )['metadata.key'];
+    if (applied is Map) {
+      final decision = Map<String, Object?>.from(applied);
+      final appliedSourceId = decision['sourceId'];
+      final appliedProviderId = decision['providerId'];
+      final appliedOrigin = decision['origin'];
+      final appliedValue = decision['value'] ?? doc.metadata['key'];
+      final matchingClaim =
+          (jsonMap(doc.extra['evidenceRanking'])['claims'] as List? ?? const [])
+              .whereType<Map>()
+              .map((claim) => Map<String, Object?>.from(claim))
+              .where((claim) {
+                if (claim['field'] != 'metadata.key' ||
+                    claim['contextCompatible'] == false ||
+                    claim['sourceScope'] is! String ||
+                    claim['sourceScope'] == 'unknown') {
+                  return false;
+                }
+                if (appliedSourceId is String &&
+                    claim['sourceId'] != appliedSourceId) {
+                  return false;
+                }
+                if (appliedProviderId is String &&
+                    claim['providerId'] != appliedProviderId) {
+                  return false;
+                }
+                if (appliedOrigin is String &&
+                    claim['origin'] != appliedOrigin) {
+                  return false;
+                }
+                return claim['value']?.toString().trim().toLowerCase() ==
+                    appliedValue?.toString().trim().toLowerCase();
+              })
+              .firstOrNull;
+      final scope = matchingClaim?['sourceScope'];
+      if (scope is String &&
+          const {
+            'recording',
+            'song',
+            'composition',
+            'arrangement',
+          }.contains(scope)) {
+        return scope;
+      }
+      // When an applied ledger exists, an unmatched claim cannot safely be
+      // replaced by another claim attached to the same source snapshot.
+      return 'unknown';
+    }
     final origin = jsonMap(doc.extra['fieldOrigins'])['key'];
     if (origin is String) {
       for (final source in doc.sources) {
@@ -1984,6 +2034,134 @@ void main() {
       },
     );
     expect(_keyClaimScope(explicitlyScopedRecordingKey), 'recording');
+  });
+
+  test('key scope follows the applied retained claim and legacy fallback', () {
+    const candidate = SongCandidate(
+      providerId: 'genius',
+      id: '821238',
+      title: 'The Girl from Ipanema',
+      artist: 'Stan Getz & João Gilberto',
+    );
+
+    SongDocument withAppliedClaim({
+      required String scope,
+      MatchKind matchKind = MatchKind.sameRecording,
+      String claimOrigin = 'provider',
+      List<Map<String, Object?>>? claims,
+    }) {
+      final source = SourceResult(
+        candidate: candidate,
+        body: '[Db]Example lyric line',
+        metadata: {'key': 'Db', 'keyScope': scope},
+        matchKind: matchKind,
+      );
+      return SongDocument(
+        id: 'ipanema-$scope',
+        title: candidate.title,
+        artist: candidate.artist,
+        body: source.body,
+        metadata: const {'key': 'Db'},
+        sources: [source],
+        selectedRecording: candidate,
+        extra: {
+          'fieldOrigins': {'key': source.id},
+          'evidenceRanking': {
+            'appliedFields': {
+              'metadata.key': {
+                'value': 'Db',
+                'sourceId': source.id,
+                'providerId': candidate.providerId,
+                'origin': claimOrigin,
+              },
+            },
+            'claims':
+                claims ??
+                [
+                  {
+                    'field': 'metadata.key',
+                    'value': 'Db',
+                    'sourceId': source.id,
+                    'providerId': candidate.providerId,
+                    'sourceScope': scope,
+                    'origin': claimOrigin,
+                    'contextCompatible': true,
+                  },
+                ],
+          },
+        },
+      );
+    }
+
+    // Audio-derived evidence retains its explicit recording scope.
+    expect(
+      _keyClaimScope(
+        withAppliedClaim(scope: 'recording', claimOrigin: 'primarySource'),
+      ),
+      'recording',
+    );
+    expect(
+      _keyClaimScope(
+        withAppliedClaim(scope: 'song', matchKind: MatchKind.sameSong),
+      ),
+      'song',
+    );
+    expect(
+      _keyClaimScope(withAppliedClaim(scope: 'composition')),
+      'composition',
+    );
+    expect(
+      _keyClaimScope(withAppliedClaim(scope: 'arrangement')),
+      'arrangement',
+    );
+
+    final legacySource = SourceResult(
+      candidate: candidate,
+      body: '[Db]Example lyric line',
+      metadata: const {'key': 'Db', 'keyScope': 'recording'},
+      matchKind: MatchKind.sameRecording,
+    );
+    final legacy = SongDocument(
+      id: 'ipanema-legacy',
+      title: candidate.title,
+      artist: candidate.artist,
+      body: legacySource.body,
+      metadata: const {'key': 'Db'},
+      sources: [legacySource],
+      extra: {
+        'fieldOrigins': {'key': legacySource.id},
+      },
+    );
+    expect(_keyClaimScope(legacy), 'recording');
+
+    final conflicting = withAppliedClaim(
+      scope: 'song',
+      claims: [
+        {
+          'field': 'metadata.key',
+          'value': 'F',
+          'sourceId': 'genius:821238',
+          'providerId': 'genius',
+          'sourceScope': 'recording',
+          'origin': 'provider',
+          'contextCompatible': true,
+        },
+        {
+          'field': 'metadata.key',
+          'value': 'Db',
+          'sourceId': 'genius:821238',
+          'providerId': 'genius',
+          'sourceScope': 'song',
+          'origin': 'provider',
+          'contextCompatible': true,
+        },
+      ],
+    );
+    expect(
+      _keyClaimScope(conflicting),
+      'song',
+      reason: 'a nonchosen conflicting value must not hijack the applied scope',
+    );
   });
   test(
     'reviewed edition proof requires the bound recording and target scope',
