@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "measuredAt": "2026-10-28T14:41:33.687804+00:00",
+  "kind": "read-only compatibility finding and proposed private data repair",
+  "publicMain": "bd4a651bc7b0d0ebc6629c12c81707f4ba0eaf4b",
+  "reviewedPr": "https://github.com/freevia-org/Singbook/pull/207",
+  "frozenHead": "ad4cd0e99514ef7ad0975a1d747765aff0111f5c",
+  "sourceCatalogPath": "config/source-catalog-v9.json",
+  "finding": {
+    "id": "chordsandtabs",
+    "currentV8": {
+      "catalogRevision": 21,
+      "sourceRevision": 2,
+      "status": "active",
+      "enabledByDefault": true
+    },
+    "frozenV9": {
+      "catalogRevision": 21,
+      "sourceRevision": 1,
+      "status": "disabled",
+      "enabledByDefault": false
+    },
+    "risk": "A channel9 client using this stale candidate would lose the channel8 activation. User opt-outs must still take precedence after any repair."
+  },
+  "proposed": {
+    "catalogRevision": 22,
+    "sourceCount": 31,
+    "allCurrent30RowsAndOrderExactlyInherited": true,
+    "openScoreEntryUnchanged": true,
+    "openScoreStatus": "disabled",
+    "catalogSha256": "1ece8bd4448c44c07a9004a1ec39bca53616a10c17ec23e657d67b355e7f8fbb",
+    "patchSha256": "b4e33159b3b230ab0e844815f4172eead31daf111593805373ad9f08b4cad135"
+  },
+  "checks": [
+    "JSON structure and unique IDs",
+    "512KiB envelope size",
+    "positive revisions and valid lifecycle values",
+    "HTTPS website fields",
+    "all current30 rows exact structural equality",
+    "new OpenScore object unchanged"
+  ],
+  "notQualified": [
+    "No compiled-registry/offline Dart validation was run; this must use the compatible channel9 runtime, not current30-provider main.",
+    "Channel/client/cache tests and updated docs still need the source owner to apply and validate the repair.",
+    "Prior frozen-head CI is not evidence for this new snapshot.",
+    "No source activation, native app or cloud qualification is implied."
+  ],
+  "mutations": {
+    "trackedSourceFiles": 0,
+    "frozenPrChanges": 0,
+    "publishedCatalogChanges": 0,
+    "sdkDeviceOrProviderHttpCalls": 0
+  },
+  "next": "Send finding and private review patch to Integration. Keep PR207 frozen until its writer/review sequencing is assigned. Preserve all served channels1-8 byte-for-byte; the proposal is not a production health/latest report.",
+  "privateCandidateOnly": true,
+  "protectedLatestBlobs": {
+    "reports/source-maintenance/latest.json": "51668b5f3443b6ab33b4568565e253a2b4540c4f",
+    "reports/source-maintenance/local/latest.json": "0163da016906a8fe61d4305a99a6d528bafea371"
+  }
+}
