@@ -1,0 +1,38 @@
+{
+  "atUtc": "2026-10-28T02:40:21.112085Z",
+  "runtime": "local Windows Flutter-bundled Dart maintenance HTTP client",
+  "sourceCommit": "a4bf065337669731e617c78ec16a23c982183845",
+  "url": "https://ozbcoz.com/Songs/cp/",
+  "method": "GET",
+  "maxRetries": 0,
+  "maximumResponseBytes": 524288,
+  "reason": "New capability check: user requested transparent Ozbcoz lookup beyond already-qualified individual ChordPro file imports. Check only publisher-documented index reachability; no song/chart/archive downloads.",
+  "scope": "index_access_only",
+  "fullProductionSuiteRepeated": false,
+  "credentialsCookiesSessionsOrChallengeWorkarounds": false,
+  "outcome": "index_access_not_qualified",
+  "reasonCode": "blocked",
+  "httpDiagnostics": {
+    "networkFailures": 0,
+    "hosts": {
+      "ozbcoz.com": {
+        "requests": 1,
+        "statuses": {
+          "403": 1
+        },
+        "retryAfterSeconds": {},
+        "databaseLag": {}
+      }
+    }
+  },
+  "rawResponsePublished": false,
+  "publisherDocumentation": [
+    "https://www.ozbcoz.com/myfaq/doku.php/chordpro_index",
+    "https://ozbcoz.com/terms"
+  ],
+  "documentedWorkflow": "Publisher describes selecting and downloading one ChordPro for apps such as OnSong. It does not document an automated metadata API in the reviewed help.",
+  "interpretation": "This is a fresh local index access denial, not proof that individual files or previously qualified native picker imports fail. No CAPTCHA/challenge type inferred from status alone.",
+  "resolved": false,
+  "next": "Retain qualified individual-file import; await a directly accessible supported index/API for transparent lookup. No header/cookie/proxy workaround or alternative path guessing.",
+  "userAction": "None currently; no new permission would change this measured server response."
+}

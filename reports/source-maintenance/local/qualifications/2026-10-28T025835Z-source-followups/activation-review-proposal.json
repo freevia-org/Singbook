@@ -1,0 +1,62 @@
+{
+  "stage": "review_only_not_published",
+  "sourceRuntime": "76ecb5641ffd57736dffef282ac124cd4902db01",
+  "baseMain": "3e2559cf4493f044535111eff5c6ea217c2768c2",
+  "catalogPath": "config/source-catalog-v8.json",
+  "baseRevision": 20,
+  "proposedRevision": 21,
+  "sourceCount": 30,
+  "changedIds": [
+    "chordsandtabs",
+    "pisni"
+  ],
+  "other28EntriesExact": true,
+  "sourceRevisions": {
+    "chordsandtabs": [
+      1,
+      2
+    ],
+    "pisni": [
+      1,
+      2
+    ]
+  },
+  "probeCounts": {
+    "chordsandtabs": 2,
+    "pisni": 2
+  },
+  "defaultEnablementProposal": "True for newly available sources under maximum-coverage objective; existing explicit user opt-outs continue to win.",
+  "oldChannelGitBlobSha256": {
+    "config/source-catalog.json": "eb23bd9999d2e70a04912bb5150d0874fc2bd5490e6f6f60fb426d2fe9838c59",
+    "config/source-catalog-v2.json": "fb761d3e89e97faafcd20ba7dd3457e42e957f76a82e5a7acebd8f40c879b5e2",
+    "config/source-catalog-v3.json": "b27df30346ba9fd0b0e2db530c42cb621cc2fe9371f50b40c685bc58703ff069",
+    "config/source-catalog-v4.json": "987dee720305c7857532f619c8b8bb6c1574bc542538688051a1974d86e4fdfa",
+    "config/source-catalog-v5.json": "17b80d9ad891e2447b9dfbade1ba7d9b3e048f2f2ea53751672258a4dc7da90b",
+    "config/source-catalog-v6.json": "bc698ebbbe0bdec8583a44d1dd05422a9e0d423228d61ccd7be20ea80c5f932d",
+    "config/source-catalog-v7.json": "b192e129d56664ddc04fea41be863cbb9e4c9f92eb7b3e5b76717e2a0b171e76"
+  },
+  "candidateBytes": 54590,
+  "candidateSha256": "2a61083aa21a4a64382f94064c29bfaed7ce3ede921358c860c7ad887ca8ddea",
+  "pending": [
+    "Integration of current PR201 source",
+    "Managed-cloud measurement using dedicated candidate report, no production-latest substitution",
+    "Compatible app/release and rights/provenance review"
+  ],
+  "runtimeCoverageRule": "A cloud-only access failure must be recorded separately from local/app health; no cross-runtime inference or source retirement from one external block.",
+  "configFilesEdited": false,
+  "published": false,
+  "newLiveSourceRequests": 0,
+  "schedulesChanged": false,
+  "offlineResult": {
+    "offline": true,
+    "summary": {
+      "offline_unverified": 28,
+      "import_only": 1,
+      "retired": 1
+    },
+    "catalogRevision": 21,
+    "sourceCount": 30,
+    "httpRequests": 0,
+    "measuredAt": "2026-10-28T02:55:52.420963Z"
+  }
+}

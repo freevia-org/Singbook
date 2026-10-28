@@ -1,0 +1,52 @@
+{
+  "atUtc": "2026-10-28T02:48:17.469143Z",
+  "sourceHead": "76ecb5641ffd57736dffef282ac124cd4902db01",
+  "runtime": "local Windows Flutter-bundled Dart host",
+  "stage": "saved_native_response_replay_only",
+  "nativeApkWasBuiltFromPriorSource": "c79e8ee6212ef9d74962e47991d49703fcde25c1",
+  "changeFromNativeProvider": "One added post-response cancellation check in search; parsePage and resolve unchanged.",
+  "networkRequests": 0,
+  "fixtureRequests": 4,
+  "cases": [
+    {
+      "sourceId": "/song/name/the-beatles-hey-jude-7",
+      "searchCandidateCount": 41,
+      "titleArtistExact": true,
+      "bodySha256": "d83aa94575cec8f1439781ae5ea305bef8f67dd5f1d9c28ac7f5e6b053e90859",
+      "sourceMetadata": {
+        "identityScope": "arrangement",
+        "capo": 1,
+        "sourceChartType": "chords",
+        "sourceChartVersion": 4
+      },
+      "originalSourceSha256": "c4a7511fb558cc6296dc47cd6a4fec1b1227a167a2077914ca682e2326724c19",
+      "originalBytesExact": true
+    },
+    {
+      "sourceId": "/song/name/queen-bohemian-rhapsody-37",
+      "searchCandidateCount": 25,
+      "titleArtistExact": true,
+      "bodySha256": "421e7dacb130c604ef681a15e629adeb59f2d7bda5e9a3443dbc4138ae4eedc1",
+      "sourceMetadata": {
+        "identityScope": "arrangement",
+        "tuning": [
+          "E",
+          "A",
+          "D",
+          "G",
+          "B",
+          "E"
+        ],
+        "sourceChartType": "chords",
+        "sourceChartVersion": 8
+      },
+      "originalSourceSha256": "c7d68d76b5e7b3f58107966cd6547dca33332a6eb001b67e4cf3c0a885a3b2f8",
+      "originalBytesExact": true
+    }
+  ],
+  "postResponseCancellationSurfaced": true,
+  "nativeReceipt": "reports/source-maintenance/local/qualifications/2026-10-28T022253Z-candt-android/report.json",
+  "nativeArchiveSha256": "02085d3069be4ddbce7117e39564d196c735485ae9ff0324c913d5c642f903ae",
+  "newNativeBuildOrLiveCanariesRun": false,
+  "rawResponsesOrLyricsPublished": false
+}

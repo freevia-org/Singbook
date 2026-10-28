@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "atUtc": "2026-10-28T02:58:35.271506+00:00",
+  "stage": "documentation_only_prepared_for_existing_PR192_owner",
+  "candidates": [
+    {
+      "id": "j-lyric",
+      "name": "J-Lyric.net",
+      "firstSeen": "2026-10-28",
+      "lastChecked": "2026-10-28",
+      "status": "deferred",
+      "documentation": [
+        "https://www.j-lyric.net/info/e374.html"
+      ],
+      "reason": "Publisher terms prohibit commercial use of its service/access. Bounded publisher-domain research found no public API or app integration contract. Do not infer client redistribution or automation permission from ordinary website access; obtain a documented compatible interface/permission and two independent identity-correct canaries before proposing integration. Japanese coverage is a lead only; size and overlap unmeasured. No song/API content request or account was made."
+    },
+    {
+      "id": "utaten",
+      "name": "UtaTen",
+      "firstSeen": "2026-10-28",
+      "lastChecked": "2026-10-28",
+      "status": "deferred",
+      "documentation": [
+        "https://utaten.com/index/agreement"
+      ],
+      "reason": "Publisher terms article8 limits lyric viewing to personal noncommercial purposes and requires prior individual written permission for reproduction, reposting and modification. No public third-party lyrics API/integration terms were identified in bounded research. Robot crawl guidance does not grant content reuse. Defer pending a documented permitted integration, attribution/work-rights handling and two independent canaries; no lyric/API request, account, permission contact or source activation."
+    },
+    {
+      "id": "letras-mus-br",
+      "name": "Letras.mus.br",
+      "firstSeen": "2026-10-28",
+      "lastChecked": "2026-10-28",
+      "status": "deferred",
+      "documentation": [
+        "https://www.ouvirmusica.com.br/aviso-legal/"
+      ],
+      "reason": "The publisher shared terms expressly cover Letras.mus.br and prohibit prospecting/similar data extraction in the user-obligations paragraph. No documented authorized third-party public API was identified. Defer until a permitted integration interface is established, then verify stable identity, attribution, retention and two canaries. Do not substitute a scraper or claim a personal-use clause not present in the currently reviewed page. Portuguese/Spanish coverage, corpus size and overlap remain unmeasured; no song/API/account calls or contact."
+    },
+    {
+      "id": "scorpexuke",
+      "name": "ScorpexUke / Richard G ukulele songbook",
+      "firstSeen": "2026-10-28",
+      "lastChecked": "2026-10-28",
+      "status": "deferred",
+      "documentation": [
+        "https://scorpexuke.com/",
+        "https://scorpexuke.com/resources/change-key/"
+      ],
+      "reason": "Publisher source-sheet instructions describe copying text from its PDF and selecting Text-ChordPro output in an external transposer; this is not a native ChordPro download/API. Footer describes the charts as author interpretations for private study/scholarship/research. No documented structured feed or ChordPro endpoint found. Singbook has no qualified generic PDF chart importer, so defer pending a supported format/interface, correct arrangement identity and two canaries. Home retrieval timed out in web research; do not infer local/cloud outage. No PDF/song/archive downloaded, no account or external contact; corpus size/overlap unmeasured."
+    }
+  ],
+  "configuredProvidersAdded": 0,
+  "sourceContentCanaries": 0,
+  "localExtractionHttpRequests": 0,
+  "publisherTermsRootReviewed": true,
+  "unavailableRobotsGuidanceTreatedAsUnknown": true,
+  "rightsBoundary": "No absence-of-license inference is treated as an explicit automation ban. Only documented restrictions are stated; underlying lyric rights and access policy remain separate.",
+  "existingDiscoveryConfigEdited": false,
+  "rawSourceDocumentsOrLyricsPublished": false
+}
