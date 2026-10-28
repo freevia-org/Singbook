@@ -29,7 +29,7 @@ env:
 
 jobs:
   analyze:
-    runs-on: ubuntu-latest
+    runs-on: singbook-i5-linux
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
@@ -64,7 +64,7 @@ jobs:
         run: flutter analyze
 
   test:
-    runs-on: ubuntu-latest
+    runs-on: singbook-i5-linux
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v7
@@ -260,7 +260,7 @@ jobs:
   windows-test:
     name: windows-test (${{ matrix.shard }}/2)
     needs: analyze
-    runs-on: windows-latest
+    runs-on: singbook-i5-windows
     timeout-minutes: 25
     strategy:
       fail-fast: false
