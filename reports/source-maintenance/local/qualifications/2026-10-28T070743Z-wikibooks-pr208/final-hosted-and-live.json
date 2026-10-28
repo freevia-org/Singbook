@@ -1,0 +1,210 @@
+{
+  "schemaVersion": 1,
+  "measuredAt": "2026-10-28T07:07:43.438181+00:00",
+  "pr": "https://github.com/freevia-org/Singbook/pull/208",
+  "base": "c77b221f1575236923b22dcea0f6672887bf11af",
+  "head": "aeee560ce81593862c5a35eb269178b07c89e1e7",
+  "moduleSha256": "d1e7c9361d587c4bd5fb98ff52467be732c651661c4d21827d14aad60f14963a",
+  "files": [
+    "lib/providers/extra/wikibooks_liederbuch.dart",
+    "test/providers/extra/wikibooks_liederbuch_test.dart",
+    "docs/wikibooks-liederbuch-qualification.md"
+  ],
+  "hostedValidation": {
+    "checks": [
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40646595160/job/122677046495",
+        "name": "windows-build",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40646595160/job/122677046475",
+        "name": "windows-test (1/2)",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40646595160/job/122677046471",
+        "name": "windows-test (2/2)",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40646595160/job/122677046512",
+        "name": "windows-journey",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40646595160/job/122676733382",
+        "name": "test",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40646595203/job/122676733522",
+        "name": "host-visuals",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40646595160/job/122676733112",
+        "name": "analyze",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40646595155/job/122676733041",
+        "name": "compile",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40646595203/job/122676734881",
+        "name": "focused-regressions",
+        "state": "SKIPPED"
+      }
+    ],
+    "applicableChecksPassed": 8,
+    "dispatchOnlyFocusedJobSkipped": true,
+    "linuxPassed": 3112,
+    "linuxSkipped": 13,
+    "metadataToolTestsPassed": 39,
+    "wikibooksCasesObservedPassed": 14,
+    "portableHistoryLicenseAndChangeNoticeAssertionsPassed": true,
+    "watcher52511": "completed_exit0"
+  },
+  "liveQualification": {
+    "schemaVersion": 1,
+    "measuredAt": "2026-10-28T07:05:45.085179Z",
+    "runtime": "local_pure_dart_exact_adapter_desktop_maintenance_transport",
+    "status": "passed",
+    "failure": null,
+    "sourceCommit": "aeee560ce81593862c5a35eb269178b07c89e1e7",
+    "sourceModuleSha256": "d1e7c9361d587c4bd5fb98ff52467be732c651661c4d21827d14aad60f14963a",
+    "candidateOnly": true,
+    "logicalRequestsExpected": 4,
+    "actualAttempts": 4,
+    "requests": [
+      {
+        "attempt": 1,
+        "sourceId": "118857",
+        "action": "query",
+        "status": 200,
+        "atUtc": "2026-10-28T07:05:42.718606Z"
+      },
+      {
+        "attempt": 2,
+        "sourceId": "118857",
+        "action": "parse",
+        "status": 200,
+        "atUtc": "2026-10-28T07:05:43.404657Z"
+      },
+      {
+        "attempt": 3,
+        "sourceId": "115615",
+        "action": "query",
+        "status": 200,
+        "atUtc": "2026-10-28T07:05:44.125918Z"
+      },
+      {
+        "attempt": 4,
+        "sourceId": "115615",
+        "action": "parse",
+        "status": 200,
+        "atUtc": "2026-10-28T07:05:44.988192Z"
+      }
+    ],
+    "httpDiagnostics": {
+      "networkFailures": 0,
+      "hosts": {
+        "de.wikibooks.org": {
+          "requests": 4,
+          "statuses": {
+            "200": 4
+          },
+          "retryAfterSeconds": {},
+          "databaseLag": {}
+        }
+      }
+    },
+    "sourceRegistered": false,
+    "catalogChanged": false,
+    "nativeOrSqliteTested": false,
+    "cloudReachabilityTested": false,
+    "cases": [
+      {
+        "id": "118857",
+        "revision": 1036453,
+        "status": "passed",
+        "metadataFields": [
+          "identityScope",
+          "language",
+          "sourceAlternativeTitles",
+          "sourceArrangerCredits",
+          "sourceChordNotation",
+          "sourceCreditLinks",
+          "sourceHeaderBlocks",
+          "sourceMelodyCredit",
+          "sourceTextCredit",
+          "wikibooksCategories",
+          "wikibooksPageId",
+          "wikibooksPageTitle",
+          "wikibooksRevisionId"
+        ],
+        "bodySha256": "56aeefa41362e4e4b001efd82fd07958b25c0c2f10c408290bcdaeef0b0db66c",
+        "metadataSha256": "4b0565a48b82e78fac8fdae2b9ca6009593e53a431988e6a85225cde74e3a3f5",
+        "originalApiBytesSha256": "9d9f991c707bf3435aa6551f9ebe25d1ea4ced101d8bfb2599e719298cb0e197",
+        "originalApiBytes": 10647,
+        "lyricLines": 20,
+        "chordCount": 28,
+        "independentReferenceAndPositionsMatched": true,
+        "ordinaryMatcherAccepted": true,
+        "combinedChordProRightsAttributionHistoryAndPayloadRetained": true
+      },
+      {
+        "id": "115615",
+        "revision": 1083680,
+        "status": "passed",
+        "metadataFields": [
+          "identityScope",
+          "language",
+          "sourceArrangerCredits",
+          "sourceChordNotation",
+          "sourceCreditLinks",
+          "sourceHeaderBlocks",
+          "sourceMelodyCredit",
+          "sourceTextCredit",
+          "wikibooksCategories",
+          "wikibooksPageId",
+          "wikibooksPageTitle",
+          "wikibooksRevisionId"
+        ],
+        "bodySha256": "b34554b119309a349a80c0d1ae4f717f1a625dbc205d688932bded489a792934",
+        "metadataSha256": "91aa065351ad21bb3601807d56cb54522299d74082ec9453b01fbd4413b0d8b6",
+        "originalApiBytesSha256": "5ba40ed537e8219c741e7f514fad8ef1987b8bba2379f3a6ea8ec23c22745f4d",
+        "originalApiBytes": 17202,
+        "lyricLines": 12,
+        "chordCount": 39,
+        "independentReferenceAndPositionsMatched": true,
+        "ordinaryMatcherAccepted": true,
+        "combinedChordProRightsAttributionHistoryAndPayloadRetained": true
+      }
+    ]
+  },
+  "independentReference": {
+    "priorRetainedHtmlRevisionsMatchFreshResponses": true,
+    "chordPositionsChecked": 67,
+    "plainLyricsAndChordSequenceMatched": true,
+    "originalResponseByteHashesMatchPriorIndependentCaptures": true,
+    "rawResponsesAndExpectedLyricsPublished": false
+  },
+  "transportPolicy": "Ordinary production ProviderTransport plus DesktopMaintenanceClient, identifying User-Agent/maxlag, no credentials. Qualification guard stops on non200, redirects, access/rate-limit failures, identity mismatch or unavailable content. No retries were needed.",
+  "provenance": {
+    "candidateOnly": true,
+    "registered": false,
+    "catalogChanged": false,
+    "defaultEnabled": false,
+    "nativeOrSqliteQualified": false,
+    "cloudReachabilityQualified": false,
+    "productionLatestReplaced": false,
+    "merged": false,
+    "released": false
+  },
+  "rights": "Page-contribution CC-BY-SA-4.0 and contributor revision/history attribution retained; underlying lyric/music rights unknown. No blanket license claim.",
+  "resources": "Pure-Dart process completed; no Flutter/pub/cache/build/device changes, no credentials or user-library access. No runtime reservations retained.",
+  "next": "Integration review for a compatible registry/catalog and private native qualification. Existing draft qualification note records earlier preparation gates; this dated receipt establishes the later exact-head CI/live evidence."
+}
