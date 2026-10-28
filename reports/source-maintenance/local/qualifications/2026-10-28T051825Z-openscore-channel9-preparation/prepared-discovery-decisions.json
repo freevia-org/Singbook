@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "atUtc": "2026-10-28T05:16:46.662153+00:00",
+  "kind": "prepared_discovery_decisions",
+  "candidateRecords": [
+    {
+      "id": "mutopia-project",
+      "name": "Mutopia Project",
+      "firstSeen": "2026-10-28",
+      "lastChecked": "2026-10-28",
+      "status": "deferred",
+      "documentation": [
+        "https://www.mutopiaproject.org/",
+        "https://www.mutopiaproject.org/browse.html",
+        "https://www.mutopiaproject.org/contribute.html",
+        "https://www.mutopiaproject.org/legal.html",
+        "https://github.com/MutopiaProject/MutopiaProject"
+      ],
+      "endpoint": "https://www.mutopiaproject.org/",
+      "reason": "Publisher offers editable LilyPond scores with per-piece public-domain, CC BY or CC BY-SA licenses, source-edition and contributor credit. Website reports2124 pieces,389Voice and395Guitar entries; these are publisher figures, not independent current counts, lyric totals or verified chord coverage. Composition, lyricist, opus, instrument, source edition and license fields are documented. Repository metadata reports last push2024-11-07; website/repository counts may differ. License family alone does not determine per-work status. No supported plaintext lyric API or ready importer is established. LilyPond includes, variables, lyric/voice alignment and repeats need a bounded non-executing parser and faithful variants; regex stripping would not qualify. Defer pending compatible grammar/identity/attribution handling and two independent live extraction/import canaries. Documentation and small GitHub metadata/directory reads only; no lyric, score or corpus downloaded."
+    },
+    {
+      "id": "digital-tradition",
+      "name": "Digital Tradition (Mudcat)",
+      "firstSeen": "2026-10-28",
+      "lastChecked": "2026-10-28",
+      "status": "deferred",
+      "documentation": [
+        "https://mudcat.org/DigiTrad-rules.cfm",
+        "https://mudcat.org/DigiTrad-blurb.cfm",
+        "https://mudcat.org/download.cfm"
+      ],
+      "endpoint": "https://mudcat.org/",
+      "reason": "Publisher describes a folk-song word/music collection with alternate versions, songwriter/source notes, categories and Child/Laws/DT catalog references. Its historical April1999 count7800 is not a current measured total. Official rules encourage sharing the database/software but warn that copyrighted works remain protected. About page explicitly says inclusion grants no content-use permission. Public downloads are legacy DOS/Windows/Mac packages, not a verified supported app API. No installer executed or archive/song document fetched. Defer pending per-work rights, a supported bounded access format, variant identity, attribution and two independent live extraction/import canaries."
+    },
+    {
+      "id": "open-lyrics-database",
+      "name": "Open Lyrics Database",
+      "firstSeen": "2026-10-28",
+      "lastChecked": "2026-10-28",
+      "status": "deferred",
+      "documentation": [
+        "https://lyrics.github.io/"
+      ],
+      "endpoint": "https://lyrics.github.io/",
+      "reason": "Publisher describes obtaining lyrics from authors and provides a repository/ZIP, but its legal section limits materials to private non-commercial educational use and retains respective-owner copyright. Public GitHub hosting and the word Open do not establish permission for a distributed songbook importer, portable exports or general app-store use. Repository metadata has no declared license. No corpus/song body or ZIP downloaded and no catalog size, unique coverage or parser qualified. Defer pending explicit app-integration permission and two independent live canaries; no automated activation proposed."
+    },
+    {
+      "id": "the-session",
+      "name": "The Session",
+      "firstSeen": "2026-10-28",
+      "lastChecked": "2026-10-28",
+      "status": "deferred",
+      "documentation": [
+        "https://blog.thesession.org/",
+        "https://github.com/adactio/TheSession-data",
+        "https://github.com/adactio/TheSession-data/blob/main/LICENSE.md"
+      ],
+      "endpoint": "https://thesession.org/",
+      "reason": "Maintainer documents read-only alternative formats and CSV/JSON dumps of tunes, settings, recordings, sets and aliases. Scope is primarily Irish/Celtic tune ABC; useful lyric/chord coverage is unverified. Dump content license includes an LLM-processing prohibition with an accessibility exception, and database terms include ODbL attribution/share-alike/access duties. A conventional Flutter runtime is not expressly excluded merely because its code uses AI assistance; do not infer that restriction. The API-versus-dump license boundary, individual setting rights, applicable merged/offline/export duties and supported rate/cache policy need clarification. No tune/API record or corpus was fetched or processed, and no song contents were supplied to an LLM. Defer pending those gates, a compatible notation/identity path and two independent live canaries. No runtime activation proposed."
+    }
+  ],
+  "providerHttpRequests": 0,
+  "runtimeOrCatalogChanges": false,
+  "rawSourceDocumentsOrSecretsIncluded": false,
+  "ledgerBoundary": "Prepared only for existing PR192 single writer; config/source-discovery.json is not edited by this branch."
+}
