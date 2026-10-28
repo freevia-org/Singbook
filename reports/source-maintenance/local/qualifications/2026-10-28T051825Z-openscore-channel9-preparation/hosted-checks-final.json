@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "atUtc": "2026-10-28T05:32:02.553762+00:00",
+  "status": "all_applicable_hosted_checks_passed",
+  "pr": "https://github.com/freevia-org/Singbook/pull/207",
+  "head": "94f56fece4f678790a2b22b9fe59034b169d3026",
+  "baseRefObserved": "c77b221f1575236923b22dcea0f6672887bf11af",
+  "draft": true,
+  "jobs": [
+    {
+      "link": "https://github.com/freevia-org/Singbook/actions/runs/40637383565/job/122647686593",
+      "name": "windows-build",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/freevia-org/Singbook/actions/runs/40637383565/job/122647686355",
+      "name": "windows-test (1/2)",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/freevia-org/Singbook/actions/runs/40637383565/job/122647686407",
+      "name": "windows-test (2/2)",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/freevia-org/Singbook/actions/runs/40637383565/job/122647686468",
+      "name": "windows-journey",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/freevia-org/Singbook/actions/runs/40637383580/job/122647376137",
+      "name": "compile",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/freevia-org/Singbook/actions/runs/40637383565/job/122647376582",
+      "name": "analyze",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/freevia-org/Singbook/actions/runs/40637383595/job/122647376363",
+      "name": "Wikisource historical-import",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/freevia-org/Singbook/actions/runs/40637383595/job/122647376346",
+      "name": "Wikisource provider-domain",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/freevia-org/Singbook/actions/runs/40637383595/job/122647376055",
+      "name": "Wikisource cached-comparison",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/freevia-org/Singbook/actions/runs/40637383565/job/122647376412",
+      "name": "test",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/freevia-org/Singbook/actions/runs/40637383512/job/122647376021",
+      "name": "host-visuals",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/freevia-org/Singbook/actions/runs/40637383512/job/122647378183",
+      "name": "focused-regressions",
+      "state": "SKIPPED"
+    }
+  ],
+  "integrationIndependentDiffReview": "Exact migration reviewed; no blocker. Preserved old30rows and unchanged reviewed PR205 source dependencies confirmed.",
+  "localStaticChecks": "SDK-free structural verification and independent static review pass; no local SDK tests were run.",
+  "runtimeEvidence": "The full hosted Flutter suite, Windows shards, desktop journey, analysis, macOS compile, visual lane and three mock-only Wikisource regression groups pass at this migration head.",
+  "nativeEvidenceBoundary": "Earlier Android imports/offline saved-reader evidence remains tied to source66d9f19 and reader1eb30e8. This migration has no physical Android or managed-cloud proof.",
+  "sourceRegisteredOnPublicMainOrActivated": false,
+  "release43Changed": false,
+  "productionLatestReportsReplaced": false,
+  "extraSourceHttpRequests": 0,
+  "extraFullProductionSuiteRuns": 0,
+  "allLocalBuildDeviceReservationsReleased": true,
+  "rawSourceDocumentsLyricsOrSecretsPublished": false
+}
