@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "atUtc": "2026-10-28T05:51:34.876438+00:00",
+  "kind": "prepared_discovery_decisions",
+  "candidateRecords": [
+    {
+      "id": "wikibooks-liederbuch",
+      "name": "Wikibooks Liederbuch (German)",
+      "firstSeen": "2026-10-28",
+      "lastChecked": "2026-10-28",
+      "status": "deferred",
+      "documentation": [
+        "https://de.wikibooks.org/wiki/Liederbuch",
+        "https://de.wikibooks.org/wiki/Liederbuch/_Inhalt",
+        "https://de.wikibooks.org/wiki/Liederbuch/_Hilfe",
+        "https://www.mediawiki.org/wiki/API:Search",
+        "https://www.mediawiki.org/wiki/API:Parsing_wikitext",
+        "https://www.mediawiki.org/wiki/Wikimedia_APIs/Access_policy"
+      ],
+      "endpoint": "https://de.wikibooks.org/w/api.php",
+      "reason": "Documented main-namespace songbook and inline chord template; folk, regional and other song repertoire rather than a dedicated religious catalog. Publisher category displays201members, not a measured usable-song count. Local identified API qualification2026-10-28T05:39Z passed siteinfo,2bounded title searches and2page parses: Kein schöner Land page118857/revision1036453; Die Gedanken sind frei page115615/revision1083680. FiveHTTP200,0retry,noauth/cookies/media/bulkfetch. Siteinfo identifies GermanWikibooks and CC BY-SA4.0 contributions; underlying-song status remains separate. Both pages have bounded poem blocks with inline chord spans and writer/melody/arranger notes. This proves search/response shape, not a completed app adapter or faithful lyric/chord extraction. Preserve revision/history attribution, licensing and exact payloads; avoid score-image alt text and hidden layout placeholders becoming lyrics. Defer pending bounded identity/parser/notation/variant handling, two live adapter extraction/import canaries, portable-source retention, compatible release and cloud qualification. No source registered or activated."
+    }
+  ],
+  "sharedLedgerEdited": false,
+  "owner": "Existing PR192 integration single writer",
+  "newSourceHttpRequests": 5,
+  "statusBoundary": "Five live API responses passed; extraction/import remains unqualified. Additional discovery/HTTP held after coordination reply was observed.",
+  "rawSourceBodiesOrSecretsIncluded": false
+}

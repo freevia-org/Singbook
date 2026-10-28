@@ -1,0 +1,112 @@
+{
+  "schemaVersion": 1,
+  "atUtc": "2026-10-28T05:51:34.876438+00:00",
+  "kind": "rights_provenance_correction_qualification",
+  "scopeProof": {
+    "sourceBefore": "70662134f6e739f71b3b708f1bb7d882f8a6b26c",
+    "sourceHead": "a23bebafbded07075b564309c83f3b1e7242e645",
+    "channelBefore": "94f56fece4f678790a2b22b9fe59034b169d3026",
+    "channelHead": "ad4cd0e99514ef7ad0975a1d747765aff0111f5c",
+    "dependencyCherryPick": "8ee0385",
+    "dependencyFilesSha256": {
+      "lib/providers/extra/openscore_lieder.dart": "284e772f8c5651289a07741c8340d36a44d265ad99077971e22ff5d6b4878432",
+      "test/providers/extra/openscore_lieder_test.dart": "6cd1eb7795b55a57eb4d99e5e0754eb5e3e1c5246a141a263bd67c799432e009",
+      "docs/openscore-lieder-qualification.md": "a35f6fd49c2d27e87f625a1af755c53e621d34eeb2fe1df0d4b357f3d5c74350"
+    },
+    "dependencyFilesExact": true,
+    "sourceCodeOutsideRightsBlockByteExact": true,
+    "catalogs1Through9ByteExact": true,
+    "retainedResponseCasesPassed": 2,
+    "networkRequests": 0,
+    "fixtureRequests": 3,
+    "replayBaselineAdjustment": "Early captured source-result prototype predates two catalog metadata fields. Comparison uses final706 replay and independently verified native source metadata; body/attribution/original bytes still match the live capture.",
+    "DartReplayOnly": true,
+    "FlutterNativeBuildCloudWork": false,
+    "noPublicActivation": true
+  },
+  "retainedResponseReplay": {
+    "schemaVersion": 1,
+    "atUtc": "2026-10-28T05:46:23.827112Z",
+    "status": "passed",
+    "sourceHead": "a23bebafbded07075b564309c83f3b1e7242e645",
+    "sourceWorktreeDirty": false,
+    "sourceModuleSha256": "284e772f8c5651289a07741c8340d36a44d265ad99077971e22ff5d6b4878432",
+    "runtime": "local_pure_Dart_retained_response_replay",
+    "networkRequests": 0,
+    "fixtureRequests": 3,
+    "baseline": "Captured independent live plaintext/source results from2026-10-28; original native evidence remains at66d9f19+reader1eb30e8.",
+    "scope": "Rights-only correction with unchanged body, metadata, attribution, original bytes/hash and combined/ChordPro source facts. No native/SQLite/cloud proof.",
+    "cases": [
+      {
+        "sourceId": "6573780",
+        "status": "passed",
+        "bodySha256": "ee15a53f5da8dc217fc208f34f62b6c615d6be06e17da8356df9800e81b838cf",
+        "metadataSha256": "02ca07785ea768c71376a34642a949081c2ff5748f7a45c26ed85046d37f9c8e",
+        "sourcePayloadSha256": "83285451ada681bf2e20b643fb1551824229e66c24ebaa43890cc5edadcf51b9",
+        "rights": {
+          "source": "openscorelieder",
+          "sourceId": "6573780",
+          "sourceUrl": "https://github.com/OpenScore/Lieder/blob/main/scores/Mayer,_Emilie/_/Der_Erlk%C3%B6nig/lc6573780.txt",
+          "license": "unknown",
+          "attribution": "Mayer, Emilie; OpenScore Lieder contributors",
+          "evidenceUrl": "https://github.com/OpenScore/Lieder/blob/main/README.md",
+          "permissions": {
+            "status": "field_specific",
+            "corpus": "CC0-1.0",
+            "corpusLicenseScope": "publisher_contributed_corpus",
+            "corpusLicenseUrl": "https://github.com/OpenScore/Lieder/blob/main/LICENSE.txt",
+            "lyrics": "unknown",
+            "underlyingPoemsAndTranslations": "unknown"
+          },
+          "provenanceNote": "Publisher text is automatically extracted from score parts. Composer credit is not a performer; no recording identity, timing, chord analysis or blanket underlying-poem clearance is inferred."
+        },
+        "bodyAttributionAndBytesEqualCapturedLiveResult": true,
+        "bodyMetadataEqualFinal706Replay": true,
+        "metadataEqualNativeSourceFacts": true,
+        "unrelatedRightsEvidenceUnchanged": true,
+        "combinedAndPortableSourceFactsRetained": true
+      },
+      {
+        "sourceId": "6217099",
+        "status": "passed",
+        "bodySha256": "202b1ed60d23da43a6066fd7f57abc411a15d7a8afb23e679fb5aa0503f97b4b",
+        "metadataSha256": "b287c7ee5405a7b1a565d06b55d24b86fbc4b06d3b5decece2f809e548be6076",
+        "sourcePayloadSha256": "1140b9ae41e8008fbd9c48e6ada8d94ced649c89297f32e002bb72b3cd234b20",
+        "rights": {
+          "source": "openscorelieder",
+          "sourceId": "6217099",
+          "sourceUrl": "https://github.com/OpenScore/Lieder/blob/main/scores/Ja%C3%ABll,_Marie/Les_Orientales/3_Clair_de_lune/lc6217099.txt",
+          "license": "unknown",
+          "attribution": "Jaëll, Marie; OpenScore Lieder contributors",
+          "evidenceUrl": "https://github.com/OpenScore/Lieder/blob/main/README.md",
+          "permissions": {
+            "status": "field_specific",
+            "corpus": "CC0-1.0",
+            "corpusLicenseScope": "publisher_contributed_corpus",
+            "corpusLicenseUrl": "https://github.com/OpenScore/Lieder/blob/main/LICENSE.txt",
+            "lyrics": "unknown",
+            "underlyingPoemsAndTranslations": "unknown"
+          },
+          "provenanceNote": "Publisher text is automatically extracted from score parts. Composer credit is not a performer; no recording identity, timing, chord analysis or blanket underlying-poem clearance is inferred."
+        },
+        "bodyAttributionAndBytesEqualCapturedLiveResult": true,
+        "bodyMetadataEqualFinal706Replay": true,
+        "metadataEqualNativeSourceFacts": true,
+        "unrelatedRightsEvidenceUnchanged": true,
+        "combinedAndPortableSourceFactsRetained": true
+      }
+    ]
+  },
+  "sourcePr": "https://github.com/freevia-org/Singbook/pull/205",
+  "channelPr": "https://github.com/freevia-org/Singbook/pull/207",
+  "currentHeadHostedChecks": "pending; earlier source706/channel94 receipts do not qualify these amended heads",
+  "focusedProviderCasesDefined": 23,
+  "independentStaticReview": "No blocker or likely compile defect found; document/corpus rights scope and portable-source regression reviewed.",
+  "nativeBoundary": "Original native receipts remain source66d9f19+reader1eb30e8. New rights provenance replays exact saved source metadata and live captured body/attribution/raw payload without a native rebuild.",
+  "managedCloudChanged": false,
+  "sourceRegisteredOrActivatedOnPublicMain": false,
+  "localFlutterBuildOrDeviceWork": false,
+  "newSourceHttpForRightsCorrection": 0,
+  "extraProductionLiveSuites": 0,
+  "allRawBodiesPrivate": true
+}

@@ -1,0 +1,115 @@
+{
+  "schemaVersion": 1,
+  "runtime": "local_Windows_Python_TLS_HTTP_contract_qualification",
+  "purpose": "New-source documented API and two independent search/parse shape canaries; not production maintenance or app extraction proof.",
+  "userAgent": "Singbook/0.2.29 (+https://github.com/freevia-org/Singbook)",
+  "maxHttpAttempts": 5,
+  "maxBytesPerResponse": 2097152,
+  "automaticRetries": 0,
+  "requests": [
+    {
+      "probe": "siteinfo",
+      "atUtc": "2026-10-28T05:39:02.781105+00:00",
+      "url": "https://de.wikibooks.org/w/api.php?format=json&formatversion=2&maxlag=5&action=query&meta=siteinfo&siprop=general%7Crightsinfo",
+      "httpStatus": 200,
+      "retryAfter": null,
+      "contentType": "application/json; charset=utf-8",
+      "bytes": 3475,
+      "sha256": "6f3a8a1fd53610cc6aba7d93b9a6c0d666e5ae9aa63c480fd4dbb1764f56dbe4",
+      "status": "healthy_response"
+    },
+    {
+      "probe": "search-kein-schoener-land",
+      "atUtc": "2026-10-28T05:39:04.389480+00:00",
+      "url": "https://de.wikibooks.org/w/api.php?format=json&formatversion=2&maxlag=5&action=query&list=search&srsearch=%22Kein+sch%C3%B6ner+Land%22+prefix%3ALiederbuch%2F&srnamespace=0&srlimit=5",
+      "httpStatus": 200,
+      "retryAfter": null,
+      "contentType": "application/json; charset=utf-8",
+      "bytes": 1199,
+      "sha256": "7189a2710f3d58f2d3d78fa5022a1a843073e18ee462e54d7ebe3d2438767988",
+      "status": "healthy_response"
+    },
+    {
+      "probe": "parse-kein-schoener-land",
+      "atUtc": "2026-10-28T05:39:05.968078+00:00",
+      "url": "https://de.wikibooks.org/w/api.php?format=json&formatversion=2&maxlag=5&action=parse&pageid=118857&prop=text%7Crevid%7Ccategories%7Cproperties%7Cdisplaytitle",
+      "httpStatus": 200,
+      "retryAfter": null,
+      "contentType": "application/json; charset=utf-8",
+      "bytes": 10647,
+      "sha256": "9d9f991c707bf3435aa6551f9ebe25d1ea4ced101d8bfb2599e719298cb0e197",
+      "status": "healthy_response"
+    },
+    {
+      "probe": "search-gedanken-frei",
+      "atUtc": "2026-10-28T05:39:07.581821+00:00",
+      "url": "https://de.wikibooks.org/w/api.php?format=json&formatversion=2&maxlag=5&action=query&list=search&srsearch=%22Die+Gedanken+sind+frei%22+prefix%3ALiederbuch%2F&srnamespace=0&srlimit=5",
+      "httpStatus": 200,
+      "retryAfter": null,
+      "contentType": "application/json; charset=utf-8",
+      "bytes": 1400,
+      "sha256": "44785e8ebe874b21a690b35ede8ec6b40b9752f753bfbe4ce942ecf10fd42831",
+      "status": "healthy_response"
+    },
+    {
+      "probe": "parse-gedanken-frei",
+      "atUtc": "2026-10-28T05:39:09.209283+00:00",
+      "url": "https://de.wikibooks.org/w/api.php?format=json&formatversion=2&maxlag=5&action=parse&pageid=115615&prop=text%7Crevid%7Ccategories%7Cproperties%7Cdisplaytitle",
+      "httpStatus": 200,
+      "retryAfter": null,
+      "contentType": "application/json; charset=utf-8",
+      "bytes": 17202,
+      "sha256": "5ba40ed537e8219c741e7f514fad8ef1987b8bba2379f3a6ea8ec23c22745f4d",
+      "status": "healthy_response"
+    }
+  ],
+  "status": "two_search_and_parse_shape_canaries_passed",
+  "credentialsCookiesBrowserOrProxyBypassUsed": false,
+  "site": {
+    "sitename": "Wikibooks",
+    "lang": "de",
+    "server": "//de.wikibooks.org"
+  },
+  "rights": {
+    "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.de",
+    "text": "Creative Commons Attribution-Share Alike 4.0"
+  },
+  "canaries": [
+    {
+      "sourcePageId": 118857,
+      "sourceTitle": "Liederbuch/ Kein schöner Land",
+      "revision": 1036453,
+      "htmlChars": 9656,
+      "poemClassOccurrences": 1,
+      "chordRelatedClasses": [],
+      "categoryNames": [
+        "Seiten,_die_die_Score-Erweiterung_verwenden",
+        "Liederbuch/_Lieder",
+        "Liederbuch/_Folkdiplom",
+        "Liederbuch/_Folk-Songs",
+        "Liederbuch/_Lieder_auf_Deutsch"
+      ],
+      "rightsBoundary": "Site contribution license and underlying-work status remain separate; no source-wide rights clearance claimed.",
+      "appExtractionOrImportTested": false
+    },
+    {
+      "sourcePageId": 115615,
+      "sourceTitle": "Liederbuch/ Die Gedanken sind frei",
+      "revision": 1083680,
+      "htmlChars": 15994,
+      "poemClassOccurrences": 1,
+      "chordRelatedClasses": [],
+      "categoryNames": [
+        "Seiten,_die_die_Score-Erweiterung_verwenden",
+        "Liederbuch/_Lieder",
+        "Liederbuch/_Folk-Songs",
+        "Liederbuch/_Lieder_auf_Deutsch",
+        "Liederbuch/_Kinderlied",
+        "Liederbuch/_Menschen_und_Mächte"
+      ],
+      "rightsBoundary": "Site contribution license and underlying-work status remain separate; no source-wide rights clearance claimed.",
+      "appExtractionOrImportTested": false
+    }
+  ],
+  "finishedAtUtc": "2026-10-28T05:39:09.731695+00:00"
+}
