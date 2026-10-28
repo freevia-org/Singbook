@@ -1,0 +1,138 @@
+{
+  "schemaVersion": 1,
+  "atUtc": "2026-10-28T01:53:00.053643+00:00",
+  "qualificationOnly": true,
+  "productionDailySuiteRepeated": false,
+  "source": {
+    "id": "chordsandtabs",
+    "base": "59798147a3ffa62c38996ed0e4f763b6a328982a",
+    "head": "c79e8ee6212ef9d74962e47991d49703fcde25c1",
+    "branch": "codex/candt-source-fidelity-20261028",
+    "pullRequest": "https://github.com/freevia-org/Singbook/pull/201",
+    "files": [
+      "lib/providers/extra/chords_and_tabs.dart",
+      "test/providers/extra/chords_and_tabs_test.dart"
+    ]
+  },
+  "changes": [
+    "Reject contradictory or unparseable visible identity even when structured identity matches selection.",
+    "Retain authoritative selected chart type/version; do not use alternate-arrangement menu facts.",
+    "Keep search type/version as untrusted constraints; omit conflicting same-path rows without invented IDs.",
+    "Retain bounded HTML with explicit decoded-String versus exact received HTTP-byte provenance."
+  ],
+  "checks": {
+    "focusedProviderTests": {
+      "passed": 20
+    },
+    "focusedAnalysis": "no_issues",
+    "independentReview": "no_remaining_blocker",
+    "offlineStructural": {
+      "passed": true,
+      "runtime": "Flutter-bundled Dart 3.12.2 Windows",
+      "catalogPath": "config/source-catalog-v8.json",
+      "catalogRevision": 20,
+      "sourceCount": 30,
+      "summary": {
+        "offline_unverified": 26,
+        "import_only": 1,
+        "retired": 1,
+        "disabled": 2
+      },
+      "httpRequests": 0
+    },
+    "capturedPageReplay": {
+      "atUtc": "2026-10-28T01:43:28.724948Z",
+      "networkRequests": 0,
+      "sourceCaptureSha256": "c4a7511fb558cc6296dc47cd6a4fec1b1227a167a2077914ca682e2326724c19",
+      "responseBytes": 25347,
+      "identity": "chordsandtabs:/song/name/the-beatles-hey-jude-7",
+      "title": "Hey jude",
+      "artist": "The Beatles",
+      "sourceMetadata": {
+        "identityScope": "arrangement",
+        "capo": 1,
+        "sourceChartType": "chords",
+        "sourceChartVersion": 4
+      },
+      "bodyCharacters": 1372,
+      "hasChords": true,
+      "parserVersion": "chordsandtabs-2",
+      "snapshotMatchesDecodedInput": true,
+      "httpBodyBytesExact": false,
+      "rightsRemainUnknown": true,
+      "musicalAccuracyEstablished": false,
+      "publisherRenditionAccuracyLimitation": "Publisher describes this rendition as not fully accurate; extraction proof does not establish musical accuracy."
+    }
+  },
+  "native": {
+    "status": "blocked_before_resolve",
+    "runtime": "Android16 API36 x86_64 16KiB emulator5554 private profile build",
+    "package": "org.freevia.singbook.qacandt8",
+    "privateOverlay": "e1fa5caf8b66b90e9963c80fff34d43e83c60b2a",
+    "apkSha256": "d25546471c7e0230163c57e69d55a7bdd6373d05cea2d8a1781f7c24301d4149",
+    "apkBytes": 69150018,
+    "publicCatalogsPackagedExact": true,
+    "privateCatalogSourceCount": 30,
+    "other29EntriesUnchanged": true,
+    "nativeSearchRequests": 1,
+    "nativeResolveRequests": 0,
+    "nativeSavedSongs": 0,
+    "returnedCandidates": 41,
+    "visibleGroups": 15,
+    "exactCanary": "/song/name/the-beatles-hey-jude-7",
+    "exactCanaryInSuggestions": true,
+    "requests": [
+      {
+        "atUtc": "2026-10-28T01:48:58.863981Z",
+        "url": "https://www.chords-and-tabs.net/songs/search/Hey%20Jude",
+        "method": "GET",
+        "status": 200,
+        "responseBytes": 29424,
+        "responseSha256": "e4f525530a2bf45cf53255e1f29d23095d972a382cbb4fc0589ec242c01cd6f7",
+        "privateCaptureName": "request-1.bin"
+      }
+    ],
+    "deniedRequests": [],
+    "roadblock": "Ordinary UI grouping hides the requested stable arrangement ID behind another arrangement. Separate coordinator-owned grouping repair required.",
+    "whatWasTried": "Normal online search; attempted normal target-row scrolling/selection. No direct controller selection or HTTP result filtering.",
+    "resolved": false,
+    "userAction": "None. Integration owns the bounded grouping repair; resume after reviewed integration and one updated private build.",
+    "searchResponseCapturedPrivatelyForOfflineReplay": true
+  },
+  "requestBudget": {
+    "desktopDiagnosticRequests": 1,
+    "desktopResponseStatus": 200,
+    "desktopResponseBytes": 25347,
+    "desktopResponseSha256": "c4a7511fb558cc6296dc47cd6a4fec1b1227a167a2077914ca682e2326724c19",
+    "nativeSearchRequests": 1,
+    "nativeResolveRequests": 0,
+    "extraFullSuiteRuns": 0,
+    "retries": 0
+  },
+  "dataProtection": {
+    "existingLibraries": [
+      {
+        "package": "org.freevia.singbook.qa09a8bf9",
+        "songCount": 10,
+        "sqliteSha256": "621eff76f49f82193f43da47f5b96a02c4c10f14043e3175bbeb5bfa4b1d79aa",
+        "completeArchiveSha256": "5463b739555b2ac5448e244fc2302c5a0d801830692693a41da59d794e78c449"
+      },
+      {
+        "package": "org.freevia.singbook.qapisni42",
+        "songCount": 2,
+        "sqliteSha256": "402f9c4e8db1e6c51b11d84b744c82f9019cc84037305375ea2126df5a1129c5",
+        "completeArchiveSha256": "ff8b031277a5bee90677f89cad5748151c00661d6e9fa9c92673f5bbfd8c5462"
+      }
+    ],
+    "archived14Preserved": true,
+    "existingDataClearedOrOverwritten": false,
+    "credentialsCopied": false
+  },
+  "limitations": [
+    "Source remains disabled in published channel8. No source activation or app release.",
+    "Native search/selection/save/offline acceptance is incomplete; no managed-cloud reachability claim.",
+    "Publisher describes Hey Jude rendition as not fully accurate. Parsing/retention does not prove musical accuracy.",
+    "Underlying work rights and redistribution permission remain unknown."
+  ],
+  "rawDocumentsOrLyricsPublished": false
+}
