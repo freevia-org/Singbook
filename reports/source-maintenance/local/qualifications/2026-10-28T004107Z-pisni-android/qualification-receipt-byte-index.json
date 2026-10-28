@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "atUtc": "2026-10-28T01:03:36.694158+00:00",
+  "sourceSnapshotHealthHead": "722c68a19f3092da1875eaebe35761496071a7b6",
+  "scope": "Canonical committed-byte index for the complete root-owned Pisni qualification receipt chain and related discovery evidence.",
+  "verificationRule": "Use committedUtf8LfBlobSha256 when verifying Git/raw/API file bytes. Some earlier handoffs or embedded receipt references used local Windows CRLF file hashes; localWorkingFileSha256 records that historical byte representation. Content/results are unchanged.",
+  "records": [
+    {
+      "path": "reports/source-maintenance/local/qualifications/2026-10-27T233224Z-pisni-native-pr195/catalog-fixture-proof.json",
+      "committedUtf8LfBlobSha256": "f1bd263c8b25e9d81a1135f2859278cdcb42c66e23c9d6081e69ecc8eaedc6c2",
+      "localWorkingFileSha256": "afc3a292a98a4086b6d7428af5ab7b7f76554e63829658b117aab9111f80f580",
+      "localWorkingLineEndings": "CRLF",
+      "normalizedBytesAndJsonExact": true
+    },
+    {
+      "path": "reports/source-maintenance/local/qualifications/2026-10-27T233224Z-pisni-native-pr195/code-provenance.json",
+      "committedUtf8LfBlobSha256": "add91e152b2020c10fd37bc76971533d26cff16953f0be47a458e87e93ffbe6c",
+      "localWorkingFileSha256": "dbcaaa9b0bdc17fc90091b5352443321c5df16a0ec16d6f1a2634f1049466a34",
+      "localWorkingLineEndings": "CRLF",
+      "normalizedBytesAndJsonExact": true
+    },
+    {
+      "path": "reports/source-maintenance/local/qualifications/2026-10-27T233224Z-pisni-native-pr195/credit-validation-repair.json",
+      "committedUtf8LfBlobSha256": "d79601b11b9017b9a663e4d95c49346d763920bf59989c971d193f51444764de",
+      "localWorkingFileSha256": "a25aaf92b0c4849a4998a1a70b351b518e2c2aa71cf9292a3ec7e557fb230b30",
+      "localWorkingLineEndings": "CRLF",
+      "normalizedBytesAndJsonExact": true
+    },
+    {
+      "path": "reports/source-maintenance/local/qualifications/2026-10-27T233224Z-pisni-native-pr195/hosted-checks-final.json",
+      "committedUtf8LfBlobSha256": "bf9195a8b24c14aa8349e9f2af70ac95a6340e2c2bee3491f0b05e86ff9b47af",
+      "localWorkingFileSha256": "69ac8ede4e3b8c81bede0b7a5b0a0fbf16023a62a18eb0cc592ae760b4f5d2ac",
+      "localWorkingLineEndings": "CRLF",
+      "normalizedBytesAndJsonExact": true
+    },
+    {
+      "path": "reports/source-maintenance/local/qualifications/2026-10-27T233224Z-pisni-native-pr195/proposed-entry.json",
+      "committedUtf8LfBlobSha256": "e46674e359dfc9b3b0b5b5192844d4c0b31e374133e2e71ec6b851a50d0f5a30",
+      "localWorkingFileSha256": "ac63d7b493efd5ac4a1e96b9ac67a3a33e2df52d18313e3ba785e542cb1a3e41",
+      "localWorkingLineEndings": "CRLF",
+      "normalizedBytesAndJsonExact": true
+    },
+    {
+      "path": "reports/source-maintenance/local/qualifications/2026-10-27T233224Z-pisni-native-pr195/report.json",
+      "committedUtf8LfBlobSha256": "378fffec854415d640ec080227f0f80486fdfbab18ca9e1550a6bb68f91f332b",
+      "localWorkingFileSha256": "3c2b9a33d8e0324218a3ed8fb36781e62f5022809152ab41d60fae1b8be66660",
+      "localWorkingLineEndings": "CRLF",
+      "normalizedBytesAndJsonExact": true
+    },
+    {
+      "path": "reports/source-maintenance/local/qualifications/2026-10-28T000017Z-discovery-import-review/file-import-documentation.json",
+      "committedUtf8LfBlobSha256": "460286266781b1502223f1d670c93267ba6d0afac33e80466c02f4b2532d46cd",
+      "localWorkingFileSha256": "18c51f0fbe99475213f10f2e2f3037b44c1624913706eb8474688bca3b38d371",
+      "localWorkingLineEndings": "CRLF",
+      "normalizedBytesAndJsonExact": true
+    },
+    {
+      "path": "reports/source-maintenance/local/qualifications/2026-10-28T000017Z-discovery-import-review/proposed-discovery-additions.json",
+      "committedUtf8LfBlobSha256": "fa4e6416abd324c42c7613f7be6909fa2fb48313ddcb37d887154a7acd49a66f",
+      "localWorkingFileSha256": "eaf8b83378c6adc1bdb836a769cdea4fce4d61e78acdb118d196ecc703802eea",
+      "localWorkingLineEndings": "CRLF",
+      "normalizedBytesAndJsonExact": true
+    },
+    {
+      "path": "reports/source-maintenance/local/qualifications/2026-10-28T004107Z-pisni-android/channel8-structural-followup.json",
+      "committedUtf8LfBlobSha256": "f1e053920fdd9ac4c80368023449f8f436e3406801fcf0b545a6380d1298a570",
+      "localWorkingFileSha256": "f1e053920fdd9ac4c80368023449f8f436e3406801fcf0b545a6380d1298a570",
+      "localWorkingLineEndings": "LF",
+      "normalizedBytesAndJsonExact": true
+    },
+    {
+      "path": "reports/source-maintenance/local/qualifications/2026-10-28T004107Z-pisni-android/committed-byte-provenance.json",
+      "committedUtf8LfBlobSha256": "2096eaf962391b219658cea08a67c01a53e9ac05d638ce6f2bc20f05e981a43e",
+      "localWorkingFileSha256": "2096eaf962391b219658cea08a67c01a53e9ac05d638ce6f2bc20f05e981a43e",
+      "localWorkingLineEndings": "LF",
+      "normalizedBytesAndJsonExact": true
+    },
+    {
+      "path": "reports/source-maintenance/local/qualifications/2026-10-28T004107Z-pisni-android/emulator-storage-recovery.json",
+      "committedUtf8LfBlobSha256": "bea5c5d1363b2516e846f2f8594aa5369f45e30e2e9d8a3ac988828c93d222b7",
+      "localWorkingFileSha256": "8c4c87b695013edc4194d8bc187f71b1d35dec1b2ae715bd7126f28f0fa82205",
+      "localWorkingLineEndings": "CRLF",
+      "normalizedBytesAndJsonExact": true
+    },
+    {
+      "path": "reports/source-maintenance/local/qualifications/2026-10-28T004107Z-pisni-android/pr196-registry-catalog-finding.json",
+      "committedUtf8LfBlobSha256": "782ea7fcfda15f33dd9623d510736e48d82fe7e52737666e7c6a3e6ae85dd67b",
+      "localWorkingFileSha256": "29ce1d8780615a03a6f83f290f9cecd8d36cff48bc5f02ab879960cd0c2c4264",
+      "localWorkingLineEndings": "CRLF",
+      "normalizedBytesAndJsonExact": true
+    },
+    {
+      "path": "reports/source-maintenance/local/qualifications/2026-10-28T004107Z-pisni-android/report.json",
+      "committedUtf8LfBlobSha256": "de96416134330898a0f41a647c1664e2ac38f6b6f9a7bac37a6847084b518e25",
+      "localWorkingFileSha256": "1b08ca76bd17e0b692706422ea1ee778a6d14e4f229b2a95d1443897533a0a79",
+      "localWorkingLineEndings": "CRLF",
+      "normalizedBytesAndJsonExact": true
+    }
+  ],
+  "sourceCodeApkDatabaseArchiveAndRawHttpByteHashesNotRedefined": true,
+  "additionalNetworkSourceRequests": 0,
+  "originalReportsModified": false
+}
