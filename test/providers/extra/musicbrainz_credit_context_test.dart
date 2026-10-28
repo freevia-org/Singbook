@@ -93,20 +93,13 @@ void main() {
       expect(result.matchKind, MatchKind.unverified);
     },
   );
-  for (final invalid in [
-    'wrong album',
-    'wrong title',
-    'unsupported feature',
-    'ambiguous',
-  ]) {
+  for (final invalid in ['wrong album', 'wrong title', 'unsupported feature']) {
     test('rejects $invalid before recording fetch', () async {
       final requests = <Uri>[];
       final rows = invalid == 'wrong album'
           ? [row(album: 'Getz/Gilberto #2')]
           : invalid == 'wrong title'
           ? [row(title: 'Other song')]
-          : invalid == 'ambiguous'
-          ? [row(), row()]
           : [row()];
       await expectLater(
         provider(
@@ -114,14 +107,23 @@ void main() {
           rows,
         ).resolve(selection(feature: invalid != 'unsupported feature')),
         throwsA(
-          isA<ProviderException>().having(
-            (e) => e.code,
-            'code',
-            invalid == 'ambiguous' ? 'ambiguous_match' : 'unavailable',
-          ),
+          isA<ProviderException>().having((e) => e.code, 'code', 'unavailable'),
         ),
       );
       expect(requests, hasLength(1));
     });
   }
+  test(
+    'repeated search rows retain one native recording without false ambiguity',
+    () async {
+      final requests = <Uri>[];
+      final result = await provider(requests, [
+        row(),
+        row(),
+      ]).resolve(selection());
+      expect(result.candidate.id, recording);
+      expect(requests, hasLength(2));
+      expect(result.extra, isNot(contains('providerAlternatives')));
+    },
+  );
 }

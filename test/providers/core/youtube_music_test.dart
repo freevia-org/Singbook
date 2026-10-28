@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
+import 'package:singbook/providers/core/core_providers.dart';
 import 'package:singbook/providers/core/youtube_music.dart';
 import 'package:singbook/providers/provider.dart';
 
@@ -26,6 +27,11 @@ http.Response homepage([
   Map<String, Object?> extra = const {},
 ]) => http.Response(
   '<script>ytcfg.set(${jsonEncode({'INNERTUBE_CLIENT_VERSION': 'fixture.1', ...extra})});</script>',
+  200,
+);
+
+http.Response upgradeHomepage() => http.Response(
+  '<img src="/img/on_platform_logo_dark.svg"><a href="https://www.google.com/chrome/index.html">Upgrade</a>',
   200,
 );
 
@@ -92,6 +98,55 @@ Map<String, dynamic> selectedTrack() => {
 };
 
 void main() {
+  test('upgrade-page fallback version uses the injected UTC date', () async {
+    final requests = <http.Request>[];
+    final t = transport((request) {
+      requests.add(request);
+      return request.url.path == '/' ? upgradeHomepage() : json(emptySearch());
+    });
+    try {
+      final frozen = DateTime.utc(2026, 10, 27, 12);
+      final provider = createCoreProviders(
+        transport: t,
+        clock: () => frozen,
+      ).whereType<YoutubeMusicProvider>().single;
+      expect(await provider.search('Moliendo Café Hugo Blanco'), isEmpty);
+      final body = jsonDecode(requests.last.body) as Map<String, dynamic>;
+      final client = (body['context'] as Map)['client'] as Map;
+      expect(client['clientVersion'], '1.20261027.01.00');
+    } finally {
+      await t.close();
+    }
+  });
+
+  test(
+    'cached config expires after one hour according to the injected clock',
+    () async {
+      var now = DateTime.utc(2026, 10, 27, 12);
+      var homeRequests = 0;
+      final t = transport((request) {
+        if (request.url.path == '/') {
+          homeRequests++;
+          return homepage();
+        }
+        return json(emptySearch());
+      });
+      try {
+        final provider = YoutubeMusicProvider(t, clock: () => now);
+        await provider.search('fixture');
+        expect(homeRequests, 1);
+        now = now.add(const Duration(minutes: 59));
+        await provider.search('fixture');
+        expect(homeRequests, 1);
+        now = now.add(const Duration(minutes: 2));
+        await provider.search('fixture');
+        expect(homeRequests, 2);
+      } finally {
+        await t.close();
+      }
+    },
+  );
+
   for (final visitor in <Object>[
     'anonymous-fixture-visitor',
     'malformed\r\nvisitor',

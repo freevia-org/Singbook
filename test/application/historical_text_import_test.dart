@@ -76,7 +76,13 @@ void main() {
         final rejected = await findMatchingSource(provider, selected);
         expect(rejected.matchKind, MatchKind.rejected);
         expect(rejected.matchReason, 'identity_mismatch');
-        expect(rejected.toJson(), expected.sources.single.toJson());
+        expect(rejected.extra['discoveryEvidence'], isA<Map>());
+        // Optional discovery diagnostics were not present in the released
+        // fixture. The underlying source facts must remain byte-compatible.
+        final legacyRejected = SourceResult.fromJson(
+          {...rejected.toJson()}..remove('discoveryEvidence'),
+        );
+        expect(legacyRejected.toJson(), expected.sources.single.toJson());
         // The baseline allowed an explicit rejected source card to be saved.
         // Project its selected reference/body/source into the old serialized
         // document; do not run the new strict combine gate as a fake old saver.
@@ -85,7 +91,7 @@ void main() {
           title: selected.title,
           artist: selected.artist,
           body: rejected.body,
-          sources: [rejected],
+          sources: [legacyRejected],
           selectedRecording: selected,
           favorite: expected.favorite,
           createdAt: expected.createdAt,
