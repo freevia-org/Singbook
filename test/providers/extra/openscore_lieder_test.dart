@@ -330,4 +330,107 @@ void main() {
       expect(calls, 2);
     },
   );
+
+  test('canceling an older cold search cannot cancel a newer search', () async {
+    final started = Completer<void>();
+    final releaseFirst = Completer<void>();
+    var requests = 0;
+    final transport = _transport((req) async {
+      requests++;
+      if (requests == 1) {
+        started.complete();
+        await releaseFirst.future;
+      }
+      return http.Response(_index(), 200);
+    });
+    addTearDown(transport.close);
+    final provider = OpenScoreLiederProvider(transport);
+    final oldToken = CancellationToken(), newToken = CancellationToken();
+    final old = expectLater(
+      provider.search('Test', cancel: oldToken),
+      throwsA(
+        isA<ProviderException>().having((e) => e.code, 'code', 'cancelled'),
+      ),
+    );
+    await started.future;
+    final current = expectLater(
+      provider.search('Test', cancel: newToken),
+      completion(hasLength(1)),
+    );
+    oldToken.cancel();
+    try {
+      await old;
+      await current.timeout(const Duration(seconds: 2));
+      expect(requests, 2);
+    } finally {
+      releaseFirst.complete();
+    }
+    expect(await provider.search('Test'), hasLength(1));
+    expect(
+      requests,
+      2,
+      reason: 'The successful newer search supplies the cache.',
+    );
+  });
+
+  test(
+    'cancelable caller returns promptly while an uncanceled fetch continues',
+    () async {
+      final started = Completer<void>();
+      final releaseFirst = Completer<void>();
+      var requests = 0;
+      final transport = _transport((req) async {
+        requests++;
+        started.complete();
+        await releaseFirst.future;
+        return http.Response(_index(), 200);
+      });
+      addTearDown(transport.close);
+      final provider = OpenScoreLiederProvider(transport);
+      final owner = provider.search('Test');
+      await started.future;
+      final token = CancellationToken();
+      final waiter = provider.search('Test', cancel: token);
+      token.cancel();
+      try {
+        await expectLater(
+          waiter.timeout(const Duration(seconds: 1)),
+          throwsA(
+            isA<ProviderException>().having((e) => e.code, 'code', 'cancelled'),
+          ),
+        );
+      } finally {
+        releaseFirst.complete();
+      }
+      expect(await owner, hasLength(1));
+      expect(
+        requests,
+        1,
+        reason: 'The canceled queued caller sends no request.',
+      );
+    },
+  );
+
+  test(
+    'uncancelled concurrent cold searches share one catalog request',
+    () async {
+      final started = Completer<void>(), release = Completer<void>();
+      var requests = 0;
+      final transport = _transport((req) async {
+        requests++;
+        started.complete();
+        await release.future;
+        return http.Response(_index(), 200);
+      });
+      addTearDown(transport.close);
+      final provider = OpenScoreLiederProvider(transport);
+      final first = provider.search('Test');
+      await started.future;
+      final second = provider.search('A Poet');
+      release.complete();
+      expect(await first, hasLength(1));
+      expect(await second, hasLength(1));
+      expect(requests, 1);
+    },
+  );
 }

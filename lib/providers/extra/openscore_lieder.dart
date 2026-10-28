@@ -39,17 +39,23 @@ class OpenScoreLiederProvider implements LyricsProvider {
   Future<List<SongCandidate>> _load(CancellationToken? cancel) async {
     cancel?.throwIfCancelled();
     if (_catalog != null && _clock().isBefore(_expiresAt!)) return _catalog!;
-    final pending = _loading;
-    if (pending != null) {
-      final result = await pending;
-      cancel?.throwIfCancelled();
+    if (cancel != null) {
+      // A changing search owns its cancellation. It must not join a request
+      // that an older caller can abort, or keep waiting after it is canceled.
+      final result = await _downloadCatalog(cancel);
+      cancel.throwIfCancelled();
+      _catalog = result;
+      _expiresAt = _clock().add(_cacheLifetime);
       return result;
     }
-    final future = _downloadCatalog(cancel);
+    final pending = _loading;
+    if (pending != null) {
+      return pending;
+    }
+    final future = _downloadCatalog(null);
     _loading = future;
     try {
       final result = await future;
-      cancel?.throwIfCancelled();
       // A failed/aborted refresh never replaces a previously usable snapshot.
       _catalog = result;
       _expiresAt = _clock().add(_cacheLifetime);
