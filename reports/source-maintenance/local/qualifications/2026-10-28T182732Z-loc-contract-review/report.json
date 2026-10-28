@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "library-of-congress-sheet-music",
+  "status": "deferred",
+  "reviewedAt": "2026-10-28T18:27:31.958096+00:00",
+  "scope": "Documentation-only candidate; no API/content/image canaries, account or credentials",
+  "opportunity": "Historical sheet-music bibliographic metadata, source-edition cover images and potentially score/lyric references; not verified album artwork or recording identity",
+  "primaryEvidence": [
+    {
+      "url": "https://www.loc.gov/apis/json-and-yaml/?loclr=blogsig",
+      "finding": "Public no-key JSON/YAML API; item and search/resource model, metadata and images; not complete library catalog"
+    },
+    {
+      "url": "https://www.loc.gov/apis/json-and-yaml/requests/endpoints/",
+      "finding": "notated-music endpoint and item ids; historic http id schemes must be normalized to validated HTTPS without arbitrary redirects"
+    },
+    {
+      "url": "https://www.loc.gov/apis/json-and-yaml/requests/parameters/",
+      "finding": "q, c, at, collection/facet scoping documented; request small bounded result count and only needed fields"
+    },
+    {
+      "url": "https://www.loc.gov/apis/json-and-yaml/working-within-limits/",
+      "finding": "Published JSON API20requests/minute,1hour block if exceeded; lower load-dependent limit/CAPTCHA possible; stop/pause on blocks"
+    },
+    {
+      "url": "https://www.loc.gov/collections/historic-sheet-music/about-this-collection/",
+      "finding": "Publisher estimates approximately9000items1800\u20131922; includes instrumental work; not unique songs or extractable lyrics count"
+    },
+    {
+      "url": "https://www.loc.gov/collections/american-sheet-music-1870-to-1885/about-this-collection/",
+      "finding": "Publisher describes over47000pieces, mixed instrumental and vocal; not additive distinct usable-song coverage"
+    },
+    {
+      "url": "https://www.loc.gov/collections/american-sheet-music-after-1885/about-this-collection/rights-and-access/",
+      "finding": "Indexed publisher statement for this particular collection says public domain/free reuse, credit Library of Congress Music Division; not extended to other collections"
+    },
+    {
+      "url": "https://libraryofcongress.github.io/data-exploration/loc.gov%20JSON%20API/Accessing%20images%20for%20analysis.html",
+      "finding": "Publisher tutorial identifies item/collection rights fields and warns access_restricted=false does not establish absence of other restrictions"
+    }
+  ],
+  "roadblocks": [
+    {
+      "step": "collection-specific rights docs",
+      "urls": [
+        "https://www.loc.gov/collections/historic-sheet-music/about-this-collection/rights-and-access/",
+        "https://www.loc.gov/collections/american-sheet-music-1870-to-1885/about-this-collection/rights-and-access/"
+      ],
+      "result": "Web reader returned403; stopped, no alternate transport, credentials or extraction attempted",
+      "resolved": false
+    }
+  ],
+  "pending": [
+    "Accessible collection/item-specific rights and intended app retention/export/image rights",
+    "Confirmed live API response,2independent identity+field+attribution canaries and raw retention",
+    "Edition-scoped identity; creators/arrangers distinct from recording artists",
+    "Classify score cover as edition artwork, not album artwork",
+    "Native/cloud and UI/export qualification; no registration/default activation"
+  ],
+  "sourceConfigChanged": false
+}
