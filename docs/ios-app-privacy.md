@@ -257,10 +257,15 @@ submitted build; earlier no-OAuth build notes do not describe this profile.
 This assessment covers PR223 at `426007ca2204646bcd0f3a389762b6e9c50a590c`,
 not frozen release 45 or a confirmed installed build. When enabled (default-on
 in candidate channel 10), this metadata provider receives a verified MusicBrainz
-recording ID in HTTPS query parameters at `acousticbrainz.org`, along with fixed
-submission positions/field names, the request IP and Singbook User-Agent. It
-receives no uploaded audio/files, saved library, account identity or browser
-session. Title/artist/album/duration checks use returned tags locally.
+recording ID in HTTPS query parameters at `acousticbrainz.org`. The count request
+contains that ID; the sampled-analysis request uses at most two submission
+offsets (0 and 1) and the exact fields
+`metadata.tags;rhythm.bpm;tonal.key_key;tonal.key_scale;tonal.key_strength`.
+The service also receives the request IP and Singbook User-Agent. It receives
+no uploaded audio/files, saved library, account identity or browser session.
+Title, artist and album are checked locally against returned file tags;
+duration is compared with the returned audio-length value
+(`metadata.audio_properties.length`, retained as `audioLengthSeconds`).
 
 The existing Search History / App Functionality recommendation should include
 this selected-recording lookup; the public recording ID is content context,
