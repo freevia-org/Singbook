@@ -19,8 +19,13 @@ const _asset = {
 };
 
 class _ArtworkProvider implements LyricsProvider {
-  _ArtworkProvider(this.metadata, {this.extra = const {}});
+  _ArtworkProvider(
+    this.metadata, {
+    this.extra = const {},
+    this.candidate = _selection,
+  });
   final Map<String, dynamic> metadata, extra;
+  final SongCandidate candidate;
   @override
   final definition = const ProviderDefinition(
     id: 'fake',
@@ -31,13 +36,13 @@ class _ArtworkProvider implements LyricsProvider {
   Future<List<SongCandidate>> search(
     String query, {
     CancellationToken? cancel,
-  }) async => [_selection];
+  }) async => [candidate];
   @override
   Future<SourceResult> resolve(
     SongCandidate candidate, {
     CancellationToken? cancel,
   }) async => SourceResult(
-    candidate: _selection,
+    candidate: this.candidate,
     body: '',
     metadata: metadata,
     extra: extra,
@@ -47,6 +52,8 @@ class _ArtworkProvider implements LyricsProvider {
 Future<Map<String, dynamic>> _run(
   _ArtworkProvider provider, {
   List<String> requiredMetadata = const ['artworkUrl', 'artworkAssets'],
+  String? expectedAlbum,
+  String selectedReleaseId = '00000000-0000-0000-0000-000000000001',
 }) => SourceMaintenanceHarness(providers: [provider]).run(
   SourceCatalog.fromJson({
     'schemaVersion': 1,
@@ -68,7 +75,13 @@ Future<Map<String, dynamic>> _run(
         'probes': [
           {
             'id': 'artwork-shape',
-            'candidate': _selection.toJson(),
+            'candidate': {
+              ..._selection.toJson(),
+              'album': ?expectedAlbum,
+              if (expectedAlbum != null)
+                'metadata': {'musicbrainzReleaseId': selectedReleaseId},
+            },
+            'expectedAlbum': ?expectedAlbum,
             'requiredFields': ['metadata'],
             'requiredMetadataFields': requiredMetadata,
           },
@@ -79,6 +92,115 @@ Future<Map<String, dynamic>> _run(
 );
 Map _probe(Map report) => report['sources'][0]['probes'][0] as Map;
 void main() {
+  const unavailableArtwork = {
+    'capabilityChecks': {
+      'artwork': {'status': 'unavailable', 'code': 'timeout'},
+    },
+  };
+  const releaseMetadata = [
+    'musicbrainzRecordingId',
+    'musicbrainzReleaseId',
+    'artworkUrl',
+    'artworkAssets',
+  ];
+  test(
+    'whitespace-only release ID cannot relax the album identity check',
+    () async {
+      final report = await _run(
+        _ArtworkProvider({
+          'musicbrainzRecordingId': '1',
+        }, extra: unavailableArtwork),
+        expectedAlbum: 'Invented Album',
+        selectedReleaseId: '   ',
+        requiredMetadata: releaseMetadata,
+      );
+      expect(_probe(report)['status'], 'identity_mismatch');
+      expect(_probe(report)['reason'], 'resolved_identity_mismatch');
+    },
+  );
+  test(
+    'missing art-dependent album reports the upstream artwork failure',
+    () async {
+      final report = await _run(
+        _ArtworkProvider({
+          'musicbrainzRecordingId': '1',
+          'durationSeconds': 201,
+        }, extra: unavailableArtwork),
+        expectedAlbum: 'Invented Album',
+        requiredMetadata: releaseMetadata,
+      );
+      expect(_probe(report)['status'], 'transient_error');
+      expect(_probe(report)['reason'], 'timeout');
+      expect(_probe(report)['capability'], 'artwork');
+      expect(_probe(report)['missingIdentityFields'], ['album']);
+      expect(_probe(report)['recordingMetadataAvailable'], isTrue);
+    },
+  );
+  test(
+    'a present wrong album remains an identity mismatch during art failure',
+    () async {
+      final report = await _run(
+        _ArtworkProvider(
+          {'musicbrainzRecordingId': '1', 'durationSeconds': 201},
+          extra: unavailableArtwork,
+          candidate: SongCandidate.fromJson({
+            ..._selection.toJson(),
+            'album': 'Different Album',
+          }),
+        ),
+        expectedAlbum: 'Invented Album',
+        requiredMetadata: releaseMetadata,
+      );
+      expect(_probe(report)['status'], 'identity_mismatch');
+      expect(_probe(report)['reason'], 'resolved_identity_mismatch');
+    },
+  );
+  test(
+    'missing album without an artwork failure remains an identity mismatch',
+    () async {
+      final report = await _run(
+        _ArtworkProvider({'musicbrainzRecordingId': '1'}),
+        expectedAlbum: 'Invented Album',
+        requiredMetadata: releaseMetadata,
+      );
+      expect(_probe(report)['status'], 'identity_mismatch');
+      expect(_probe(report)['reason'], 'resolved_identity_mismatch');
+    },
+  );
+  test(
+    'artwork failure cannot relax an album check without the exact release requirement',
+    () async {
+      final report = await _run(
+        _ArtworkProvider({
+          'musicbrainzRecordingId': '1',
+        }, extra: unavailableArtwork),
+        expectedAlbum: 'Invented Album',
+      );
+      expect(_probe(report)['status'], 'identity_mismatch');
+      expect(_probe(report)['reason'], 'resolved_identity_mismatch');
+    },
+  );
+  test(
+    'art-dependent album cannot hide missing required recording metadata',
+    () async {
+      final report = await _run(
+        _ArtworkProvider({'durationSeconds': 201}, extra: unavailableArtwork),
+        expectedAlbum: 'Invented Album',
+        requiredMetadata: releaseMetadata,
+      );
+      expect(_probe(report)['status'], 'changed_schema');
+      expect(_probe(report)['reason'], 'required_metadata_fields_missing');
+      expect(
+        _probe(report)['missingMetadataFields'],
+        contains('musicbrainzRecordingId'),
+      );
+      expect(_probe(report)['missingIdentityFields'], ['album']);
+      expect(_probe(report)['capabilityFailures']['artwork'], {
+        'status': 'transient_error',
+        'reason': 'timeout',
+      });
+    },
+  );
   test(
     'artwork-dependent release ID follows the optional artwork timeout',
     () async {
