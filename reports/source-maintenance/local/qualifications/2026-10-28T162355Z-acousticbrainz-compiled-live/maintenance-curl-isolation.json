@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "atUtc": "2026-10-28T16:37:46.500772+00:00",
+  "kind": "bounded desktop maintenance-client request-isolation qualification",
+  "sourceCommit": "8c475f74873e95a83818f9a8272c1884d1a86916",
+  "baseCommit": "7633513af0436deceebd49a99ace00ccca0c101f",
+  "pullRequest": "https://github.com/freevia-org/Singbook/pull/221",
+  "draft": true,
+  "files": [
+    "test/providers/desktop_maintenance_client_test.dart",
+    "tool/source_maintenance.dart"
+  ],
+  "committedFileSha256": {
+    "test/providers/desktop_maintenance_client_test.dart": "5a9558746516a275e9aaddf828cf9256535e5ea873920c1beeea4050a7f81be7",
+    "tool/source_maintenance.dart": "f7a0e1c3799c33080fd1d2dcd68a8b89e6686a024581e69f1dfafcea1a4e02c0"
+  },
+  "behavior": "curl receives --disable as first argument, isolating probe request policy from default curl configuration.",
+  "regression": "Isolated synthetic curl config attempts to add cookie/header and redirect following; loopback request remains one302, with no ambient cookie/header. Existing explicit consent-marker/header and redirect/response-bound cases still pass.",
+  "checks": {
+    "focusedTests": {
+      "passed": 14,
+      "files": 2,
+      "exitCode": 0
+    },
+    "analysis": {
+      "paths": 2,
+      "exitCode": 0,
+      "result": "No issues found",
+      "durationSeconds": 44.4
+    },
+    "diffCheck": "pass"
+  },
+  "logsSha256": {
+    "tests": "16703ea50487ca37392a427d8f2f8b07040834043f16f8ee8f6a9e9736b1c6e5",
+    "analysis": "c537652b8795f158d742655b80d2b16c9ffbd3d3b1be8ba5471c0c5be103fd90"
+  },
+  "resourceWindows": [
+    {
+      "startedAtUtc": "2026-10-28T16:20:24Z",
+      "releasedAtUtc": "2026-10-28T16:25:13Z",
+      "limitSeconds": 300,
+      "reservedSeconds": 289
+    },
+    {
+      "startedAtUtc": "2026-10-28T16:33:43Z",
+      "lastSdkExitAtUtc": "2026-10-28T16:34:32Z",
+      "releasedAtUtc": "2026-10-28T16:36:14Z",
+      "limitSeconds": 180,
+      "reservedSeconds": 151
+    }
+  ],
+  "sourceHttpRequestsForThisPatch": 0,
+  "syntheticLoopbackOnly": true,
+  "realUserCurlConfigurationReadOrChanged": false,
+  "pastRateLimitCauseClaimed": false,
+  "deviceGradleReleaseCatalogFactoryRoutingOrModelChanges": 0,
+  "sdkFullyReleased": true,
+  "next": "Coordinator review; no automatic merge. Any remaining hosted platform validation stays explicit."
+}

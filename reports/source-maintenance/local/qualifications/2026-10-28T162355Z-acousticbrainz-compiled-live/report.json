@@ -1,0 +1,208 @@
+{
+  "schemaVersion": 1,
+  "atUtc": "2026-10-28T16:32:40.159954+00:00",
+  "kind": "candidate-only local compiled AcousticBrainz extraction qualification",
+  "sourceCommit": "f8f31a9b0fbdff201337e3f342ac1ef3063250b7",
+  "pullRequest": "https://github.com/freevia-org/Singbook/pull/217",
+  "runtime": "3.12.2 (stable) (Tue Jun 9 01:11:39 2026 -0700) on \"windows_x64\"",
+  "startedAtUtc": "2026-10-28T16:23:45.475908Z",
+  "completedAtUtc": "2026-10-28T16:23:55.322490Z",
+  "baseCatalog": {
+    "path": "config/source-catalog-v9.json",
+    "revision": 22,
+    "rosterEntries": 31,
+    "nativeIds": 30,
+    "declarativeIds": [
+      "unison"
+    ]
+  },
+  "candidateOverlay": {
+    "rosterEntries": 32,
+    "nativeIds": 31,
+    "declarativeIds": [
+      "unison"
+    ],
+    "offlineCompleteCoveragePassed": true,
+    "published": false
+  },
+  "canaries": [
+    {
+      "id": "b5d7d380-f43a-4c1f-a5de-694150b093ac",
+      "title": "Mysterons",
+      "artist": "Portishead",
+      "status": "healthy",
+      "sourceFactsSha256": "781cf70212a47288b53c239f21837cec9a419c6323f11f3d7f4c1b089920ef4d",
+      "submissionCount": 148,
+      "sampledOffsets": [
+        0,
+        1
+      ],
+      "allSubmissionsRetrieved": false,
+      "musicalAccuracy": "unverified",
+      "audioAlignment": "unverified",
+      "canonicalKeyOrBpmPromoted": false,
+      "bodyEmpty": true,
+      "rightsCorpusScopeRetained": true,
+      "chordProSourceFactsExact": true,
+      "payloads": [
+        {
+          "role": "submissionCount",
+          "sha256": "866f605adbdc88f63e7d8cfaa8cf71e261e9926792952c6b816b8ad18f8ee306"
+        },
+        {
+          "role": "sampledLowLevel",
+          "sha256": "ec8c9ffba97e1394c2ee9da7321ea562dcafbff1bb95cd3ced5c936c2258020b"
+        }
+      ]
+    },
+    {
+      "id": "099b148e-fe99-4b79-be6e-5078e4bb7415",
+      "title": "Colors and the Kids",
+      "artist": "Cat Power",
+      "status": "healthy",
+      "sourceFactsSha256": "c8ea685435c37e2125d52f2c95b7e139ba8d268100f5b987029f1cf5f1e04ed7",
+      "submissionCount": 44,
+      "sampledOffsets": [
+        0,
+        1
+      ],
+      "allSubmissionsRetrieved": false,
+      "musicalAccuracy": "unverified",
+      "audioAlignment": "unverified",
+      "canonicalKeyOrBpmPromoted": false,
+      "bodyEmpty": true,
+      "rightsCorpusScopeRetained": true,
+      "chordProSourceFactsExact": true,
+      "payloads": [
+        {
+          "role": "submissionCount",
+          "sha256": "5b93840dee81572738550979c6e505633d269c03982e76ea3542d64ec7723755"
+        },
+        {
+          "role": "sampledLowLevel",
+          "sha256": "ace9e9d46fc9461db0c048cd366e9a87176890ee37e20ba83e255717003f3128"
+        }
+      ]
+    }
+  ],
+  "requests": [
+    {
+      "atUtc": "2026-10-28T16:23:45.562158Z",
+      "method": "GET",
+      "path": "/api/v1/count",
+      "probeId": "b5d7d380-f43a-4c1f-a5de-694150b093ac-explicit-recording",
+      "httpStatus": 200,
+      "elapsedMilliseconds": 542,
+      "rate": {
+        "x-ratelimit-limit": 100,
+        "x-ratelimit-remaining": 99,
+        "x-ratelimit-reset-in": 5
+      }
+    },
+    {
+      "atUtc": "2026-10-28T16:23:47.212228Z",
+      "method": "GET",
+      "path": "/api/v1/low-level",
+      "probeId": "b5d7d380-f43a-4c1f-a5de-694150b093ac-explicit-recording",
+      "httpStatus": 200,
+      "elapsedMilliseconds": 3584,
+      "rate": {
+        "x-ratelimit-limit": 100,
+        "x-ratelimit-remaining": 98,
+        "x-ratelimit-reset-in": 3
+      }
+    },
+    {
+      "atUtc": "2026-10-28T16:23:51.906312Z",
+      "method": "GET",
+      "path": "/api/v1/count",
+      "probeId": "099b148e-fe99-4b79-be6e-5078e4bb7415-explicit-recording",
+      "httpStatus": 200,
+      "elapsedMilliseconds": 221,
+      "rate": {
+        "x-ratelimit-limit": 100,
+        "x-ratelimit-remaining": 99,
+        "x-ratelimit-reset-in": 8
+      }
+    },
+    {
+      "atUtc": "2026-10-28T16:23:53.231373Z",
+      "method": "GET",
+      "path": "/api/v1/low-level",
+      "probeId": "099b148e-fe99-4b79-be6e-5078e4bb7415-explicit-recording",
+      "httpStatus": 200,
+      "elapsedMilliseconds": 2081,
+      "rate": {
+        "x-ratelimit-limit": 100,
+        "x-ratelimit-remaining": 98,
+        "x-ratelimit-reset-in": 7
+      }
+    }
+  ],
+  "httpAttempts": 4,
+  "retries": 0,
+  "otherProviderHttpRequests": 0,
+  "productionSuiteRepeated": false,
+  "requestReason": "New exact-compiled-adapter capability after hosted validation; earlier API feasibility reads predated module.",
+  "checks": {
+    "requiredMetadataFields": "pass for2 independent recording IDs",
+    "recordingContextAndSubmittedTags": "pass; not independent audio verification",
+    "rawResponseBytesSha256": "pass",
+    "cachedResolveExtraHttpRequests": 0,
+    "sourceFactsChordProRoundtrip": "pass forboth",
+    "canonicalMusicalOrTimingPromotion": false
+  },
+  "initialRoadblock": {
+    "stage": "private offline registry validation",
+    "reason": "The helper incorrectly equated all catalog IDs with native IDs; Unison is declarative.",
+    "resolved": "Validate exact native-ID coverage plus declarative extraction grammar, retaining full native+declarative roster.",
+    "httpRequestsBeforeRepair": 0,
+    "sourceOrCatalogRuntimeBug": false
+  },
+  "resourceWindow": {
+    "startedAtUtc": "2026-10-28T16:20:24Z",
+    "lastSdkExitAtUtc": "2026-10-28T16:23:55Z",
+    "releasedAtUtc": "2026-10-28T16:25:13Z",
+    "reservedSeconds": 289,
+    "maximumSeconds": 300,
+    "released": true,
+    "deviceOrGradleOperations": 0
+  },
+  "rightsScope": "Publisher CC0 analysis corpus; no audio/lyrics/artwork rights claimed.",
+  "limitations": [
+    "Local Windows CLI only; no Android/iOS/macOS UI or cloud source reachability proof.",
+    "Only offsets0/1 sampled from148 and44 submissions; not full coverage, consensus or authoritative winner.",
+    "Musical accuracy and audio alignment remain unverified.",
+    "Provider remains unregistered; ordinary app late context routing, safe source-analysis UI, compatible registry/catalog and cloud qualification remain open.",
+    "PR216 dynamic publisher-window handling remains a separate prerequisite."
+  ],
+  "rawDocumentsPublished": false,
+  "productionLatestReportsChanged": false,
+  "independentRetainedResponseAudit": {
+    "atUtc": "2026-10-28T16:42:03.207864+00:00",
+    "runtime": "Python standard-library JSON/base64/hash audit, no Dart/provider deserializer or new network",
+    "checks": [
+      {
+        "recordingMbid": "b5d7d380-f43a-4c1f-a5de-694150b093ac",
+        "sampleCount": 2,
+        "allReturnedTagsExact": true,
+        "audioLengthAndExtractorVersionExact": true,
+        "estimatesMatchRawNumbersExact": true,
+        "candidateIdentityFromActualTags": true,
+        "canonicalFieldsNotPromoted": true,
+        "rightsScopeRetained": true
+      },
+      {
+        "recordingMbid": "099b148e-fe99-4b79-be6e-5078e4bb7415",
+        "sampleCount": 2,
+        "allReturnedTagsExact": true,
+        "audioLengthAndExtractorVersionExact": true,
+        "estimatesMatchRawNumbersExact": true,
+        "candidateIdentityFromActualTags": true,
+        "canonicalFieldsNotPromoted": true,
+        "rightsScopeRetained": true
+      }
+    ],
+    "rawDocumentsPublished": false
+  }
+}
