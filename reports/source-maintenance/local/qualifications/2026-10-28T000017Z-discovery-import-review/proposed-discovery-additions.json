@@ -1,0 +1,39 @@
+{
+  "scope": "Proposed discovery-registry additions for the existing PR192 owner; not active providers or a published catalog.",
+  "candidates": [
+    {
+      "id": "chordwiki",
+      "name": "ChordWiki Japanese chord and lyric catalog",
+      "documentation": [
+        "https://ja.chordwiki.org/",
+        "https://ja.chordwiki.org/TermOfUse.html"
+      ],
+      "firstSeen": "2026-10-27",
+      "lastChecked": "2026-10-27",
+      "status": "deferred",
+      "reason": "Publisher homepage currently reports 27,178 songs and ChordPro-based submissions; this is a publisher claim, not a corpus census. Terms clause3 limits its JASRAC-managed lyrics permission to on-site streaming and explicitly disallows download, copy and print; clause4 reserves remaining source/output rights to contributors. No song, editor-source or content request was made. Keep pending explicit compatible integration permission, recording/arrangement identity and source-credit preservation, and two independent permitted live canaries. Japanese coverage is a potential benefit; overlap and importer compatibility remain unmeasured."
+    },
+    {
+      "id": "guitarparty",
+      "name": "GuitarParty lyrics chords and songbooks",
+      "documentation": [
+        "https://www.guitarparty.com/",
+        "https://www.guitarparty.com/terms/"
+      ],
+      "firstSeen": "2026-10-27",
+      "lastChecked": "2026-10-27",
+      "status": "deferred",
+      "reason": "Publisher homepage describes lyrics/chords, transposition and custom songbooks. A current official third-party API contract and corpus size were not verified; historical third-party API clients are not permission evidence. Published terms sections6 and11 restrict copying/storage and automated extraction without express written consent; personal printing is narrower than Singbook saved-library integration. No song/API/authenticated-content request, account or credential was created. Defer pending a documented authorized API contract covering app retention, required attribution and rights, identity/schema verification and two independent live canaries."
+    }
+  ],
+  "requestAccounting": {
+    "webSearchQueries": 2,
+    "webOpenOperations": 3,
+    "songOrApiContentRequests": 0,
+    "localSourceHttpRequests": 0,
+    "credentialsOrAccountsCreated": false,
+    "publisherContactSent": false
+  },
+  "atUtc": "2026-10-28T00:00:17.929740+00:00",
+  "sourceMain": "4f943eb126dd83eb8af12680d2544a42e89b94f6"
+}

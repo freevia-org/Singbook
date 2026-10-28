@@ -1,0 +1,35 @@
+{
+  "scope": "Selected incomplete file-import capability documentation review only; no new production live suite or local source HTTP probes.",
+  "runtime": "web research service; results do not establish local-machine or managed-cloud reachability",
+  "productionMain": "4f943eb126dd83eb8af12680d2544a42e89b94f6",
+  "wikisource": {
+    "documentation": [
+      "https://en.wikisource.org/wiki/Help:Reading_offline",
+      "https://wikisource.org/wiki/Wikisource:WS_Export/en"
+    ],
+    "observation": "Publisher help describes EPUB/MOBI/PDF and additional formats such as RTF; it links the separate WS Export service. Current Singbook ingestion handles song text/ChordPro/timing and its backup collections, not a qualified generic EPUB/PDF/RTF importer.",
+    "observedExportServiceUrl": "https://ws-export.wmcloud.org/",
+    "webServiceResult": "Anubis Access Denied document; HTTP status not exposed by the research tool.",
+    "whatWasTried": "Read publisher documentation and its directly linked export-service entry page once. No guessed download URL, challenge workaround, authentication or source-content request.",
+    "fileImportVerified": false,
+    "localAndCloudFailureInferred": false,
+    "nextStep": "A permitted publisher export in a supported format, or a separately qualified format adapter, is required before claiming file import. Existing direct historical-text lookup remains separately healthy."
+  },
+  "chordie": {
+    "observation": "Current native module reads public embedded ChordPro; that proves ordinary extraction, not an independent publisher download workflow.",
+    "research": "One domain-scoped documentation search returned no matching primary Chordie download instructions. One informational FAQ URL open failed in the web research service; no local probe or extraction failure is inferred.",
+    "fileImportVerified": false,
+    "nextStep": "Identify an observed publisher-supported copy/download action and qualify its actual bytes through ingestion; do not relabel HTML extraction or synthetic text as a live file-download canary."
+  },
+  "requestAccounting": {
+    "webSearchQueries": 2,
+    "webOpenOperations": 2,
+    "publisherContentDownloads": 0,
+    "localLiveHttpRequests": 0,
+    "fullProductionSuiteRepeated": false
+  },
+  "credentialsCookiesOrChallengeBypass": false,
+  "userActionRequiredNow": false,
+  "atUtc": "2026-10-28T00:00:17.929740+00:00",
+  "sourceMain": "4f943eb126dd83eb8af12680d2544a42e89b94f6"
+}
