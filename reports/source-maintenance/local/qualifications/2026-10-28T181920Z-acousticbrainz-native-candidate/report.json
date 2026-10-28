@@ -1,0 +1,121 @@
+{
+  "sourceCommit": "426007ca2204646bcd0f3a389762b6e9c50a590c",
+  "completed": false,
+  "provenance": {
+    "acousticBrainz": "real HTTPS API",
+    "Genius": "authored fixture; no real search",
+    "MusicBrainz": "authored canonical witness fixture"
+  },
+  "http": [
+    {
+      "startedAt": "2026-10-28T18:17:50.279626Z",
+      "endedAt": "2026-10-28T18:18:00.356167Z",
+      "host": "acousticbrainz.org",
+      "path": "/api/v1/count",
+      "status": 200,
+      "responseBytes": 73
+    },
+    {
+      "startedAt": "2026-10-28T18:18:00.357508Z",
+      "endedAt": "2026-10-28T18:18:14.581862Z",
+      "host": "acousticbrainz.org",
+      "path": "/api/v1/low-level",
+      "status": 200,
+      "responseBytes": 3945
+    },
+    {
+      "startedAt": "2026-10-28T18:18:20.444369Z",
+      "endedAt": "2026-10-28T18:18:40.477283Z",
+      "host": "acousticbrainz.org",
+      "path": "/api/v1/count",
+      "status": null,
+      "responseBytes": 0
+    }
+  ],
+  "httpRequestCount": 3,
+  "retries": 0,
+  "cases": [
+    {
+      "case": "mysterons",
+      "completed": true,
+      "sourceCount": 3,
+      "acousticBrainzSourceCount": 1,
+      "recordingScopedMbid": true,
+      "originalPayloadsRetained": true,
+      "chordProRoundTrip": true,
+      "rawPayloadSha256": [
+        "866f605adbdc88f63e7d8cfaa8cf71e261e9926792952c6b816b8ad18f8ee306",
+        "ec8c9ffba97e1394c2ee9da7321ea562dcafbff1bb95cd3ced5c936c2258020b"
+      ],
+      "sqliteReopenRawPayloadAudit": true
+    },
+    {
+      "case": "colors-and-the-kids",
+      "completed": false
+    }
+  ],
+  "failures": [
+    {
+      "case": "colors-and-the-kids",
+      "step": "case",
+      "code": "qa_assertion_failed"
+    }
+  ],
+  "schemaVersion": 1,
+  "qualificationType": "candidate-native-android",
+  "status": "partial",
+  "productionLocalLatest": false,
+  "equivalentAppSourceHead": "47ecb871ac2356a53eb0638695c390d1626c1b65",
+  "catalogPath": "config/source-catalog-v10.json",
+  "catalogChannel": 10,
+  "catalogRevision": 23,
+  "runtime": "Android16 API36 x86_64 16KiB pages; Flutter3.44.8 Dart3.12.2; native Cronet HTTP",
+  "package": "org.freevia.singbook.qaacoustic223",
+  "build": {
+    "result": "passed",
+    "mode": "debug",
+    "standardScript": true,
+    "privateOverlays": true,
+    "apkSha256": "d16d90c864247efbaad3ecba8713753c78aea512790ecbb3a9abd8389083f6e8"
+  },
+  "ui": {
+    "appLaunch": true,
+    "versionDetailsVerified": false,
+    "reason": "second_case_failed_before_conditional_modal",
+    "screenshotInspected": true
+  },
+  "independentSqliteAudit": {
+    "sourceCommit": "426007ca2204646bcd0f3a389762b6e9c50a590c",
+    "savedSongCount": 1,
+    "acousticBrainzSourceCount": 1,
+    "sqliteChordProDecodedIndependently": true,
+    "candidateAndMetadataExact": true,
+    "originalPayloadObjectsExact": true,
+    "rawByteSha256Verified": true,
+    "savedOriginalPayloadCount": 2,
+    "networkRequests": 0
+  },
+  "roadblocks": [
+    {
+      "source": "acousticbrainz",
+      "capability": "second native extraction and version-details UI",
+      "evidence": "Second count request ended after20.033s without HTTP status; transport timeout20s;0retries",
+      "resolved": false,
+      "nextAction": "Selected-source native extraction and details qualification in next assigned SDK window; do not rerun full source suite or infer permanent source regression"
+    }
+  ],
+  "resourceReservation": {
+    "startedAt": "2026-10-28T18:04:15Z",
+    "releasedAt": "2026-10-28T18:19:20Z",
+    "ownedEmulatorStopped": true,
+    "dataPreserved": true,
+    "physicalPhoneAndOtherAvdsUntouched": true
+  },
+  "limitations": [
+    "Genius catalog/lyrics and canonical MusicBrainz witness are authored fixtures, not live provider qualification",
+    "No musical or lyric accuracy claim",
+    "No version-details modal native pass",
+    "No managed cloud reachability qualification",
+    "Private APK, source responses and QA SQLite database not published"
+  ]
+}
