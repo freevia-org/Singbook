@@ -327,12 +327,16 @@ class OpenScoreLiederProvider implements LyricsProvider {
       extra: {
         ...sourceEvidence(
           found,
-          license: 'CC0-1.0 (publisher corpus dedication)',
-          licenseUrl: '$_repository/blob/main/LICENSE.txt',
+          license: 'unknown',
           attribution: attribution,
           evidenceUrl: '$_repository/blob/main/README.md',
           permissions: {
-            'status': 'source_declared_underlying_rights_unverified',
+            'status': 'field_specific',
+            'corpus': 'CC0-1.0',
+            'corpusLicenseScope': 'publisher_contributed_corpus',
+            'corpusLicenseUrl': '$_repository/blob/main/LICENSE.txt',
+            'lyrics': 'unknown',
+            'underlyingPoemsAndTranslations': 'unknown',
           },
           provenanceNote:
               'Publisher text is automatically extracted from score parts. Composer credit is not a performer; no recording identity, timing, chord analysis or blanket underlying-poem clearance is inferred.',

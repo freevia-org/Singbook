@@ -25,9 +25,13 @@ and incremental coverage remain unmeasured.
 
 The publisher [dedicates the corpus under CC0](https://github.com/OpenScore/Lieder/blob/38c5db510224d9facdc4b08d741fc788cfb58ea8/LICENSE.txt)
 and requests OpenScore attribution and a repository link. CC0 does not clear
-third-party rights the affirmer does not own. The adapter retains that dedication,
-source attribution and an explicit underlying-rights-unverified status rather
-than declaring every embedded poem or translation public domain everywhere.
+third-party rights the affirmer does not own. The document-level
+`rights.license` is `unknown`. The publisher's contributed-corpus dedication and
+its license link stay separately scoped under `rights.permissions`, with
+`status: field_specific`, `corpus: CC0-1.0`, and the underlying lyrics, poems and
+translations explicitly `unknown`. Attribution and the publisher evidence link
+remain intact. The corpus license is not presented as the document's license
+or as proof that every embedded work is public domain everywhere.
 
 ## Identity, extraction and request bounds
 
