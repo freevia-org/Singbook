@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "measuredAt": "2026-10-28T13:26:56.123928+00:00",
+  "kind": "additional-publisher-documentation-research",
+  "runtime": "web research reader only; no local source HTTP, app or cloud source probes",
+  "sourceCommit": "4f957b023cacd303bf6fe757153d462396e58bd8",
+  "scope": "Documentation-only followup kept separate from the single-candidate AcousticBrainz PR212. No existing discovery records or catalog edited.",
+  "decisions": [
+    {
+      "id": "guitarparty",
+      "name": "GuitarParty",
+      "status": "deferred",
+      "documentation": [
+        "https://www.guitarparty.com/terms/",
+        "https://www.guitarparty.com/pricing/"
+      ],
+      "potential": "Chord/lyric songbook source; publisher pricing advertises over15000 songs, a publisher claim rather than independently enumerated coverage.",
+      "primaryEvidence": "Current terms limit content use, restrict off-service reproduction/storage and require prior written consent for automated extraction. A personal printing exception does not establish Singbook offline ingestion/export permission.",
+      "decision": "Do not probe content or reuse third-party API examples or embedded credentials. Defer until a publisher-supported integration/access agreement and offline/export/attribution contract are established.",
+      "remaining": [
+        "supported current API and auth/rate/retry contract",
+        "express intended-use permission",
+        "stable work/arrangement identity",
+        "two independent bounded extraction and app retention canaries"
+      ],
+      "apiOrSongRequests": 0,
+      "credentialsAccountsSubscriptionsOutreach": false
+    },
+    {
+      "id": "chordwiki-jp",
+      "name": "ChordWiki Japan",
+      "status": "deferred",
+      "documentation": [
+        "https://ja.chordwiki.org/TermOfUse.html",
+        "https://chordwiki.org/"
+      ],
+      "potential": "Japanese lyric/chord charts with ChordPro editing. Indexed publisher pages report around27000 entries; alias snapshots differ, so no synchronized corpus count or new coverage claim.",
+      "primaryEvidence": "Current publisher terms identify JASRAC-managed lyrics as licensed for on-site interactive streaming and exclude download/copy/printing; remaining submitted ChordPro data belongs to contributors. The API section describes YouTube integration rather than a supported external chord/lyric API.",
+      "decision": "Do not infer open reuse from wiki naming or ChordPro format. No song page, chart/source endpoint or age-confirmation flow requested. Defer intended app persistence/export until permission and a supported access contract are established.",
+      "remaining": [
+        "per-work and contributor permission for intended use",
+        "supported stable content access and limits",
+        "arrangement/revision identity and attribution",
+        "two independent extraction and app retention canaries"
+      ],
+      "apiOrSongRequests": 0,
+      "credentialsAccountsSubscriptionsOutreach": false
+    }
+  ],
+  "unqualifiedLeads": [
+    {
+      "name": "AmDm",
+      "evidence": "Search surfaced a2017 user Q&A asking for an API. This is not current publisher API documentation or proof that no API exists. No guessed route or song page was requested.",
+      "decision": "Continue documentation discovery later; do not assert API availability or absence."
+    },
+    {
+      "name": "Chords.wiki",
+      "evidence": "Separate domain from ChordWiki Japan. Search surfaced publisher terms prohibiting scraping and asking developers to request API access. No scope or corpus size established, no outreach made.",
+      "documentation": [
+        "https://chords.wiki/help/privacy-policy"
+      ],
+      "decision": "Do not conflate these services or treat one policy as authorization for the other."
+    }
+  ],
+  "webOperationAccounting": {
+    "searchQueries": 6,
+    "explicitDocumentationOpens": 3,
+    "findOperationsOnOpenedTerms": 3,
+    "actualUpstreamFetchCount": "not exposed by web reader",
+    "songChartContentOrMediaCanaries": 0,
+    "localSourceHttpRequests": 0
+  },
+  "nonPrimaryResults": "Third-party code, historic API/credential examples and unsolicited PDF search snippets were not used as access authorization, executed, downloaded or reproduced.",
+  "registrationFactoryCatalogPreferencesVersionOrReleaseChanges": false,
+  "userActionRequired": false
+}
