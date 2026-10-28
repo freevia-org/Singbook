@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "measuredAt": "2026-10-28T11:59:14.934003+00:00",
+  "runtime": "documentation-only-web-research",
+  "sourceCommit": "f523dd1c98aac38052fbbbd4f5d3db95c16f1ee0",
+  "recordsForIntegrationOwnedLedger": [
+    {
+      "id": "mudcat-digital-tradition",
+      "name": "Digital Tradition / Mudcat",
+      "firstSeen": "2026-10-28",
+      "lastChecked": "2026-10-28",
+      "status": "deferred",
+      "documentation": [
+        "https://mudcat.org/DigiTrad-rules.cfm",
+        "https://mudcat.org/AboutDigiTrad.cfm",
+        "https://mudcat.org/download.cfm",
+        "https://mudcat.org/DigitradSearch.cfm"
+      ],
+      "reason": "Potential English-language folk lyric and source-provenance supplement. Publisher rules encourage database copying but explicitly separate individual song copyrights; corpus inclusion does not establish public-domain status or commercial permission. The7800 count is dated April1999, not current usable coverage. Current download documentation lists Spring2002 DOS/Windows/Mac packages, not a verified modern plain-text/API contract. Do not execute supplied programs or infer current extraction from historical downloads. Search documentation describes phrases, operators, categories and ballad identifiers. No archive, installer, tune, audio, selected lyric response or extraction canary fetched; incidental search snippets were not used as source qualification. Defer pending current bounded access/schema, per-item provenance/rights handling, correct arrangement identities and two independently validated live canaries. Overlap with existing folk catalogs and incremental coverage unmeasured."
+    },
+    {
+      "id": "dutch-song-database",
+      "name": "Nederlandse Liederenbank / Dutch Song Database",
+      "firstSeen": "2026-10-28",
+      "lastChecked": "2026-10-28",
+      "status": "deferred",
+      "documentation": [
+        "https://www.liederenbank.nl/",
+        "https://www.liederenbank.nl/mtc/",
+        "https://flat.meertens.knaw.nl/flat/islandora/object/lat%3A10744_c961bb4f_3169_4c68_a974_93501ff9e985"
+      ],
+      "reason": "Institutional Dutch historical-song metadata lead. Publisher homepage search evidence describes180000+ song descriptions spanning medieval to twentieth-century sources; only some records link complete text, melody or audio. This is not180000 verified full-lyric imports or unique recordings. Live web reads of homepage and MTC documentation returned403; stopped without alternate-host/proxy or authentication workaround. Cached primary MTC documentation identifies research collections under CC-BY-NC-SA3.0; that is a separate collection scope, not a blanket license for the whole database or all underlying works. Archival collection313 has its own restricted-access status, not proof every public database record is restricted. No content/API/asset/archive calls, credentials, accounts or canaries. Defer until current public machine access, intended app-use rights, attribution, stable work/variant identity, compatible extraction and two canaries are established. Incremental overlap unmeasured."
+    }
+  ],
+  "providerExtractionCalls": 0,
+  "downloadsOrExecutions": 0,
+  "registeredOrActivated": [],
+  "sharedLedgerEdited": false,
+  "ledgerOwner": "SB Integration; PR192 single writer",
+  "scope": "Publisher documentation only; cached search evidence, live documentation failures, archival collections and current source extraction are explicitly distinguished."
+}
