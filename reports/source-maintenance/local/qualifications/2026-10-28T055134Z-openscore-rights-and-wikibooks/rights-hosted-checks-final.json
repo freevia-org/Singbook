@@ -1,0 +1,169 @@
+{
+  "schemaVersion": 1,
+  "atUtc": "2026-10-28T06:16:45.522071+00:00",
+  "status": "all_applicable_current_head_checks_passed",
+  "checks": {
+    "205": {
+      "pr": "https://github.com/freevia-org/Singbook/pull/205",
+      "head": "a23bebafbded07075b564309c83f3b1e7242e645",
+      "baseRefObserved": "c77b221f1575236923b22dcea0f6672887bf11af",
+      "draft": true,
+      "jobs": [
+        {
+          "link": "https://github.com/freevia-org/Singbook/actions/runs/40640176540/job/122656530667",
+          "name": "windows-build",
+          "state": "SUCCESS"
+        },
+        {
+          "link": "https://github.com/freevia-org/Singbook/actions/runs/40640176540/job/122656530626",
+          "name": "windows-test (1/2)",
+          "state": "SUCCESS"
+        },
+        {
+          "link": "https://github.com/freevia-org/Singbook/actions/runs/40640176540/job/122656530654",
+          "name": "windows-test (2/2)",
+          "state": "SUCCESS"
+        },
+        {
+          "link": "https://github.com/freevia-org/Singbook/actions/runs/40640176540/job/122656530669",
+          "name": "windows-journey",
+          "state": "SUCCESS"
+        },
+        {
+          "link": "https://github.com/freevia-org/Singbook/actions/runs/40640176540/job/122656242520",
+          "name": "analyze",
+          "state": "SUCCESS"
+        },
+        {
+          "link": "https://github.com/freevia-org/Singbook/actions/runs/40640176560/job/122656242237",
+          "name": "compile",
+          "state": "SUCCESS"
+        },
+        {
+          "link": "https://github.com/freevia-org/Singbook/actions/runs/40640176540/job/122656242289",
+          "name": "test",
+          "state": "SUCCESS"
+        },
+        {
+          "link": "https://github.com/freevia-org/Singbook/actions/runs/40640176595/job/122656242460",
+          "name": "host-visuals",
+          "state": "SUCCESS"
+        },
+        {
+          "link": "https://github.com/freevia-org/Singbook/actions/runs/40640176595/job/122656244169",
+          "name": "focused-regressions",
+          "state": "SKIPPED"
+        }
+      ],
+      "linuxSuiteSummaries": [
+        {
+          "passed": 3121,
+          "skipped": 13
+        },
+        {
+          "passed": 39,
+          "skipped": 0
+        }
+      ],
+      "focusedProviderCasesObserved": 23,
+      "portableRightsRegressionObserved": true,
+      "rawPrivateLogSha256": "2fb86d418881328f256719ca27341a9a14e12032d9285b933d510862ccfd60da",
+      "rawLogPublished": false
+    },
+    "207": {
+      "pr": "https://github.com/freevia-org/Singbook/pull/207",
+      "head": "ad4cd0e99514ef7ad0975a1d747765aff0111f5c",
+      "baseRefObserved": "c77b221f1575236923b22dcea0f6672887bf11af",
+      "draft": true,
+      "jobs": [
+        {
+          "link": "https://github.com/freevia-org/Singbook/actions/runs/40640183286/job/122656520600",
+          "name": "windows-build",
+          "state": "SUCCESS"
+        },
+        {
+          "link": "https://github.com/freevia-org/Singbook/actions/runs/40640183286/job/122656520588",
+          "name": "windows-test (1/2)",
+          "state": "SUCCESS"
+        },
+        {
+          "link": "https://github.com/freevia-org/Singbook/actions/runs/40640183286/job/122656520688",
+          "name": "windows-test (2/2)",
+          "state": "SUCCESS"
+        },
+        {
+          "link": "https://github.com/freevia-org/Singbook/actions/runs/40640183286/job/122656520642",
+          "name": "windows-journey",
+          "state": "SUCCESS"
+        },
+        {
+          "link": "https://github.com/freevia-org/Singbook/actions/runs/40640183286/job/122656262911",
+          "name": "analyze",
+          "state": "SUCCESS"
+        },
+        {
+          "link": "https://github.com/freevia-org/Singbook/actions/runs/40640183186/job/122656261993",
+          "name": "Wikisource historical-import",
+          "state": "SUCCESS"
+        },
+        {
+          "link": "https://github.com/freevia-org/Singbook/actions/runs/40640183172/job/122656261749",
+          "name": "compile",
+          "state": "SUCCESS"
+        },
+        {
+          "link": "https://github.com/freevia-org/Singbook/actions/runs/40640183186/job/122656261863",
+          "name": "Wikisource provider-domain",
+          "state": "SUCCESS"
+        },
+        {
+          "link": "https://github.com/freevia-org/Singbook/actions/runs/40640183186/job/122656261714",
+          "name": "Wikisource cached-comparison",
+          "state": "SUCCESS"
+        },
+        {
+          "link": "https://github.com/freevia-org/Singbook/actions/runs/40640183286/job/122656262514",
+          "name": "test",
+          "state": "SUCCESS"
+        },
+        {
+          "link": "https://github.com/freevia-org/Singbook/actions/runs/40640183153/job/122656261681",
+          "name": "host-visuals",
+          "state": "SUCCESS"
+        },
+        {
+          "link": "https://github.com/freevia-org/Singbook/actions/runs/40640183153/job/122656263019",
+          "name": "focused-regressions",
+          "state": "SKIPPED"
+        }
+      ],
+      "linuxSuiteSummaries": [
+        {
+          "passed": 3129,
+          "skipped": 13
+        },
+        {
+          "passed": 39,
+          "skipped": 0
+        }
+      ],
+      "focusedProviderCasesObserved": 23,
+      "portableRightsRegressionObserved": true,
+      "rawPrivateLogSha256": "51b27a810bb6c4ee093ab8b16da349885f126a8b56ebc9423a40f2bd809b4a9e",
+      "rawLogPublished": false
+    }
+  },
+  "independentIntegrationReReview": "Rights correction and exact dependency reviewed; no blocker found.",
+  "retainedResponseReplay": "Two real retained canaries pass with0network/3fixture calls; body/fullmetadata/attribution/original bytes unchanged. New field-specific rights survive ChordPro.",
+  "rightsBoundary": "Document license unknown; publisher contributed-corpus dedicationCC0 is separately scoped. Underlying lyric/poem/translation rights remain unknown.",
+  "nativeBoundary": "Earlier native proof remains source66d9f19+reader1eb30e8. No native or cloud build/probe was performed for this amendment.",
+  "readerPrUnchanged": "1eb30e8afce86e88ccebad1b1f129fb508ea1cb3",
+  "catalogs1Through9UnchangedByRightsAmendment": true,
+  "sourceRegisteredOnMainOrActivated": false,
+  "release43Changed": false,
+  "extraRightsSourceHttpRequests": 0,
+  "extraProductionLiveSuiteRuns": 0,
+  "productionLatestFilesReplaced": false,
+  "allLocalBuildDeviceReservationsReleased": true,
+  "rawLyricsDocumentsOrSecretsPublished": false
+}
