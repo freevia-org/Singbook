@@ -1,0 +1,128 @@
+{
+  "schemaVersion": 1,
+  "atUtc": "2026-10-28T00:04:30.847813+00:00",
+  "sourceHead": "3d45b1b4a4c26b15060503be24f3246407c5d0ac",
+  "pullRequest": 195,
+  "scope": "Final hosted checks for source-only unregistered Pisni candidate; no merge, activation, native app or cloud-source qualification claim.",
+  "checks": {
+    "headRefOid": "3d45b1b4a4c26b15060503be24f3246407c5d0ac",
+    "isDraft": true,
+    "state": "OPEN",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-27T23:53:40Z",
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/freevia-org/Singbook/actions/runs/40605193290/job/122542832394",
+        "name": "focused-regressions",
+        "startedAt": "2026-10-27T23:53:40Z",
+        "status": "COMPLETED",
+        "workflowName": "UX batch validation"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-27T23:54:48Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/freevia-org/Singbook/actions/runs/40605193160/job/122542830999",
+        "name": "analyze",
+        "startedAt": "2026-10-27T23:53:42Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-27T23:58:53Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/freevia-org/Singbook/actions/runs/40605193214/job/122542830669",
+        "name": "compile",
+        "startedAt": "2026-10-27T23:53:43Z",
+        "status": "COMPLETED",
+        "workflowName": "macOS compilation"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-28T00:01:04Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/freevia-org/Singbook/actions/runs/40605193160/job/122542831328",
+        "name": "test",
+        "startedAt": "2026-10-27T23:53:42Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-27T23:54:44Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/freevia-org/Singbook/actions/runs/40605193290/job/122542830476",
+        "name": "host-visuals",
+        "startedAt": "2026-10-27T23:53:42Z",
+        "status": "COMPLETED",
+        "workflowName": "UX batch validation"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-27T23:59:27Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/freevia-org/Singbook/actions/runs/40605193160/job/122543246226",
+        "name": "windows-build",
+        "startedAt": "2026-10-27T23:54:50Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-28T00:02:46Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/freevia-org/Singbook/actions/runs/40605193160/job/122543246348",
+        "name": "windows-test (1/2)",
+        "startedAt": "2026-10-27T23:54:50Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-28T00:03:58Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/freevia-org/Singbook/actions/runs/40605193160/job/122543246361",
+        "name": "windows-test (2/2)",
+        "startedAt": "2026-10-27T23:54:50Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-28T00:00:49Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/freevia-org/Singbook/actions/runs/40605193160/job/122543246578",
+        "name": "windows-journey",
+        "startedAt": "2026-10-27T23:54:50Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      }
+    ]
+  },
+  "applicableChecksPassed": 8,
+  "expectedPathFilteredSkips": [
+    "focused-regressions"
+  ],
+  "localEvidence": {
+    "receipt": "reports/source-maintenance/local/qualifications/2026-10-27T233224Z-pisni-native-pr195/credit-validation-repair.json",
+    "sha256": "a25aaf92b0c4849a4998a1a70b351b518e2c2aa71cf9292a3ec7e557fb230b30",
+    "providerTests": 28,
+    "disposableControllerPersistenceTests": 1,
+    "capturedNativeResultsExactAfterRepair": 2,
+    "additionalLiveRepairRequests": 0
+  },
+  "resources": {
+    "hostTestLeaseReleased": true,
+    "buildOrDeviceReservationsHeld": false
+  },
+  "productionLatestSha256Preserved": {
+    "reports/source-maintenance/latest.json": "775610cfe42d78ef194759c0516c0c70dfcb285f5e02c59ca13618cc18979604",
+    "reports/source-maintenance/local/latest.json": "a0455e0efc1bcdc7694b4d7e27ebece92875459c666c38b666bbc13638e72fbf"
+  },
+  "remainingGates": [
+    "Integration-owned compatible factory/catalog registration",
+    "Native app and managed-cloud qualification before activation"
+  ]
+}
