@@ -114,18 +114,23 @@ void main() {
                   .firstOrNull;
               if (selected != null || client.networkAttempts >= _budget) break;
             }
-            if (selected == null) {
-              outcome['status'] = 'no_exact_identity';
-            } else {
-              final results = await service.discover(selected);
-              outcome.addAll({
-                'status': 'resolved',
-                'candidateId': selected.id,
-                'sources':
-                    results.map((r) => r.candidate.providerId).toSet().toList()
-                      ..sort(),
-              });
-            }
+            final catalogMatched = selected != null;
+            final reference = selected ?? corpusRequestCandidate(song);
+            outcome.addAll({
+              'catalogMatched': catalogMatched,
+              'selectionBasis': catalogMatched
+                  ? 'matched_catalog_candidate'
+                  : 'requested_song_without_catalog_match',
+              'candidateProvider': reference.providerId,
+              'candidateId': reference.id,
+            });
+            final results = await service.discover(reference);
+            outcome.addAll({
+              'status': 'resolved',
+              'sources':
+                  results.map((r) => r.candidate.providerId).toSet().toList()
+                    ..sort(),
+            });
           } on ProviderException catch (e) {
             outcome.addAll({'status': 'unavailable', 'code': e.code});
           }

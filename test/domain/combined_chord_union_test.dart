@@ -148,7 +148,7 @@ void main() {
     },
   );
 
-  test('apostrophe compatibility retains conflicting arrangement guards', () {
+  test('apostrophe compatibility ranks a coherent chart setup and retains alternatives', () {
     final song = combineSources(_selected, [
       _source('lyrics', _lyrics, metadata: {'key': 'D', 'capo': 2}),
       _source(
@@ -158,10 +158,26 @@ void main() {
         metadata: {'key': 'Em', 'capo': 0},
       ),
     ]);
-    expect(song.body, _lyrics);
-    expect(song.hasChords, isFalse);
-    expect(song.metadata['key'], 'D');
-    expect(song.metadata['capo'], 2);
+    expect(song.body, '[Em]$_lyrics');
+    expect(song.hasChords, isTrue);
+    expect(song.metadata['key'], 'Em');
+    expect(song.metadata['capo'], 0);
+    final ranking = song.extra['evidenceRanking'] as Map;
+    final claims = ranking['claims'] as List;
+    expect(
+      claims.any((claim) =>
+          claim['field'] == 'metadata.key' && claim['value'] == 'Em'),
+      isTrue,
+    );
+    expect(
+      claims.any((claim) =>
+          claim['field'] == 'metadata.key' && claim['value'] == 'D'),
+      isTrue,
+    );
+    expect(
+      (ranking['appliedFields'] as Map)['metadata.key']['value'],
+      'Em',
+    );
   });
 
   test('explicit lyrics version remains the chosen version', () {

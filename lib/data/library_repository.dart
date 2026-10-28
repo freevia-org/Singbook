@@ -72,6 +72,7 @@ SongDocument _sanitizeImportedDurations(SongDocument song) {
   final sources = song.sources.map((source) {
     return SourceResult(
       candidate: _sanitizeCandidateDuration(source.candidate),
+      arrangementId: source.arrangementId,
       body: source.body,
       metadata: _withoutInvalidDuration(source.metadata),
       timingTracks: source.timingTracks,

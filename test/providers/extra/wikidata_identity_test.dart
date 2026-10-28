@@ -183,13 +183,19 @@ void main() {
   });
 
   test(
-    'two matching works stay ambiguous instead of taking the first',
+    'two known same-song works retain all donors behind a stable primary',
     () async {
       final transport = _transport(types: ['Q7366'], workIds: ['Q1', 'Q9']);
-      await expectLater(
-        findMatchingSource(WikidataProvider(transport), _external()),
-        throwsA(_code('ambiguous_match')),
+      final combined = await findMatchingSource(
+        WikidataProvider(transport),
+        _external(),
       );
+      expect(combined.candidate.id, 'Q1');
+      expect(combined.matchKind, MatchKind.sameSong);
+      final donors = combined.extra['providerAlternatives'] as List;
+      expect(donors, hasLength(1));
+      expect((donors.single as Map)['candidate']['id'], 'Q9');
+      expect((donors.single as Map)['matchKind'], 'sameSong');
       final exact = await findMatchingSource(
         WikidataProvider(transport),
         _external(workId: 'Q9'),

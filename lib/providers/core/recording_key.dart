@@ -7,7 +7,13 @@ import '../provider.dart';
 /// usually right about the tonic but can confuse a key with its relative
 /// major or minor (D for B minor). Callers weigh it against chord charts.
 class RecordingKey {
-  const RecordingKey({required this.key, required this.ids, this.tempo});
+  const RecordingKey({
+    required this.key,
+    required this.ids,
+    this.tempo,
+    this.alternatives = const [],
+    this.observations = const [],
+  });
 
   /// The key name, such as "A" or "F#m".
   final String key;
@@ -18,11 +24,21 @@ class RecordingKey {
   /// Beats per minute, when the analyses agree on it.
   final double? tempo;
 
+  /// Other valid keys returned for the same requested recordings, ranked by
+  /// distinct recording count, then by key name. Empty for legacy lookups.
+  final List<RecordingKey> alternatives;
+
+  /// Actual ReccoBeats rows supporting this key group, when retained.
+  final List<JsonMap> observations;
+
   JsonMap toJson() => {
     'key': key,
     'ids': ids,
     'tempo': ?tempo,
     'source': 'ReccoBeats',
+    if (alternatives.isNotEmpty)
+      'alternatives': alternatives.map((value) => value.toJson()).toList(),
+    if (observations.isNotEmpty) 'observations': observations,
   };
 }
 
@@ -97,6 +113,7 @@ class RecordingKeyService {
     List<String> spotifyIds = const [],
     List<String> isrcs = const [],
     CancellationToken? cancel,
+    bool retainAlternatives = false,
   }) async {
     final ids = <String>{
       ...spotifyIds.where(_spotifyId.hasMatch),
@@ -131,6 +148,11 @@ class RecordingKeyService {
     }
 
     final byRecording = <String, ({String key, double? tempo})>{};
+    final byKey =
+        <
+          String,
+          ({List<String> ids, Set<String> identities, List<JsonMap> rows})
+        >{};
     for (final raw in content) {
       if (raw is! Map || !asked(raw)) continue;
       final key = raw['key'], mode = raw['mode'];
@@ -141,15 +163,54 @@ class RecordingKeyService {
           ? raw['isrc'] as String
           : '${raw['id']}';
       final tempo = raw['tempo'];
+      final keyName = '${_names[key]}${mode == 1 ? '' : 'm'}';
       byRecording.putIfAbsent(
         id,
         () => (
-          key: '${_names[key]}${mode == 1 ? '' : 'm'}',
+          key: keyName,
           tempo: tempo is num && tempo > 0 && tempo < 400
               ? tempo.toDouble()
               : null,
         ),
       );
+      if (retainAlternatives) {
+        final href = raw['href'];
+        final uri = href is String ? Uri.tryParse(href) : null;
+        final spotifyId =
+            uri != null &&
+                uri.host == 'open.spotify.com' &&
+                uri.pathSegments.length == 2 &&
+                uri.pathSegments.first == 'track'
+            ? uri.pathSegments.last
+            : null;
+        final rawIsrc = raw['isrc'];
+        final normalizedIsrc = rawIsrc is String
+            ? rawIsrc.trim().toUpperCase()
+            : '';
+        final validIsrc = _isrc.hasMatch(normalizedIsrc);
+        final rawRowId = raw['id'];
+        final rowId = rawRowId is String && rawRowId.trim().isNotEmpty
+            ? rawRowId.trim()
+            : null;
+        final groupId = validIsrc ? rawIsrc as String : spotifyId ?? rowId;
+        final identity = validIsrc
+            ? 'isrc:$normalizedIsrc'
+            : spotifyId != null
+            ? 'spotify:$spotifyId'
+            : 'id:$rowId';
+        final group = byKey.putIfAbsent(
+          keyName,
+          () => (ids: <String>[], identities: <String>{}, rows: <JsonMap>[]),
+        );
+        if (groupId != null && group.identities.add(identity)) {
+          group.ids.add(groupId);
+        }
+        group.rows.add(Map<String, dynamic>.from(raw));
+        // A single ISRC can have contradictory rows. It is one vote in each
+        // observed key group, while repeated rows remain available as raw
+        // evidence. `identity` is deliberately resolved above so rows without
+        // an ISRC can still be associated with their requested Spotify ID.
+      }
     }
     if (byRecording.isEmpty) return null;
     final votes = <String, List<String>>{};
@@ -158,6 +219,44 @@ class RecordingKeyService {
     }
     final ranked = votes.entries.toList()
       ..sort((a, b) => b.value.length.compareTo(a.value.length));
+    if (retainAlternatives) {
+      final groups = byKey.entries.toList()
+        ..sort((a, b) {
+          final count = b.value.ids.length.compareTo(a.value.ids.length);
+          return count != 0 ? count : a.key.compareTo(b.key);
+        });
+      if (groups.isEmpty) return null;
+      RecordingKey makeGroup(
+        MapEntry<
+          String,
+          ({List<String> ids, Set<String> identities, List<JsonMap> rows})
+        >
+        group,
+      ) {
+        final tempos = {
+          for (final row in group.value.rows)
+            if (row['tempo'] is num &&
+                (row['tempo'] as num) > 0 &&
+                (row['tempo'] as num) < 400)
+              (row['tempo'] as num).round(),
+        };
+        return RecordingKey(
+          key: group.key,
+          ids: List.unmodifiable(group.value.ids),
+          tempo: tempos.length == 1 ? tempos.single.toDouble() : null,
+          observations: List.unmodifiable(group.value.rows),
+        );
+      }
+
+      final primary = makeGroup(groups.first);
+      return RecordingKey(
+        key: primary.key,
+        ids: primary.ids,
+        tempo: primary.tempo,
+        observations: primary.observations,
+        alternatives: List.unmodifiable(groups.skip(1).map(makeGroup)),
+      );
+    }
     if (ranked.length > 1 &&
         ranked.first.value.length * 2 <= byRecording.length) {
       return null;
