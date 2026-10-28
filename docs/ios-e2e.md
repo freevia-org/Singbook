@@ -30,6 +30,8 @@ runner. A suite that emits no screenshot markers is not screenshot-verified. Rev
 | --- | --- |
 | `app_device_test.dart` | Native SQLite library/settings persistence, light/dark/localization state, enlarged text, logical phone/tablet/split-window sizes, keyboard and rotation layouts. Logical tablet sizes do not substitute for a native iPad run. |
 | `singbook_journey_device_test.dart` | Fixture-provider search, failure/retry, comparison, provenance and safe metadata enrichment, save/edit, favorite, player and timing, setlist operations, settings/reload, ChordPro and collection-package round trips, PDF generation. Import bytes enter the public controller API; this does not operate the OS document picker. |
+| `ios_android_parity_device_test.dart` | Deterministic native parity target: the complete fixture journey, settings/setlists/player tests, native platform contracts, real fullscreen/orientation checks, and native layout captures. No live source or cloud account is used. |
+| `ios_provider_parity_device_test.dart` | Actual LyricsPlus parsing/word timing, channel-7 cache migration with retained library data, and Start Jamming chord-only comparison/save/SQLite round trip, using synthetic HTTP responses on native iOS. This does not establish live network availability. |
 | `android_parity_features_device_test.dart` | Unified Recent/Library/Favorites/Online modes, persisted startup selection, Settings section routes and text size/chord controls, inferred key and estimated duration, collapsed player controls, speed/section seeking, inline setlist rename, accessibility reorder actions, and song deletion confirmation. |
 | `transpose_popup_device_test.dart` | Chord transposition, restored preferences, keyless/known-key songs, large RTL text, logical landscape and actual native portrait/landscape. |
 | `ios_native_layout_device_test.dart` | Actual native window sizes without surface overrides, portrait/landscape, English/light, Ukrainian/dark at 150%, Arabic/dark at 160%, reader scrolling and editor metadata reachability. |
@@ -569,3 +571,7 @@ hardware and authenticated Google Drive remain outside this verification.
 
 The displayed-version and User-Agent drift checks both passed for `0.2.9+23`.
 All temporary build/device reservations were released after verification.
+
+The account UI exposes visible Drive folder selection and ChordPro import on iOS using the existing account-bound system-browser Picker. Its OAuth flow uses the documented [desktop/mobile Google Picker](https://developers.google.com/workspace/drive/picker/guides/desktop-mobile-picker) with `drive.file`, PKCE and state validation. Live sign-in and folder migration require a dedicated QA account and are separate from deterministic fixture coverage.
+
+For headless native runs, `SINGBOOK_NATIVE_SESSION` enables an app-support JSON receipt containing the integration binding's actual outcomes, failures, platform and physical dimensions. Session names must use letters, digits, underscores or hyphens. A receipt must contain the expected tests and `allTestsPassed: true`; missing, skipped or failed tests are not a successful native run. Normal `flutter test` execution remains supported.

@@ -156,7 +156,9 @@ void main() {
           await tester.pumpAndSettle();
           expect(lastLine.hitTestable(), findsOneWidget);
           await captureIosCheckpoint('${name}_reader_scrolled');
-          await tester.tap(find.byIcon(Icons.edit_outlined).first);
+          await tester.tap(find.byTooltip(l10n.songMenuLabel));
+          await tester.pumpAndSettle();
+          await tester.tap(find.text(l10n.actionEdit).last);
           await tester.pumpAndSettle();
           expect(
             find.byKey(const ValueKey('editor-lyrics-input')),
