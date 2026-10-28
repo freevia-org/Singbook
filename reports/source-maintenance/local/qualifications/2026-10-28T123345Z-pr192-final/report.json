@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 1,
+  "measuredAt": "2026-10-28T12:33:45.392958+00:00",
+  "pr": "https://github.com/freevia-org/Singbook/pull/192",
+  "head": "d4c59b9c83db4d98b5cb04a6f7f182f3a9e6656a",
+  "mainBase": "2e0a77d7a856f514a676e040fc6eafa52a7d69e1",
+  "incomingHead": "df651b9d58e658d4754117dac87a982401f207c3",
+  "appendHead": "9d540b899a45f6cb122ae04e299e5ee6b59543af",
+  "intermediateMainMerge": "22e7fa158d3ba7db2e0d95a72f5019a04722de6d",
+  "files": [
+    "config/source-discovery.json",
+    "docs/source-discovery-review-20261027.md"
+  ],
+  "fileSha256": {
+    "config/source-discovery.json": "9d44e84b8df6fe9dad73ce4edcd9e1ac95858cf8ec5fa27f0b9f88c46db753ce",
+    "docs/source-discovery-review-20261027.md": "b29bbc527b99a66365879912960bc60f11770a2fb7bd30544c83e5783741225b"
+  },
+  "records": {
+    "total": 51,
+    "incomingPreserved": 46,
+    "newDeferred": 5,
+    "all39CurrentMainRecordsPreserved": true,
+    "acceptedSetUnchanged": true,
+    "newIds": [
+      "mudcat-digital-tradition",
+      "dutch-song-database",
+      "the-session",
+      "wywrota",
+      "fanart-tv"
+    ]
+  },
+  "preservation": {
+    "oldCandidateObjectsAndOrderUnchanged": true,
+    "oldJsonPrefixBeforeTerminatorByteExact": true,
+    "oldDocumentPrefixByteExact": true,
+    "bothApprovedFileBlobsByteExactAcrossMainMerges": true,
+    "ordinaryNonForcedPushesOnly": true,
+    "oldLocalBranchAndOwnerEvidencePreserved": true
+  },
+  "hostedValidation": {
+    "checks": [
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40686870387/job/122812348510",
+        "name": "windows-test (1/2)",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40686870387/job/122812348743",
+        "name": "windows-test (2/2)",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40686870387/job/122812348518",
+        "name": "windows-journey",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40686870387/job/122812348547",
+        "name": "windows-build",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40686870387/job/122811894193",
+        "name": "analyze",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40686870387/job/122811893724",
+        "name": "test",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40686870368/job/122811378701",
+        "name": "compile",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40686870384/job/122811374585",
+        "name": "host-visuals",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40686870384/job/122811376857",
+        "name": "focused-regressions",
+        "state": "SKIPPED"
+      }
+    ],
+    "applicableChecksPassed": 8,
+    "linuxPassed": 3118,
+    "linuxSkipped": 13,
+    "metadataToolTestsPassed": 39,
+    "runIds": [
+      40686870387,
+      40686870368,
+      40686870384
+    ],
+    "watcher42585": "completed_exit0"
+  },
+  "priorEvidence": "reports/source-maintenance/local/qualifications/2026-10-28T120754Z-pr192-discovery-append/report.json",
+  "newSdkOrProviderContentHttpUse": false,
+  "scope": "Discovery JSON and documentation only. No provider extraction, registry/catalog activation, preferences, source data, cloud, version, release or Publishing change.",
+  "stateAtVerification": "open_draft_ready_for_coordinator_review",
+  "sourceWriterReservation": "Ready to hand back to Integration; no further edits planned.",
+  "protectedLatestBlobsUnchanged": {
+    "reports/source-maintenance/latest.json": "51668b5f3443b6ab33b4568565e253a2b4540c4f",
+    "reports/source-maintenance/local/latest.json": "0163da016906a8fe61d4305a99a6d528bafea371"
+  }
+}

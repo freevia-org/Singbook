@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-10-28T12:33:45.392958+00:00",
+  "pr": "https://github.com/freevia-org/Singbook/pull/209",
+  "head": "89e5d224e862e56f1952ec6c7129cdaac3674f85",
+  "mergeCommit": "2e0a77d7a856f514a676e040fc6eafa52a7d69e1",
+  "mergedAt": "2026-10-28T12:16:33Z",
+  "state": "merged",
+  "scope": "Two-file checker/report classification fix and synthetic tests; no source extraction/catalog/registry/release changes.",
+  "validationReceipt": "reports/source-maintenance/local/qualifications/2026-10-28T121731Z-pr209-hosted-final/report.json",
+  "supersedesPriorReceiptDraftStatus": true,
+  "note": "The hosted-results receipt carried a stale draft-review state. This confirmation records the authoritative GitHub merge without changing its successful test evidence or the original daily measurement."
+}
