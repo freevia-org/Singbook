@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "measuredAt": "2026-10-28T07:39:28.094051+00:00",
+  "kind": "candidate-checker-review-hardening",
+  "base": "f523dd1c98aac38052fbbbd4f5d3db95c16f1ee0",
+  "head": "89e5d224e862e56f1952ec6c7129cdaac3674f85",
+  "priorCandidateHead": "e5b9ab7be5731b69b0fdd9f864a5d5765c9508cd",
+  "files": [
+    "lib/providers/source_maintenance.dart",
+    "test/providers/source_maintenance_artwork_test.dart"
+  ],
+  "patchSha256": "5edbff9955ec628363f2852f8b952c16f42abf3d05bc52571d7099baa15a16f3",
+  "patchBytes": 9464,
+  "reviewFollowup": "Trim declared release ID before accepting the art-dependent missing-album gate; whitespace keeps strict identity mismatch.",
+  "validation": {
+    "focusedTestsPassed": 64,
+    "analysis": "no issues; --no-pub",
+    "exactCommittedHead": true,
+    "networkSourceRequests": 0,
+    "finalOfflineReplay": {
+      "schemaVersion": 1,
+      "catalogRevision": 20,
+      "measuredAt": "2026-10-28T07:39:05.428581Z",
+      "offline": false,
+      "summary": {
+        "transient_error": 1
+      },
+      "sources": [
+        {
+          "id": "musicbrainz",
+          "name": "MusicBrainz",
+          "status": "transient_error",
+          "coverage": {
+            "status": "partial",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "artwork",
+              "catalog",
+              "metadata"
+            ]
+          },
+          "probes": [
+            {
+              "id": "exact-release-artwork-b5d7d380-f43a-4c1f-a5de-694150b093ac",
+              "status": "transient_error",
+              "reason": "network",
+              "capability": "artwork",
+              "recordingMetadataAvailable": true,
+              "missingMetadataFields": [
+                "musicbrainzReleaseId",
+                "artworkUrl",
+                "artworkAssets"
+              ],
+              "missingIdentityFields": [
+                "album"
+              ]
+            }
+          ]
+        }
+      ],
+      "runtime": "offline-retained-metadata-release-network-failure",
+      "networkRequests": 0,
+      "fixtureCalls": 2,
+      "sourceCommit": "89e5d224e862e56f1952ec6c7129cdaac3674f85"
+    }
+  },
+  "status": "local_unpushed_waiting_final_review",
+  "sourceExtractionAndRegistryChanged": false,
+  "productionReportsUnchanged": true,
+  "priorSupplement": "reports/source-maintenance/local/qualifications/2026-10-28T073453Z-artwork-classification/report.json",
+  "resourcesReleased": true
+}
