@@ -4,8 +4,8 @@ The adapter in `lib/providers/extra/openscore_lieder.dart` searches the publishe
 generated public metadata index and reads an individual publisher-provided `.txt`
 lyric file for an explicitly selected score ID. It is **not registered, enabled,
 published in a source catalog, or qualified in a released app**. It must not delay
-the separate release-43 rollout. A later compatible catalog/runtime proposal and
-native/cloud qualification are required.
+the separate 0.2.30+44 rollout or change its frozen artifacts. A later compatible
+catalog/runtime proposal and native/cloud qualification are required.
 
 ## Publisher interface and content
 
