@@ -44,7 +44,10 @@ void main() {
       path: inMemoryDatabasePath,
       factory: databaseFactoryFfi,
     );
-    app = AppController(repository: repository);
+    app = AppController(
+      repository: repository,
+      discovery: SourceDiscoveryService([]),
+    );
     await app.initialize();
     ui = AppControllerAdapter(app);
   });
