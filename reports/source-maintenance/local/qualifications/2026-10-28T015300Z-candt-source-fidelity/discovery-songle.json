@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "atUtc": "2026-10-28T02:05:36.193498+00:00",
+  "stage": "documentation_only",
+  "preparedDiscoveryEntry": {
+    "id": "songle",
+    "name": "Songle / AIST music-analysis annotations",
+    "firstSeen": "2026-10-28",
+    "lastChecked": "2026-10-28",
+    "status": "deferred",
+    "documentation": [
+      "https://docs.songle.jp/en/",
+      "https://docs.songle.jp/en/credit/",
+      "https://widget.songle.jp/docs/v1?lang=en",
+      "https://github.com/SongleJp/songle-api",
+      "https://api.songle.jp/terms_of_use.pdf"
+    ],
+    "endpoint": "https://widget.songle.jp",
+    "reason": "Official documentation describes public song search, song identity/duration and versioned chord/beat/melody/structure annotations keyed by an original music URL. This is a potential Japanese/regional chord and analysis source, not established lyric transcription. Publisher credit states personal-use-only information and directs commercial-use inquiries to its team; no permission for Singbook app integration or redistribution has been established. The linked terms PDF timed out during documentation retrieval. No API extraction requests, source registration, account creation or term acceptance were performed. Defer pending access/permission clarification, two independent live identity/extraction canaries, per-work attribution, bounded compatible adapter and accurate separation of automatic annotation from verified recording timing. Corpus size, distinct coverage and overlap with existing providers remain unmeasured."
+  },
+  "evidence": [
+    {
+      "url": "https://docs.songle.jp/en/credit/",
+      "observed": "Publisher states academic demonstration and personal-use-only information; automatic annotations can disagree with music."
+    },
+    {
+      "url": "https://widget.songle.jp/docs/v1?lang=en",
+      "observed": "Documents song/search GET and revision-aware chord/beat/melody/structure routes keyed by source music URL."
+    },
+    {
+      "url": "https://github.com/SongleJp/songle-api",
+      "observed": "Publisher-owned API client requires agreement to API terms; Sync additionally needs a registered token."
+    },
+    {
+      "url": "https://api.songle.jp/terms_of_use.pdf",
+      "observed": "Web retrieval timed out; full terms not reviewed."
+    }
+  ],
+  "httpAccounting": {
+    "method": "Web search and primary-documentation retrieval only; upstream fetch counts are not exposed by that tool.",
+    "sourceExtractionRequests": 0,
+    "maintenanceCliRuns": 0
+  },
+  "decision": "deferred_no_activation",
+  "configurationWriter": "SB Integration owns existing discovery PR192; prepared append-only entry handed off instead of competing edits.",
+  "userAction": "None requested. Permission clarification is a prerequisite before any future integration; no external contact sent.",
+  "cloudReachabilityTested": false,
+  "corpusOrOverlapMeasured": false,
+  "rawDocumentsLyricsOrCredentialsPublished": false
+}
