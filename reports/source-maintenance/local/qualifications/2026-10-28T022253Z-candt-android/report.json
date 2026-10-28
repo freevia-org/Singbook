@@ -1,0 +1,448 @@
+{
+  "schemaVersion": 1,
+  "atUtc": "2026-10-28T02:22:53.907666+00:00",
+  "status": "two_native_canaries_and_offline_restart_passed",
+  "qualificationOnly": true,
+  "runtime": {
+    "platform": "Android16 API36 x86_64 16KiB emulator5554",
+    "httpClient": "production Android Cronet through bounded fixed-host capture tee",
+    "package": "org.freevia.singbook.qacandt8",
+    "build": "private profile",
+    "privateOverlay": "9935d46aa612f6cfaab09fb8ec0e99cb48d030ff",
+    "apkSha256": "bbbcb79b628e297cf75891d6bc221600a1731aa93fa4ca1f362b59ecaae04529",
+    "apkBytes": 88687136
+  },
+  "sourceProvenance": {
+    "sourcePr": "https://github.com/freevia-org/Singbook/pull/201",
+    "sourceHead": "c79e8ee6212ef9d74962e47991d49703fcde25c1",
+    "sourceBase": "59798147a3ffa62c38996ed0e4f763b6a328982a",
+    "privateBase": "7f54ba83ad8fe3196d86bcd30062c6f491718973",
+    "groupingPr": "https://github.com/freevia-org/Singbook/pull/202",
+    "groupingHead": "4932d616f5167203fdbea2d2d7dbb6a35b07c830",
+    "groupingIntegratedMain": "b06c084886da1308be0ce78b8901cf876c317c15",
+    "exactGitBlobSha256": {
+      "lib/providers/extra/chords_and_tabs.dart": "427ba1e1262ae83b01b9d4ed4066b97f302b4b66a19f926ca613a9848dbd9755",
+      "lib/domain/search_grouping.dart": "f951948ed20c20ab3bc6fe1428f9208f3a76ef200a73fca45f760f53b011206b"
+    },
+    "privateSourceFilesEqualQualifiedPublicPrHeads": true,
+    "publicSourceActivation": false
+  },
+  "catalogProvenance": {
+    "privateAsset": "config/source-catalog-candt-qa.json",
+    "privateCatalogRevision": 21,
+    "privateCount": 30,
+    "onlyCandTTemporarilyActiveForQa": true,
+    "other29RowsUnchanged": true,
+    "sourceEnabledOnlyInPrivatePreferences": true,
+    "publicDefaultAsset": "config/source-catalog-v8.json",
+    "publicCatalogRevision": 20,
+    "publicCandTStillDisabled": true,
+    "allPackagedPublicChannelsExact": true,
+    "catalogRefreshIsLocalFixtureOnly": true
+  },
+  "hostChecks": {
+    "focusedProviderTestsPassed": 20,
+    "combinedProviderAndGroupingTestsPassed": 35,
+    "focusedAnalysis": "no_issues",
+    "finalExactSourceStructuralCheck": {
+      "sourceHead": "c79e8ee6212ef9d74962e47991d49703fcde25c1",
+      "offline": true,
+      "httpRequests": 0,
+      "sourceCount": 30,
+      "summary": {
+        "offline_unverified": 26,
+        "import_only": 1,
+        "retired": 1,
+        "disabled": 2
+      },
+      "measuredAt": "2026-10-28T02:21:43.318535Z"
+    },
+    "sourceExactHeadHostedChecks": [
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40616867388/job/122581612476",
+        "name": "windows-build",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40616867388/job/122581612373",
+        "name": "windows-test (1/2)",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40616867388/job/122581612372",
+        "name": "windows-test (2/2)",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40616867388/job/122581612281",
+        "name": "windows-journey",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40616867757/job/122581294387",
+        "name": "compile",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40616867388/job/122581293648",
+        "name": "analyze",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40616867388/job/122581293780",
+        "name": "test",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40616867441/job/122581293575",
+        "name": "host-visuals",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/freevia-org/Singbook/actions/runs/40616867441/job/122581295359",
+        "name": "focused-regressions",
+        "state": "SKIPPED"
+      }
+    ]
+  },
+  "nativeWorkflow": {
+    "steps": [
+      "Normal online title search",
+      "Normal scroll and selection of exact stable arrangement row",
+      "Explicit source tab",
+      "Normal Save",
+      "Saved reader",
+      "Actual airplane mode with Wi-Fi/mobile data disabled",
+      "Fresh app process",
+      "Both library rows opened offline",
+      "Independent stopped physical SQLite audit"
+    ],
+    "canaries": [
+      {
+        "id": "ddaa9a4a-53a8-4906-b46b-7d2a7970f915",
+        "title": "Bohemian rhapsody",
+        "artist": "Queen",
+        "sourceId": "/song/name/queen-bohemian-rhapsody-37",
+        "sourceProvider": "chordsandtabs",
+        "sourceUrl": "https://www.chords-and-tabs.net/song/name/queen-bohemian-rhapsody-37",
+        "documentSha256": "d37f8f4de0fcf2892c6890fa6acd836902ec52e651ee38ea8b00f1c236d89b13",
+        "sourceFactsSha256": "00d4d39fed5a8bebaa28e8b3823b00a2eeec1d1d9dc73c230ef714611d9837b5",
+        "bodySha256": "421e7dacb130c604ef681a15e629adeb59f2d7bda5e9a3443dbc4138ae4eedc1",
+        "bodyCharacters": 2805,
+        "hasChords": true,
+        "sourceMetadata": {
+          "identityScope": "arrangement",
+          "tuning": [
+            "E",
+            "A",
+            "D",
+            "G",
+            "B",
+            "E"
+          ],
+          "sourceChartType": "chords",
+          "sourceChartVersion": 8
+        },
+        "recordingIdsEmpty": true,
+        "sourceAlbumAbsent": true,
+        "originalPayloadPresent": true,
+        "originalSourceBytes": 33569,
+        "originalSourceSha256": "c7d68d76b5e7b3f58107966cd6547dca33332a6eb001b67e4cf3c0a885a3b2f8",
+        "originalHttpBodyBytesExact": true,
+        "pageIdentityEvidence": {
+          "basis": "validated_request_url",
+          "url": "https://www.chords-and-tabs.net/song/name/queen-bohemian-rhapsody-37"
+        },
+        "rightsLicense": null,
+        "attributionRetained": true,
+        "chordProSourceFactsExact": true,
+        "repositoryMatchesController": true
+      },
+      {
+        "id": "0c47f69b-4535-47f9-bc2b-dcd757d6e532",
+        "title": "Hey jude",
+        "artist": "The Beatles",
+        "sourceId": "/song/name/the-beatles-hey-jude-7",
+        "sourceProvider": "chordsandtabs",
+        "sourceUrl": "https://www.chords-and-tabs.net/song/name/the-beatles-hey-jude-7",
+        "documentSha256": "bdcfe41cf32a4d95c205a46c7a62d68b2d7167079bd6e3b9ad22efd7a50a3b1c",
+        "sourceFactsSha256": "d14a2a2a73eac36d28bb0ea525176aded30676bd6eaff9e01ec782c987606a3d",
+        "bodySha256": "d83aa94575cec8f1439781ae5ea305bef8f67dd5f1d9c28ac7f5e6b053e90859",
+        "bodyCharacters": 1372,
+        "hasChords": true,
+        "sourceMetadata": {
+          "identityScope": "arrangement",
+          "capo": 1,
+          "sourceChartType": "chords",
+          "sourceChartVersion": 4
+        },
+        "recordingIdsEmpty": true,
+        "sourceAlbumAbsent": true,
+        "originalPayloadPresent": true,
+        "originalSourceBytes": 25347,
+        "originalSourceSha256": "c4a7511fb558cc6296dc47cd6a4fec1b1227a167a2077914ca682e2326724c19",
+        "originalHttpBodyBytesExact": true,
+        "pageIdentityEvidence": {
+          "basis": "validated_request_url",
+          "url": "https://www.chords-and-tabs.net/song/name/the-beatles-hey-jude-7"
+        },
+        "rightsLicense": null,
+        "attributionRetained": true,
+        "chordProSourceFactsExact": true,
+        "repositoryMatchesController": true
+      }
+    ],
+    "freshRequests": [
+      {
+        "atUtc": "2026-10-28T02:14:03.499764Z",
+        "url": "https://www.chords-and-tabs.net/songs/search/Hey%20Jude",
+        "method": "GET",
+        "status": 200,
+        "responseBytes": 29424,
+        "responseSha256": "346713882c78045c23a8a741adf32df7f880ff0f372b34e19ea0b0e51b0c6bc5",
+        "privateCaptureName": "request-1.bin"
+      },
+      {
+        "atUtc": "2026-10-28T02:14:26.966400Z",
+        "url": "https://www.chords-and-tabs.net/song/name/the-beatles-hey-jude-7",
+        "method": "GET",
+        "status": 200,
+        "responseBytes": 25347,
+        "responseSha256": "c4a7511fb558cc6296dc47cd6a4fec1b1227a167a2077914ca682e2326724c19",
+        "privateCaptureName": "request-2.bin"
+      },
+      {
+        "atUtc": "2026-10-28T02:17:17.423810Z",
+        "url": "https://www.chords-and-tabs.net/songs/search/Bohemian%20Rhapsody",
+        "method": "GET",
+        "status": 200,
+        "responseBytes": 33085,
+        "responseSha256": "b4b23f4385869b7c8e4fe40dab07695d7e4effe92677537d9cba0de5a0c96d30",
+        "privateCaptureName": "request-3.bin"
+      },
+      {
+        "atUtc": "2026-10-28T02:17:27.251959Z",
+        "url": "https://www.chords-and-tabs.net/song/name/queen-bohemian-rhapsody-37",
+        "method": "GET",
+        "status": 200,
+        "responseBytes": 33569,
+        "responseSha256": "c7d68d76b5e7b3f58107966cd6547dca33332a6eb001b67e4cf3c0a885a3b2f8",
+        "privateCaptureName": "request-4.bin"
+      }
+    ],
+    "deniedRequests": [],
+    "offlineRestart": {
+      "startedAtUtc": "2026-10-28T02:19:04.711339+00:00",
+      "package": "org.freevia.singbook.qacandt8",
+      "initialNetworkState": {
+        "airplane_mode_on": "0",
+        "wifi_on": "1",
+        "mobile_data": "1"
+      },
+      "actions": [
+        {
+          "action": "status",
+          "values": []
+        },
+        {
+          "action": "tap-key",
+          "values": [
+            "home-mode-library-segment"
+          ]
+        },
+        {
+          "action": "tap-text",
+          "values": [
+            "Hey jude"
+          ]
+        },
+        {
+          "action": "screenshot",
+          "values": [
+            "artifacts/candt-native-offline-0-reader.png"
+          ]
+        },
+        {
+          "action": "tap-tooltip",
+          "values": [
+            "Back"
+          ]
+        },
+        {
+          "action": "tap-key",
+          "values": [
+            "home-mode-library-segment"
+          ]
+        },
+        {
+          "action": "tap-text",
+          "values": [
+            "Bohemian rhapsody"
+          ]
+        },
+        {
+          "action": "screenshot",
+          "values": [
+            "artifacts/candt-native-offline-1-reader.png"
+          ]
+        },
+        {
+          "action": "tap-tooltip",
+          "values": [
+            "Back"
+          ]
+        },
+        {
+          "action": "snapshot",
+          "values": [
+            "artifacts/candt-native-offline-reopened.json"
+          ]
+        }
+      ],
+      "freshLivePhaseRequests": 4,
+      "priorPreGroupingNativeSearchRequests": 1,
+      "offlineSourceRequests": 0,
+      "networkRestored": true,
+      "actualDeviceNetworkDisabled": true,
+      "oldProcessStopped": true,
+      "newProcessConfirmed": true,
+      "bothNativeReadersOpenedOffline": true,
+      "documentsAndSourceFactsExactAfterRestart": true,
+      "passed": true,
+      "restoredNetworkState": {
+        "airplane_mode_on": "0",
+        "wifi_on": "1",
+        "mobile_data": "1"
+      },
+      "completedAtUtc": "2026-10-28T02:19:32.733615+00:00"
+    },
+    "independentNativeSqliteAudit": {
+      "atUtc": "2026-10-28T02:19:43.961676+00:00",
+      "scope": "Independent standard-library SQLite/base64/JSON audit of actual stopped Android app data; no provider HTTP or Flutter deserializer.",
+      "package": "org.freevia.singbook.qacandt8",
+      "nativeSavedSongCount": 2,
+      "sqliteIntegrity": "ok",
+      "checks": [
+        {
+          "sourceId": "/song/name/the-beatles-hey-jude-7",
+          "nativeSqliteSourceFactsExact": true,
+          "originalNativeHttpBytesExact": true,
+          "originalSourceSha256": "c4a7511fb558cc6296dc47cd6a4fec1b1227a167a2077914ca682e2326724c19",
+          "sourceFactsSha256": "d14a2a2a73eac36d28bb0ea525176aded30676bd6eaff9e01ec782c987606a3d",
+          "rightsAttributionRetained": true,
+          "chartMetadataVerified": {
+            "identityScope": "arrangement",
+            "capo": 1,
+            "sourceChartType": "chords",
+            "sourceChartVersion": 4
+          }
+        },
+        {
+          "sourceId": "/song/name/queen-bohemian-rhapsody-37",
+          "nativeSqliteSourceFactsExact": true,
+          "originalNativeHttpBytesExact": true,
+          "originalSourceSha256": "c7d68d76b5e7b3f58107966cd6547dca33332a6eb001b67e4cf3c0a885a3b2f8",
+          "sourceFactsSha256": "00d4d39fed5a8bebaa28e8b3823b00a2eeec1d1d9dc73c230ef714611d9837b5",
+          "rightsAttributionRetained": true,
+          "chartMetadataVerified": {
+            "identityScope": "arrangement",
+            "tuning": [
+              "E",
+              "A",
+              "D",
+              "G",
+              "B",
+              "E"
+            ],
+            "sourceChartType": "chords",
+            "sourceChartVersion": 8
+          }
+        }
+      ],
+      "completePrivateDataArchiveSha256": "02085d3069be4ddbce7117e39564d196c735485ae9ff0324c913d5c642f903ae",
+      "completePrivateDataArchiveBytes": 785920,
+      "sqliteSnapshotSha256": "a7bf32657174d5d3e3bb5dae6f5c76ed42df8546a51a7763abba72f6fb923e31",
+      "regularFilesVerified": 8,
+      "capturedNativeResponseFiles": 5,
+      "distinctCapturedResponseDigests": 5,
+      "existingQa10AndPisni2AndArchived14Unchanged": true,
+      "ownAppStopped": true,
+      "networkRequests": 0,
+      "rawSourceOrLyricsPublished": false
+    },
+    "visualReview": {
+      "freshFramesReviewed": 8,
+      "frameSha256": {
+        "hey-grouped-search-row.png": "4f267eba8da4e2c1f55f4a4fc9844be49c2725997c873d5266347e74539c8bf1",
+        "hey-native-chart-preview.png": "18fb97bf182ef0dcae84fa6daa5f3d4b10e547ce3281987077d96870be967c0a",
+        "hey-native-saved-reader.png": "361e7224b5f44ec6a5c17249371eabb5a6a28656dfc9643a9a8755e34ed03b71",
+        "queen-native-search-row.png": "ee8889360e56606d9ecaf7c6c187299ba1dfa541b3ff0f097b8349a8660cfc4c",
+        "queen-native-chart-preview.png": "71bf8d0c1ce880187e3dddd34f51cb43b4f755a3761e912164d79bbeb2fba3d3",
+        "queen-native-saved-reader.png": "38196780c38d7a1ac4f11f0f08c2a8087a211cc966dbdad0b28bb9c82302b0f0",
+        "candt-native-offline-0-reader.png": "361e7224b5f44ec6a5c17249371eabb5a6a28656dfc9643a9a8755e34ed03b71",
+        "candt-native-offline-1-reader.png": "38196780c38d7a1ac4f11f0f08c2a8087a211cc966dbdad0b28bb9c82302b0f0"
+      },
+      "screenshotsContainSourceTextAndRemainPrivate": true,
+      "observed": "Expected identity, source tab, chord layout, Save/readers and Hey Jude capo1 rendered. Queen unknown key remains unknown; no missing artwork is invented."
+    }
+  },
+  "requestBudget": {
+    "desktopDiagnosticDocumentGets": 1,
+    "preGroupingNativeSearchGets": 1,
+    "postGroupingNativeSearchGets": 2,
+    "postGroupingNativeResolveGets": 2,
+    "totalCandTSourceHttpAttempts": 6,
+    "allResponseStatus": 200,
+    "retries": 0,
+    "offlineSourceRequests": 0,
+    "extraFullProductionSuites": 0,
+    "freshReprobeReason": "Reviewed app grouping repair changed normal selection capability; one updated private build required two fresh UI canaries.",
+    "discoveryDocumentationRequests": "Separate web-tool documentation review; upstream fetch count not exposed and excluded from source-canary counts."
+  },
+  "roadblocks": [
+    {
+      "step": "native arrangement selection",
+      "reason": "Prior grouping hid Hey Jude-7 behind another arrangement.",
+      "whatWasTried": "Preserved first search with0resolves; coordinator PR202 passed CI/review and merged; captured replay and updated normal Android selection passed.",
+      "resolved": true,
+      "userAction": "None."
+    },
+    {
+      "step": "QA driver controls",
+      "reason": "Initial profile render-tree inspection and two UI-selector assumptions were unsuitable for the actual screen.",
+      "whatWasTried": "Used fresh screenshots, the actual visible Save control and explicit Online mode. No extra source requests or controller bypass.",
+      "resolved": true,
+      "userAction": "None."
+    },
+    {
+      "step": "production activation and managed cloud qualification",
+      "reason": "Local private Android acceptance does not prove managed-cloud reachability or a released compatible app.",
+      "whatWasTried": "Catalog activation left unchanged; source/receipt handed to Integration for separate exact-source cloud and release review.",
+      "resolved": false,
+      "userAction": "None currently; integration/cloud owners continue qualification."
+    }
+  ],
+  "resources": {
+    "atUtc": "2026-10-28T02:20:18.160167+00:00",
+    "ownAppStopped": true,
+    "nativeTwoSongBackupVerified": true,
+    "existingQa10AndPisni2AndArchived14Unchanged": true,
+    "originalAdbNonRootPreserved": true,
+    "networkRestored": true,
+    "ownVmForwardsRemoved": 3,
+    "gracefulOwnAvdShutdownIssued": true,
+    "shutdownOutput": "OK: killing emulator, bye bye\n\nOK",
+    "otherDevicesOrAdbServerStopped": false,
+    "flutterGradleReservationReleased": true,
+    "nativeAvdShutdownConfirmed": true,
+    "ownWrapperPidAbsent": true,
+    "otherOnlineEmulatorUntouched": true
+  },
+  "limitations": [
+    "Two independent arrangement canaries only; no corpus size, overlap, transcription or musical accuracy claim.",
+    "Publisher describes the Hey Jude rendition as not fully accurate; the app preserves publisher facts without upgrading that claim.",
+    "Underlying work rights/redistribution permission remain unknown. Attribution and raw source provenance are retained.",
+    "No production-signed build, ARM phone test, store upload, automatic merge, public activation or full cloud-suite claim."
+  ],
+  "sourceDocumentsLyricsCredentialsPublished": false
+}
