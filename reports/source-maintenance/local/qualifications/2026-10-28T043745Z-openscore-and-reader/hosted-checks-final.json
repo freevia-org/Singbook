@@ -1,0 +1,112 @@
+{
+  "schemaVersion": 1,
+  "atUtc": "2026-10-28T04:38:55.740475+00:00",
+  "status": "all_applicable_checks_passed",
+  "checks": {
+    "source": {
+      "pr": "https://github.com/freevia-org/Singbook/pull/205",
+      "head": "66d9f1970c0784640408ac6ed31f9ee643500136",
+      "draft": true,
+      "jobs": [
+        {
+          "link": "https://github.com/freevia-org/Singbook/actions/runs/40630075971/job/122624470143",
+          "name": "windows-journey",
+          "state": "SUCCESS"
+        },
+        {
+          "link": "https://github.com/freevia-org/Singbook/actions/runs/40630075971/job/122624469987",
+          "name": "windows-build",
+          "state": "SUCCESS"
+        },
+        {
+          "link": "https://github.com/freevia-org/Singbook/actions/runs/40630075971/job/122624470004",
+          "name": "windows-test (1/2)",
+          "state": "SUCCESS"
+        },
+        {
+          "link": "https://github.com/freevia-org/Singbook/actions/runs/40630075971/job/122624470245",
+          "name": "windows-test (2/2)",
+          "state": "SUCCESS"
+        },
+        {
+          "link": "https://github.com/freevia-org/Singbook/actions/runs/40630075971/job/122624161481",
+          "name": "analyze",
+          "state": "SUCCESS"
+        },
+        {
+          "link": "https://github.com/freevia-org/Singbook/actions/runs/40630076041/job/122624161047",
+          "name": "compile",
+          "state": "SUCCESS"
+        },
+        {
+          "link": "https://github.com/freevia-org/Singbook/actions/runs/40630075971/job/122624161452",
+          "name": "test",
+          "state": "SUCCESS"
+        },
+        {
+          "link": "https://github.com/freevia-org/Singbook/actions/runs/40630075973/job/122624161215",
+          "name": "host-visuals",
+          "state": "SUCCESS"
+        },
+        {
+          "link": "https://github.com/freevia-org/Singbook/actions/runs/40630075973/job/122624162750",
+          "name": "focused-regressions",
+          "state": "SKIPPED"
+        }
+      ]
+    },
+    "reader": {
+      "pr": "https://github.com/freevia-org/Singbook/pull/206",
+      "head": "1eb30e8afce86e88ccebad1b1f129fb508ea1cb3",
+      "draft": true,
+      "jobs": [
+        {
+          "link": "https://github.com/freevia-org/Singbook/actions/runs/40632314280/job/122631589979",
+          "name": "windows-build",
+          "state": "SUCCESS"
+        },
+        {
+          "link": "https://github.com/freevia-org/Singbook/actions/runs/40632314280/job/122631589972",
+          "name": "windows-test (1/2)",
+          "state": "SUCCESS"
+        },
+        {
+          "link": "https://github.com/freevia-org/Singbook/actions/runs/40632314280/job/122631589959",
+          "name": "windows-test (2/2)",
+          "state": "SUCCESS"
+        },
+        {
+          "link": "https://github.com/freevia-org/Singbook/actions/runs/40632314280/job/122631589903",
+          "name": "windows-journey",
+          "state": "SUCCESS"
+        },
+        {
+          "link": "https://github.com/freevia-org/Singbook/actions/runs/40632314280/job/122631295989",
+          "name": "analyze",
+          "state": "SUCCESS"
+        },
+        {
+          "link": "https://github.com/freevia-org/Singbook/actions/runs/40632314245/job/122631295713",
+          "name": "compile",
+          "state": "SUCCESS"
+        },
+        {
+          "link": "https://github.com/freevia-org/Singbook/actions/runs/40632314280/job/122631294830",
+          "name": "test",
+          "state": "SUCCESS"
+        },
+        {
+          "link": "https://github.com/freevia-org/Singbook/actions/runs/40632314272/job/122631295496",
+          "name": "host-visuals",
+          "state": "SUCCESS"
+        },
+        {
+          "link": "https://github.com/freevia-org/Singbook/actions/runs/40632314272/job/122631298760",
+          "name": "focused-regressions",
+          "state": "SKIPPED"
+        }
+      ]
+    }
+  },
+  "rawSourceDocumentsOrSecretsPublished": false
+}
