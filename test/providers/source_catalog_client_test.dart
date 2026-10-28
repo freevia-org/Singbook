@@ -155,9 +155,11 @@ void main() {
     expect(client.lastCheckedAt, isNotNull);
   });
 
-  test('uses a separate channel6 cache while retaining prior cache names', () {
-    expect(SourceCatalogClient.bundledAsset, 'config/source-catalog-v6.json');
-    expect(SourceCatalogClient.cacheKey, 'sourceCatalog:v6');
+  test('uses a separate channel8 cache while retaining prior cache names', () {
+    expect(SourceCatalogClient.bundledAsset, 'config/source-catalog-v8.json');
+    expect(SourceCatalogClient.cacheKey, 'sourceCatalog:v8');
+    expect(SourceCatalogClient.channel7CacheKey, 'sourceCatalog:v7');
+    expect(SourceCatalogClient.channel6CacheKey, 'sourceCatalog:v6');
     expect(SourceCatalogClient.channel5CacheKey, 'sourceCatalog:v5');
     expect(SourceCatalogClient.channel4CacheKey, 'sourceCatalog:v4');
     expect(SourceCatalogClient.channel3CacheKey, 'sourceCatalog:v3');
@@ -165,7 +167,7 @@ void main() {
     expect(SourceCatalogClient.legacyCacheKey, 'sourceCatalog');
     expect(
       SourceCatalogClient.defaultEndpoint,
-      'https://raw.githubusercontent.com/freevia-org/Singbook/main/config/source-catalog-v6.json',
+      'https://raw.githubusercontent.com/freevia-org/Singbook/main/config/source-catalog-v8.json',
     );
   });
 

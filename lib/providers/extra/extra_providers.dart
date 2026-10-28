@@ -9,6 +9,8 @@ import 'amll.dart';
 import 'startjamming.dart';
 import 'lyricsplus.dart';
 import 'vocadb.dart';
+import 'chords_and_tabs.dart';
+import 'pisni.dart';
 
 export 'import_sources.dart';
 export 'metadata.dart';
@@ -20,6 +22,8 @@ export 'amll.dart';
 export 'startjamming.dart';
 export 'lyricsplus.dart';
 export 'vocadb.dart';
+export 'chords_and_tabs.dart';
+export 'pisni.dart';
 
 /// All sources in the architecture, including truthful file-import-only routes.
 List<LyricsProvider> createExtraProviders({ProviderTransport? transport}) {
@@ -44,5 +48,7 @@ List<LyricsProvider> createExtraProviders({ProviderTransport? transport}) {
     VocaDbProvider(http),
     TouhouDbProvider(http),
     UtaiteDbProvider(http),
+    ChordsAndTabsProvider(http),
+    PisniProvider(http),
   ];
 }

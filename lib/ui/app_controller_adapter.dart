@@ -12,6 +12,8 @@ import '../domain/combine.dart'
     show
         checkedChordKeyEstimate,
         combineSources,
+        rankedChordKeyEstimate,
+        rankedKeyNeedsReview,
         recordingCompatible,
         sourcedArrangementKey;
 import '../domain/metadata_enrichment.dart' show displayMetadataFor;
@@ -340,7 +342,7 @@ class AppControllerAdapter extends VerseUiController {
     final setlist = currentSetlist;
     final trustedReaderKey = displayedKey;
     final estimatedReaderKey = trustedReaderKey == null && song != null
-        ? estimateChordKey(song.body)?.key ?? checkedChordKeyEstimate(song)
+        ? rankedChordKeyEstimate(song) ?? estimateChordKey(song.body)?.key ?? checkedChordKeyEstimate(song)
         : null;
     final readerKey =
         trustedReaderKey ??
@@ -568,7 +570,10 @@ class AppControllerAdapter extends VerseUiController {
       editor: _editorData,
       editorDirty: _editorDirty,
       readerKey: readerKey,
-      readerKeyEstimated: estimatedReaderKey != null,
+      readerKeyEstimated: estimatedReaderKey != null ||
+          song != null &&
+              activeSetlistEntry?.overrides['key']?.toString().trim().isNotEmpty != true &&
+              rankedKeyNeedsReview(song),
       readerTranspose: _transpose.round(),
       readerCapo: displayedCapo?.toString(),
       readerTuning: tuning?.toString(),

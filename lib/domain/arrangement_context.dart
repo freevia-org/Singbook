@@ -6,9 +6,18 @@ import 'models.dart';
 /// never says that the chart belongs to the selected recording.
 bool contextualArrangementCandidate(
   SongCandidate selected,
-  SongCandidate chart,
-) {
-  if (!const {'songsterr', 'ultimateguitar'}.contains(chart.providerId)) {
+  SongCandidate chart, {
+  bool allowAlternatePerformers = false,
+}) {
+  const contextualProviders = {'songsterr', 'ultimateguitar'};
+  const alternatePerformerProviders = {
+    ...contextualProviders,
+    'chordie',
+    'chordsandtabs',
+  };
+  if (!contextualProviders.contains(chart.providerId) &&
+      !(allowAlternatePerformers &&
+          alternatePerformerProviders.contains(chart.providerId))) {
     return false;
   }
   bool selectedScopeAllowed(SongCandidate candidate) {
@@ -45,19 +54,31 @@ bool contextualArrangementCandidate(
 
   final songTitle = _words(selected.title);
   if (songTitle.isEmpty) return false;
-  final chartTitle = _words(chart.title);
+  final chartTitle = _words(chart.title), chartArtist = _words(chart.artist);
 
   // Direct composer/author evidence is accepted only from structured credits
   // in a supported role. Artist names, featured performers, labels, and
   // arbitrary metadata text are not treated as composition evidence.
-  if (chartTitle == songTitle &&
+  if (contextualProviders.contains(chart.providerId) &&
+      chartTitle == songTitle &&
       _selectedCreativeCreditNames(selected).contains(_words(chart.artist))) {
     return true;
   }
 
+  // Exact-title alternate performers are considered only by the explicit
+  // deferred lyric-corroboration retry. This admits a chart for inspection;
+  // it does not establish that it belongs to the selected recording.
+  if (allowAlternatePerformers &&
+      chartTitle == songTitle &&
+      chartArtist.isNotEmpty &&
+      chartArtist != _words(selected.artist)) {
+    return true;
+  }
+
+  if (!contextualProviders.contains(chart.providerId)) return false;
+
   final work = _soundtrackWork(selected.album);
   if (work == null) return false;
-  final chartArtist = _words(chart.artist);
   if (chartTitle == songTitle && chartArtist == work) return true;
 
   // Category-style chart credits are accepted only when the title explicitly

@@ -5,6 +5,7 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:singbook/application/app_controller.dart';
 import 'package:singbook/data/library_repository.dart';
 import 'package:singbook/domain/arrangement.dart';
+import 'package:singbook/domain/combine.dart';
 import 'package:singbook/domain/models.dart';
 import 'package:singbook/domain/song_identity.dart';
 import 'package:singbook/domain/timing.dart';
@@ -93,6 +94,61 @@ void main() {
       factory: databaseFactoryFfi,
     );
   }
+
+  test(
+    'derived arrangement identities and raw parent survive save reopen and resave',
+    () async {
+      const lyrics =
+          'Amber lanterns cross the quiet harbor\nSilver windows catch the morning sunlight';
+      final selected = candidate('catalog');
+      final chartCandidate = candidate('chart');
+      const rawChart =
+          'Capo II\n[C]Amber lanterns cross the quiet harbor\n'
+          '[G]Silver windows catch the morning sunlight\nArrangement 2\nCapo IV\n'
+          '[Bb]Amber lanterns cross the quiet harbor\n[F]Silver windows catch the morning sunlight';
+      final combined = combineSources(selected, [
+        SourceResult(
+          candidate: selected,
+          body: lyrics,
+          matchKind: MatchKind.sameRecording,
+        ),
+        SourceResult(
+          candidate: chartCandidate,
+          body: rawChart,
+          metadata: const {'key': 'D', 'capo': 2},
+          matchKind: MatchKind.sameSong,
+        ),
+      ]);
+      final expectedIds = combined.sources.map((source) => source.id).toSet();
+      expect(
+        combined.sources.where((source) => source.arrangementId != null),
+        hasLength(2),
+      );
+      final saved = await repo.saveChosenSong(combined);
+      await reopen();
+      final restored = (await repo.getSong(saved.id))!;
+      expect(restored.body, combined.body);
+      expect(restored.sources.map((source) => source.id).toSet(), expectedIds);
+      expect(
+        restored.sources
+            .singleWhere((source) => source.id == chartCandidate.identity)
+            .body,
+        rawChart,
+      );
+      for (final view in restored.sources.where(
+        (source) => source.arrangementId != null,
+      )) {
+        expect(view.candidate.id, chartCandidate.id);
+        expect(view.extra['parentSourceId'], chartCandidate.identity);
+      }
+      final resaved = await repo.saveChosenSong(restored);
+      expect(resaved.sources.map((source) => source.id).toSet(), expectedIds);
+      expect(
+        resaved.sources.map((source) => source.id),
+        hasLength(expectedIds.length),
+      );
+    },
+  );
 
   test(
     'cross-provider overwrite survives reopen with local relationships and extras',

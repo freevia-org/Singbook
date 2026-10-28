@@ -9,6 +9,19 @@ String normalizeCorpusText(String value) => value
 String corpusArtistIdentity(String value) =>
     normalizeCorpusText(value).replaceFirst(RegExp(r'^the '), '');
 
+/// A corpus row can request discovery without claiming a catalog identity.
+/// The scope and marker prevent this query seed becoming recording evidence;
+/// every result still needs its provider's own matching title and artist.
+SongCandidate corpusRequestCandidate(Map<String, dynamic> song) =>
+    SongCandidate(
+      providerId: 'corpus-request',
+      id: song['id'] as String,
+      title: song['title'] as String,
+      artist: song['artist'] as String,
+      metadata: const {'identityScope': 'composition'},
+      extra: const {'requestOnly': true},
+    );
+
 /// A reviewed catalog alias selects one specific public record. It is not an
 /// accuracy reference and does not establish a master recording or lyric gold.
 /// Title/artist checks prevent a stale ID from silently selecting another act.
@@ -39,6 +52,7 @@ bool corpusRecordingReferenceMatches(
   Map<String, dynamic> song,
   SongCandidate candidate,
 ) {
+  if (candidate.providerId == 'corpus-request') return false;
   if (!matchesCorpusCandidate(song, candidate)) return false;
   final expected = song['expected'];
   if (expected is! Map) return false;
