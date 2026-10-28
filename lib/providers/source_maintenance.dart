@@ -336,12 +336,33 @@ class SourceMaintenanceHarness {
           'reason': 'resolved_candidate_changed',
         };
       }
+      final capabilityChecks = result.extra['capabilityChecks'];
+      final artworkCheck = capabilityChecks is Map
+          ? capabilityChecks['artwork']
+          : null;
+      final expectedReleaseId = selected.metadata['musicbrainzReleaseId'];
+      // Exact release/album facts are exposed only after optional artwork
+      // verification. Its failure must not invent a different recording.
+      // A present conflicting album remains an identity mismatch below.
+      final albumMissingWithArtworkFailure =
+          expectedAlbum != null &&
+          (result.candidate.album?.trim().isEmpty ?? true) &&
+          entry.capabilities.contains('artwork') &&
+          expectedReleaseId is String &&
+          expectedReleaseId.isNotEmpty &&
+          (probe['requiredMetadataFields'] as List? ?? const []).contains(
+            'musicbrainzReleaseId',
+          ) &&
+          !_hasMetadataPath(result.metadata, 'musicbrainzReleaseId') &&
+          artworkCheck is Map &&
+          artworkCheck['status'] == 'unavailable';
       if (expectedTitle != null &&
               _normalized(result.candidate.title) != expectedTitle ||
           expectedArtist != null &&
               _normalized(result.candidate.artist) != expectedArtist ||
           expectedAlbum != null &&
-              _normalized(result.candidate.album) != expectedAlbum ||
+              _normalized(result.candidate.album) != expectedAlbum &&
+              !albumMissingWithArtworkFailure ||
           expectedDuration != null &&
               !_durationMatches(
                 result.candidate.durationSeconds,
@@ -411,10 +432,6 @@ class SourceMaintenanceHarness {
         final unrelatedMissing = absentMetadataPaths
             .where((p) => !artworkPath(p))
             .toList();
-        final capabilityChecks = result.extra['capabilityChecks'];
-        final artworkCheck = capabilityChecks is Map
-            ? capabilityChecks['artwork']
-            : null;
         if (artworkRequired &&
             artworkCheck is Map &&
             artworkCheck['status'] == 'unavailable') {
@@ -446,6 +463,8 @@ class SourceMaintenanceHarness {
               'status': 'changed_schema',
               'reason': 'required_metadata_fields_missing',
               'missingMetadataFields': absentMetadataPaths,
+              if (albumMissingWithArtworkFailure)
+                'missingIdentityFields': ['album'],
               'capabilityFailures': {'artwork': failure},
             };
           }
@@ -455,6 +474,8 @@ class SourceMaintenanceHarness {
             'capability': 'artwork',
             'recordingMetadataAvailable': result.metadata.isNotEmpty,
             'missingMetadataFields': absentMetadataPaths,
+            if (albumMissingWithArtworkFailure)
+              'missingIdentityFields': ['album'],
           };
         }
         return {
