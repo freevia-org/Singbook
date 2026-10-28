@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart' show ScrollDirection;
+import 'package:flutter/rendering.dart' show RenderBox, ScrollDirection;
 import 'package:flutter/scheduler.dart' show SchedulerBinding, SchedulerPhase;
 import 'package:flutter/services.dart';
 
@@ -713,6 +713,27 @@ class _PlayerScreenState extends State<PlayerScreen>
     );
   }
 
+  Future<void> _revealLyricsLine(
+    BuildContext lineContext, {
+    required Duration duration,
+    required Curve curve,
+  }) {
+    final render = lineContext.findRenderObject();
+    final oversized =
+        render is RenderBox &&
+        render.hasSize &&
+        _lyricsScroll.hasClients &&
+        render.size.height > _lyricsScroll.position.viewportDimension;
+    // Centering a paragraph taller than the reader hides its first words.
+    // Keep its beginning visible; ordinary lines retain their reading position.
+    return Scrollable.ensureVisible(
+      lineContext,
+      duration: duration,
+      curve: curve,
+      alignment: oversized ? 0 : .4,
+    );
+  }
+
   void _scrollToCurrentLine({bool immediate = false}) {
     if (!mounted || _lyricsPointers.length >= 2) return;
     final state = controller.state;
@@ -720,11 +741,10 @@ class _PlayerScreenState extends State<PlayerScreen>
     if (!state.autoscroll || lineId == null) return;
     final lineContext = _lineKeys[lineId]?.currentContext;
     if (lineContext != null) {
-      Scrollable.ensureVisible(
+      _revealLyricsLine(
         lineContext,
         duration: immediate ? Duration.zero : const Duration(milliseconds: 420),
         curve: Curves.easeInOut,
-        alignment: .4,
       );
     } else if (_lyricsScroll.hasClients) {
       final index = state.songLines.indexWhere((line) => line.id == lineId);
@@ -760,13 +780,12 @@ class _PlayerScreenState extends State<PlayerScreen>
         if (!mounted) return;
         final targetContext = _lineKeys[lineId]?.currentContext;
         if (targetContext != null && targetContext.mounted) {
-          Scrollable.ensureVisible(
+          _revealLyricsLine(
             targetContext,
             duration: immediate
                 ? Duration.zero
                 : const Duration(milliseconds: 180),
             curve: Curves.easeOut,
-            alignment: .4,
           );
           return;
         }
@@ -784,10 +803,10 @@ class _PlayerScreenState extends State<PlayerScreen>
         WidgetsBinding.instance.addPostFrameCallback((_) {
           final built = _lineKeys[lineId]?.currentContext;
           if (mounted && built != null && built.mounted) {
-            Scrollable.ensureVisible(
+            _revealLyricsLine(
               built,
               duration: Duration.zero,
-              alignment: .4,
+              curve: Curves.easeOut,
             );
           }
         });
