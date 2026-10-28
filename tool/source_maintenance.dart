@@ -175,6 +175,9 @@ class DesktopMaintenanceClient extends http.BaseClient {
     String responseHeaders,
   ) async {
     final process = await _processStarter(curlExecutable, [
+      // Keep anonymous probes and measured retries independent of curlrc.
+      // curl requires this to be its first argument.
+      '--disable',
       '--silent',
       '--show-error',
       '--max-time',
