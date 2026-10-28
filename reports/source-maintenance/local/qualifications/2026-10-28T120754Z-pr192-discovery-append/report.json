@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "measuredAt": "2026-10-28T12:07:54.647182+00:00",
+  "pr": "https://github.com/freevia-org/Singbook/pull/192",
+  "inputHead": "df651b9d58e658d4754117dac87a982401f207c3",
+  "head": "9d540b899a45f6cb122ae04e299e5ee6b59543af",
+  "files": [
+    "config/source-discovery.json",
+    "docs/source-discovery-review-20261027.md"
+  ],
+  "patchSha256": "bb9718af09b7de2d448ebdd85910c389a0eb5c33a38ad5733727bdc52d82d46d",
+  "patchBytes": 10871,
+  "appendValidation": {
+    "preparedAt": "2026-10-28T12:05:03.238587+00:00",
+    "incomingHead": "df651b9d58e658d4754117dac87a982401f207c3",
+    "existingCount": 46,
+    "newCount": 51,
+    "addedIds": [
+      "mudcat-digital-tradition",
+      "dutch-song-database",
+      "the-session",
+      "wywrota",
+      "fanart-tv"
+    ],
+    "oldCandidateObjectsEqual": true,
+    "oldJsonPrefixBeforeArrayTerminatorByteExact": true,
+    "oldDocumentPrefixByteExact": true,
+    "sourcePackets": [
+      {
+        "path": "reports/source-maintenance/local/qualifications/2026-10-28T115914Z-discovery/discovery-decisions.json",
+        "sha256": "39d00e1887b8218ebe06bba47c1410847b9519d5b1aee345b0a38afd9fd9229e"
+      },
+      {
+        "path": "reports/source-maintenance/local/qualifications/2026-10-28T065930Z-discovery/discovery-decisions.json",
+        "sha256": "22c44aebecebe8b6dc386fc1e5ff9ce2d7c15c932b5d935c5ee95e5889a48215"
+      }
+    ],
+    "originalSha256": {
+      "config/source-discovery.json": "9df8196f4fc1476d9966ea7e3eaf77ae58a70c521788583c3c6dd99a91b2d471",
+      "docs/source-discovery-review-20261027.md": "9fae6bf59d20444d7d05b9841255c233ca171985fd1e7d575b029b9bc2a0c367"
+    },
+    "updatedSha256": {
+      "config/source-discovery.json": "9d44e84b8df6fe9dad73ce4edcd9e1ac95858cf8ec5fa27f0b9f88c46db753ce",
+      "docs/source-discovery-review-20261027.md": "b29bbc527b99a66365879912960bc60f11770a2fb7bd30544c83e5783741225b"
+    },
+    "noRuntimeSourceOrCatalogChange": true
+  },
+  "status": "draft_pushed_exact_head_checks_running",
+  "localValidation": "JSON uniqueness/structure/required fields/HTTPS/UTF8LF;46prior objects/accepted set and old JSON/document prefix preserved;git diff --check passed.",
+  "hostedRunIds": [
+    40685094870,
+    40685094868,
+    40685094854
+  ],
+  "runtimeNetworkSdkUse": false,
+  "noActivationOrRelease": true,
+  "historyPreservation": "Local pre-existing cb4f73a ref and ignored evidence retained; detached at authoritative df651b9 and pushed ordinary fast-forward df651b9..9d540b8. No rebase/reset/forcepush/cleanup."
+}
