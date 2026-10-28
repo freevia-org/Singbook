@@ -53,6 +53,7 @@ Future<Map<String, dynamic>> _run(
   _ArtworkProvider provider, {
   List<String> requiredMetadata = const ['artworkUrl', 'artworkAssets'],
   String? expectedAlbum,
+  String selectedReleaseId = '00000000-0000-0000-0000-000000000001',
 }) => SourceMaintenanceHarness(providers: [provider]).run(
   SourceCatalog.fromJson({
     'schemaVersion': 1,
@@ -78,10 +79,7 @@ Future<Map<String, dynamic>> _run(
               ..._selection.toJson(),
               'album': ?expectedAlbum,
               if (expectedAlbum != null)
-                'metadata': {
-                  'musicbrainzReleaseId':
-                      '00000000-0000-0000-0000-000000000001',
-                },
+                'metadata': {'musicbrainzReleaseId': selectedReleaseId},
             },
             'expectedAlbum': ?expectedAlbum,
             'requiredFields': ['metadata'],
@@ -105,6 +103,21 @@ void main() {
     'artworkUrl',
     'artworkAssets',
   ];
+  test(
+    'whitespace-only release ID cannot relax the album identity check',
+    () async {
+      final report = await _run(
+        _ArtworkProvider({
+          'musicbrainzRecordingId': '1',
+        }, extra: unavailableArtwork),
+        expectedAlbum: 'Invented Album',
+        selectedReleaseId: '   ',
+        requiredMetadata: releaseMetadata,
+      );
+      expect(_probe(report)['status'], 'identity_mismatch');
+      expect(_probe(report)['reason'], 'resolved_identity_mismatch');
+    },
+  );
   test(
     'missing art-dependent album reports the upstream artwork failure',
     () async {

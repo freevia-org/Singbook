@@ -349,7 +349,7 @@ class SourceMaintenanceHarness {
           (result.candidate.album?.trim().isEmpty ?? true) &&
           entry.capabilities.contains('artwork') &&
           expectedReleaseId is String &&
-          expectedReleaseId.isNotEmpty &&
+          expectedReleaseId.trim().isNotEmpty &&
           (probe['requiredMetadataFields'] as List? ?? const []).contains(
             'musicbrainzReleaseId',
           ) &&
