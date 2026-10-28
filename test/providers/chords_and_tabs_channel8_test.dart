@@ -99,12 +99,13 @@ void main() {
     expect(pisni['website'], 'https://www.pisni.org.ua/');
     expect(pisni['hosts'], ['www.pisni.org.ua']);
     expect(pisni['probes'], isEmpty);
-    expect(SourceCatalogClient.bundledAsset, 'config/source-catalog-v8.json');
-    expect(SourceCatalogClient.cacheKey, 'sourceCatalog:v8');
+    expect(SourceCatalogClient.bundledAsset, 'config/source-catalog-v9.json');
+    expect(SourceCatalogClient.cacheKey, 'sourceCatalog:v9');
+    expect(SourceCatalogClient.channel8CacheKey, 'sourceCatalog:v8');
     expect(SourceCatalogClient.channel7CacheKey, 'sourceCatalog:v7');
     expect(
       SourceCatalogClient.defaultEndpoint,
-      endsWith('/source-catalog-v8.json'),
+      endsWith('/source-catalog-v9.json'),
     );
     expect(
       File('pubspec.yaml').readAsStringSync(),
@@ -121,7 +122,9 @@ void main() {
     addTearDown(transport.close);
     final providers = [
       ...createCoreProviders(transport: transport),
-      ...createExtraProviders(transport: transport),
+      ...createExtraProviders(transport: transport).where(
+        (provider) => provider.definition.id != 'openscorelieder',
+      ),
     ];
     final native = providers.whereType<ChordsAndTabsProvider>().single;
     final pisniNative = providers.whereType<PisniProvider>().single;
@@ -177,7 +180,9 @@ void main() {
     addTearDown(transport.close);
     final providers = [
       ...createCoreProviders(transport: transport),
-      ...createExtraProviders(transport: transport),
+      ...createExtraProviders(transport: transport).where(
+        (provider) => provider.definition.id != 'openscorelieder',
+      ),
     ];
     final catalog = SourceCatalog.parse(channel8File.readAsStringSync());
     final runtime = SourceCatalogRuntime(

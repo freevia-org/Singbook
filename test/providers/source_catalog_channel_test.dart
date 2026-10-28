@@ -156,10 +156,10 @@ void main() {
           await client.initialize();
           expect(
             SourceCatalogClient.bundledAsset,
-            'config/source-catalog-v8.json',
+            'config/source-catalog-v9.json',
           );
-          expect(SourceCatalogClient.cacheKey, 'sourceCatalog:v8');
-          expect(client.endpoint.path, endsWith('/source-catalog-v8.json'));
+          expect(SourceCatalogClient.cacheKey, 'sourceCatalog:v9');
+          expect(client.endpoint.path, endsWith('/source-catalog-v9.json'));
           expect(runtime.catalog!.sources, hasLength(26));
           for (final previous in SourceCatalog.parse(_bundle('-v4')).sources) {
             final current = runtime.catalog!.sources.singleWhere(
