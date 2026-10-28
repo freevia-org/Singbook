@@ -20,8 +20,8 @@ void main() {
     'extra roster distinguishes imports, catalogs, and identity-bound artwork',
     () {
       final providers = createExtraProviders();
-      expect(providers.length, 22);
-      expect(providers.map((p) => p.definition.id).toSet().length, 22);
+      expect(providers.length, 23);
+      expect(providers.map((p) => p.definition.id).toSet().length, 23);
       expect(providers.whereType<AmllProvider>(), hasLength(1));
       expect(providers.whereType<StartJammingProvider>(), hasLength(1));
       expect(providers.whereType<LyricsPlusProvider>(), hasLength(1));
