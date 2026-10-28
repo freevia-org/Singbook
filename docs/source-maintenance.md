@@ -18,7 +18,7 @@ versions. All eight files currently use `schemaVersion: 1` and
 | 5 | `config/source-catalog-v5.json` | 17 | 26 | Adds TouhouDB and UtaiteDB; updates MusicBrainz artwork metadata |
 | 6 | `config/source-catalog-v6.json` | 18 | 27 | Adds StartJamming |
 | 7 | `config/source-catalog-v7.json` | 19 | 28 | Adds LyricsPlus |
-| 8 | `config/source-catalog-v8.json` | 20 | 30 | Adds Chords & Tabs and Pisni |
+| 8 | `config/source-catalog-v8.json` | 21 | 30 | Retains Chords & Tabs and Pisni; activates qualified Chords & Tabs |
 
 Roster membership alone does not show that a provider is enabled, qualified or
 live.
@@ -78,6 +78,19 @@ artifacts remain frozen and are not rebuilt by this source change. Native
 qualification covers real search/import, cached readers, artwork decoding and
 exact source-payload retention across SQLite reopening and ChordPro round trips;
 it does not establish independent lyric transcription or musical accuracy.
+
+Channel 8 revision 21 activates Chords & Tabs at source revision 2 and enables
+it by default for compatible clients. Its two catalog health probes use the
+previously qualified Hey Jude and Bohemian Rhapsody arrangements; the Hey Jude
+probe retains its search-version hint so the legacy page-without-version case
+continues to be checked. Native QA covered normal search, selection, source
+preview, save, fresh-process offline reopen, and exact source-payload and
+attribution preservation. These checks establish behavior for those two
+arrangements only. Chords & Tabs charts are user-submitted; per-work rights are
+unknown, arrangement identity does not establish recording identity, and the
+canaries do not prove independent musical accuracy. The app retains provider
+attribution and the original source payload. Existing user opt-outs remain in
+force. Pisni stays disabled pending its separate qualification.
 The lrc.red native adapter uses the publisher's identifying User-Agent,
 exact ISRC search/detail identity, same-host TTML/artwork references and visible
 attribution. Its explicit timing profile handles the publisher's bare-second
