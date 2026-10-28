@@ -1,0 +1,296 @@
+{
+  "schemaVersion": 1,
+  "atUtc": "2026-10-28T00:55:12.806401+00:00",
+  "scope": "Candidate-only native Android UI/transport/persistence qualification. The provider module is public; this private package/catalog overlay is not a release or served catalog.",
+  "source": {
+    "publicSourcePr": 195,
+    "qualifiedProviderHead": "3d45b1b4a4c26b15060503be24f3246407c5d0ac",
+    "publicModuleMerge": "9823ece5f4568f5a73b0d178a295dae5b4cad86d",
+    "providerCommittedLfSha256": "c001df5586445a68fc57956cf683093b58ce7aafafff0c1ebd62c897d739370b",
+    "localOnlyQaOverlayHead": "b6b1012cbc6f0a851490a0644e7d42a78564b4f3",
+    "qaOverlayNeverPushed": true,
+    "generatedUncommittedStatusEntriesAreLfEquivalentOnly": 35
+  },
+  "runtime": {
+    "os": "Android emulator",
+    "apiLevel": 36,
+    "abi": "x86_64",
+    "pageSize": 16384,
+    "package": "org.freevia.singbook.qapisni42",
+    "version": "0.2.28+42 private debug QA",
+    "nativeHttp": "Production CronetClient.defaultCronetEngine behind a fixed-host request-budget guard",
+    "physicalPhoneTabletAndOtherAvdUsed": false
+  },
+  "catalog": {
+    "bundledCandidatePath": "config/source-catalog-pisni-qa.json",
+    "candidateCount": 29,
+    "all28PreviousEntriesExact": true,
+    "compiledFactoryIncludesPisniOnlyInPrivateOverlay": true,
+    "productionCatalogsUnchanged": true,
+    "startupRefresh": "Private in-memory response for the catalog URL; not a served publisher refresh test",
+    "cache": "Disjoint private QA cache key",
+    "sourcePreferences": "Explicit private Pisni opt-in, other sources disabled; no production user preferences touched",
+    "offlineStructuralCheckPassed": true
+  },
+  "nativeUiChecks": {
+    "actions": "Two ordinary Online searches, exact stable document-row selection, source-version preview, source-tab selection, Save and native reader; both saved library rows opened again after offline app-process restart",
+    "checks": [
+      {
+        "title": "Ой у лузі",
+        "documentSha256": "b464d4ff0e14f63edbaac38e08ee72b5051a97228f29846f002d75f15aa86564",
+        "sourceId": "8878",
+        "sourceProvider": "pisni",
+        "sourceFactsSha256": "39f031ad60e95e21cd42064a67c0f9630098d5ee65c4a68ced513b2fb18a9594",
+        "bodySha256": "ef780a348fed61c36a37efda218087a60b92df2535c786f783e2cd7313362049",
+        "originalSourceBytes": 64720,
+        "originalSourceSha256": "fcf1614afca025b3a6260d01c53cb4b96043b6eab06861e4652fdc1a56600c2f",
+        "creditCount": 3,
+        "performerCount": 3,
+        "sourceFieldCount": 5,
+        "recordingIdsEmpty": true,
+        "originalEncoding": "windows-1251",
+        "rightsLicense": "unknown",
+        "hasChords": true,
+        "attributionRetained": true,
+        "chordProSourceFactsExact": true,
+        "repositoryMatchesController": true
+      },
+      {
+        "title": "Червона рута",
+        "documentSha256": "3131077a6e0411c8dd9c6d2144848925d5b3ae7da46a1842c5733d4aeeea828a",
+        "sourceId": "3424",
+        "sourceProvider": "pisni",
+        "sourceFactsSha256": "d78cc58c735c1bd20b2d2dd5e4ef99e7dd4e232463cbf98e0cb92673e1634871",
+        "bodySha256": "7dd8e0b7e0633af4ed73833421d229f03c010e4ee24cee42cf77cc8376e553ad",
+        "originalSourceBytes": 54419,
+        "originalSourceSha256": "da7142499967be8896e13a313ed76cb2b8706adac2e0c6d9bab0e722d70b2975",
+        "creditCount": 2,
+        "performerCount": 7,
+        "sourceFieldCount": 5,
+        "recordingIdsEmpty": true,
+        "originalEncoding": "windows-1251",
+        "rightsLicense": "unknown",
+        "hasChords": true,
+        "attributionRetained": true,
+        "chordProSourceFactsExact": true,
+        "repositoryMatchesController": true
+      }
+    ],
+    "visuallyReviewedScreenshotsRetainedPrivately": {
+      "pisni-native-initial.png": "880d425d27691e501e3e35d060f666d6f7a7d79413f988e06819c8b72ec4d387",
+      "pisni-native-3424-comparison.png": "047000e33d6e627bf5c0761fbe6f694be6d3018404239ce681e50b24ae0b696d",
+      "pisni-native-3424-reader.png": "ec0a203c9901b8c4062e4aa40ce78f52f03d97e47c732ecde3ebad9f837869eb",
+      "pisni-native-8878-reader.png": "875ed582125b16673f513345abc1d9aa26d079fae726f3d18f2a7b5563e74c6e",
+      "pisni-native-offline-3424-reader.png": "ec0a203c9901b8c4062e4aa40ce78f52f03d97e47c732ecde3ebad9f837869eb",
+      "pisni-native-offline-8878-reader.png": "875ed582125b16673f513345abc1d9aa26d079fae726f3d18f2a7b5563e74c6e"
+    },
+    "visualScope": "Fresh portrait/light/default-text-scale frames; Ukrainian glyphs and inline chord rendering reviewed. No broad orientation/theme/DPI claim."
+  },
+  "requestAccounting": {
+    "reason": "New Android native transport/UI/save/offline-reader capability; separate from daily production suite and earlier host canaries",
+    "trace": [
+      {
+        "atUtc": "2026-10-28T00:35:46.262032Z",
+        "url": "https://www.pisni.org.ua/search.php?phrase=%D7%E5%F0%E2%EE%ED%E0+%F0%F3%F2%E0&obj=s",
+        "method": "GET",
+        "status": 200
+      },
+      {
+        "atUtc": "2026-10-28T00:36:16.221717Z",
+        "url": "https://www.pisni.org.ua/songs/3424.html",
+        "method": "GET",
+        "status": 200
+      },
+      {
+        "atUtc": "2026-10-28T00:37:31.940763Z",
+        "url": "https://www.pisni.org.ua/search.php?phrase=%CE%E9+%F3+%EB%F3%E7%B3&obj=s",
+        "method": "GET",
+        "status": 200
+      },
+      {
+        "atUtc": "2026-10-28T00:37:44.639831Z",
+        "url": "https://www.pisni.org.ua/songs/8878.html",
+        "method": "GET",
+        "status": 200
+      }
+    ],
+    "httpRequests": 4,
+    "http200": 4,
+    "retries": 0,
+    "minimumConfiguredHostIntervalMs": 1100,
+    "fullProductionSuiteRepeated": false,
+    "catalogFixtureReads": 1,
+    "offlineSourceHttpRequests": 0,
+    "cookiesCredentialsMediaOrOtherSourceCalls": false
+  },
+  "offlineRestart": {
+    "startedAtUtc": "2026-10-28T00:40:38.432166+00:00",
+    "package": "org.freevia.singbook.qapisni42",
+    "device": "emulator-5554",
+    "initialNetworkState": {
+      "airplane_mode_on": "0",
+      "wifi_on": "1",
+      "mobile_data": "1"
+    },
+    "actions": [
+      {
+        "action": "status",
+        "value": []
+      },
+      {
+        "action": "tap-key",
+        "value": [
+          "home-mode-library-segment"
+        ]
+      },
+      {
+        "action": "tap-text",
+        "value": [
+          "Червона рута"
+        ]
+      },
+      {
+        "action": "screenshot",
+        "value": [
+          "artifacts/pisni-native-offline-3424-reader.png"
+        ]
+      },
+      {
+        "action": "tap-tooltip",
+        "value": [
+          "Back"
+        ]
+      },
+      {
+        "action": "tap-key",
+        "value": [
+          "home-mode-library-segment"
+        ]
+      },
+      {
+        "action": "tap-text",
+        "value": [
+          "Ой у лузі"
+        ]
+      },
+      {
+        "action": "screenshot",
+        "value": [
+          "artifacts/pisni-native-offline-8878-reader.png"
+        ]
+      },
+      {
+        "action": "tap-tooltip",
+        "value": [
+          "Back"
+        ]
+      },
+      {
+        "action": "snapshot",
+        "value": [
+          "artifacts/pisni-native-offline-reopened.json"
+        ]
+      }
+    ],
+    "livePhaseRequests": 4,
+    "offlineSourceRequests": 0,
+    "networkRestored": true,
+    "actualDeviceNetworkDisabled": true,
+    "oldAppProcessConfirmedStopped": true,
+    "newProcessConfirmed": true,
+    "bothNativeReadersOpenedOffline": true,
+    "completeDocumentsAndSourceFactsExactAfterProcessRestart": true,
+    "passed": true,
+    "restoredNetworkState": {
+      "airplane_mode_on": "0",
+      "wifi_on": "1",
+      "mobile_data": "1"
+    },
+    "completedAtUtc": "2026-10-28T00:41:07.214901+00:00"
+  },
+  "independentPhysicalSqliteAudit": {
+    "atUtc": "2026-10-28T00:47:12.771185+00:00",
+    "scope": "Independent standard-library SQLite/base64/JSON audit of the actual stopped Android app database, no provider HTTP or Flutter model deserializer.",
+    "package": "org.freevia.singbook.qapisni42",
+    "nativeSavedSongCount": 2,
+    "sqliteIntegrity": "ok",
+    "checks": [
+      {
+        "sourceId": "3424",
+        "nativeSqliteSourceFactsExact": true,
+        "originalSourceBytesExact": true,
+        "rightsRetained": true,
+        "publisherScopedChordNotationRetained": true,
+        "sourceFactsSha256": "d78cc58c735c1bd20b2d2dd5e4ef99e7dd4e232463cbf98e0cb92673e1634871",
+        "originalSourceSha256": "da7142499967be8896e13a313ed76cb2b8706adac2e0c6d9bab0e722d70b2975"
+      },
+      {
+        "sourceId": "8878",
+        "nativeSqliteSourceFactsExact": true,
+        "originalSourceBytesExact": true,
+        "rightsRetained": true,
+        "publisherScopedChordNotationRetained": true,
+        "sourceFactsSha256": "39f031ad60e95e21cd42064a67c0f9630098d5ee65c4a68ced513b2fb18a9594",
+        "originalSourceSha256": "fcf1614afca025b3a6260d01c53cb4b96043b6eab06861e4652fdc1a56600c2f"
+      }
+    ],
+    "completePrivateDataArchiveSha256": "ff8b031277a5bee90677f89cad5748151c00661d6e9fa9c92673f5bbfd8c5462",
+    "completePrivateDataArchiveBytes": 125183488,
+    "regularFilesVerified": 7,
+    "sqliteSnapshotSha256": "402f9c4e8db1e6c51b11d84b744c82f9019cc84037305375ea2126df5a1129c5",
+    "oldQa10AndArchived14Unchanged": true,
+    "oldQa10Sha256": "621eff76f49f82193f43da47f5b96a02c4c10f14043e3175bbeb5bfa4b1d79aa",
+    "archived14Sha256": "cba0c26388128ab51e6855d979fd0ef355fb8e2624af483a164643e9e3b52e3c",
+    "appStoppedAfterQualification": true,
+    "rawDataOrLyricsForPublication": false,
+    "networkRequests": 0
+  },
+  "apk": {
+    "sha256": "fe8b573cd9c2292642f0b3622b517aaae3fded26b288b08bdf8f684555140255",
+    "bytes": 203028642,
+    "debuggable": true,
+    "packagedCatalogSha256": {
+      "source-catalog.json": "eb23bd9999d2e70a04912bb5150d0874fc2bd5490e6f6f60fb426d2fe9838c59",
+      "source-catalog-v2.json": "fb761d3e89e97faafcd20ba7dd3457e42e957f76a82e5a7acebd8f40c879b5e2",
+      "source-catalog-v3.json": "b27df30346ba9fd0b0e2db530c42cb621cc2fe9371f50b40c685bc58703ff069",
+      "source-catalog-v4.json": "987dee720305c7857532f619c8b8bb6c1574bc542538688051a1974d86e4fdfa",
+      "source-catalog-v5.json": "17b80d9ad891e2447b9dfbade1ba7d9b3e048f2f2ea53751672258a4dc7da90b",
+      "source-catalog-v6.json": "bc698ebbbe0bdec8583a44d1dd05422a9e0d423228d61ccd7be20ea80c5f932d",
+      "source-catalog-v7.json": "b192e129d56664ddc04fea41be863cbb9e4c9f92eb7b3e5b76717e2a0b171e76",
+      "source-catalog-pisni-qa.json": "e4e3d5175f2118baf22a95259784dc53b586db981ad21392d35412d0d56285f0"
+    },
+    "notForDistributionOrStoreUpload": true
+  },
+  "storageRoadblock": {
+    "initialInstall": "INSTALL_FAILED_INSUFFICIENT_STORAGE at about677MiB free",
+    "resolved": true,
+    "sameImmutableApkInstalledAfterRecovery": true,
+    "installedApkBytesReclaimed": 402066304,
+    "dataCleared": false,
+    "onlyTwoArchivedObsoleteQaPackagesRemovedWithKeepData": true
+  },
+  "resources": {
+    "atUtc": "2026-10-28T00:49:52.940054+00:00",
+    "privateAppStopped": true,
+    "native2SongBackupVerified": true,
+    "currentQa10AndArchived14Unchanged": true,
+    "originalAdbNonRootRestored": true,
+    "networkRestored": true,
+    "ownVmForwardsRemoved": 2,
+    "gracefulOwnAvdShutdownIssued": true,
+    "shutdownOutput": "OK: killing emulator, bye bye\n\nOK",
+    "otherEmulatorPhoneTabletOrAdbServerStopped": false,
+    "flutterGradleBuildLeaseAlreadyReleased": true,
+    "nativeAvdShutdownConfirmed": true,
+    "shutdownVerifiedAtUtc": "2026-10-28T00:55:12.614065+00:00",
+    "shutdownEvidence": "ADB target absent; exact-AVD Get-CimInstance inventory found no emulator/qemu process after graceful shutdown."
+  },
+  "limitations": [
+    "No public catalog registration/activation or new release performed",
+    "Not a managed-cloud source probe or current full-cloud roster validation",
+    "Emulator x86_64 only, not a new physical-device or production-signer test",
+    "Unknown per-work rights remain retained; no blanket reuse grant inferred",
+    "Two documents do not establish corpus-wide or independent musical accuracy"
+  ],
+  "rawLyricsHtmlUserDatabasesScreenshotsApksOrCredentialsPublished": false
+}

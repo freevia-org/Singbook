@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "atUtc": "2026-10-28T00:55:12.806401+00:00",
+  "scope": "Sanitized recovery receipt for the explicitly authorized owned emulator only; raw recovery archives remain ignored/private.",
+  "device": "emulator-5554",
+  "avd": "SudokuBuddy16K_API36",
+  "humanAuthorizationVerifiedLocally": true,
+  "packages": [
+    {
+      "package": "org.freevia.singbook.releaseqa21",
+      "installedApkBytes": 200930354,
+      "commandExitCode": 0,
+      "commandOutput": "Success",
+      "apkRecoverySha256": "6277ceab946ba76fcd0fe7d3ebd66920417f4db1864972d5d62038bab8dd9d9d",
+      "dataRecoverySha256": "d692ae21ca4c83468819fcd3224d9f20954f455c5d0952e3ee4b95d1757e6089",
+      "allRegularDataFilesRetainedExact": true,
+      "retainedRegularFileCount": 5,
+      "afterDataArchiveSha256": "d692ae21ca4c83468819fcd3224d9f20954f455c5d0952e3ee4b95d1757e6089"
+    },
+    {
+      "package": "org.freevia.singbook.releaseqa22",
+      "installedApkBytes": 201135950,
+      "commandExitCode": 0,
+      "commandOutput": "Success",
+      "apkRecoverySha256": "08fe56d18e6daa1fe1d32ec8c027dd690597113a725241625a64414ace3a764e",
+      "dataRecoverySha256": "3bec04c974df7c003a18a3d222a0cbb1c9bc2ef2e230256d00f70a1711a15933",
+      "allRegularDataFilesRetainedExact": true,
+      "retainedRegularFileCount": 9,
+      "afterDataArchiveSha256": "3bec04c974df7c003a18a3d222a0cbb1c9bc2ef2e230256d00f70a1711a15933"
+    }
+  ],
+  "installedApkBytesReclaimed": 402066304,
+  "allDataArchivesByteIdenticalBeforeAndAfter": true,
+  "currentNativeOldQaSongCount": 10,
+  "current10MatchesHistoricalBaselineAndIsExactSubsetOfArchived14": true,
+  "current10DatabaseSha256": "621eff76f49f82193f43da47f5b96a02c4c10f14043e3175bbeb5bfa4b1d79aa",
+  "archived14DatabaseSha256": "cba0c26388128ab51e6855d979fd0ef355fb8e2624af483a164643e9e3b52e3c",
+  "newNative2SongArchiveSha256": "ff8b031277a5bee90677f89cad5748151c00661d6e9fa9c92673f5bbfd8c5462",
+  "productionPackageAndOtherDevicesUntouched": true,
+  "noRestoreOrMigrationOfEitherOldLibrary": true,
+  "adbRootUsedOnlyForReadOnlyBackupAndVerification": true,
+  "originalAdbNonRootRestored": true,
+  "networkRestored": true,
+  "ownedAvdGracefullyStopped": true,
+  "newPrivateInstallSucceeded": true
+}
