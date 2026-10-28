@@ -118,6 +118,74 @@ void main() {
     ]);
   });
 
+  test('arrangements from different providers still group by recording', () {
+    final groups = groupSearchRecordings([
+      _row('lrclib', album: 'Demo Album', duration: 200),
+      _row(
+        'chordsandtabs',
+        id: '/songs/sample-a',
+        metadata: {'identityScope': 'arrangement'},
+      ),
+      _row(
+        'othercharts',
+        id: 'chart-1',
+        metadata: {'identityScope': 'arrangement'},
+      ),
+    ]);
+
+    expect(_ids(groups), [
+      ['lrclib:1', 'chordsandtabs:/songs/sample-a', 'othercharts:chart-1'],
+    ]);
+  });
+
+  test('distinct same-provider arrangement identities stay selectable', () {
+    final groups = groupSearchRecordings([
+      _row(
+        'chordsandtabs',
+        id: '/songs/hey-jude-7',
+        title: 'Hey Jude',
+        artist: 'The Beatles',
+        metadata: {'identityScope': 'arrangement'},
+      ),
+      _row(
+        'chordsandtabs',
+        id: '/songs/hey-jude-8',
+        title: 'Hey Jude',
+        artist: 'The Beatles',
+        metadata: {'identityScope': 'arrangement'},
+      ),
+    ]);
+
+    expect(_ids(groups), [
+      ['chordsandtabs:/songs/hey-jude-7'],
+      ['chordsandtabs:/songs/hey-jude-8'],
+    ]);
+  });
+
+  test('duplicate arrangement identity deduplicates without changing rank', () {
+    final groups = groupSearchRecordings([
+      _row(
+        'chordsandtabs',
+        id: '/songs/hey-jude-7',
+        title: 'Hey Jude',
+        artist: 'The Beatles',
+        metadata: {'identityScope': 'arrangement'},
+      ),
+      _row('lrclib', id: 'lyrics', title: 'Hey Jude', artist: 'The Beatles'),
+      _row(
+        'chordsandtabs',
+        id: '/songs/hey-jude-7',
+        title: 'Hey Jude',
+        artist: 'The Beatles',
+        metadata: {'identityScope': 'arrangement'},
+      ),
+    ]);
+
+    expect(_ids(groups), [
+      ['chordsandtabs:/songs/hey-jude-7', 'lrclib:lyrics'],
+    ]);
+  });
+
   test('only https artwork is shown', () {
     final groups = groupSearchRecordings([
       _row('a', artwork: 'http://images.example/cover.jpg'),
