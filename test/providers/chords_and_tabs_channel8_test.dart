@@ -67,8 +67,20 @@ void main() {
       containsPair('searchChartVersionHint', 4),
     );
     expect(
+      (legacyChartProbe['candidate'] as Map)['metadata'],
+      containsPair('searchChartTypeHint', 'chords'),
+    );
+    expect(
+      (legacyChartProbe['candidate'] as Map)['metadata'],
+      isNot(contains('sourceChartType')),
+    );
+    expect(
       legacyChartProbe['requiredFields'],
       containsAll(['body', 'chords', 'metadata']),
+    );
+    expect(
+      legacyChartProbe['requiredMetadataFields'],
+      containsAll(['identityScope', 'sourceChartType']),
     );
     final pisni = sources.last as Map;
     expect(pisni['id'], 'pisni');

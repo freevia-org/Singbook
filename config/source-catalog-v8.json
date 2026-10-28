@@ -1628,7 +1628,7 @@
             "url": "https://www.chords-and-tabs.net/song/name/the-beatles-hey-jude-7",
             "metadata": {
               "identityScope": "arrangement",
-              "sourceChartType": "chords",
+              "searchChartTypeHint": "chords",
               "searchChartVersionHint": 4
             }
           },
@@ -1655,7 +1655,7 @@
             "url": "https://www.chords-and-tabs.net/song/name/queen-bohemian-rhapsody-37",
             "metadata": {
               "identityScope": "arrangement",
-              "sourceChartType": "chords",
+              "searchChartTypeHint": "chords",
               "searchChartVersionHint": 8
             }
           },

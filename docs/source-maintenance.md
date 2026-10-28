@@ -81,9 +81,10 @@ it does not establish independent lyric transcription or musical accuracy.
 
 Channel 8 revision 21 activates Chords & Tabs at source revision 2 and enables
 it by default for compatible clients. Its two catalog health probes use the
-previously qualified Hey Jude and Bohemian Rhapsody arrangements; the Hey Jude
-probe retains its search-version hint so the legacy page-without-version case
-continues to be checked. Native QA covered normal search, selection, source
+previously qualified Hey Jude and Bohemian Rhapsody arrangements. The Hey Jude
+probe retains its unconfirmed search-version hint; provider regressions
+separately cover legacy pages whose descriptor omits a version. Native QA
+covered normal search, selection, source
 preview, save, fresh-process offline reopen, and exact source-payload and
 attribution preservation. These checks establish behavior for those two
 arrangements only. Chords & Tabs charts are user-submitted; per-work rights are
