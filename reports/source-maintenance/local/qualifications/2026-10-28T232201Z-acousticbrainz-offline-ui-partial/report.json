@@ -1,0 +1,46 @@
+{
+  "sourceCommit": "8c852e873f9c82c1fcf6fe336e22f7bc690de9c9",
+  "independentDatabaseAudits": [
+    {
+      "file": "qa-readable-library-1793229541920.sqlite",
+      "bytes": 393216,
+      "sha256": "820ebf5a5ae0cbd2f12bdf179a4c2f3717f60627fa259b1b060c0a832f939ee0",
+      "quickCheck": "ok",
+      "songs": 2,
+      "priorSongIdDocumentHashesExact": true,
+      "colorsCandidateMetadataAndRawPayloadObjectsExact": true,
+      "allRawByteSha256Verified": true,
+      "rawPayloadsVerified": 4,
+      "analysisNotPromotedToCanonicalKeyTempo": true
+    },
+    {
+      "file": "qa-readable-library-1793229544665.sqlite",
+      "bytes": 393216,
+      "sha256": "060039658e533218d065a1ca9862d75276260a26aec7e5e64387f6dc1043d439",
+      "quickCheck": "ok",
+      "songs": 2,
+      "priorSongIdDocumentHashesExact": true,
+      "colorsCandidateMetadataAndRawPayloadObjectsExact": true,
+      "allRawByteSha256Verified": true,
+      "rawPayloadsVerified": 4,
+      "analysisNotPromotedToCanonicalKeyTempo": true
+    }
+  ],
+  "replayJournals": 2,
+  "savedResponseReads": 2,
+  "liveBeforeSendEvents": 0,
+  "nativeDetailsUiPassed": false,
+  "sourceNetworkRequests": 0,
+  "schemaVersion": 1,
+  "qualificationType": "candidate-offline-native-ui-partial",
+  "completed": false,
+  "uiPassed": false,
+  "uiFailure": "Fresh secondary adapter did not follow selectReference; query bookkeeping prevented comparison; no UI pass",
+  "rawReceiptLabels": "Raw private failure report retains generic http and real-HTTPS wording; these fields describe replay responses here, not new network traffic. Exact savedResponseRead journals and injected client establish0newsourceHTTP.",
+  "runtime": "x64 AOT release-mode private QA;2GiB existing AVD; data preserved",
+  "sdkReleasedAtUtc": "2026-10-28T23:22:01Z",
+  "avdStoppedAtUtc": "2026-10-28T23:21:17Z",
+  "originalNativeReportAndSourcePreserved": true,
+  "failed131BytePlaceholderPreserved": true,
+  "productionLatestChanged": false
+}

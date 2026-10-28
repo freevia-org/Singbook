@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "8c852e873f9c82c1fcf6fe336e22f7bc690de9c9",
+  "selectedCasePassed": true,
+  "sourceCandidateMbidVerified": true,
+  "sourceOriginalPayloadsMatchNativeReceiptHashes": true,
+  "durableJournalAttempts": 2,
+  "httpStatuses": [
+    200,
+    200
+  ],
+  "transportRetries": 0,
+  "rawReceiptModified": false,
+  "rawOverallCompletedFlag": false,
+  "overallFlagAnnotation": "Harness compared one selected case against all two configured tracks. Actual selected case completed=true, failures=[]; this does not establish UI completion.",
+  "nativeInternalSaveReopenAndChordProAssertions": "passed as recorded by harness; independent offline DB audit unavailable",
+  "databaseExport": {
+    "status": "failed_read_error_placeholder",
+    "bytes": 131,
+    "sha256": "ff62ad5a66cdaa185b80c1941fe485fc2c3738302c7dc4ae4278a170bf538378",
+    "notASqliteSnapshot": true,
+    "independentIntegrityOrPreservationClaim": false
+  },
+  "detailsUi": {
+    "passed": false,
+    "harnessError": "null comparison after save/close before details; line470",
+    "screenshot": "Android SystemUI ANR overlay; not a passing UI capture"
+  },
+  "appRuntime": {
+    "aliveAtCapture": true,
+    "totalRssKiB": 184688,
+    "totalPssKiB": 88009,
+    "emulatorMemoryMiB": 2048,
+    "memoryConfigurationChanged": false
+  },
+  "resourcesReleasedAtUtc": "2026-10-28T23:03:09Z",
+  "nextActions": [
+    "Zero-network UI-only replay of saved response bytes before saving/closing comparison",
+    "Write new readable app-owned DB export via bytes, retain original failed placeholder",
+    "Inspect settled SystemUI before screenshot; do not change other devices or wipe data"
+  ],
+  "qualificationType": "candidate-native-extraction",
+  "catalogPath": "config/source-catalog-v10.json",
+  "catalogChannel": 10,
+  "catalogRevision": 23,
+  "apiCanary": "Colors and the Kids / Cat Power",
+  "artifactHashes": {
+    "app-qa-preview.apk": {
+      "bytes": 54371636,
+      "sha256": "16b89060851ad10a44557affdcdcfde0a5661e53db6af2e45be63b699ac00e8a"
+    },
+    "native-screen.png": {
+      "bytes": 135346,
+      "sha256": "412734308ccb17c5e572df5b456bf90ecacb8bf36b4d328ea9750dca22faaac6"
+    }
+  },
+  "followupDiagnosis": "A fresh UI adapter had no selected-query bookkeeping; normal mounted-UI selection workflow must be used. This is a private harness issue, not a source regression.",
+  "laterIndependentDatabaseAudit": "See2026-10-28T232201Z-acousticbrainz-offline-ui-partial; newly readable exports independently validated saved data without modifying this raw receipt.",
+  "remaining": [
+    "Native source-details rendering",
+    "Managed-cloud qualification",
+    "Hosted infrastructure checks and catalog publication review"
+  ],
+  "productionLatestChanged": false
+}

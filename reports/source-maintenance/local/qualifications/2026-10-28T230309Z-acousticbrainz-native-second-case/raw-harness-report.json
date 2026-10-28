@@ -1,0 +1,47 @@
+{
+  "sourceCommit": "8c852e873f9c82c1fcf6fe336e22f7bc690de9c9",
+  "completed": false,
+  "provenance": {
+    "acousticBrainz": "real HTTPS API",
+    "Genius": "authored fixture; no real search",
+    "MusicBrainz": "authored canonical witness fixture"
+  },
+  "http": [
+    {
+      "startedAt": "2026-10-28T22:59:39.560748Z",
+      "endedAt": "2026-10-28T22:59:49.786402Z",
+      "host": "acousticbrainz.org",
+      "path": "/api/v1/count",
+      "status": 200,
+      "responseBytes": 72
+    },
+    {
+      "startedAt": "2026-10-28T22:59:49.792686Z",
+      "endedAt": "2026-10-28T23:00:01.003678Z",
+      "host": "acousticbrainz.org",
+      "path": "/api/v1/low-level",
+      "status": 200,
+      "responseBytes": 3241
+    }
+  ],
+  "httpRequestCount": 2,
+  "retries": 0,
+  "cases": [
+    {
+      "case": "colors-and-the-kids",
+      "completed": true,
+      "sourceCount": 3,
+      "acousticBrainzSourceCount": 1,
+      "recordingScopedMbid": true,
+      "originalPayloadsRetained": true,
+      "chordProRoundTrip": true,
+      "rawPayloadSha256": [
+        "5b93840dee81572738550979c6e505633d269c03982e76ea3542d64ec7723755",
+        "ace9e9d46fc9461db0c048cd366e9a87176890ee37e20ba83e255717003f3128"
+      ],
+      "sqliteReopenRawPayloadAudit": true
+    }
+  ],
+  "failures": [],
+  "libraryPathAvailableForRunAsAudit": true
+}

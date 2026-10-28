@@ -1,0 +1,43 @@
+{
+  "sourceCommit": "8c852e873f9c82c1fcf6fe336e22f7bc690de9c9",
+  "completed": false,
+  "provenance": {
+    "acousticBrainz": "real HTTPS API",
+    "Genius": "authored fixture; no real search",
+    "MusicBrainz": "authored canonical witness fixture"
+  },
+  "http": [
+    {
+      "startedAt": "2026-10-28T23:19:05.354872Z",
+      "endedAt": "2026-10-28T23:19:05.488243Z",
+      "host": "acousticbrainz.org",
+      "path": "/api/v1/count",
+      "status": 200,
+      "responseBytes": 72
+    },
+    {
+      "startedAt": "2026-10-28T23:19:06.598818Z",
+      "endedAt": "2026-10-28T23:19:06.629021Z",
+      "host": "acousticbrainz.org",
+      "path": "/api/v1/low-level",
+      "status": 200,
+      "responseBytes": 3241
+    }
+  ],
+  "httpRequestCount": 2,
+  "retries": 0,
+  "cases": [
+    {
+      "case": "colors-and-the-kids",
+      "completed": false
+    }
+  ],
+  "failures": [
+    {
+      "case": "colors-and-the-kids",
+      "step": "case",
+      "code": "qa_assertion_failed"
+    }
+  ],
+  "libraryPathAvailableForRunAsAudit": false
+}

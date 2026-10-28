@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "publicMain": "bdf42a442475614e2291d1bb5ce0fac47f06b901",
+  "historyPolicy": "Normal merges; previous heads retained; no force-push/main merge",
+  "pr216": {
+    "sourceCommit": "c36aadd395829457b557effce32167508cb6973c",
+    "tree": "3282d0f2f3d68be42d254da85e5f70ca6a644531",
+    "ownedFiles": [
+      "lib/providers/transport.dart",
+      "test/providers/core/transport_test.dart"
+    ],
+    "conflicts": false,
+    "sourcePatchUnchanged": "Cooldown additions unchanged; inheritedmainversionliteral0.2.31; existingtestblobexact",
+    "analyze": {
+      "command": "flutter analyze --no-pub",
+      "exitCode": 0,
+      "seconds": 83.1,
+      "logSha256": "da4c3a41e5aa1c6f1bf645285650d8f9c3b57e7dbac77b664f53976d699e610f"
+    },
+    "test": {
+      "command": "flutter test --no-pub test/providers/core/transport_test.dart --reporter expanded",
+      "exitCode": 0,
+      "passed": 30,
+      "logSha256": "d891a5c4a7f657617a732251f4aa6cc53aa5865fd74281923d738eedd130c790"
+    }
+  },
+  "pr224": {
+    "schemaVersion": 1,
+    "sourceCommit": "f35b8ed6c4823c36c577d200a73aa9a98ae80a2c",
+    "publicMain": "bdf42a442475614e2291d1bb5ce0fac47f06b901",
+    "ownedFilesOnly": [
+      "docs/ios-app-privacy.md",
+      "docs/play-store/privacy-policy.html",
+      "docs/play-store/privacy-policy.md",
+      "docs/site/singbook/privacy/index.html"
+    ],
+    "ownedBlobsUnchangedSinceReviewed85081ab": true,
+    "matchingNewParagraphsAcrossMarkdownAndBothHtml": 2,
+    "uniqueHostRows": true,
+    "datesConsistent": true,
+    "exactRequestFieldsAndDurationMapping": true,
+    "diffCheckPassed": true,
+    "networkRequests": 0,
+    "sdkUsed": false,
+    "sha256": {
+      "docs/ios-app-privacy.md": "62a0049f47420f548140f880733e8cdc98135c1e5b4e3469a91e6513f4abc4b2",
+      "docs/play-store/privacy-policy.html": "762d9bd1c134c8c50294523449ae7430956f52e5889470fb477a925aaee54fc1",
+      "docs/play-store/privacy-policy.md": "60856e7e9891869ad03e1c42317d36198983b57fcad2bfda2777e4da4712aa86",
+      "docs/site/singbook/privacy/index.html": "dae26f36d6a220808c355fdc8ecb2adaa16a8e60d7922a294ba8b19fdb3671b5"
+    }
+  },
+  "sdkReleasedAtUtc": "2026-10-28T23:26:11Z",
+  "deviceOrSourceHttpUsed": false,
+  "hostedRunsDispatched": false,
+  "bothPrsRemainDraft": true,
+  "productionLatestChanged": false
+}

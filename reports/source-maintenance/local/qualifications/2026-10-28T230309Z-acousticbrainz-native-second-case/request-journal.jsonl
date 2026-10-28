@@ -1,0 +1,5 @@
+{"event":"runStarted","startedAt":"2026-10-28T22:59:37.260188Z","case":"colors-and-the-kids"}
+{"event":"beforeSend","attempt":1,"startedAt":"2026-10-28T22:59:39.560748Z","host":"acousticbrainz.org","path":"/api/v1/count"}
+{"event":"responseHeaders","attempt":1,"status":200}
+{"event":"beforeSend","attempt":2,"startedAt":"2026-10-28T22:59:49.792686Z","host":"acousticbrainz.org","path":"/api/v1/low-level"}
+{"event":"responseHeaders","attempt":2,"status":200}
