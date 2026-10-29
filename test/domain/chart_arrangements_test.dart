@@ -24,6 +24,30 @@ SourceResult _source(String body) => SourceResult(
 );
 
 void main() {
+  test('a retuning note starts a new view with its tuning', () {
+    const body = '''[C]amber harbor
+[G]silver hillside
+TUNED HALF STEP DOWN - Eb Ab Db Gb Bb Eb
+[D]amber harbor
+[A]silver hillside''';
+    final views = splitChartArrangements(_source(body));
+    expect(views, hasLength(2));
+    expect(views.first.body, '[C]amber harbor\n[G]silver hillside');
+    expect(views.first.metadata['capo'], 1);
+    expect(views.last.body, '[D]amber harbor\n[A]silver hillside');
+    expect(views.last.metadata['tuning'], 'Eb Ab Db Gb Bb Eb');
+    expect(views.last.metadata['capo'], 0);
+  });
+
+  test('a retuning note before any chords splits nothing', () {
+    expect(
+      splitChartArrangements(
+        _source('Tuned down a half step\n[C]amber harbor\n[G]silver hillside'),
+      ),
+      isEmpty,
+    );
+  });
+
   test('splits explicit capo and version boundaries into stable views', () {
     const body = '''Capo I
 [C]amber harbor

@@ -21,6 +21,11 @@ final _tuningLine = RegExp(
   r'^\s*tuning\s*[:=]\s*(.+?)\s*$',
   caseSensitive: false,
 );
+// "Tuned half step down - Eb Ab Db Gb Bb Eb" and similar retuning notes.
+final _detunedLine = RegExp(
+  r'^\s*(?:tuned\s+(?:down\s+)?(?:a\s+)?(?:half|1/2|whole|full)[\s-]*(?:step|tone)(?:\s+down)?|(?:half|1/2|whole)[\s-]*(?:step|tone)\s+down(?:\s+tuning)?)\b[\s:=\-–]*(.*?)\s*$',
+  caseSensitive: false,
+);
 final _keyLine = RegExp(
   r'^\s*key(?:\s+of)?\s*[:=]\s*(.+?)\s*$',
   caseSensitive: false,
@@ -40,6 +45,19 @@ const _romanCapos = {
   'xii': 12,
 };
 const _arrangementFields = {'capo', 'key', 'tuning', 'timeSignature'};
+
+/// The tuning a retuning note declares: its string notes when it lists
+/// six, otherwise the note itself.
+String? _detunedValue(String line) {
+  final match = _detunedLine.firstMatch(line);
+  if (match == null) return null;
+  final notes = RegExp(
+    r'[A-G][#b]?',
+  ).allMatches(match.group(1)!).map((note) => note[0]!).toList();
+  return notes.length == 6
+      ? notes.join(' ')
+      : line.trim().replaceAll(RegExp(r'[\[\]]'), '');
+}
 
 int? _capoValue(String line) {
   final match = _capoLine.firstMatch(line);
@@ -71,8 +89,10 @@ bool _isVersionHeading(String line, String title) {
 
 /// Splits a provider result that explicitly contains multiple complete charts.
 /// Ordinary section labels (verse, chorus, bridge, etc.) never create a split.
-/// Version headings and capo declarations delimit views; later key or tuning
-/// annotations can describe a modulation and remain inside the same chart.
+/// Version headings, capo declarations and retuning notes ("tuned half step
+/// down") delimit views; a song is not retuned midway. Later key or
+/// "tuning:" annotations can describe a modulation and remain inside the same
+/// chart.
 /// The original result remains the canonical source payload; returned views
 /// carry only their own chart text and parent references.
 List<SourceResult> splitChartArrangements(SourceResult source) {
@@ -92,6 +112,7 @@ List<SourceResult> splitChartArrangements(SourceResult source) {
     if (i > segmentStart &&
         currentHasChords(i) &&
         (_capoValue(line) != null ||
+            _detunedValue(line) != null ||
             _isVersionHeading(line, source.candidate.title))) {
       boundaries.add(i);
       segmentStart = i;
@@ -118,6 +139,11 @@ List<SourceResult> splitChartArrangements(SourceResult source) {
       }
       if (!chartStarted && tuning != null) {
         setup['tuning'] = tuning.group(1)!.trim();
+        continue;
+      }
+      final detuned = _detunedValue(line);
+      if (!chartStarted && detuned != null) {
+        setup['tuning'] = detuned;
         continue;
       }
       if (!chartStarted && key != null) {
