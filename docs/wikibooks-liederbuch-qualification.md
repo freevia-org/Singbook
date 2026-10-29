@@ -138,3 +138,31 @@ The contribution license does not become blanket clearance of underlying works;
 their unknown status remains explicit in portable source evidence. No provider,
 catalog default, release artifact or production report is changed by this
 persistence follow-up.
+
+## Default-off offline preview groundwork
+
+`WikibooksLiederbuchPreview` creates a separate registry/catalog view from the
+initialized production client's effective catalog and complete compiled provider
+list. Existing entries, cached publisher repairs and removals remain intact. It
+adds the unchanged native adapter with a disabled, default-off entry only inside
+that preview. The regular provider factories, production catalogs, selected
+channel, endpoint, bundled assets and cache keys remain unchanged.
+
+The preview stores its derived snapshot only under
+`sourceCatalog:preview:wikibooks-liederbuch:v1`. A cached snapshot is reusable only
+when it matches the current derived catalog apart from local creation time.
+Stale or edited snapshots cannot restore removed sources, undo repairs or enable
+Wikibooks. Existing native or declarative ID collisions fail before cache access.
+Its injected discovery has no catalog refresh client; preview persistence failure
+still leaves a valid disabled runtime. The caller owns the transport lifecycle.
+
+Offline synthetic checks cover the production/preview boundary, cache isolation
+and rejection, publisher repairs/removals, ID collision and write failure. A
+controller test retains explicit opt-outs, production/legacy cache values and a
+saved sheet through SQLite close/reopen and ChordPro export. Its source bytes and
+separate contribution versus unknown underlying-work rights stay exact. All
+fixture text is invented, and these checks make no datasource HTTP requests.
+
+This is local preview wiring rather than a production registration or activation.
+Fresh source canaries, native app, managed-cloud and release qualification remain
+separate gates. The preview creates no user-facing setting or consent step.
