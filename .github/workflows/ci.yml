@@ -115,7 +115,7 @@ jobs:
 
   windows-build:
     needs: analyze
-    runs-on: windows-latest
+    runs-on: singbook-i5-windows
     timeout-minutes: 30
     env:
       SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID: ${{ vars.SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID }}
@@ -185,10 +185,10 @@ jobs:
         shell: pwsh
         run: ./scripts/build-windows.ps1 -AllowMissingDefines
 
-      - name: Inspect hosted Windows PDF printer capability
+      - name: Inspect Windows PDF printer capability
         shell: pwsh
         run: |
-          $evidencePath = 'artifacts/windows-parity/print-acceptance-host-capabilities.json'
+          $evidencePath = 'artifacts/windows-parity/print-acceptance-runner-capabilities.json'
           New-Item -ItemType Directory -Path (Split-Path $evidencePath) -Force | Out-Null
           $printers = @()
           $printerQueryError = $null
