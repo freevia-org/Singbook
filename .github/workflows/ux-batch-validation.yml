@@ -21,7 +21,7 @@ jobs:
   focused-regressions:
     # Keep this serial diagnostic lane available for targeted manual runs.
     if: github.event_name == 'workflow_dispatch'
-    runs-on: singbook-i5-linux
+    runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
@@ -57,7 +57,7 @@ jobs:
           retention-days: 7
 
   host-visuals:
-    runs-on: singbook-i5-linux
+    runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
