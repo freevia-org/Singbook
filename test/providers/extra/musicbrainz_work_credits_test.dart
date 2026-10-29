@@ -183,7 +183,10 @@ void main() {
     'malformed sibling relationships do not prove a complete work association',
     () {
       final data = _record();
-      (data['relations'] as List).add('invalid relationship');
+      data['relations'] = [
+        ...data['relations'] as List,
+        'invalid relationship',
+      ];
       final facts = musicBrainzWorkMetadata(data);
       expect(facts['musicbrainzWorks'], hasLength(1));
       expect(facts.containsKey('credits'), false);
