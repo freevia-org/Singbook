@@ -5,6 +5,11 @@ name: iOS store screenshot capture (draft PR)
 on:
   workflow_dispatch:
     inputs:
+      run_preflight:
+        description: Check the disposable iOS simulator runtime only
+        required: true
+        default: false
+        type: boolean
       run_capture:
         description: Run the disposable iOS screenshot capture
         required: true
@@ -19,6 +24,71 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  preflight:
+    # This intentionally exercises only one new disposable simulator. It does
+    # not build the app or alter any existing simulator or App Store record.
+    if: inputs.run_preflight == true
+    runs-on: singbook-macmini
+    timeout-minutes: 12
+    steps:
+      - name: Check iOS runtime and boot a disposable iPhone twice
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import subprocess
+
+          def simctl(*args, timeout=30):
+              command = ["xcrun", "simctl", *args]
+              result = subprocess.run(
+                  command, capture_output=True, text=True, timeout=timeout,
+              )
+              print(f"{' '.join(command)}: exit {result.returncode}", flush=True)
+              output = result.stdout + result.stderr
+              if "Data Migration Failed" in output:
+                  raise RuntimeError("Disposable simulator data migration failed")
+              if result.returncode:
+                  raise RuntimeError(output[-2000:])
+              return result.stdout
+
+          runtimes = json.loads(simctl("list", "runtimes", "--json"))["runtimes"]
+          runtime = next((item for item in runtimes if item.get("isAvailable")
+                          and item.get("version") == "27.0"
+                          and "iOS" in item["identifier"]), None)
+          if runtime is None:
+              raise SystemExit("iOS 27.0 runtime is unavailable")
+          # This was the call that hung in the first capture run.
+          simctl("list", "devices", "--json")
+          types = json.loads(simctl("list", "devicetypes", "--json"))["devicetypes"]
+          device_type = next((item for item in types
+                              if item["name"].startswith("iPhone 17 Pro Max")), None)
+          if device_type is None:
+              raise SystemExit("iPhone 17 Pro Max simulator type is unavailable")
+          identifier = None
+          try:
+              identifier = simctl(
+                  "create", f"SingbookPreflight-{os.environ['GITHUB_RUN_ID']}",
+                  device_type["identifier"], runtime["identifier"], timeout=60,
+              ).strip()
+              for attempt in (1, 2):
+                  simctl("boot", identifier, timeout=60)
+                  simctl("bootstatus", identifier, "-b", timeout=180)
+                  devices = json.loads(simctl("list", "devices", "--json"))["devices"]
+                  device = next((item for group in devices.values()
+                                 for item in group if item["udid"] == identifier), None)
+                  if not device or not device.get("isAvailable") or device["state"] != "Booted":
+                      raise RuntimeError(f"Disposable boot {attempt} incomplete: {device}")
+                  print(f"Disposable boot {attempt} passed", flush=True)
+                  simctl("shutdown", identifier, timeout=60)
+          finally:
+              if identifier:
+                  for command in ("shutdown", "delete"):
+                      try:
+                          simctl(command, identifier, timeout=30)
+                      except (RuntimeError, subprocess.TimeoutExpired) as error:
+                          print(f"Cleanup of disposable {identifier}: {error}", flush=True)
+          PY
   capture:
     # A later branch push can intentionally rerun the job after the Mac
     # simulator runtime is healthy. Ordinary PR edits never take the runner.
