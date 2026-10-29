@@ -1884,10 +1884,15 @@ class AppControllerAdapter extends VerseUiController {
         ? app.suggestions
         : _cachedAutocomplete;
     if (app.suggestions.isNotEmpty) _cachedAutocomplete = app.suggestions;
-    final candidate = candidates
+    final row = candidates
         .where((item) => item.identity == reference.id)
         .firstOrNull;
-    if (candidate == null) return;
+    if (row == null) return;
+    final candidate = withRowFacts(
+      row,
+      album: reference.album,
+      durationSeconds: reference.durationSeconds,
+    );
     _selectedVersionId = null;
     _selectedQuery = _query.trim();
     await app.selectCandidate(candidate);

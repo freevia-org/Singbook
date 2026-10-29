@@ -333,7 +333,7 @@ Future<void> _audit() async {
       if (group.album == null) issues.add('search: no album');
       if (group.durationSeconds == null) issues.add('search: no duration');
 
-      final selection = group.representative;
+      final selection = group.selection;
       if (verbose) {
         print(
           '   selected ${selection.providerId} album=${selection.album} '

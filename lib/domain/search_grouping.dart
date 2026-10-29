@@ -266,6 +266,46 @@ class SearchRecordingGroup {
       _duration(representative) ?? members.map(_duration).nonNulls.firstOrNull;
   String? get artworkUrl =>
       _artwork(representative) ?? members.map(_artwork).nonNulls.firstOrNull;
+
+  /// The row a tap opens: the representative with the album and length the
+  /// row shows.
+  SongCandidate get selection => withRowFacts(
+    representative,
+    album: album,
+    durationSeconds: durationSeconds,
+  );
+}
+
+/// [candidate] with a search row's displayed [album] and [durationSeconds]
+/// where it has none of its own, so the opened song keeps the facts shown in
+/// search. A group's members never disagree on a known album. They are
+/// display metadata only: the row's own fields still decide which sources
+/// match it, as another member's album or length is not its identity.
+SongCandidate withRowFacts(
+  SongCandidate candidate, {
+  String? album,
+  double? durationSeconds,
+}) {
+  final addAlbum = _album(candidate) == null && album != null;
+  final addDuration =
+      _duration(candidate) == null && _seconds(durationSeconds) != null;
+  if (!addAlbum && !addDuration) return candidate;
+  return SongCandidate(
+    providerId: candidate.providerId,
+    id: candidate.id,
+    title: candidate.title,
+    artist: candidate.artist,
+    album: candidate.album,
+    durationSeconds: candidate.durationSeconds,
+    url: candidate.url,
+    metadata: {
+      ...candidate.metadata,
+      'album': ?(addAlbum ? album : null),
+      'durationSeconds': ?(addDuration ? durationSeconds : null),
+    },
+    recordingIds: candidate.recordingIds,
+    extra: candidate.extra,
+  );
 }
 
 class _Group {
