@@ -163,6 +163,9 @@ class CachingClient extends http.BaseClient {
   final uncachedHosts = <String, int>{};
   final storedStatuses = <int, int>{};
 
+  /// Hosts that answered 429 or 503, with the requests skipped since.
+  final busyHosts = <String, int>{};
+
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
     final body = request is http.Request ? request.body : '';
@@ -192,10 +195,18 @@ class CachingClient extends http.BaseClient {
       overBudget++;
       throw const ProviderException('unavailable', 'audit network budget');
     }
+    // A host that answered busy is left alone for the rest of the run.
+    if (busyHosts.containsKey(request.url.host)) {
+      busyHosts.update(request.url.host, (n) => n + 1);
+      throw const ProviderException('provider_busy', 'audit host backed off');
+    }
     misses++;
     final response = await _inner.send(request);
     final bytes = await response.stream.toBytes();
     storedStatuses.update(response.statusCode, (n) => n + 1, ifAbsent: () => 1);
+    if (const {429, 503}.contains(response.statusCode)) {
+      busyHosts.putIfAbsent(request.url.host, () => 0);
+    }
     // Refusals and not-found answers are kept too, so reruns do not repeat
     // them; rate limits and server errors are not.
     if (const {200, 401, 403, 404, 410}.contains(response.statusCode)) {
@@ -484,8 +495,9 @@ Future<void> _audit() async {
       row['sources'] = [for (final id in contributingProviderIds(doc)) id];
     } on ProviderException catch (e) {
       issues.add('error: ${e.code}');
-    } catch (e) {
+    } catch (e, stack) {
       issues.add('error: ${e.runtimeType}');
+      if (verbose) print('   $e\n$stack');
     }
     row['issues'] = issues;
     rows.add(row);
@@ -507,6 +519,7 @@ Future<void> _audit() async {
         'uncachedOffline': client.uncached,
         'overNetworkBudget': client.overBudget,
         'uncachedHosts': client.uncachedHosts,
+        'busyHosts': client.busyHosts,
         'networkStatuses': {
           for (final e in client.storedStatuses.entries) '${e.key}': e.value,
         },
@@ -518,7 +531,8 @@ Future<void> _audit() async {
     '\n${rows.where((r) => (r['issues'] as List).isEmpty).length}/${rows.length} '
     'songs without findings; cache hits ${client.hits}, misses ${client.misses}'
     '${client.uncached == 0 ? '' : '; ${client.uncached} requests not in the cache (rerun online)'}'
-    '${client.overBudget == 0 ? '' : '; ${client.overBudget} requests refused over the network budget'}',
+    '${client.overBudget == 0 ? '' : '; ${client.overBudget} requests refused over the network budget'}'
+    '${client.busyHosts.isEmpty ? '' : '; busy hosts left alone: ${client.busyHosts}'}',
   );
   for (final entry in findings.entries) {
     print('${entry.key}: ${entry.value.length}');
