@@ -254,7 +254,7 @@ submitted build; earlier no-OAuth build notes do not describe this profile.
 
 ## AcousticBrainz candidate disclosure (28 October 2026)
 
-This assessment covers PR223 at `426007ca2204646bcd0f3a389762b6e9c50a590c`,
+This assessment covers PR223 at `8c852e873f9c82c1fcf6fe336e22f7bc690de9c9`,
 not frozen release 45 or a confirmed installed build. When enabled (default-on
 in candidate channel 10), this metadata provider receives a verified MusicBrainz
 recording ID in HTTPS query parameters at `acousticbrainz.org`. The count request
