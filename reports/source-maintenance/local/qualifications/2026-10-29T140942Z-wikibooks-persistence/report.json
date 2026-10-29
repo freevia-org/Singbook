@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "status": "passed",
+  "measuredAt": "2026-10-29T14:09:42.687810Z",
+  "runtime": "windows-host-flutter-sqlite",
+  "runtimeBaseCommit": "1a4573eefc7f0f0e28c8ab7ab77cd4479c1d2a05",
+  "moduleSha256": "d1e7c9361d587c4bd5fb98ff52467be732c651661c4d21827d14aad60f14963a",
+  "retainedLiveEvidenceCommit": "aeee560ce81593862c5a35eb269178b07c89e1e7",
+  "retainedLiveMeasuredAt": "2026-10-28T07:05:45.085179Z",
+  "networkRequests": 0,
+  "mockReplayRequests": [
+    {
+      "sourceId": "118857",
+      "action": "query",
+      "retainedBytesSha256": "7189a2710f3d58f2d3d78fa5022a1a843073e18ee462e54d7ebe3d2438767988"
+    },
+    {
+      "sourceId": "118857",
+      "action": "parse",
+      "retainedBytesSha256": "9d9f991c707bf3435aa6551f9ebe25d1ea4ced101d8bfb2599e719298cb0e197"
+    },
+    {
+      "sourceId": "115615",
+      "action": "query",
+      "retainedBytesSha256": "44785e8ebe874b21a690b35ede8ec6b40b9752f753bfbe4ce942ecf10fd42831"
+    },
+    {
+      "sourceId": "115615",
+      "action": "parse",
+      "retainedBytesSha256": "5ba40ed537e8219c741e7f514fad8ef1987b8bba2379f3a6ea8ec23c22745f4d"
+    }
+  ],
+  "userLibraryAccessed": false,
+  "realDocumentsCommitted": false,
+  "cases": [
+    {
+      "sourceId": "118857",
+      "revision": 1036453,
+      "savedSongId": "7eec9bcb-8e58-45a8-9461-d5598557f1c7",
+      "status": "passed",
+      "bodySha256": "56aeefa41362e4e4b001efd82fd07958b25c0c2f10c408290bcdaeef0b0db66c",
+      "sourceMetadataSha256": "4b0565a48b82e78fac8fdae2b9ca6009593e53a431988e6a85225cde74e3a3f5",
+      "sourceExtraSha256": "55b9adbada285661e3f72e83d36c32fa0b309fe1f1474a604edaf8c2ee37c7b0",
+      "originalApiBytesSha256": "9d9f991c707bf3435aa6551f9ebe25d1ea4ced101d8bfb2599e719298cb0e197",
+      "lyricLinesAndAllChordAnchorsMatchIndependentReference": true,
+      "controllerSaveExactSource": true,
+      "portableSourceExact": true,
+      "scopedRightsAndRevisionAttributionPreserved": true
+    },
+    {
+      "sourceId": "115615",
+      "revision": 1083680,
+      "savedSongId": "75a177dd-8471-47e2-9e87-3eee2a963226",
+      "status": "passed",
+      "bodySha256": "b34554b119309a349a80c0d1ae4f717f1a625dbc205d688932bded489a792934",
+      "sourceMetadataSha256": "91aa065351ad21bb3601807d56cb54522299d74082ec9453b01fbd4413b0d8b6",
+      "sourceExtraSha256": "9e3fb51253b134e68ef07d648abfa3b87452ca55c8b595713eeee2a93a92d10a",
+      "originalApiBytesSha256": "5ba40ed537e8219c741e7f514fad8ef1987b8bba2379f3a6ea8ec23c22745f4d",
+      "lyricLinesAndAllChordAnchorsMatchIndependentReference": true,
+      "controllerSaveExactSource": true,
+      "portableSourceExact": true,
+      "scopedRightsAndRevisionAttributionPreserved": true
+    }
+  ],
+  "sqliteReopenExact": true,
+  "providerPreferenceReopened": true,
+  "nativeDeviceQualified": false,
+  "managedCloudQualified": false,
+  "registeredOrActivated": false,
+  "privateHarnessSha256": "ae73999e4b7b9f06d6917da215a5fae8a2c08c7fb7063bc2e8c7f2cc42618934",
+  "qualificationScope": "Retained exact publisher API bytes through current production provider/controller/SQLite/ChordPro; not native device or fresh HTTP",
+  "savedLibrary": "New disposable private QA database; no user library accessed",
+  "privateHarnessPreparationFailure": "Initial private harness failed to compile due to incorrect repository settings accessor; corrected to getSetting(app). This attempt made no HTTP requests and created no QA database.",
+  "regression": {
+    "head": "d596d19adb3b94a271df5adeda080d497eb68d5d",
+    "files": [
+      "test/application/wikibooks_liederbuch_flow_test.dart",
+      "docs/wikibooks-liederbuch-qualification.md"
+    ],
+    "syntheticOnly": true,
+    "testCommand": "flutter test --no-pub test/application/wikibooks_liederbuch_flow_test.dart test/providers/extra/wikibooks_liederbuch_test.dart --reporter expanded",
+    "testsPassed": 15,
+    "testExitCode": 0,
+    "testLogSha256": "fc4edf63cb138f0776f9b3cf56d9e51f43d3073736d57a820d3e4267e04d0aef",
+    "analyzeCommand": "dart analyze test/application/wikibooks_liederbuch_flow_test.dart",
+    "analysisResult": "No issues found",
+    "analysisExitCode": 0,
+    "analysisLogSha256": "a31e4b448dd67413068f2b0ee8ba7cf310ca5563f7255fde99c867c9733492c0",
+    "formatAndDiffChecks": "passed",
+    "sharedSdkLease": "Released after terminal host checks; no Gradle/device/build access"
+  }
+}
