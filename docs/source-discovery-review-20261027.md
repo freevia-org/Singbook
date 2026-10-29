@@ -88,3 +88,74 @@ operation is part of this append. The two redacted source packets remain on
   (SHA-256 `22c44aebecebe8b6dc386fc1e5ff9ce2d7c15c932b5d935c5ee95e5889a48215`).
 - `reports/source-maintenance/local/qualifications/2026-10-28T115914Z-discovery/discovery-decisions.json`
   (SHA-256 `39d00e1887b8218ebe06bba47c1410847b9519d5b1aee345b0a38afd9fd9229e`).
+
+## 2026-10-28 AcousticBrainz metadata feasibility
+
+This append preserves all 51 existing discovery records and their order and
+adds one deferred candidate, for **52 total**. Earlier counts above remain
+dated observations. No provider, runtime, registry, catalog or release changes.
+
+The [publisher homepage](https://acousticbrainz.org/) identifies the data as
+CC0, says collection stopped in 2022 and states that the API remains available.
+It indexes acoustic analyses by recording MBID. The
+[API reference](https://acousticbrainz.readthedocs.io/api.html) supports bounded
+feature reads and submission offsets; the default offset has no authority.
+This is a possible source of estimated key/BPM metadata, not lyric or chord
+content. No musical accuracy or current corpus-coverage claim is established.
+
+Three ordinary local API GETs at 12:49–12:50 UTC returned 200 with no retries:
+a bulk count followed by two feature-filtered bulk reads. Mysterons / Portishead
+(`b5d7d380-f43a-4c1f-a5de-694150b093ac`) had 148 submissions. Offsets 0 and 1
+matched the expected source identity tags and both reported length 306.973s,
+but returned slightly
+different BPM values (164.01968 and 163.97499). Colors and the Kids / Cat Power
+(`099b148e-fe99-4b79-be6e-5078e4bb7415`), identified by the publisher's linked
+[recording page](https://acousticbrainz.org/099b148e-fe99-4b79-be6e-5078e4bb7415),
+returned matching tags and key/BPM fields at offset 0. The exact Wonderwall /
+Oasis recording MBID `9de3f212-2121-4c48-9240-96a52b512733` was absent from the
+count response; that is unavailable coverage, not a reported zero count.
+These reads establish basic API feasibility only, not a qualified app adapter.
+
+A native adapter must verify the actual source MBID/title/artist and available
+duration/edition context, retain raw bytes/hash, extractor version, submission
+offset and estimated values, and keep contradictions/alternatives explicit.
+Copying selected identity into contradictory source tags is invalid. Neither
+the first submission nor a bounded sample establishes authoritative consensus.
+Analysis must not silently overwrite a chart's key, tempo or playback timing.
+
+The API documents changing rate windows and headers. The observed remaining
+counts decreased from 99 to 98 within a window advertised as 100 requests;
+these are sampled headers, not a fixed quota. Current Singbook transport does
+not expose that contract. Coordinate a bounded shared-host cooldown change
+before adapter qualification, preserving private authentication/cookie headers.
+Native extraction/persistence/combination, compatible registry/catalog rollout
+and independent managed-cloud reachability remain unqualified. No media,
+audio upload, credentials, account, source activation or extra daily suite was
+used. An earlier MusicBrainz documentation read returned 429 in the web reader
+and was stopped without retry; it is separate from these three API 200s.
+
+
+## 2026-10-28 additional public-source contract review
+
+These four documentation-only leads supplement the existing 52 discovery
+records. The configuration is unchanged; this append does not register,
+activate or qualify a provider. No extraction canaries, credentials, accounts,
+cloud jobs, uploads or content downloads were used for this review.
+
+| Candidate | Primary evidence and decision |
+| --- | --- |
+| ChordWiki | The [publisher homepage](https://ja.chordwiki.org/) and [help](https://ja.chordwiki.org/help.html) describe Japanese ChordPro charts. Its [terms](https://ja.chordwiki.org/TermOfUse.html) limit JASRAC-managed lyrics to on-site streaming and prohibit download, copying and printing; other contributions retain separate rights. An indexed chart count is not a verified current usable corpus count. Defer app import until the intended access, storage/export and rights contract is established. No chart extraction was attempted. |
+| Jam Jam | The [developer documentation](https://jam-jam.org/developers/) describes API-key access and a social:read scope for public-profile songs. This does not establish an anonymous global lyric/chord catalog; private songbooks and conversion endpoints have separate scopes. The linked OpenAPI URL was unavailable to the web reader and no alternate route was attempted. Defer pending intended app access, source identity, attribution and two canaries. |
+| KSoft Lyrics | The [API documentation](https://docs.ksoft.si/api/lyrics-api) requires an Authorization token. Its example result total is not evidence of current corpus size. A direct documentation read returned 502 while indexed documentation remained visible; this does not establish an API outage. No token or API call was made. Defer pending supported production credentials, content retention/rights, identity and two canaries. |
+| Tuned Global | The [lyrics documentation](https://docs.tunedglobal.com/api-docs/tracks-songs-and-voice/songs/content/get-song-lyrics) and [chord-chart documentation](https://docs.tunedglobal.com/api-docs/tracks-songs-and-voice/songs/content/get-chord-chart) describe partner StoreId access. Chord charts require an enabled service and customer/third-party supplied content, so the endpoint does not establish an independent new chart corpus. Defer pending a concrete partner catalog, access and persistence/rights contract, attribution and two canaries. |
+
+These decisions preserve the distinction between publisher documentation,
+actual extraction evidence and production availability. No current source,
+older served channel, provider default, user preference or saved data changed.
+
+
+## 2026-10-29 AcousticBrainz implementation status
+
+PR223 merged on 2026-10-29 as `5523677db0fbbdfc77d92cbf6576d63d73c796d5`. It adds the native recording-ID metadata adapter and a channel 10 candidate that is enabled by default; the exact-head CI, macOS, UX and Wikisource workflows all passed. The previously authorized Mysterons/Portishead canary remains the only live provider canary and was not repeated.
+
+This does not qualify managed-cloud reachability or network policy, and it does not publish a channel10 catalog to users. The source is a main-branch candidate; current public app releases remain unchanged. The earlier 2026-10-28 feasibility and deferred-source notes above are historical observations from before PR223.
