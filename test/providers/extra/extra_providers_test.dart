@@ -20,8 +20,8 @@ void main() {
     'extra roster distinguishes imports, catalogs, and identity-bound artwork',
     () {
       final providers = createExtraProviders();
-      expect(providers.length, 21);
-      expect(providers.map((p) => p.definition.id).toSet().length, 21);
+      expect(providers.length, 23);
+      expect(providers.map((p) => p.definition.id).toSet().length, 23);
       expect(providers.whereType<AmllProvider>(), hasLength(1));
       expect(providers.whereType<StartJammingProvider>(), hasLength(1));
       expect(providers.whereType<LyricsPlusProvider>(), hasLength(1));
@@ -30,6 +30,12 @@ void main() {
       expect(providers.whereType<UtaiteDbProvider>(), hasLength(1));
       expect(providers.whereType<ChordsAndTabsProvider>(), hasLength(1));
       expect(providers.whereType<PisniProvider>(), hasLength(1));
+      expect(providers.whereType<OpenScoreLiederProvider>(), hasLength(1));
+      expect(
+        providers.whereType<OpenScoreLiederProvider>()
+            .single.definition.enabledByDefault,
+        isFalse,
+      );
       expect(
         providers
             .singleWhere((p) => p.definition.id == 'chordsandtabs')

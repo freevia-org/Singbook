@@ -2,11 +2,6 @@ name: Package Microsoft Store MSIX
 
 # This packages existing CI output; it does not build Flutter or run tests.
 on:
-  push:
-    branches: [codex/release28-integration]
-    paths:
-      - '.github/workflows/package-windows-store.yml'
-      - 'scripts/windows-store/**'
   workflow_dispatch:
 
 permissions:
@@ -15,7 +10,10 @@ permissions:
 
 jobs:
   package:
-    runs-on: windows-latest
+    # This legacy path only assembles an unsigned MSIX; keep it on the
+    # persistent runner only for reviewed default-branch workflow code.
+    if: github.ref == 'refs/heads/main'
+    runs-on: singbook-i5-windows
     timeout-minutes: 15
     env:
       RELEASE_RUN_ID: '39769176975'

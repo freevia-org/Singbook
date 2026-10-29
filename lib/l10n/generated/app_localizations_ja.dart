@@ -1997,4 +1997,20 @@ class AppLocalizationsJa extends AppLocalizations {
   @override
   String get settingsShowPlayerControlsHint =>
       'プレーヤーパネルをタップまたはスワイプして表示・非表示を切り替えることもできます。';
+
+  @override
+  String get sourceAnalysisHeading => '提出された音源の分析（未検証）';
+
+  @override
+  String sourceAnalysisCoverage(int shown, int total) {
+    return '$total 件中 $shown 件の投稿を表示';
+  }
+
+  @override
+  String sourceAnalysisSample(int number) {
+    return 'サンプル $number';
+  }
+
+  @override
+  String get sourceAnalysisEstimatedTempo => '推定テンポ (BPM)';
 }

@@ -6,7 +6,7 @@ app builds; do not replace an older channel's roster with entries that require
 a newer compiled adapter. Compatible data corrections may advance a channel's
 `revision`; a new native provider capability requires a new channel snapshot.
 The catalog `revision` is independent of the distribution channel and schema
-versions. All eight files currently use `schemaVersion: 1` and
+versions. All ten files currently use `schemaVersion: 1` and
 `extractionSchemaVersion: 1`:
 
 | Channel | Catalog file | Revision | Sources | Roster changes from previous channel |
@@ -18,10 +18,22 @@ versions. All eight files currently use `schemaVersion: 1` and
 | 5 | `config/source-catalog-v5.json` | 17 | 26 | Adds TouhouDB and UtaiteDB; updates MusicBrainz artwork metadata |
 | 6 | `config/source-catalog-v6.json` | 18 | 27 | Adds StartJamming |
 | 7 | `config/source-catalog-v7.json` | 19 | 28 | Adds LyricsPlus |
-| 8 | `config/source-catalog-v8.json` | 20 | 30 | Adds Chords & Tabs and Pisni |
+| 8 | `config/source-catalog-v8.json` | 21 | 30 | Retains Chords & Tabs and Pisni; activates qualified Chords & Tabs |
+| 9 | `config/source-catalog-v9.json` | 22 | 31 | Adds OpenScore disabled/off; inherits all current channel 8 rows |
+| 10 | `config/source-catalog-v10.json` | 23 | 32 | Adds recording-ID AcousticBrainz analysis; inherits all channel 9 rows |
 
 Roster membership alone does not show that a provider is enabled, qualified or
 live.
+Channel 10 is the current bundle and matching compiled registry (31 native IDs
+plus declarative Unison). AcousticBrainz contributes metadata only, using a
+validated recording MBID and at most two publisher-submitted analysis samples.
+Its key/tempo estimates remain explicitly unverified and never become canonical
+musical fields or timing. The OpenScore entry remains disabled and off by default pending its separate
+activation review, including rights and remaining native/cloud qualification.
+Pisni remains disabled pending managed-cloud qualification and rights review.
+Chords & Tabs source revision 2 retains its qualified active/default-on state.
+This catalog integration does not establish a new app release, source
+activation, managed-cloud reachability or per-work rights clearance.
 `SINGBOOK_SOURCE_CATALOG_URL` can override
 the HTTPS publisher URL at build time. Settings → Sources → Refresh source list
 performs the same refresh manually. A new app build containing this implementation
@@ -34,10 +46,10 @@ and durable snapshot. Bundle and cache loading do not depend on a network call.
 No provider update changes saved songs, ChordPro provenance or user preferences.
 Catalog storage is separate from the user's synced application settings.
 Channel 3 reads/writes `sourceCatalog:v3` and never overwrites channel-2 or
-legacy cache streams, or provider preferences. Channels 4 through 8 each use
+legacy cache streams, or provider preferences. Channels 4 through 10 each use
 their matching `sourceCatalog:vN` cache key. Every channel preserves older cache
-streams and provider preferences. Without a valid current-channel cache, offline
-startup validates the closest older cached channel against its own bundle and
+streams and provider preferences. Channel 10 checks previous caches from
+channels 9 through 1. Without a valid current-channel cache, offline startup validates the closest older cached channel against its own bundle and
 the current compiled adapters. It carries newer compatible source
 revisions, added declarative sources, disabled/retired entries and removals into
 an in-memory view of the new bundle. New compiled sources and newer bundled
@@ -78,6 +90,23 @@ artifacts remain frozen and are not rebuilt by this source change. Native
 qualification covers real search/import, cached readers, artwork decoding and
 exact source-payload retention across SQLite reopening and ChordPro round trips;
 it does not establish independent lyric transcription or musical accuracy.
+
+Channel 8 revision 21 activates Chords & Tabs at source revision 2 and enables
+it by default for compatible clients. Its two catalog health probes use the
+previously qualified Hey Jude and Bohemian Rhapsody arrangements. The Hey Jude
+probe retains its unconfirmed search-version hint; provider regressions
+separately cover legacy pages whose descriptor omits a version. Probe search
+terms match the exact title-only searches observed in canaries, with expected
+artist checks retained. Native QA covered normal search, selection, source
+preview, save, fresh-process offline reopen, and exact source-payload and
+attribution preservation. These checks establish behavior for those two
+arrangements only. A retained-response replay was captured before the later
+unknown-version fix; the merged provider regression set covers that fix. Neither
+replay nor the canaries establish general chart accuracy. Chords & Tabs charts
+are user-submitted; per-work rights are unknown, and arrangement identity does
+not establish recording identity. The app retains provider attribution and the
+original source payload. Existing user opt-outs remain in force. Pisni stays
+disabled pending its separate qualification.
 The lrc.red native adapter uses the publisher's identifying User-Agent,
 exact ISRC search/detail identity, same-host TTML/artwork references and visible
 attribution. Its explicit timing profile handles the publisher's bare-second
@@ -190,7 +219,7 @@ Options also include `--catalog path` to validate a candidate catalog. By
 default, offline and live CLI runs use the asset named by
 `SourceCatalogClient.bundledAsset` in `lib/providers/source_catalog_client.dart`.
 That compiled source of truth currently points to
-`config/source-catalog-v8.json`; do not hard-code a channel number in scheduled
+`config/source-catalog-v10.json`; do not hard-code a channel number in scheduled
 commands or reports.
 An explicit older `--catalog` still parses/applies that snapshot, but the full
 current registry reports newer compiled providers intentionally absent from it

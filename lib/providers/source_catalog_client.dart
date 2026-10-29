@@ -26,12 +26,14 @@ class SourceCatalogClient {
   static const defaultEndpoint = String.fromEnvironment(
     'SINGBOOK_SOURCE_CATALOG_URL',
     defaultValue:
-        'https://raw.githubusercontent.com/freevia-org/Singbook/main/config/source-catalog-v8.json',
+        'https://raw.githubusercontent.com/freevia-org/Singbook/main/config/source-catalog-v10.json',
   );
-  // Channel 8 adds the Chords & Tabs adapter without changing the catalog
-  // consumed by channel-7 binaries. Keep each channel in its own cache.
-  static const bundledAsset = 'config/source-catalog-v8.json';
-  static const cacheKey = 'sourceCatalog:v8';
+  // Channel 10 adds recording analysis without changing catalogs consumed
+  // by earlier binaries. Keep each compatible channel in its own cache.
+  static const bundledAsset = 'config/source-catalog-v10.json';
+  static const cacheKey = 'sourceCatalog:v10';
+  static const channel9CacheKey = 'sourceCatalog:v9';
+  static const channel8CacheKey = 'sourceCatalog:v8';
   static const channel7CacheKey = 'sourceCatalog:v7';
   static const channel6CacheKey = 'sourceCatalog:v6';
   static const channel5CacheKey = 'sourceCatalog:v5';
@@ -104,7 +106,7 @@ class SourceCatalogClient {
       try {
         // The controller supplies only known local channel keys/assets. Bound
         // this optional callback too; invalid older state cannot block startup.
-        for (final previous in (await readPreviousCaches!()).take(8)) {
+        for (final previous in (await readPreviousCaches!()).take(9)) {
           try {
             final baseline = SourceCatalog.parse(previous.bundled);
             final cached = SourceCatalog.parse(previous.cached);

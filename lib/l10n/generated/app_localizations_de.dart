@@ -2103,4 +2103,21 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get settingsShowPlayerControlsHint =>
       'Du kannst das Playerfeld auch antippen oder wischen, um es ein- oder auszublenden.';
+
+  @override
+  String get sourceAnalysisHeading =>
+      'Analyse der eingereichten Audiodaten (nicht verifiziert)';
+
+  @override
+  String sourceAnalysisCoverage(int shown, int total) {
+    return '$shown von $total eingereichten Aufnahmen angezeigt';
+  }
+
+  @override
+  String sourceAnalysisSample(int number) {
+    return 'Stichprobe $number';
+  }
+
+  @override
+  String get sourceAnalysisEstimatedTempo => 'Geschätztes Tempo (BPM)';
 }

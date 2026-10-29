@@ -260,8 +260,10 @@ class AppController extends ChangeNotifier {
   /// Automatic sync is enabled for signed-in accounts.
   bool get autoSyncEnabled => true;
   int _searchEpoch = 0, _discoveryEpoch = 0;
+  int _immediateDiscoveryRecomputeCount = 0;
   CancellationToken? _searchCancel, _discoveryCancel;
   CancellationToken? _youtubeDiscoveryCancel;
+  Timer? _pendingDiscoveryCombine;
   String? _searchProviderId;
   bool _disposed = false;
   Future<void>? _activeSyncAction;
@@ -557,7 +559,7 @@ class AppController extends ChangeNotifier {
           final current = int.tryParse(
             SourceCatalogClient.cacheKey.split(':v').last,
           );
-          if (current == null || current < 2 || current > 8) return [];
+          if (current == null || current < 2) return [];
           final previous = <PreviousSourceCatalogCache>[];
           for (var channel = current - 1; channel >= 1; channel--) {
             final key = channel == 1
@@ -875,6 +877,8 @@ class AppController extends ChangeNotifier {
 
   void cancelDiscovery() {
     ++_discoveryEpoch;
+    _immediateDiscoveryRecomputeCount = 0;
+    _cancelPendingDiscoveryCombine();
     _discoveryCancel?.cancel();
     for (final token in _providerDiscoveryCancellations.values) {
       token.cancel();
@@ -1102,7 +1106,12 @@ class AppController extends ChangeNotifier {
               !(result.hasChords &&
                   _cachedDiscoverySourceIds.contains(result.id))) {
             results = _mergeDiscoveryResults(candidate, results, [result]);
-            _combine(candidate);
+            if (_immediateDiscoveryRecomputeCount < 2) {
+              _immediateDiscoveryRecomputeCount++;
+              _combine(candidate, preserveProgressRecomputeCount: true);
+            } else {
+              _scheduleDiscoveryCombine(candidate, epoch);
+            }
           }
           _emit();
         },
@@ -1131,7 +1140,36 @@ class AppController extends ChangeNotifier {
     }
   }
 
-  void _combine(SongCandidate candidate) {
+  static const _discoveryCombineInterval = Duration(milliseconds: 50);
+
+  void _scheduleDiscoveryCombine(SongCandidate candidate, int epoch) {
+    if (_pendingDiscoveryCombine != null) return;
+    _pendingDiscoveryCombine = Timer(_discoveryCombineInterval, () {
+      _pendingDiscoveryCombine = null;
+      if (_disposed ||
+          epoch != _discoveryEpoch ||
+          !discovering ||
+          selection?.identity != candidate.identity) {
+        return;
+      }
+      _combine(candidate);
+      _emit();
+    });
+  }
+
+  void _cancelPendingDiscoveryCombine() {
+    _pendingDiscoveryCombine?.cancel();
+    _pendingDiscoveryCombine = null;
+  }
+
+  void _combine(
+    SongCandidate candidate, {
+    bool preserveProgressRecomputeCount = false,
+  }) {
+    _cancelPendingDiscoveryCombine();
+    if (!preserveProgressRecomputeCount) {
+      _immediateDiscoveryRecomputeCount = 0;
+    }
     final available = results
         .map(
           (source) => isSourceReady(source)
@@ -2142,6 +2180,7 @@ class AppController extends ChangeNotifier {
   @override
   void dispose() {
     _disposed = true;
+    _cancelPendingDiscoveryCombine();
     _historicalCacheUses = const [];
     _autoSyncTimer?.cancel();
     for (final service in {..._syncProviders.values, ?_sync}) {

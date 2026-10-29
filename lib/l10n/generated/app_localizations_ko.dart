@@ -2005,4 +2005,20 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String get settingsShowPlayerControlsHint =>
       '플레이어 패널을 탭하거나 스와이프해 표시하거나 숨길 수도 있습니다.';
+
+  @override
+  String get sourceAnalysisHeading => '제출된 오디오 분석(미검증)';
+
+  @override
+  String sourceAnalysisCoverage(int shown, int total) {
+    return '$total개 제출 중 $shown개 표시';
+  }
+
+  @override
+  String sourceAnalysisSample(int number) {
+    return '샘플 $number';
+  }
+
+  @override
+  String get sourceAnalysisEstimatedTempo => '추정 템포 (BPM)';
 }

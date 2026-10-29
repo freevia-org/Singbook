@@ -2107,4 +2107,21 @@ class AppLocalizationsRo extends AppLocalizations {
   @override
   String get settingsShowPlayerControlsHint =>
       'Poți atinge sau glisa și panoul playerului pentru a-l afișa sau ascunde.';
+
+  @override
+  String get sourceAnalysisHeading =>
+      'Analiza audio-ului trimis (neverificată)';
+
+  @override
+  String sourceAnalysisCoverage(int shown, int total) {
+    return 'Se afișează $shown din $total trimiteri';
+  }
+
+  @override
+  String sourceAnalysisSample(int number) {
+    return 'Eșantionul $number';
+  }
+
+  @override
+  String get sourceAnalysisEstimatedTempo => 'Tempo estimat (BPM)';
 }

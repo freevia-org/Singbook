@@ -2074,4 +2074,20 @@ class AppLocalizationsDa extends AppLocalizations {
   @override
   String get settingsShowPlayerControlsHint =>
       'Du kan også trykke på eller stryge på afspillerpanelet for at vise eller skjule det.';
+
+  @override
+  String get sourceAnalysisHeading => 'Analyse af indsendt lyd (uverificeret)';
+
+  @override
+  String sourceAnalysisCoverage(int shown, int total) {
+    return '$shown af $total indsendelser vises';
+  }
+
+  @override
+  String sourceAnalysisSample(int number) {
+    return 'Prøve $number';
+  }
+
+  @override
+  String get sourceAnalysisEstimatedTempo => 'Anslået tempo (BPM)';
 }

@@ -251,3 +251,35 @@ container setup, but this review did not inspect a signed archive or observe a
 live sync. Retain the conservative Google SDK disclosures above for
 Google-enabled builds. Final App Store Connect answers must match the exact
 submitted build; earlier no-OAuth build notes do not describe this profile.
+
+## AcousticBrainz candidate disclosure (28 October 2026)
+
+This assessment covers PR223 at `8c852e873f9c82c1fcf6fe336e22f7bc690de9c9`,
+not frozen release 45 or a confirmed installed build. When enabled (default-on
+in candidate channel 10), this metadata provider receives a verified MusicBrainz
+recording ID in HTTPS query parameters at `acousticbrainz.org`. The count request
+contains that ID; the sampled-analysis request uses at most two submission
+offsets (0 and 1) and the exact fields
+`metadata.tags;rhythm.bpm;tonal.key_key;tonal.key_scale;tonal.key_strength`.
+The service also receives the request IP and Singbook User-Agent. It receives
+no uploaded audio/files, saved library, account identity or browser session.
+Title, artist and album are checked locally against returned file tags;
+duration is compared with the returned audio-length value
+(`metadata.audio_properties.length`, retained as `audioLengthSeconds`).
+
+The existing Search History / App Functionality recommendation should include
+this selected-recording lookup; the public recording ID is content context,
+not a Singbook account identifier. The [MetaBrainz privacy policy](https://metabrainz.org/privacy)
+states that web/API logs include IP, User-Agent, endpoint and parameters, but
+provides no fixed retention period for these logs. Do not infer that the CC0
+analysis-data license excludes request logging or establishes endpoint-specific
+tracking behavior. No new tracking conclusion is established by this change.
+
+The app exposes the ordinary Settings → Sources switch and preserves opt-out.
+The in-memory provider cache holds at most 32 recordings and reuses an entry
+for up to 15 minutes. TTL checks do not proactively erase expired entries;
+provider-instance/process disposal releases that cache. Saved source facts and
+original response metadata persist with the song in SQLite, ChordPro exports
+and the user's optional chosen library sync; opt-out does not remove them.
+The candidate controller test proves save/reopen/export retention. Device/cloud
+qualification and privacy/source integration review remain separate gates.

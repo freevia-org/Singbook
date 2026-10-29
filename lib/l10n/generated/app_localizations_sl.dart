@@ -2114,4 +2114,20 @@ class AppLocalizationsSl extends AppLocalizations {
   @override
   String get settingsShowPlayerControlsHint =>
       'Ploščo predvajalnika lahko prikažete ali skrijete tudi z dotikom ali podrsanjem.';
+
+  @override
+  String get sourceAnalysisHeading => 'Analiza poslanega zvoka (nepreverjena)';
+
+  @override
+  String sourceAnalysisCoverage(int shown, int total) {
+    return 'Prikazanih je $shown od $total poslanih prispevkov';
+  }
+
+  @override
+  String sourceAnalysisSample(int number) {
+    return 'Vzorec $number';
+  }
+
+  @override
+  String get sourceAnalysisEstimatedTempo => 'Ocenjeni tempo (BPM)';
 }

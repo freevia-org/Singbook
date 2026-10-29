@@ -2096,4 +2096,20 @@ class AppLocalizationsSk extends AppLocalizations {
   @override
   String get settingsShowPlayerControlsHint =>
       'Panel prehrávača môžete zobraziť alebo skryť aj ťuknutím či potiahnutím.';
+
+  @override
+  String get sourceAnalysisHeading => 'Analýza odoslaného zvuku (neoverená)';
+
+  @override
+  String sourceAnalysisCoverage(int shown, int total) {
+    return 'Zobrazuje sa $shown z $total odoslaných záznamov';
+  }
+
+  @override
+  String sourceAnalysisSample(int number) {
+    return 'Vzorka $number';
+  }
+
+  @override
+  String get sourceAnalysisEstimatedTempo => 'Odhadované tempo (BPM)';
 }

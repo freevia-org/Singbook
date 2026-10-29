@@ -1,16 +1,8 @@
 name: macOS compilation
 
-# Compile-only lane: macOS regression tests plus an unsigned universal build.
+# On-demand compile-only lane: macOS regression tests plus an unsigned universal build.
 on:
-  push:
-    branches: [main]
-    paths-ignore: &docs-only
-      - 'docs/**'
-      - '**/*.md'
-      - 'LICENSE'
-      - 'NOTICE'
-  pull_request:
-    paths-ignore: *docs-only
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -25,7 +17,7 @@ env:
 
 jobs:
   compile:
-    runs-on: macos-latest
+    runs-on: singbook-macmini
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v7
@@ -49,7 +41,17 @@ jobs:
           -derivedDataPath build/macos CODE_SIGNING_ALLOWED=NO build
       - name: Verify universal executable
         run: |
-          lipo build/macos/Build/Products/Release/Singbook.app/Contents/MacOS/Singbook -verify_arch arm64 x86_64
+          executable='build/macos/Build/Products/Release/Singbook.app/Contents/MacOS/Singbook'
+          architectures="$(lipo -archs "$executable")"
+          for architecture in arm64 x86_64; do
+            case " $architectures " in
+              *" $architecture "*) ;;
+              *)
+                echo "::error::Expected $architecture in universal executable; found: $architectures"
+                exit 1
+                ;;
+            esac
+          done
       - name: Preserve compile output
         uses: actions/upload-artifact@v7
         with:

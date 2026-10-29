@@ -17,7 +17,7 @@ void main() {
   final channel7File = File('config/source-catalog-v7.json');
   final channel8File = File('config/source-catalog-v8.json');
 
-  test('channel8 adds disabled native entries without editing v7', () {
+  test('channel8 activates qualified Chords and Tabs without editing v7', () {
     final oldText = channel7File.readAsStringSync();
     expect(
       sha256.convert(utf8.encode(oldText)).toString(),
@@ -31,7 +31,7 @@ void main() {
     expect(oldSources, hasLength(28));
     expect(sources, hasLength(30));
     expect(sources.take(oldSources.length).toList(), oldSources);
-    expect(next['revision'], 20);
+    expect(next['revision'], 21);
     expect(DateTime.parse(next['publishedAt']).isUtc, isTrue);
     expect(
       DateTime.parse(
@@ -42,9 +42,9 @@ void main() {
     final chordsAndTabs = sources[oldSources.length] as Map;
     expect(chordsAndTabs['id'], 'chordsandtabs');
     expect(chordsAndTabs['adapter'], 'builtin');
-    expect(chordsAndTabs['revision'], 1);
-    expect(chordsAndTabs['status'], 'disabled');
-    expect(chordsAndTabs['enabledByDefault'], false);
+    expect(chordsAndTabs['revision'], 2);
+    expect(chordsAndTabs['status'], 'active');
+    expect(chordsAndTabs['enabledByDefault'], true);
     expect(chordsAndTabs['accessMode'], 'publicPage');
     expect(chordsAndTabs['capabilities'], [
       'catalog',
@@ -55,7 +55,39 @@ void main() {
     expect(chordsAndTabs['website'], 'https://www.chords-and-tabs.net');
     expect(chordsAndTabs['hosts'], ['www.chords-and-tabs.net']);
     expect(chordsAndTabs['attribution'], 'Chords and Tabs');
-    expect(chordsAndTabs['probes'], isEmpty);
+    expect(chordsAndTabs['probes'], hasLength(2));
+    expect((chordsAndTabs['probes'] as List).map((probe) => probe['id']), [
+      'hey-jude-beatles-chart-v4',
+      'bohemian-rhapsody-queen-chart-v8',
+    ]);
+    final legacyChartProbe =
+        (chordsAndTabs['probes'] as List).first as Map<String, dynamic>;
+    final queenProbe =
+        (chordsAndTabs['probes'] as List).last as Map<String, dynamic>;
+    expect(legacyChartProbe['query'], 'Hey Jude');
+    expect(legacyChartProbe['expectedArtist'], 'The Beatles');
+    expect(queenProbe['query'], 'Bohemian Rhapsody');
+    expect(queenProbe['expectedArtist'], 'Queen');
+    expect(
+      (legacyChartProbe['candidate'] as Map)['metadata'],
+      containsPair('searchChartVersionHint', 4),
+    );
+    expect(
+      (legacyChartProbe['candidate'] as Map)['metadata'],
+      containsPair('searchChartTypeHint', 'chords'),
+    );
+    expect(
+      (legacyChartProbe['candidate'] as Map)['metadata'],
+      isNot(contains('sourceChartType')),
+    );
+    expect(
+      legacyChartProbe['requiredFields'],
+      containsAll(['body', 'chords', 'metadata']),
+    );
+    expect(
+      legacyChartProbe['requiredMetadataFields'],
+      containsAll(['identityScope', 'sourceChartType']),
+    );
     final pisni = sources.last as Map;
     expect(pisni['id'], 'pisni');
     expect(pisni['adapter'], 'builtin');
@@ -67,12 +99,13 @@ void main() {
     expect(pisni['website'], 'https://www.pisni.org.ua/');
     expect(pisni['hosts'], ['www.pisni.org.ua']);
     expect(pisni['probes'], isEmpty);
-    expect(SourceCatalogClient.bundledAsset, 'config/source-catalog-v8.json');
-    expect(SourceCatalogClient.cacheKey, 'sourceCatalog:v8');
+    expect(SourceCatalogClient.bundledAsset, 'config/source-catalog-v10.json');
+    expect(SourceCatalogClient.cacheKey, 'sourceCatalog:v10');
+    expect(SourceCatalogClient.channel8CacheKey, 'sourceCatalog:v8');
     expect(SourceCatalogClient.channel7CacheKey, 'sourceCatalog:v7');
     expect(
       SourceCatalogClient.defaultEndpoint,
-      endsWith('/source-catalog-v8.json'),
+      endsWith('/source-catalog-v10.json'),
     );
     expect(
       File('pubspec.yaml').readAsStringSync(),
@@ -89,7 +122,11 @@ void main() {
     addTearDown(transport.close);
     final providers = [
       ...createCoreProviders(transport: transport),
-      ...createExtraProviders(transport: transport),
+      ...createExtraProviders(transport: transport).where(
+        (provider) =>
+            provider.definition.id != 'openscorelieder' &&
+            provider.definition.id != 'acousticbrainz',
+      ),
     ];
     final native = providers.whereType<ChordsAndTabsProvider>().single;
     final pisniNative = providers.whereType<PisniProvider>().single;
@@ -105,12 +142,11 @@ void main() {
       currentRuntime.catalog!.sources.map((entry) => entry.id),
       containsAll(['chordsandtabs', 'pisni']),
     );
-    expect(
-      currentRuntime.providers.any(
-        (provider) => provider.definition.id == 'chordsandtabs',
-      ),
-      isFalse,
+    final configuredChordsAndTabs = currentRuntime.providers.singleWhere(
+      (provider) => provider.definition.id == 'chordsandtabs',
     );
+    expect(configuredChordsAndTabs, isA<ConfiguredBuiltinProvider>());
+    expect(configuredChordsAndTabs.definition.enabledByDefault, isTrue);
     expect(
       currentRuntime.providers.any(
         (provider) => provider.definition.id == 'pisni',
@@ -146,7 +182,11 @@ void main() {
     addTearDown(transport.close);
     final providers = [
       ...createCoreProviders(transport: transport),
-      ...createExtraProviders(transport: transport),
+      ...createExtraProviders(transport: transport).where(
+        (provider) =>
+            provider.definition.id != 'openscorelieder' &&
+            provider.definition.id != 'acousticbrainz',
+      ),
     ];
     final catalog = SourceCatalog.parse(channel8File.readAsStringSync());
     final runtime = SourceCatalogRuntime(
@@ -165,7 +205,7 @@ void main() {
     expect(rows.where((row) => row['status'] == 'coverage_gap'), isEmpty);
     expect(
       rows.singleWhere((row) => row['id'] == 'chordsandtabs')['status'],
-      'disabled',
+      'offline_unverified',
     );
     expect(
       rows.singleWhere((row) => row['id'] == 'pisni')['status'],

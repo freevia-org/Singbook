@@ -2080,4 +2080,20 @@ class AppLocalizationsSv extends AppLocalizations {
   @override
   String get settingsShowPlayerControlsHint =>
       'Du kan också trycka på eller svepa över spelarpanelen för att visa eller dölja den.';
+
+  @override
+  String get sourceAnalysisHeading => 'Analys av inskickat ljud (overifierad)';
+
+  @override
+  String sourceAnalysisCoverage(int shown, int total) {
+    return 'Visar $shown av $total inskickade bidrag';
+  }
+
+  @override
+  String sourceAnalysisSample(int number) {
+    return 'Prov $number';
+  }
+
+  @override
+  String get sourceAnalysisEstimatedTempo => 'Uppskattat tempo (BPM)';
 }

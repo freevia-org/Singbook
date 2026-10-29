@@ -2107,4 +2107,21 @@ class AppLocalizationsEl extends AppLocalizations {
   @override
   String get settingsShowPlayerControlsHint =>
       'Μπορείτε επίσης να πατήσετε ή να σύρετε το πλαίσιο αναπαραγωγής για να το εμφανίσετε ή να το αποκρύψετε.';
+
+  @override
+  String get sourceAnalysisHeading =>
+      'Ανάλυση υποβλημένου ήχου (μη επαληθευμένη)';
+
+  @override
+  String sourceAnalysisCoverage(int shown, int total) {
+    return 'Εμφανίζονται $shown από $total υποβολές';
+  }
+
+  @override
+  String sourceAnalysisSample(int number) {
+    return 'Δείγμα $number';
+  }
+
+  @override
+  String get sourceAnalysisEstimatedTempo => 'Εκτιμώμενος ρυθμός (BPM)';
 }

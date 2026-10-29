@@ -2095,4 +2095,20 @@ class AppLocalizationsHr extends AppLocalizations {
   @override
   String get settingsShowPlayerControlsHint =>
       'Ploču reproduktora možete prikazati ili sakriti i dodirom ili prelaskom prstom.';
+
+  @override
+  String get sourceAnalysisHeading => 'Analiza poslanog zvuka (nepotvrđena)';
+
+  @override
+  String sourceAnalysisCoverage(int shown, int total) {
+    return 'Prikazano je $shown od $total poslanih snimki';
+  }
+
+  @override
+  String sourceAnalysisSample(int number) {
+    return 'Uzorak $number';
+  }
+
+  @override
+  String get sourceAnalysisEstimatedTempo => 'Procijenjeni tempo (BPM)';
 }
