@@ -43,6 +43,16 @@ ambiguous associations, wrong directions/types, malformed IDs/attributes,
 truncation, combined metadata and portable source rights. Existing MusicBrainz
 artist-context, song-donor and artwork regressions remain relevant.
 
+Follow-up controller qualification replays both exact recorded detail responses
+through ordinary discovery and saving, an isolated SQLite close/reopen, and
+ChordPro export/import. Catalog and lyric replies in this host test are authored
+fixtures; it does not claim live catalog or lyric qualification. Combined author
+names and every saved source field survive; source credit ordering remains exact
+while combined display names use the existing deterministic ordering. Disabling
+MusicBrainz preserves the saved song and the opt-out after restart. The synthetic
+controller regression also covers ambiguous works without flat author donation.
+This phase makes zero network calls and does not qualify a native device.
+
 This is a compatible compiled-adapter improvement; an app update is required.
 Registry/catalog/cache channels, defaults, schedules and release artifacts are
 unchanged. It is a review candidate, not an integrated or installed release.
