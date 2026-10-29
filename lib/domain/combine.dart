@@ -963,15 +963,42 @@ String _escapeLiteralChordTokens(String text) {
 
 String _escapeBackslashes(String text) => text.replaceAll('\\', '\\\\');
 
+final _normalizedLineLetterOrNumber = RegExp(r'[\p{L}\p{N}]', unicode: true);
+
 ({String text, List<int> offsets}) _normalizedLine(String text) {
+  // Most lyric text is ASCII. Avoid building grapheme and RegExp objects for
+  // every character while retaining the same normalized-to-original offsets.
+  if (text.codeUnits.every((unit) => unit < 0x80)) {
+    final normalized = StringBuffer();
+    final offsets = <int>[];
+    var pendingSeparator = false;
+    for (var index = 0; index < text.length; index++) {
+      var unit = text.codeUnitAt(index);
+      if (unit >= 0x41 && unit <= 0x5a) unit += 0x20;
+      final isLetterOrNumber =
+          (unit >= 0x61 && unit <= 0x7a) || (unit >= 0x30 && unit <= 0x39);
+      if (!isLetterOrNumber) {
+        if (normalized.isNotEmpty) pendingSeparator = true;
+        continue;
+      }
+      if (pendingSeparator && normalized.isNotEmpty) {
+        normalized.write(' ');
+        offsets.add(index);
+      }
+      normalized.writeCharCode(unit);
+      offsets.add(index);
+      pendingSeparator = false;
+    }
+    return (text: normalized.toString(), offsets: offsets);
+  }
+
   final normalized = StringBuffer();
   final offsets = <int>[];
   var pendingSeparator = false;
   final graphemes = text.characters.toList();
-  final letterOrNumber = RegExp(r'[\p{L}\p{N}]', unicode: true);
   for (var index = 0; index < graphemes.length; index++) {
     final lowered = graphemes[index].toLowerCase().characters;
-    final kept = lowered.where(letterOrNumber.hasMatch).toList();
+    final kept = lowered.where(_normalizedLineLetterOrNumber.hasMatch).toList();
     if (kept.isEmpty) {
       if (normalized.isNotEmpty) pendingSeparator = true;
       continue;
@@ -1017,7 +1044,9 @@ Map<int, List<ChordAnchor>> _phraseChords(
   final phraseIndex = <int, Map<String, List<int>>>{};
   List<int> startsFor(String phrase) {
     final tokens = phrase.split(' ');
-    final count = tokens.length.clamp(1, 3);
+    // Four-word keys avoid scanning every repeated three-word opening while
+    // remaining a necessary prefix for every valid full-phrase occurrence.
+    final count = tokens.length.clamp(1, 4);
     final index = phraseIndex.putIfAbsent(count, () {
       final value = <String, List<int>>{};
       for (var i = 0; i + count <= words.length; i++) {
@@ -2048,6 +2077,9 @@ Map<int, List<ChordAnchor>> _fuzzyLineChords(
 ) {
   bool plainText(String text) => text.characters.length == text.length;
   final parsedDonors = parseArrangement(chart);
+  final wordCache = <String, _Words>{};
+  _Words lineWords(String text) =>
+      wordCache.putIfAbsent(text, () => _lineWords(text));
   final donors =
       <
         ({
@@ -2055,33 +2087,28 @@ Map<int, List<ChordAnchor>> _fuzzyLineChords(
           _Words words,
           Map<int, int> trailingWordOverrides,
         })
-      >[
-        for (final line in parsedDonors)
-          if (!line.directive &&
-              line.chords.isNotEmpty &&
-              plainText(line.text) &&
-              _lineWords(line.text).length >= 3 &&
-              _lineWords(line.text).length <= 40)
-            (
-              line: line,
-              words: _lineWords(line.text),
-              trailingWordOverrides: const {},
-            ),
-      ];
-  final donorRanges = <(int, int)>[
-    for (var i = 0; i < parsedDonors.length; i++)
-      if (!parsedDonors[i].directive &&
-          parsedDonors[i].chords.isNotEmpty &&
-          plainText(parsedDonors[i].text) &&
-          _lineWords(parsedDonors[i].text).length >= 3 &&
-          _lineWords(parsedDonors[i].text).length <= 40)
-        (i, i + 1),
-  ];
-  final targetLineCount = target.where((line) {
-    if (line.directive || !plainText(line.text)) return false;
-    final words = _lineWords(line.text);
-    return words.isNotEmpty && words.length <= 40;
-  }).length;
+      >[];
+  final donorRanges = <(int, int)>[];
+  for (var i = 0; i < parsedDonors.length; i++) {
+    final line = parsedDonors[i];
+    if (line.directive || line.chords.isEmpty || !plainText(line.text)) {
+      continue;
+    }
+    final words = lineWords(line.text);
+    if (words.length < 3 || words.length > 40) continue;
+    donors.add((line: line, words: words, trailingWordOverrides: const {}));
+    donorRanges.add((i, i + 1));
+  }
+  final eligibleTargets = <({int index, _Words words})>[];
+  for (var i = 0; i < target.length; i++) {
+    final line = target[i];
+    if (line.directive || !plainText(line.text)) continue;
+    final words = lineWords(line.text);
+    if (words.isNotEmpty && words.length <= 40) {
+      eligibleTargets.add((index: i, words: words));
+    }
+  }
+  final targetLineCount = eligibleTargets.length;
   if (targetLineCount == 0) return const {};
   final donorLimit = 40000 ~/ targetLineCount;
   if (donors.length > donorLimit) return const {};
@@ -2104,8 +2131,8 @@ Map<int, List<ChordAnchor>> _fuzzyLineChords(
     if (first.directive ||
         first.chords.isEmpty ||
         !plainText(first.text) ||
-        _lineWords(first.text).length > 6 ||
-        _lineWords(first.text).isEmpty) {
+        lineWords(first.text).length > 6 ||
+        lineWords(first.text).isEmpty) {
       continue;
     }
     final text = StringBuffer();
@@ -2116,7 +2143,7 @@ Map<int, List<ChordAnchor>> _fuzzyLineChords(
     var previousTrailingWordOverrides = <int, int>{};
     for (var end = start; end < parsedDonors.length && end < start + 8; end++) {
       final line = parsedDonors[end];
-      final words = _lineWords(line.text);
+      final words = lineWords(line.text);
       if (line.directive ||
           line.chords.isEmpty ||
           !plainText(line.text) ||
@@ -2151,7 +2178,7 @@ Map<int, List<ChordAnchor>> _fuzzyLineChords(
         );
         contextDonors.add((
           line: combined,
-          words: _lineWords(combined.text),
+          words: lineWords(combined.text),
           trailingWordOverrides: Map.unmodifiable(
             internalTrailingWordOverrides,
           ),
@@ -2213,12 +2240,8 @@ Map<int, List<ChordAnchor>> _fuzzyLineChords(
 
   // Lines of one or two words take part only joined with the next line.
   final lyrics = [
-    for (var i = 0; i < target.length; i++)
-      if (!target[i].directive &&
-          plainText(target[i].text) &&
-          _lineWords(target[i].text).isNotEmpty &&
-          _lineWords(target[i].text).length <= 40)
-        (index: i, words: known(_lineWords(target[i].text))),
+    for (final target in eligibleTargets)
+      (index: target.index, words: known(target.words)),
   ];
   if (donors.isEmpty ||
       lyrics.isEmpty ||
