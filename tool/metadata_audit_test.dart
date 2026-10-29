@@ -367,6 +367,16 @@ Future<void> _audit() async {
         }
       }
       final doc = combineSources(selection, results);
+      if (const bool.fromEnvironment('AUDIT_DUMP')) {
+        final dir = Directory('build/metadata_audit/dump/$title')
+          ..createSync(recursive: true);
+        File('${dir.path}/combined.txt').writeAsStringSync(doc.body);
+        for (final (i, r) in results.indexed) {
+          File(
+            '${dir.path}/$i-${r.candidate.providerId}-${r.matchKind.name}.txt',
+          ).writeAsStringSync(r.body);
+        }
+      }
       if (verbose) {
         final reference = results
             .where((r) => r.matchKind == MatchKind.sameRecording)
@@ -427,6 +437,20 @@ Future<void> _audit() async {
       final chorded = lines.where((l) => l.chords.isNotEmpty).length;
       row['lines'] = lines.length;
       row['chorded'] = chorded;
+      if (verbose) {
+        // One mark per lyric line, section breaks as spaces: # chorded, . not.
+        final marks = StringBuffer();
+        for (final line in parseArrangement(doc.body)) {
+          if (line.directive || line.text.trim().isEmpty) {
+            if (marks.isNotEmpty && !marks.toString().endsWith(' ')) {
+              marks.write(' ');
+            }
+          } else {
+            marks.write(line.chords.isEmpty ? '.' : '#');
+          }
+        }
+        print('   coverage $marks');
+      }
       if (chorded == 0) {
         issues.add('chords: none');
       } else if (chorded < lines.length * .8) {
