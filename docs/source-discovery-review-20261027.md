@@ -152,3 +152,10 @@ cloud jobs, uploads or content downloads were used for this review.
 These decisions preserve the distinction between publisher documentation,
 actual extraction evidence and production availability. No current source,
 older served channel, provider default, user preference or saved data changed.
+
+
+## 2026-10-29 AcousticBrainz implementation status
+
+PR223 merged on 2026-10-29 as `5523677db0fbbdfc77d92cbf6576d63d73c796d5`. It adds the native recording-ID metadata adapter and a channel 10 candidate that is enabled by default; the exact-head CI, macOS, UX and Wikisource workflows all passed. The previously authorized Mysterons/Portishead canary remains the only live provider canary and was not repeated.
+
+This does not qualify managed-cloud reachability or network policy, and it does not publish a channel10 catalog to users. The source is a main-branch candidate; current public app releases remain unchanged. The earlier 2026-10-28 feasibility and deferred-source notes above are historical observations from before PR223.
