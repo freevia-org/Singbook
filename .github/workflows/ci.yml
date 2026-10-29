@@ -272,7 +272,7 @@ jobs:
           persist-credentials: false
 
       - name: Install pinned jq for Flutter action
-        shell: powershell
+        shell: pwsh
         run: |
           $jqVersion = '1.8.2'
           $toolsDirectory = Join-Path $env:RUNNER_TEMP "tools/jq-$jqVersion"
