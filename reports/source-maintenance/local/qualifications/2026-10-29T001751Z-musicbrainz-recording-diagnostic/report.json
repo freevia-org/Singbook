@@ -1,0 +1,48 @@
+{
+  "scope": "one_recording_field_diagnostic_not_native_or_artwork_qualification",
+  "reason": "2026-10-28 local probe resolved_identity_mismatch for existing Mysterons exact-release artwork canary",
+  "sourceCommitReference": "8c852e873f9c82c1fcf6fe336e22f7bc690de9c9",
+  "startedAt": "2026-10-29T00:17:50.748737+00:00",
+  "httpAttempts": 1,
+  "retries": 0,
+  "url": "https://musicbrainz.org/ws/2/recording/b5d7d380-f43a-4c1f-a5de-694150b093ac?fmt=json&inc=artist-credits%2Breleases%2Bisrcs%2Burl-rels%2Bwork-rels",
+  "artworkImageRequests": 0,
+  "sourceOrConfigModified": false,
+  "httpStatus": 200,
+  "bytes": 19571,
+  "sha256": "a446ca514036d18f8945c480cc192a8abdddba127a94fe78b3bad08eb58e95e6",
+  "observed": {
+    "id": "b5d7d380-f43a-4c1f-a5de-694150b093ac",
+    "title": "Mysterons",
+    "lengthMilliseconds": 306200,
+    "artistCredits": [
+      {
+        "name": "Portishead",
+        "joinphrase": "",
+        "artistId": "8f6bd1e4-fbe1-4f50-aa9b-94c450ec0f11"
+      }
+    ],
+    "expectedReleasePresent": true,
+    "releaseTitleForExpectedId": [
+      "Dummy"
+    ]
+  },
+  "expectedDurationSeconds": 306.2,
+  "durationDeltaSeconds": 0.0,
+  "withinCurrentHalfSecondTolerance": true,
+  "finishedAt": "2026-10-29T00:17:51.222612+00:00",
+  "interpretation": {
+    "currentRecordingIdentityFields": "Exact requested MBID/title/artist/duration306.2 match the existing canary. Expected release ID/title occurs in22 returned releases, with4distinct album titles. Native candidate intentionally leaves album unset for that ambiguity.",
+    "existingCheckerFix": "2e0a77d7a856f514a676e040fc6eafa52a7d69e1: Classify missing art-dependent albums; included in candidate8c and public main (GitHub comparison main ahead20,behind0 on2026-10-29).",
+    "historicalFailureScope": "Production report measured2026-10-28T07:22:35.791499Z onf523 predates checker fix committed12:16:32Z. Historical optional artwork response is not retained, so exact historical external failure cause remains unproven.",
+    "currentArtworkAvailability": "Not tested: recording metadata request only; no release detail, image, native adapter, CLI, SDK or device invocation.",
+    "nextAction": "Reuse existing regression coverage/fix; do not duplicate repair or relax identities. Next ordinary scheduled current-main maintenance can establish current native artwork status with proper request accounting.",
+    "currentPublicMainCompared": "e6e57667867c9b703158c1a94919c02e9b396fd6",
+    "warning": "Do not replace the historical failed probe, claim native/artwork health, or infer its exact historical upstream failure from this one metadata response."
+  },
+  "schemaVersion": 1,
+  "qualificationType": "bounded_recording_metadata_diagnostic_only",
+  "productionLatestUpdated": false,
+  "rawSourceDocumentPublished": false,
+  "originalPrivateReceiptSha256": "269184393f3d8088e395fa131a970b4a8d348e1d964e82ce8c70d79149dbec4c"
+}
