@@ -269,7 +269,7 @@ jobs:
   windows-test:
     name: windows-test (${{ matrix.shard }}/2)
     needs: analyze
-    runs-on: singbook-i5-windows
+    runs-on: windows-latest
     timeout-minutes: 25
     strategy:
       fail-fast: false
