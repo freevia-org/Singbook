@@ -17,10 +17,12 @@ echo '0cf29a6ace57daf2e80bdf3380f8887e16fdc7952dad3cffe5d92641de56e56b  '"$apk" 
 adb devices
 adb shell wm size 1080x1920
 adb shell wm density 420
-adb shell cmd statusbar demo enter || true
-adb shell cmd statusbar demo clock hhmm 1008 || true
-adb shell cmd statusbar demo battery level 100 plugged false || true
 export SINGBOOK_SCREENSHOT_DIR="$out"
+# v0.2.26 explicitly provides this Debug-only fixture flag. It excludes the
+# duplicate-namespace cronet-shared artifact from the screenshot test build;
+# ordinary Debug and all Release builds remain unchanged.
+grep -q 'val fixtureE2e = providers.gradleProperty("singbookFixtureE2e")' android/app/build.gradle.kts
+export ORG_GRADLE_PROJECT_singbookFixtureE2e=true
 flutter drive --no-pub -d emulator-5554 \
   --driver=test_driver/singbook_journey_device_test.dart \
   --target=integration_test/play_public_domain_gallery_device_test.dart \
