@@ -685,6 +685,35 @@
       ],
       "endpoint": "https://acousticbrainz.org/api/v1",
       "reason": "Publisher identifies the archived acoustic-analysis data as CC0 and says its API remains available after collection stopped in2022. It is recording-MBID/submission-scoped metadata, not lyrics, chord charts, musical ground truth or verified playback timing. Three bounded local API GETs on2026-10-28T12:49-12:50Z returned200 without retries: one bulk count and two feature-filtered bulk documents. Exact Mysterons/Portishead MBID returned148submissions; observed offsets0/1 retained matching source MBID/title/artist/album and length306.973s, keyD#minor with strength around0.616, but BPM164.01968/163.97499 differs. Colors and the Kids/Cat Power offset0 returned matching source tags and length395.729s, BPM117.969/Fminor. Exact Wonderwall/Oasis canary MBID was omitted by count; omission is unavailable coverage, not a zero-submission claim. Samples prove basic API feasibility only: no native extraction, independent musical accuracy, all-submission consensus, corpus coverage or app/cloud qualification. Never make offset0 authoritative or invent identity from selected text. Validate source tags/MBID, duration and edition; retain submission offset, raw bytes/hash, extractor version and estimated values in namespaced provenance rather than top-level chart key/tempo. API requires dynamic rate-limit headers; current app transport hides them, so a coordinated bounded cooldown contract is a prerequisite. Actual sampled headers advertised100/window; documentation says the policy may vary. One earlier MusicBrainz documentation web read returned429 and was stopped; this is separate from these3API200s. Defer pending transport policy, bounded submission/identity contract, native two-canary persistence/combination tests, coordinated compatible registry/catalog and app/cloud rollout. No audio, media, credentials, account, corpus download or activation. Follow-up 2026-10-29: PR223 merged as 5523677 and adds a native channel10 candidate enabled by default; all four exact-head CI/macOS/UX/Wikisource workflows passed, and the earlier authorized Mysterons canary is not repeated. The preceding defer list records status at discovery time. Current managed-cloud reachability/network-policy and public rollout remain unqualified, so this discovery item does not claim source launch or production availability."
+    },
+    {
+      "id": "mutopia",
+      "name": "Mutopia Project",
+      "firstSeen": "2026-10-29",
+      "lastChecked": "2026-10-29",
+      "status": "deferred",
+      "documentation": [
+        "https://www.mutopiaproject.org/",
+        "https://www.mutopiaproject.org/legal.html",
+        "https://www.mutopiaproject.org/contribute.html",
+        "https://github.com/MutopiaProject/MutopiaProject"
+      ],
+      "endpoint": "https://www.mutopiaproject.org",
+      "reason": "Open score-edition source with publisher-displayed2124 total pieces; lyric/chord subset size and overlap are unmeasured. Four bounded ordinary local HTTPS reads on2026-10-29 returned200 with no retries: detail and LilyPond source for secular vocal editions2244 and2243. Both publisher records and source headers label Public Domain and retain separate composer, lyricist, arranger, source edition and revision identity. Files contain2/1 lyric-underlay blocks and no explicit chordmode blocks. This is field discovery, not full native extraction or recording identity proof. LilyPond is executable notation: a bounded inert parser must never execute Scheme/includes and must handle language/underlay/version semantics rather than flattening streams or inventing recording timing/chords. Defer pending compatible parser, search/identity, two full native extraction canaries, attribution/licensing, persistence/export/UI and cloud qualification. No source registered or activated."
+    },
+    {
+      "id": "secondhandsongs",
+      "name": "SecondHandSongs",
+      "firstSeen": "2026-10-29",
+      "lastChecked": "2026-10-29",
+      "status": "deferred",
+      "documentation": [
+        "https://secondhandsongs.com/page/API",
+        "https://secondhandsongs.com/page/API/access",
+        "https://secondhandsongs.com/page/TermsOfService"
+      ],
+      "endpoint": "https://api.secondhandsongs.com",
+      "reason": "Publisher-indexed primary documentation describes JSON search for artists, works and performances plus object retrieval; a rate-limited anonymous API and optional approved key are documented. Current indexed terms distinguish private use from public tools/services, require prior written authorization for non-private API retrieval, and restrict automated website collection. Direct documentation opens returned403; stopped without alternate-host/API/content requests, credentials or workarounds. Search-index text is documentation evidence, not proof of current live machine access, exact schema or granted app-use permission. No work/performance rows, lyric/chord content, media, extraction canaries or accounts were requested. Potential cover/original/credit relationship enrichment is unmeasured and does not establish lyrics, chord charts or incremental catalog size. Defer pending publisher-approved public-app access/persistence/export terms, readable current documentation, precise work-versus-recording identity, attribution/quota contract, compatible adapter and two independent real extraction canaries. No registration or activation."
     }
   ]
 }
