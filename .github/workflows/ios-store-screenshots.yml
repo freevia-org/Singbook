@@ -5,7 +5,6 @@ name: iOS store screenshot capture (draft PR)
 on:
   push:
     branches: [codex/ios-screenshot-workflows-20261029]
-    paths: [.github/workflows/ios-store-screenshots.yml]
 
 permissions:
   contents: read
@@ -16,6 +15,9 @@ concurrency:
 
 jobs:
   capture:
+    # A later branch push can intentionally rerun the job after the Mac
+    # simulator runtime is healthy. Ordinary PR edits never take the runner.
+    if: contains(github.event.head_commit.message, '[run-ios-capture]')
     runs-on: singbook-macmini
     timeout-minutes: 70
     steps:
@@ -98,6 +100,34 @@ jobs:
             --output "artifacts/ios-store-ipad-${GITHUB_RUN_ID}" \
             integration_test/ios_store_screenshots_device_test.dart
           xcrun simctl shutdown "$IPAD_UUID"
+      - name: Require all seven captures on both devices
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import os
+          from pathlib import Path
+
+          checkpoints = {
+              "store_01_library",
+              "store_02_reader",
+              "store_02a_key_picker",
+              "store_02b_transposed",
+              "store_03_reader_dark",
+              "store_04_setlists",
+              "store_04a_setlist_detail",
+          }
+          for platform in ("iphone", "ipad"):
+              folder = Path(f"artifacts/ios-store-{platform}-{os.environ['GITHUB_RUN_ID']}")
+              actual = {
+                  path.stem.removeprefix("ios_store_screenshots_device_test_")
+                  for path in folder.glob("ios_store_screenshots_device_test_*.png")
+              }
+              if actual != checkpoints:
+                  raise SystemExit(
+                      f"{platform} capture mismatch: missing={sorted(checkpoints - actual)} "
+                      f"unexpected={sorted(actual - checkpoints)}"
+                  )
+          PY
       - name: Record image provenance
         if: always()
         shell: bash
