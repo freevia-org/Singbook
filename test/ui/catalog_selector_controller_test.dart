@@ -149,6 +149,28 @@ void main() {
   );
 
   test(
+    'Settings saves the preferred source without starting a search',
+    () async {
+      final h = await open();
+      h.ui.setTab(VerseTab.settings);
+
+      await h.ui.setSearchCatalog('wikisource');
+
+      await _expectCatalogAgreement(h, 'wikisource');
+      expect(h.ui.state.activeTab, VerseTab.settings);
+      expect(h.allRequests, isEmpty);
+
+      h.ui.setTab(VerseTab.home);
+      h.online('Lantern path');
+      final search = h.ui.submitSearch();
+      (await h.wiki.requestAt(0)).complete('preferred-source-result');
+      await search;
+      expect(h.app.suggestions.single.id, 'preferred-source-result');
+      expect(h.lrclib.requests, isEmpty);
+    },
+  );
+
+  test(
     'no available catalog fails locally and can recover after enablement',
     () async {
       final h = await open();
