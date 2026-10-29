@@ -690,6 +690,16 @@ void main() {
         expect(body.endsWith('[C]'), true);
       },
     );
+    test('Ultimate Guitar keeps a footnoted chord row over its lyrics', () {
+      const raw =
+          '[tab][ch]G[/ch]                  [ch]Am[/ch]  *\n'
+          'A paper satellite sails tonight[/tab]\n'
+          '[tab][ch]D[/ch]\nAbove an empty desk at night[/tab]';
+      final body = UltimateGuitarProvider.parseText(raw);
+      expect(body, startsWith('[G]A paper satellite s'));
+      expect(body, contains('[Am]'));
+      expect(body, isNot(contains('*')));
+    });
     test('Ultimate Guitar reads "o" as a diminished chord', () {
       const raw =
           '[tab][ch]C#o[/ch]      [ch]Bo7[/ch]\nA paper satellite sails[/tab]\n'
