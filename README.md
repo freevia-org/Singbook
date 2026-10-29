@@ -2,7 +2,7 @@
 
 **Website:** [freevia.org/singbook](https://freevia.org/singbook/) · **Privacy policy:** [freevia.org/singbook/privacy](https://freevia.org/singbook/privacy/) · **Support and feedback:** [freevia.org/singbook/support](https://freevia.org/singbook/support/)
 
-**Stores:** [Google Play for Android](https://play.google.com/store/apps/details?id=org.freevia.singbook) (0.2.26, build 40, live in Production) · [Microsoft Store for Windows](https://apps.microsoft.com/detail/9P2J824JLQGZ) (package 1.0.46.0 live through Submission 15). As of 29 October 2026, five Google Play listing changes are saved but unsubmitted pending a content-declaration update; the current app release remains available.
+**Stores:** [Google Play for Android](https://play.google.com/store/apps/details?id=org.freevia.singbook) (0.2.26, build 40, live in Production) · [Microsoft Store for Windows](https://apps.microsoft.com/detail/9P2J824JLQGZ) (package 1.0.46.0 live through Submission 16). As of 29 October 2026, five Google Play listing changes are saved but unsubmitted pending a content-declaration update; the current app release remains available.
 
 **GitHub Android 0.2.26 (build 40):** [Signed APK](https://github.com/freevia-org/Singbook/releases/download/v0.2.26/singbook-0.2.26%2B40-release.apk) · [Release notes and checksums](https://github.com/freevia-org/Singbook/releases/tag/v0.2.26).
 
