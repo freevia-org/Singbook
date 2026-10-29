@@ -5,6 +5,7 @@ import '../../domain/metadata_artist_credit.dart';
 import '../../domain/edition_identity.dart';
 import '../provider.dart';
 import 'common.dart';
+import 'musicbrainz_work_credits.dart';
 
 /// The transport already sends the versioned Singbook User-Agent (with the
 /// configured contact URL); no per-adapter override is needed.
@@ -565,7 +566,8 @@ class MusicBrainzProvider implements LyricsProvider {
     final data = await _get(
       Uri.https('musicbrainz.org', '/ws/2/recording/$id', {
         'fmt': 'json',
-        'inc': 'artist-credits+releases+isrcs+url-rels+work-rels',
+        'inc':
+            'artist-credits+releases+isrcs+url-rels+work-rels+artist-rels+work-level-rels',
       }),
       cancel,
     );
@@ -583,6 +585,7 @@ class MusicBrainzProvider implements LyricsProvider {
       if (data['isrcs'] is List) 'isrcs': data['isrcs'],
       'musicbrainzRecordingId': id,
       'relationships': maps(data['relations']),
+      ...musicBrainzWorkMetadata(data),
       'mediaLinks': [
         for (final relation in maps(data['relations']))
           if (httpsLink(jsonMap(relation['url'])['resource'])
