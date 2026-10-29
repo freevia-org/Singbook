@@ -99,3 +99,37 @@ remain necessary when that phase is authorized. Coordinator review approved
 validation. It remains unregistered and inactive pending those checks and
 further qualification. It must not change or delay the separate release-43
 work or the frozen OpenScore proposals.
+
+## Follow-up qualification on 29 October 2026
+
+The adapter was integrated unchanged and remains unregistered. Current public
+main `1a4573eefc7f0f0e28c8ab7ab77cd4479c1d2a05` has module SHA-256
+`d1e7c9361d587c4bd5fb98ff52467be732c651661c4d21827d14aad60f14963a`,
+matching the final live-qualified PR208 adapter. Its two exact-request canaries
+passed on 28 October at 07:05 UTC: four HTTP 200 responses, no retries, both
+independent lyric references and all 67 chord positions matched. The final
+PR208 checks also passed. These later results supersede the earlier preparation
+limitations above; they do not qualify a new registry or app release.
+
+A separate host Flutter qualification on 29 October replayed those same four
+captured responses through the production adapter, ordinary AppController
+search/selection/save, isolated SQLite close/reopen and ChordPro export/import.
+Both complete saved documents, source metadata, original API bytes/hashes,
+revision/history attribution and separately scoped contribution/underlying-work
+rights survived exactly. The default-off preference was explicitly enabled and
+persisted. The independent lyric lines and chord anchors still matched. This
+was zero-network retained-response evidence, not a fresh publisher or device
+run. Raw documents and the disposable QA library stay ignored and private.
+
+`test/application/wikibooks_liederbuch_flow_test.dart` provides a synthetic CI
+regression for this controller/persistence contract, including German H/B
+notation, original payloads, portable rights/history preservation, and disabling
+the provider without deleting saved songs or losing the opt-out on restart.
+All text in that test is invented.
+
+Remaining gates are compatible registry/catalog/cache rollout, native-device
+app qualification, managed-cloud reachability and integration/release review.
+The contribution license does not become blanket clearance of underlying works;
+their unknown status remains explicit in portable source evidence. No provider,
+catalog default, release artifact or production report is changed by this
+persistence follow-up.
