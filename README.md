@@ -2,13 +2,13 @@
 
 **Website:** [freevia.org/singbook](https://freevia.org/singbook/) · **Privacy policy:** [freevia.org/singbook/privacy](https://freevia.org/singbook/privacy/) · **Support and feedback:** [freevia.org/singbook/support](https://freevia.org/singbook/support/)
 
-**Stores:** [Google Play for Android](https://play.google.com/store/apps/details?id=org.freevia.singbook) (0.2.26, build 40, live in Production) · [Microsoft Store for Windows](https://apps.microsoft.com/detail/9P2J824JLQGZ) (package 1.0.46.0 live through Submission 16). As of 29 October 2026, five Google Play listing changes are saved but unsubmitted pending a content-declaration update; the current app release remains available.
+**Stores:** [Google Play for Android](https://play.google.com/store/apps/details?id=org.freevia.singbook) (0.2.26, build 40, live in Production; 0.2.32, build 46, available to Internal testers) · [Microsoft Store for Windows](https://apps.microsoft.com/detail/9P2J824JLQGZ) (package 1.0.46.0 live through Submission 17). Five Google Play listing-only changes, including the revised description and phone gallery, were published on 29 October 2026; the Microsoft submission updated one search keyword without changing the package.
 
 **GitHub Android 0.2.26 (build 40):** [Signed APK](https://github.com/freevia-org/Singbook/releases/download/v0.2.26/singbook-0.2.26%2B40-release.apk) · [Release notes and checksums](https://github.com/freevia-org/Singbook/releases/tag/v0.2.26).
 
 **GitHub desktop 0.2.24 (build 38):** [Portable Windows x64 ZIP](https://github.com/freevia-org/Singbook/releases/download/v0.2.24/singbook-0.2.24%2B38-windows-x64-release-f11a5341-20261025T071344096Z.zip) · [macOS universal ZIP](https://github.com/freevia-org/Singbook/releases/download/v0.2.24/Singbook-0.2.24-macos-universal.zip) · [Release notes](https://github.com/freevia-org/Singbook/releases/tag/v0.2.24).
 
-The [website](https://freevia.org/singbook/) shows real Android and Windows app screenshots using fictional sample-song content. iOS and macOS 0.2.25 (build 39) are Waiting for Review; neither is publicly available on the App Store as of 29 October 2026.
+The [website](https://freevia.org/singbook/) shows real Android and Windows app screenshots using fictional sample-song content. Apple is still reviewing iOS and macOS 0.2.25 (build 39); neither is publicly available on the App Store as of 29 October 2026.
 
 A local-first Flutter songbook for Android, Windows and macOS, with an iOS release in review. Search Genius, compare lyrics and chord arrangements from free sources, and keep each song in one portable ChordPro file. No Singbook backend is required. SQLite stores the local library; source HTTP requests run on the device.
 
