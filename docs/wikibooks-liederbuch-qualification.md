@@ -1,11 +1,17 @@
-# Wikibooks Liederbuch source proposal
+# Wikibooks Liederbuch qualification and rollout candidate
 
-This unregistered proposal is based on public main
-`c77b221f1575236923b22dcea0f6672887bf11af`. Its only product changes are the new
-adapter and synthetic tests. No registry, catalog, client, cache channel,
-existing provider, version or release artifact is changed. The provider's
-definition is off by default. Public-main integration and a compatible app
-remain separate work.
+The unpublished local rollout candidate is based on public main
+`66978393717e0327c46e4aa6fad811273ac53330` and reuses the separately reviewed
+cache-history repair. It compiles the unchanged adapter in the normal registry
+and selects an independent channel 11 endpoint, bundle and cache. The new row
+is disabled and off by default; every older catalog and cache identity remains.
+This prepares compatible integration without changing production publication,
+installed apps or source activation. No release version or artifact changes.
+
+The adapter's original source-only comment and historical qualification below
+describe the earlier proposal at `c77b221f1575236923b22dcea0f6672887bf11af`.
+Its extraction bytes remain unchanged. Fresh source probes, actual native app
+and managed-cloud qualification, review and compatible release remain gates.
 
 ## Publisher interface and scope
 
