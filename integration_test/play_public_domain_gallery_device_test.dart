@@ -84,13 +84,14 @@ void main() {
     await _capture('01-library');
 
     await tester.enterText(find.byType(TextField).first, 'Auld');
-    tester.testTextInput.hide();
+    // A device integration test uses the platform keyboard, not TestTextInput.
+    FocusManager.instance.primaryFocus?.unfocus();
     await tester.pumpAndSettle();
     expect(find.text('Auld Lang Syne'), findsOneWidget);
     await _capture('02-local-search');
 
     await tester.enterText(find.byType(TextField).first, '');
-    tester.testTextInput.hide();
+    FocusManager.instance.primaryFocus?.unfocus();
     await tester.pumpAndSettle();
     await tester.tap(find.text('Auld Lang Syne').first);
     await tester.pumpAndSettle();
