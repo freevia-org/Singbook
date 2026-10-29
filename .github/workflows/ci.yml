@@ -271,6 +271,25 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Install pinned jq for Flutter action
+        shell: pwsh
+        run: |
+          $jqVersion = '1.8.2'
+          $toolsDirectory = Join-Path $env:RUNNER_TEMP "tools/jq-$jqVersion"
+          New-Item -ItemType Directory -Path $toolsDirectory -Force | Out-Null
+          $jqPath = Join-Path $toolsDirectory 'jq.exe'
+          $jqUri = "https://github.com/jqlang/jq/releases/download/jq-$jqVersion/jq-windows-amd64.exe"
+          Invoke-WebRequest -Uri $jqUri -OutFile $jqPath
+
+          $actualSha256 = (Get-FileHash -Path $jqPath -Algorithm SHA256).Hash.ToLowerInvariant()
+          $expectedSha256 = 'a6fc67fedaf9128a3309a1e2ebb8b986aeccf70122ee46d2cb4849e423f0c627'
+          if ($actualSha256 -ne $expectedSha256) {
+            throw "jq $jqVersion SHA-256 mismatch: $actualSha256"
+          }
+
+          Add-Content -Path $env:GITHUB_PATH -Value $toolsDirectory
+          & $jqPath --version
+
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
