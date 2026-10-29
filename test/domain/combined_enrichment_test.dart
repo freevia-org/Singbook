@@ -796,25 +796,29 @@ void main() {
     },
   );
 
-  test('large unmatched chart phrases finish within a bounded interval', () {
-    final lyrics = List.generate(
-      1200,
-      (i) => 'Amber lanterns glow across the quiet harbor number $i',
-    ).join('\n');
-    final chart = List.generate(
-      1200,
-      (i) => '[C]Amber lanterns glow around a different mountain number $i',
-    ).join('\n');
-    final watch = Stopwatch()..start();
-    final song = combineSources(selected, [
-      source('lyrics', lyrics),
-      source('chart', chart),
-    ]);
-    expect(watch.elapsed, lessThan(const Duration(seconds: 3)));
-    expect(song.hasChords, false);
-    expect(plainLyrics(song.body), lyrics);
-    expect(song.sources.last.body, chart);
-  });
+  test(
+    'large unmatched chart phrases finish within a bounded interval',
+    () {
+      final lyrics = List.generate(
+        1200,
+        (i) => 'Amber lanterns glow across the quiet harbor number $i',
+      ).join('\n');
+      final chart = List.generate(
+        1200,
+        (i) => '[C]Amber lanterns glow around a different mountain number $i',
+      ).join('\n');
+      final watch = Stopwatch()..start();
+      final song = combineSources(selected, [
+        source('lyrics', lyrics),
+        source('chart', chart),
+      ]);
+      expect(watch.elapsed, lessThan(const Duration(seconds: 3)));
+      expect(song.hasChords, false);
+      expect(plainLyrics(song.body), lyrics);
+      expect(song.sources.last.body, chart);
+    },
+    tags: 'performance',
+  );
 
   test(
     'matching resolved album supplies missing duration without activating timing',
