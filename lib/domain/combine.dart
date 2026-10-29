@@ -963,15 +963,42 @@ String _escapeLiteralChordTokens(String text) {
 
 String _escapeBackslashes(String text) => text.replaceAll('\\', '\\\\');
 
+final _normalizedLineLetterOrNumber = RegExp(r'[\p{L}\p{N}]', unicode: true);
+
 ({String text, List<int> offsets}) _normalizedLine(String text) {
+  // Most lyric text is ASCII. Avoid building grapheme and RegExp objects for
+  // every character while retaining the same normalized-to-original offsets.
+  if (text.codeUnits.every((unit) => unit < 0x80)) {
+    final normalized = StringBuffer();
+    final offsets = <int>[];
+    var pendingSeparator = false;
+    for (var index = 0; index < text.length; index++) {
+      var unit = text.codeUnitAt(index);
+      if (unit >= 0x41 && unit <= 0x5a) unit += 0x20;
+      final isLetterOrNumber =
+          (unit >= 0x61 && unit <= 0x7a) || (unit >= 0x30 && unit <= 0x39);
+      if (!isLetterOrNumber) {
+        if (normalized.isNotEmpty) pendingSeparator = true;
+        continue;
+      }
+      if (pendingSeparator && normalized.isNotEmpty) {
+        normalized.write(' ');
+        offsets.add(index);
+      }
+      normalized.writeCharCode(unit);
+      offsets.add(index);
+      pendingSeparator = false;
+    }
+    return (text: normalized.toString(), offsets: offsets);
+  }
+
   final normalized = StringBuffer();
   final offsets = <int>[];
   var pendingSeparator = false;
   final graphemes = text.characters.toList();
-  final letterOrNumber = RegExp(r'[\p{L}\p{N}]', unicode: true);
   for (var index = 0; index < graphemes.length; index++) {
     final lowered = graphemes[index].toLowerCase().characters;
-    final kept = lowered.where(letterOrNumber.hasMatch).toList();
+    final kept = lowered.where(_normalizedLineLetterOrNumber.hasMatch).toList();
     if (kept.isEmpty) {
       if (normalized.isNotEmpty) pendingSeparator = true;
       continue;
@@ -1017,7 +1044,9 @@ Map<int, List<ChordAnchor>> _phraseChords(
   final phraseIndex = <int, Map<String, List<int>>>{};
   List<int> startsFor(String phrase) {
     final tokens = phrase.split(' ');
-    final count = tokens.length.clamp(1, 3);
+    // Four-word keys avoid scanning every repeated three-word opening while
+    // remaining a necessary prefix for every valid full-phrase occurrence.
+    final count = tokens.length.clamp(1, 4);
     final index = phraseIndex.putIfAbsent(count, () {
       final value = <String, List<int>>{};
       for (var i = 0; i + count <= words.length; i++) {

@@ -356,6 +356,19 @@ void main() {
     expect(song.extra['chordSourceIds'], ['chart:song']);
   });
 
+  test('ASCII phrase normalization preserves original lyric offsets', () {
+    const lyrics =
+        'We remember !!HELLO, brave world?! through the quiet summer evening';
+    final song = combineSources(selected, [
+      source('lyrics', lyrics),
+      source('chart', '[G]hello brave world'),
+    ]);
+
+    expect(plainLyrics(song.body), lyrics);
+    expect(song.body, contains('!![G]HELLO'));
+    expect(song.extra['chordSourceIds'], ['chart:song']);
+  });
+
   test(
     'one partial phrase does not spread across different lyric contexts',
     () {
