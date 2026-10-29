@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "measuredAt": "2026-10-29T14:46:23.190415Z",
+  "status": "passed",
+  "runtime": "windows-host-flutter-controller-sqlite",
+  "sourceHeadBeforeTestAppend": "e41e198f63a0042bebf2cdb919493203065d6600",
+  "sourceFileHashes": {
+    "lib/providers/extra/metadata.dart": "0e623b0948e864257a8e6be4820947e3a7a76935948cab8e09939a068825a07e",
+    "lib/providers/extra/musicbrainz_work_credits.dart": "62a5e6f517c7b4a3677b8d2af886d59bc2dc42d030b082ea11b2e7d402b8f497"
+  },
+  "retainedLiveMeasuredAt": "2026-10-29T14:30:36.000464Z",
+  "networkRequests": 0,
+  "recordingResponses": "Exact retained 14:30 UTC native-provider HTTP bytes",
+  "catalogAndLyricResponses": "Authored fixtures; no live catalog or lyric claim",
+  "cases": [
+    {
+      "recordingId": "b5d7d380-f43a-4c1f-a5de-694150b093ac",
+      "status": "passed",
+      "mockReplayRequests": 2,
+      "recordingResponseReplays": 1,
+      "syntheticCatalogReplies": 1,
+      "networkRequests": 0,
+      "responseSha256": "de1198aee95247448b43ca919c6ad38d39be13b2520f8c6b0387e1bac0430b6b",
+      "sourceMetadataSha256": "7559c8f1952043d5fb91ea8c79c86fa26db0381acdbd2280800d4787837fad57",
+      "savedSongId": "b96966a5-05ce-40c3-9e73-92d373704c90",
+      "workCount": 1,
+      "authorCounts": {
+        "writers": 3
+      },
+      "combinedAuthorsMatched": true,
+      "sqliteReopenExact": true,
+      "portableMetadataAndSourceExact": true,
+      "disabledPreferenceReopened": true,
+      "userLibraryAccessed": false
+    },
+    {
+      "recordingId": "099b148e-fe99-4b79-be6e-5078e4bb7415",
+      "status": "passed",
+      "mockReplayRequests": 2,
+      "recordingResponseReplays": 1,
+      "syntheticCatalogReplies": 1,
+      "networkRequests": 0,
+      "responseSha256": "c802737c7a799056e7e9b8de25c3345ba335e0c0d8b2d497db3586523f65df65",
+      "sourceMetadataSha256": "cefb314dd66218cf37650712c22ddebebfc495e595654902f18b89c2833eb51d",
+      "savedSongId": "3de27622-dd72-4c7e-bf17-72637cc236dc",
+      "workCount": 1,
+      "authorCounts": {
+        "writers": 1
+      },
+      "combinedAuthorsMatched": true,
+      "sqliteReopenExact": true,
+      "portableMetadataAndSourceExact": true,
+      "disabledPreferenceReopened": true,
+      "userLibraryAccessed": false
+    }
+  ],
+  "userLibraryAccessed": false,
+  "rawDocumentsCommitted": false,
+  "nativeDeviceTested": false,
+  "cloudTested": false,
+  "productionReportsChanged": false,
+  "testedHead": "94cd94384f25423184de06d1c6ee7666c24b061c",
+  "privateHarnessSha256": "31ebbc2d805f308e59bf4ee0e627b26fd2d82392e79194896d30663236d8e91f",
+  "regressionTestSha256": "099860f0de619c32531845fc49a1b391fb6ade991520c5a8967a0ee9a9cff9ca",
+  "sourceCodeUnchangedFrom": "e41e198f63a0042bebf2cdb919493203065d6600",
+  "priorHarnessCorrections": [
+    "Modeled normal secondary catalog search separately from one exact recording response per canary; no claim that the whole search/discovery flow is one request.",
+    "Compared combined author names without relying on upstream order; original full source ordering/content remains exact."
+  ]
+}

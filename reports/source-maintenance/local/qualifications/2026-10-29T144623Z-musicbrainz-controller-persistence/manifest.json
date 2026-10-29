@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "base": "1a4573eefc7f0f0e28c8ab7ab77cd4479c1d2a05",
+  "head": "94cd94384f25423184de06d1c6ee7666c24b061c",
+  "tree": "b6903f61681393dedc7ea25a5adaebbc0c8e1827",
+  "appendSince": "e41e198f63a0042bebf2cdb919493203065d6600",
+  "appendedFiles": [
+    "docs/musicbrainz-work-credits.md",
+    "test/application/musicbrainz_work_credits_flow_test.dart"
+  ],
+  "productionCodeDiffSincePreviousTestedHead": "",
+  "testExitCode": 0,
+  "finalFocusedTestsPassed": 15,
+  "testBreakdown": {
+    "existingWorkCreditProviderTests": 12,
+    "newSyntheticControllerTests": 2,
+    "privateTwoRetainedCanaryQualification": 1
+  },
+  "previousOtherProviderTestsPassed": 34,
+  "testLogSha256": "f0847f143005eff73d3c662a294a7c720c283019675b8e59f81a66fbdda35dd4",
+  "analysisExitCode": 0,
+  "analysisLogSha256": "07f164848f8ed59cc381f892fbea770194b45470557636e2765acb40b18b8bb8",
+  "formatAndDiffCheck": "passed",
+  "independentReadOnlyReview": "No blocker; public synthetic tests alone do not prove real-byte provenance, which is supplied and hash-checked by the separate private retained-response qualification.",
+  "networkCalls": 0,
+  "userLibraryAccessed": false,
+  "productionReportsChanged": false,
+  "nativeDeviceQualified": false,
+  "cloudQualified": false,
+  "hostSdkLeaseReleased": "2026-10-29T14:47:00Z"
+}
