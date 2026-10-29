@@ -12,13 +12,17 @@ import 'package:integration_test/integration_test.dart';
 import 'package:path/path.dart' as paths;
 import 'package:sqflite/sqflite.dart' show deleteDatabase, getDatabasesPath;
 import 'package:singbook/application/app_controller.dart';
+import 'package:singbook/application/file_actions.dart';
 import 'package:singbook/data/library_repository.dart';
 import 'package:singbook/domain/chordpro.dart';
+import 'package:singbook/l10n/generated/app_localizations.dart';
 import 'package:singbook/providers/core/service.dart';
 import 'package:singbook/providers/extra/acousticbrainz.dart';
 import 'package:singbook/providers/provider.dart';
 import 'package:singbook/providers/source_catalog.dart';
 import 'package:singbook/ui/app_controller_adapter.dart';
+import 'package:singbook/ui/home/source_version_widgets.dart';
+import 'package:singbook/ui/theme/verse_theme.dart';
 import 'package:singbook/ui/verse_app.dart';
 import 'package:singbook/ui/verse_ui_state.dart';
 
@@ -196,7 +200,18 @@ void main() {
       await app.setProviderEnabled('musicbrainz', true);
       await app.setProviderEnabled('acousticbrainz', true);
       adapter = AppControllerAdapter(app);
-      await tester.pumpWidget(VerseApp(controller: app));
+      // UI and test actions share one adapter. VerseApp creates another adapter
+      // with independent query and selected-version state.
+      await tester.pumpWidget(
+        MaterialApp(
+          debugShowCheckedModeBanner: false,
+          locale: const Locale('en'),
+          localizationsDelegates: singbookLocalizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          theme: verseTheme(brightness: Brightness.light, palette: 'navy'),
+          home: VerseAppShell(controller: adapter, files: VerseFileActions()),
+        ),
+      );
       await tester.pumpAndSettle();
 
       adapter.setHomeListMode(HomeListMode.online);
@@ -227,11 +242,20 @@ void main() {
       expect(version.metadata.containsKey('tempo'), isFalse);
       expect(jsonEncode(version.metadata), isNot(contains('private-upload')));
       expect(
-        jsonEncode(analysisResult.toJson()),
-        isNot(contains('private-upload')),
+        ((analysisResult.metadata['acousticbrainz'] as Map)['samples'] as List)
+            .map((sample) => (sample['tags'] as Map)['file_name']),
+        ['private-upload.flac', 'private-upload.flac'],
+        reason:
+            'Original upload tags stay archived outside the safe UI projection',
       );
 
       adapter.selectVersion(version.id);
+      await tester.pumpAndSettle();
+      final analysisChip = find.byKey(
+        ValueKey('version-row-${versionSelectionId(version)}'),
+      );
+      await tester.ensureVisible(analysisChip);
+      await tester.tap(analysisChip);
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('version-info-button')));
       await tester.pumpAndSettle();
@@ -246,7 +270,7 @@ void main() {
         scrollable: scrollable,
       );
       expect(find.textContaining('164.02'), findsOneWidget);
-      expect(find.textContaining('D#m'), findsOneWidget);
+      expect(find.textContaining(RegExp(r'D#m[\s\S]*164\.02')), findsOneWidget);
       expect(find.textContaining('private-upload'), findsNothing);
       expect(tester.takeException(), isNull);
       await captureIosCheckpoint('recording_context_analysis_details');
@@ -272,7 +296,8 @@ void main() {
         (source) => source.candidate.providerId == 'acousticbrainz',
       );
       expect(preserved.metadata['acousticbrainz'], isNotNull);
-      expect(jsonEncode(preserved.toJson()), isNot(contains('private-upload')));
+      expect(preserved.metadata, analysisResult.metadata);
+      expect(preserved.extra, analysisResult.extra);
       final portable = ChordProCodec().decode(ChordProCodec().encode(saved));
       final portableAnalysis = portable.sources.singleWhere(
         (source) => source.candidate.providerId == 'acousticbrainz',
