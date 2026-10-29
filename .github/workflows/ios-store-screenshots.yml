@@ -3,8 +3,13 @@ name: iOS store screenshot capture (draft PR)
 # This workflow is intentionally scoped to the screenshot draft branch. It uses
 # disposable simulators and uploads evidence only; it never publishes to Apple.
 on:
-  push:
-    branches: [codex/ios-screenshot-workflows-20261029]
+  workflow_dispatch:
+    inputs:
+      run_capture:
+        description: Run the disposable iOS screenshot capture
+        required: true
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -17,7 +22,7 @@ jobs:
   capture:
     # A later branch push can intentionally rerun the job after the Mac
     # simulator runtime is healthy. Ordinary PR edits never take the runner.
-    if: contains(github.event.head_commit.message, '[run-ios-capture]')
+    if: inputs.run_capture == true
     runs-on: singbook-macmini
     timeout-minutes: 70
     steps:
