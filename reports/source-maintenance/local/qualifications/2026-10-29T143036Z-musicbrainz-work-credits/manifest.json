@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "measuredAt": "2026-10-29T14:35:33.239267+00:00",
+  "base": "1a4573eefc7f0f0e28c8ab7ab77cd4479c1d2a05",
+  "head": "e41e198f63a0042bebf2cdb919493203065d6600",
+  "tree": "772d41f2fc5e91c3e2daba7e7975b84fab2a83e6",
+  "ownedFiles": [
+    "docs/musicbrainz-work-credits.md",
+    "lib/providers/extra/metadata.dart",
+    "lib/providers/extra/musicbrainz_work_credits.dart",
+    "test/providers/extra/musicbrainz_work_credits_test.dart"
+  ],
+  "status": "host_and_live_qualified_review_pending",
+  "requestAccounting": {
+    "fieldDiscoveryRecordingGets": 2,
+    "changedCapabilityNativeRecordingGets": 2,
+    "finalGuardReplayNetworkCalls": 0,
+    "retries": 0,
+    "fullSuiteRepeated": false,
+    "mediaOrCredentialCalls": 0
+  },
+  "checks": {
+    "testsPassed": 46,
+    "testExitCode": 0,
+    "testCommand": "flutter test --no-pub test/providers/extra/musicbrainz_work_credits_test.dart test/providers/extra/musicbrainz_credit_context_test.dart test/providers/extra/musicbrainz_song_donors_test.dart test/providers/extra/musicbrainz_artwork_test.dart --reporter expanded",
+    "testLogSha256": "fd5de035d3b913022ccf390b317a8628845fc7aadb602bcb0034143bd366b33b",
+    "analysis": "No issues found",
+    "analysisExitCode": 0,
+    "analysisLogSha256": "0f728b9d152003f4ce808b475547716047ce74e1ae3938abdc117caa2e05d53e",
+    "formatAndDiffCheck": "passed"
+  },
+  "priorFailures": {
+    "initialNewTestCompile": "Missing JsonMap import; corrected; failed host command stopped using its own session handle. No live HTTP involved.",
+    "malformedSiblingTestFixture": "Typed fixture list rejected the deliberate string before calling production code. Fixed to mixed-type list; all46tests then passed.",
+    "productionFailuresFound": false
+  },
+  "qualificationLimits": [
+    "Final malformed-sibling guard was replayed against the preceding exact live bytes, not presented as a new network run.",
+    "Native mobile and managed-cloud qualification are not supplied by this host run.",
+    "No integration, installed update or release publication."
+  ],
+  "frozenRegistryCatalogCacheFilesChanged": false,
+  "productionReportsChanged": false,
+  "userLibraryAccessed": false,
+  "rawDocumentsCommitted": false
+}

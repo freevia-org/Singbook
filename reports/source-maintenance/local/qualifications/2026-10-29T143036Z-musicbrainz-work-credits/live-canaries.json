@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 1,
+  "measuredAt": "2026-10-29T14:30:36.000464Z",
+  "status": "passed",
+  "failure": null,
+  "runtime": "windows_flutter_bundled_dart_native_provider",
+  "sourceBaseCommit": "1a4573eefc7f0f0e28c8ab7ab77cd4479c1d2a05",
+  "sourceFileHashes": {
+    "lib/providers/extra/metadata.dart": "0e623b0948e864257a8e6be4820947e3a7a76935948cab8e09939a068825a07e",
+    "lib/providers/extra/musicbrainz_work_credits.dart": "1e3c5f5580c7bda0dfc577e86446ea211146b6b9236f62bc5ad7623ea7515b95"
+  },
+  "purpose": "Two changed-capability live canaries after bounded work-credit implementation",
+  "requests": [
+    {
+      "recordingId": "b5d7d380-f43a-4c1f-a5de-694150b093ac",
+      "atUtc": "2026-10-29T14:30:29.086170Z",
+      "status": 200,
+      "responseSha256": "de1198aee95247448b43ca919c6ad38d39be13b2520f8c6b0387e1bac0430b6b",
+      "bytes": 24622
+    },
+    {
+      "recordingId": "099b148e-fe99-4b79-be6e-5078e4bb7415",
+      "atUtc": "2026-10-29T14:30:33.251982Z",
+      "status": 200,
+      "responseSha256": "c802737c7a799056e7e9b8de25c3345ba335e0c0d8b2d497db3586523f65df65",
+      "bytes": 8623
+    }
+  ],
+  "retries": 0,
+  "cases": [
+    {
+      "recordingId": "b5d7d380-f43a-4c1f-a5de-694150b093ac",
+      "workId": "2f68c789-eb72-3e12-8226-558b80e0979f",
+      "status": "passed",
+      "writerCount": 3,
+      "independentArtistIdsAndNamesMatched": true,
+      "workIdentityAndCompletenessMatched": true,
+      "combinedWritersRetained": true,
+      "portableSourceMetadataExact": true,
+      "metadataFields": [
+        "artistCredits",
+        "credits",
+        "durationSeconds",
+        "identityScope",
+        "isrcs",
+        "mediaLinks",
+        "musicbrainzRecordingId",
+        "musicbrainzWorks",
+        "relationships",
+        "releases",
+        "writers"
+      ]
+    },
+    {
+      "recordingId": "099b148e-fe99-4b79-be6e-5078e4bb7415",
+      "workId": "97167b97-65ad-4dfe-8e55-d41cb3d8dd6a",
+      "status": "passed",
+      "writerCount": 1,
+      "independentArtistIdsAndNamesMatched": true,
+      "workIdentityAndCompletenessMatched": true,
+      "combinedWritersRetained": true,
+      "portableSourceMetadataExact": true,
+      "metadataFields": [
+        "album",
+        "artistCredits",
+        "credits",
+        "durationSeconds",
+        "identityScope",
+        "isrcs",
+        "musicbrainzRecordingId",
+        "musicbrainzWorks",
+        "relationships",
+        "releases",
+        "writers"
+      ]
+    }
+  ],
+  "userLibraryAccessed": false,
+  "lyricsAuthoredFixtureOnly": true,
+  "rawResponsesCommitted": false,
+  "registryCatalogReleaseChanged": false,
+  "freshFieldDiscoveryRequestsEarlierToday": 2,
+  "qualificationRequests": 2,
+  "fullDailySuiteRepeated": false
+}

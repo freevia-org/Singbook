@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "purpose": "New linked-work and recording artist-role capability; two selected metadata GETs, not daily-suite repetition",
+  "requestBudget": 2,
+  "retries": 0,
+  "credentialUse": false,
+  "requests": [
+    {
+      "recordingId": "b5d7d380-f43a-4c1f-a5de-694150b093ac",
+      "atUtc": "2026-10-29T14:19:38.600345+00:00",
+      "status": 200
+    },
+    {
+      "recordingId": "099b148e-fe99-4b79-be6e-5078e4bb7415",
+      "atUtc": "2026-10-29T14:19:40.327251+00:00",
+      "status": 200
+    }
+  ],
+  "cases": [
+    {
+      "recordingId": "b5d7d380-f43a-4c1f-a5de-694150b093ac",
+      "responseSha256": "40ca9459566df1e2cc77949c6cc7578190d87cf9a75c26cd6b3573e13be81342",
+      "responseBytes": 24622,
+      "relationCount": 9,
+      "workCount": 1,
+      "recordingArtistRoles": [
+        "engineer",
+        "instrument",
+        "producer",
+        "vocal"
+      ],
+      "workArtistRoles": [
+        "writer"
+      ]
+    },
+    {
+      "recordingId": "099b148e-fe99-4b79-be6e-5078e4bb7415",
+      "responseSha256": "58c45466f8074ca09d741980764b7d1b980d189fb198662246835bad54ab47ad",
+      "responseBytes": 8623,
+      "relationCount": 2,
+      "workCount": 1,
+      "recordingArtistRoles": [
+        "engineer"
+      ],
+      "workArtistRoles": [
+        "writer"
+      ]
+    }
+  ],
+  "measuredAt": "2026-10-29T14:19:40.566406+00:00",
+  "contentRetainedPrivately": true,
+  "extractionQualified": false
+}
