@@ -1,15 +1,24 @@
 // ignore_for_file: avoid_print
-// Opt-in metadata audit over a fixed song set, outside the test suite:
+// Opt-in metadata audit over the metadata accuracy corpus, outside the test
+// suite:
 //   flutter test tool/metadata_audit_test.dart \
-//     [--dart-define=AUDIT_OFFLINE=true] [--dart-define=AUDIT_ONLY=Title]
-//     [--dart-define=AUDIT_JITTER=<seed>] [--dart-define=AUDIT_MAX_NETWORK=<n>]
-// It runs under flutter test for the platform HTTP stack the app uses.
+//     [--dart-define=AUDIT_CORPUS=<corpus json>] [--dart-define=AUDIT_ONLY=Title]
+//     [--dart-define=AUDIT_CACHE=<cache directory>]
+//     [--dart-define=AUDIT_CATALOG=<source catalog json>]
+//     [--dart-define=AUDIT_AS_OF=<ISO time>] [--dart-define=AUDIT_JITTER=<seed>]
+//     [--dart-define=AUDIT_LIVE=true --dart-define=AUDIT_MAX_NETWORK=<n>]
+// It runs under flutter test for the platform HTTP stack the app uses, with
+// the providers of the app's bundled source catalog (as SourceCatalogRuntime
+// applies it) and a fixed provider clock.
 //
-// Every provider response is cached under build/metadata_audit/cache, keyed
-// by request, so repeated runs work from stored results instead of asking
-// the providers again; --offline never touches the network. The report
-// (build/metadata_audit/report.json) and printed summary hold identities,
-// counts and chord symbols only, never lyrics or credentials.
+// Runs are offline by default: every response comes from the cache (by
+// default build/metadata_audit/cache; the benchmark client's .json.gz
+// entries are read too) and each request missing from it is journaled. Only
+// AUDIT_LIVE with a positive AUDIT_MAX_NETWORK asks providers, at most that
+// many times, for missing requests only. The report (build/metadata_audit/
+// report.json) records the code, corpus, catalog, cache and clock it used,
+// and holds identities, counts and chord symbols only, never lyrics or
+// credentials.
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math' as math;
@@ -22,119 +31,38 @@ import 'package:singbook/domain/chord_key_estimate.dart';
 import 'package:singbook/domain/combine.dart';
 import 'package:singbook/domain/search_grouping.dart';
 import 'package:singbook/domain/source_contributions.dart';
+import 'package:singbook/providers/configurable_provider.dart';
 import 'package:singbook/providers/core/core_providers.dart';
 import 'package:singbook/providers/extra/extra_providers.dart';
 import 'package:singbook/providers/native_client.dart';
 import 'package:singbook/providers/provider.dart';
+import 'package:singbook/providers/source_catalog.dart';
 
-/// (title, artist, recording key when well documented).
-const songs = <(String, String, String?)>[
-  ('Tears in Heaven', 'Eric Clapton', 'A'),
-  ('Lonely Stranger', 'Eric Clapton', 'E'),
-  ('Wonderful Tonight', 'Eric Clapton', 'G'),
-  ('Wonderwall', 'Oasis', 'F#m'),
-  ('Hotel California', 'Eagles', 'Bm'),
-  ('Let It Be', 'The Beatles', 'C'),
-  ('Hey Jude', 'The Beatles', 'F'),
-  ('Yesterday', 'The Beatles', 'F'),
-  ('Here Comes the Sun', 'The Beatles', 'A'),
-  ('Imagine', 'John Lennon', 'C'),
-  ('Wish You Were Here', 'Pink Floyd', 'G'),
-  ('Fast Car', 'Tracy Chapman', null),
-  ('Hallelujah', 'Leonard Cohen', 'C'),
-  ('Free Fallin\'', 'Tom Petty', 'F'),
-  ('Stand By Me', 'Ben E. King', 'A'),
-  ('Brown Eyed Girl', 'Van Morrison', 'G'),
-  // D Mixolydian; charts and the measured key name its signature, G.
-  ('Sweet Home Alabama', 'Lynyrd Skynyrd', null),
-  ('Perfect', 'Ed Sheeran', 'Ab'),
-  ('Thinking Out Loud', 'Ed Sheeran', 'D'),
-  ('Shape of You', 'Ed Sheeran', 'C#m'),
-  ('Zombie', 'The Cranberries', 'Em'),
-  ('Creep', 'Radiohead', 'G'),
-  ('Riptide', 'Vance Joy', null),
-  ('Knockin\' on Heaven\'s Door', 'Bob Dylan', 'G'),
-  ('Blowin\' in the Wind', 'Bob Dylan', 'D'),
-  ('The House of the Rising Sun', 'The Animals', 'Am'),
-  ('Losing My Religion', 'R.E.M.', 'Am'),
-  ('Every Breath You Take', 'The Police', 'Ab'),
-  ('Hey There Delilah', 'Plain White T\'s', 'D'),
-  ('Have You Ever Seen the Rain', 'Creedence Clearwater Revival', 'C'),
-  ('Take Me Home, Country Roads', 'John Denver', 'A'),
-  ('Redemption Song', 'Bob Marley & The Wailers', 'G'),
-  ('Three Little Birds', 'Bob Marley & The Wailers', 'A'),
-  ('No Woman, No Cry', 'Bob Marley & The Wailers', 'C'),
-  ('Jolene', 'Dolly Parton', 'C#m'),
-  ('Ring of Fire', 'Johnny Cash', 'G'),
-  ('Hurt', 'Johnny Cash', 'Am'),
-  ('Shallow', 'Lady Gaga & Bradley Cooper', 'G'),
-  ('Someone Like You', 'Adele', 'A'),
-  ('Yellow', 'Coldplay', 'B'),
-  ('Fix You', 'Coldplay', 'Eb'),
-  ('Chasing Cars', 'Snow Patrol', 'A'),
-  ('Boulevard of Broken Dreams', 'Green Day', 'Fm'),
-  ('Good Riddance (Time of Your Life)', 'Green Day', 'G'),
-  ('Black', 'Pearl Jam', 'E'),
-  ('Nothing Else Matters', 'Metallica', 'Em'),
-  ('Smells Like Teen Spirit', 'Nirvana', 'Fm'),
-  ('Take Me to Church', 'Hozier', 'Em'),
-  ('Ho Hey', 'The Lumineers', 'C'),
-  ('Bohemian Rhapsody', 'Queen', 'Bb'),
-  ('Despacito', 'Luis Fonsi', 'Bm'),
-  // Wider coverage: newer pop, folk, rock, country, worship and songs in
-  // other languages.
-  ('Someone You Loved', 'Lewis Capaldi', 'Db'),
-  ('Shake It Off', 'Taylor Swift', 'G'),
-  ('Love Story', 'Taylor Swift', null),
-  ('All of Me', 'John Legend', 'Ab'),
-  ('Rolling in the Deep', 'Adele', 'Cm'),
-  ('Hello', 'Adele', 'Fm'),
-  ('Let Her Go', 'Passenger', null),
-  ('Counting Stars', 'OneRepublic', null),
-  ('Africa', 'Toto', null),
-  ('Dreams', 'Fleetwood Mac', null),
-  ('Landslide', 'Fleetwood Mac', null),
-  ('The Sound of Silence', 'Simon & Garfunkel', null),
-  ('Mrs. Robinson', 'Simon & Garfunkel', null),
-  ('Piano Man', 'Billy Joel', 'C'),
-  ('Sweet Caroline', 'Neil Diamond', 'B'),
-  ('Amazing Grace (My Chains Are Gone)', 'Chris Tomlin', null),
-  ('How Great Thou Art', 'Carrie Underwood', null),
-  ('La Bamba', 'Ritchie Valens', 'C'),
-  ('Cielito Lindo', 'Pedro Infante', null),
-  ('99 Luftballons', 'Nena', null),
-  ('Under the Bridge', 'Red Hot Chili Peppers', null),
-  ('Californication', 'Red Hot Chili Peppers', 'Am'),
-  ('Stairway to Heaven', 'Led Zeppelin', 'Am'),
-  ('Dust in the Wind', 'Kansas', 'C'),
-  ('Blackbird', 'The Beatles', 'G'),
-  ('Yellow Submarine', 'The Beatles', null),
-  ('Halo', 'Beyoncé', 'A'),
-  ('Hey, Soul Sister', 'Train', 'E'),
-  ("I'm Yours", 'Jason Mraz', 'B'),
-  ('Iris', 'The Goo Goo Dolls', null),
-  ('Torn', 'Natalie Imbruglia', 'F'),
-  ('Budapest', 'George Ezra', null),
-  ('Ride', 'Twenty One Pilots', null),
-  ('Mad World', 'Gary Jules', null),
-  ('Vienna', 'Billy Joel', null),
-  ('Tennessee Whiskey', 'Chris Stapleton', null),
-  ('Before He Cheats', 'Carrie Underwood', null),
-  // A hundred songs: more rock, folk and a non-Latin title with a
-  // published Latin alias.
-  ('Bad Moon Rising', 'Creedence Clearwater Revival', 'D'),
-  ('Seven Nation Army', 'The White Stripes', null),
-  ('Mr. Brightside', 'The Killers', null),
-  ('Use Somebody', 'Kings of Leon', null),
-  ('Viva la Vida', 'Coldplay', null),
-  ('Wake Me Up', 'Avicii', null),
-  ('Leaving on a Jet Plane', 'John Denver', null),
-  ('Big Yellow Taxi', 'Joni Mitchell', null),
-  ('Folsom Prison Blues', 'Johnny Cash', null),
-  ('Let It Go', 'Idina Menzel', null),
-  ('Bésame Mucho', 'Luis Miguel', null),
-  ('紅蓮華', 'LiSA', null),
-];
+const _corpusPath = String.fromEnvironment(
+  'AUDIT_CORPUS',
+  defaultValue: 'tool/metadata_accuracy_corpus.json',
+);
+
+/// (id, title, artist, legacy recording key hint) for each corpus song.
+List<(String, String, String, String?)> _songs() {
+  final corpus = jsonDecode(File(_corpusPath).readAsStringSync()) as Map;
+  return [
+    for (final raw in corpus['songs'] as List)
+      if (raw case {
+        'id': final String id,
+        'title': final String title,
+        'artist': final String artist,
+      })
+        (
+          id,
+          title,
+          artist,
+          (((raw['expected'] as Map?)?['legacyUnverifiedExpectation']
+                  as Map?)?['recordingKey'])
+              as String?,
+        ),
+  ];
+}
 
 /// Answers from the cache when it can; otherwise asks the network and keeps
 /// successful and not-found answers. Keys leave out headers, so tokens are
@@ -161,6 +89,17 @@ class CachingClient extends http.BaseClient {
   final http.Client _inner = createNativeHttpClient();
   int hits = 0, misses = 0, uncached = 0;
   final uncachedHosts = <String, int>{};
+
+  /// Requests the cache could not answer, with the song that made them.
+  final missJournal = <Map<String, Object?>>[];
+  String? currentSong;
+  void _journal(http.BaseRequest request, String outcome) => missJournal.add({
+    'song': currentSong,
+    'method': request.method,
+    'host': request.url.host,
+    'path': request.url.path,
+    'outcome': outcome,
+  });
   final storedStatuses = <int, int>{};
 
   final _nextAllowed = <String, DateTime>{};
@@ -175,12 +114,20 @@ class CachingClient extends http.BaseClient {
         .convert(utf8.encode('${request.method} ${request.url}\n$body'))
         .toString();
     final file = File('${directory.path}/$key.json');
-    if (file.existsSync()) {
+    // The shared cache also holds the benchmark client's gzip entries.
+    final packed = File('${directory.path}/$key.json.gz');
+    if (packed.existsSync() || file.existsSync()) {
       hits++;
       if (jitter case final random?) {
         await Future<void>.delayed(Duration(milliseconds: random.nextInt(120)));
       }
-      final stored = jsonDecode(file.readAsStringSync()) as Map;
+      final stored =
+          jsonDecode(
+                packed.existsSync()
+                    ? utf8.decode(gzip.decode(packed.readAsBytesSync()))
+                    : file.readAsStringSync(),
+              )
+              as Map;
       return http.StreamedResponse(
         Stream.value(base64Decode(stored['body'] as String)),
         stored['status'] as int,
@@ -191,15 +138,18 @@ class CachingClient extends http.BaseClient {
     if (offline) {
       uncached++;
       uncachedHosts.update(request.url.host, (n) => n + 1, ifAbsent: () => 1);
+      _journal(request, 'offline');
       throw const ProviderException('unavailable', 'not in audit cache');
     }
     if (networkBudget case final budget? when misses >= budget) {
       overBudget++;
+      _journal(request, 'over_budget');
       throw const ProviderException('unavailable', 'audit network budget');
     }
     // A host that answered busy is left alone for the rest of the run.
     if (busyHosts.containsKey(request.url.host)) {
       busyHosts.update(request.url.host, (n) => n + 1);
+      _journal(request, 'host_backed_off');
       throw const ProviderException('provider_busy', 'audit host backed off');
     }
     misses++;
@@ -214,6 +164,7 @@ class CachingClient extends http.BaseClient {
     final response = await _inner.send(request);
     final bytes = await response.stream.toBytes();
     storedStatuses.update(response.statusCode, (n) => n + 1, ifAbsent: () => 1);
+    _journal(request, 'fetched_${response.statusCode}');
     if (const {429, 503}.contains(response.statusCode)) {
       busyHosts.putIfAbsent(request.url.host, () => 0);
     }
@@ -263,22 +214,64 @@ Set<String> _artistWords(String artist) => {
     if (!const {'the', 'and', ''}.contains(word)) word,
 };
 
+String _fileSha(String path) =>
+    sha256.convert(File(path).readAsBytesSync()).toString();
+
+/// Entry names and sizes: identifies a cache's contents without reading
+/// every response.
+Map<String, Object> _cacheFingerprint(Directory directory) {
+  final entries = directory.existsSync()
+      ? (directory
+            .listSync()
+            .whereType<File>()
+            .map((f) => '${f.uri.pathSegments.last} ${f.lengthSync()}')
+            .toList()
+          ..sort())
+      : <String>[];
+  return {
+    'path': directory.path,
+    'entries': entries.length,
+    'namesAndSizesSha256': sha256
+        .convert(utf8.encode(entries.join('\n')))
+        .toString(),
+  };
+}
+
 Future<void> _audit() async {
-  const offline = bool.fromEnvironment('AUDIT_OFFLINE');
+  const live = bool.fromEnvironment('AUDIT_LIVE');
+  const offline = !live;
+  const budget = int.fromEnvironment('AUDIT_MAX_NETWORK');
+  if (live && budget <= 0) {
+    throw StateError('AUDIT_LIVE needs a positive AUDIT_MAX_NETWORK.');
+  }
   const onlyValue = String.fromEnvironment('AUDIT_ONLY');
   // Several titles may be given, separated by "|".
   final only = onlyValue == '' ? null : onlyValue.split('|').toSet();
   const verbose = bool.fromEnvironment('AUDIT_VERBOSE');
   final out = Directory('build/metadata_audit');
   const jitterSeed = int.fromEnvironment('AUDIT_JITTER', defaultValue: -1);
-  const budget = int.fromEnvironment('AUDIT_MAX_NETWORK', defaultValue: -1);
+  const cachePath = String.fromEnvironment('AUDIT_CACHE');
+  const catalogPath = String.fromEnvironment(
+    'AUDIT_CATALOG',
+    defaultValue: 'config/source-catalog-v10.json',
+  );
+  final asOf = DateTime.parse(
+    const String.fromEnvironment(
+      'AUDIT_AS_OF',
+      defaultValue: '2026-10-29T12:00:00Z',
+    ),
+  ).toUtc();
+  final cacheDirectory = Directory(
+    cachePath.isEmpty ? '${out.path}/cache' : cachePath,
+  );
   final client = CachingClient(
-    Directory('${out.path}/cache'),
+    cacheDirectory,
     offline: offline,
     jitter: jitterSeed < 0 ? null : math.Random(jitterSeed),
-    networkBudget: budget < 0 ? null : budget,
+    networkBudget: live ? budget : null,
   );
-  var token = Platform.environment['GENIUS_ACCESS_TOKEN'] ?? '';
+  // Offline, a placeholder enables cached Genius requests without a secret.
+  var token = offline ? 'cached-audit-no-network' : '';
   for (final path in [
     'config/local.defines.json',
     '../Singbook/config/local.defines.json',
@@ -291,14 +284,33 @@ Future<void> _audit() async {
           '';
     }
   }
+  if (token.isEmpty) token = Platform.environment['GENIUS_ACCESS_TOKEN'] ?? '';
   final transport = ProviderTransport(
     client: client,
     hostInterval: offline ? Duration.zero : const Duration(milliseconds: 700),
+    maxRetries: offline ? 0 : 3,
   );
-  final discovery = SourceDiscoveryService([
-    ...createCoreProviders(transport: transport, geniusToken: token),
-    ...createExtraProviders(transport: transport),
-  ], recordingKeys: RecordingKeyService(transport));
+  // The providers the app runs: compiled adapters as the bundled source
+  // catalog configures, enables and adds to them.
+  final catalog = SourceCatalog.parse(File(catalogPath).readAsStringSync());
+  final runtime = SourceCatalogRuntime(
+    builtins: [
+      ...createCoreProviders(
+        transport: transport,
+        geniusToken: token,
+        clock: () => asOf,
+      ),
+      ...createExtraProviders(transport: transport),
+    ],
+    createProvider: (entry) {
+      ConfigurableProvider.validateExtraction(entry);
+      return ConfigurableProvider(entry, transport);
+    },
+  )..apply(catalog);
+  final discovery = SourceDiscoveryService(
+    runtime.providers,
+    recordingKeys: RecordingKeyService(transport),
+  );
   final catalogs = {
     for (final p in discovery.definitions)
       if (p.capabilities.contains('catalog') &&
@@ -306,13 +318,37 @@ Future<void> _audit() async {
           p.enabledByDefault)
         p.id,
   };
+  final run = {
+    'head': Process.runSync('git', [
+      'rev-parse',
+      'HEAD',
+    ]).stdout.toString().trim(),
+    'dirty': Process.runSync('git', [
+      'status',
+      '--porcelain',
+      'lib',
+      'tool',
+    ]).stdout.toString().trim().isNotEmpty,
+    'harnessSha256': _fileSha('tool/metadata_audit_test.dart'),
+    'corpus': {'path': _corpusPath, 'sha256': _fileSha(_corpusPath)},
+    'catalog': {
+      'path': catalogPath,
+      'revision': catalog.revision,
+      'sha256': _fileSha(catalogPath),
+    },
+    'asOf': asOf.toIso8601String(),
+    'offline': offline,
+    if (live) 'networkBudget': budget,
+    'cacheBefore': _cacheFingerprint(cacheDirectory),
+  };
 
   final rows = <Map<String, Object?>>[];
   final findings = <String, List<String>>{};
-  for (final (title, artist, expectedKey) in songs) {
-    if (only != null && !only.contains(title)) continue;
+  for (final (id, title, artist, expectedKey) in _songs()) {
+    if (only != null && !only.contains(title) && !only.contains(id)) continue;
+    client.currentSong = id;
     final query = '$title $artist';
-    final row = <String, Object?>{'title': title, 'artist': artist};
+    final row = <String, Object?>{'id': id, 'title': title, 'artist': artist};
     final issues = <String>[];
     try {
       final found = await discovery.searchAcrossCatalogs(
@@ -519,6 +555,13 @@ Future<void> _audit() async {
           ? shown
           : transposeChord(shown, frets);
       row['key'] = sounding;
+      // Where the key came from: a source's declaration, or inferred from
+      // the chords (a checked estimate or the estimator).
+      row['keyBasis'] = sounding == null
+          ? null
+          : m['key'] != null
+          ? 'source'
+          : 'inferred';
       row['capo'] = capo;
       if (chorded > 0 && sounding == null) issues.add('key: none');
       if (expectedKey != null &&
@@ -526,7 +569,19 @@ Future<void> _audit() async {
           !keysAgree(sounding, expectedKey)) {
         issues.add('key: $sounding, expected $expectedKey');
       }
-      row['sources'] = [for (final id in contributingProviderIds(doc)) id];
+      row['sources'] = [
+        for (final source in contributingProviderIds(doc)) source,
+      ];
+      // Presence: lyrics, chords on lyric lines and a key. Coverage is the
+      // share of lyric lines with chords, reported but not a pass gate.
+      row['present'] = {
+        'lyrics': lines.isNotEmpty,
+        'chords': chorded > 0,
+        'key': sounding != null,
+      };
+      row['coverage'] = lines.isEmpty
+          ? 0
+          : double.parse((chorded / lines.length).toStringAsFixed(3));
     } on ProviderException catch (e) {
       issues.add('error: ${e.code}');
     } catch (e, stack) {
@@ -546,7 +601,8 @@ Future<void> _audit() async {
   out.createSync(recursive: true);
   File('${out.path}/report.json').writeAsStringSync(
     const JsonEncoder.withIndent('  ').convert({
-      'offline': offline,
+      'run': run,
+      'cacheAfter': _cacheFingerprint(cacheDirectory),
       'cache': {
         'hits': client.hits,
         'misses': client.misses,
@@ -558,11 +614,16 @@ Future<void> _audit() async {
           for (final e in client.storedStatuses.entries) '${e.key}': e.value,
         },
       },
+      'missJournal': client.missJournal,
       'songs': rows,
     }),
   );
+  bool present(Map<String, Object?> row) =>
+      (row['present'] as Map?)?.values.every((value) => value == true) ?? false;
   print(
-    '\n${rows.where((r) => (r['issues'] as List).isEmpty).length}/${rows.length} '
+    '\n${rows.where(present).length}/${rows.length} songs with lyrics, chords '
+    'and a key; '
+    '${rows.where((r) => (r['issues'] as List).isEmpty).length}/${rows.length} '
     'songs without findings; cache hits ${client.hits}, misses ${client.misses}'
     '${client.uncached == 0 ? '' : '; ${client.uncached} requests not in the cache (rerun online)'}'
     '${client.overBudget == 0 ? '' : '; ${client.overBudget} requests refused over the network budget'}'
