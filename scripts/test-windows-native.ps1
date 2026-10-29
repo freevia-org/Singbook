@@ -15,7 +15,7 @@ New-Item -ItemType Directory -Path $evidence | Out-Null
 $binary = Join-Path $evidence 'native-check.exe'
 $source = Join-Path $workspace 'test/native/windows_clipboard_test.cpp'
 $object = Join-Path $evidence 'native-check.obj'
-$compileArguments = @('/nologo', '/std:c++17', '/EHsc', '/W4', '/WX', '/DNOMINMAX', $source, "/Fo$object", "/Fe$binary", '/link', 'user32.lib', 'advapi32.lib')
+$compileArguments = @('/nologo', '/std:c++17', '/EHsc', '/W4', '/WX', '/DNOMINMAX', $source, "/Fo$object", "/Fe$binary", '/link', 'user32.lib', 'advapi32.lib', 'ole32.lib')
 ('cl ' + ($compileArguments -join ' ')) | Set-Content -LiteralPath (Join-Path $evidence 'command.txt')
 & cl @compileArguments *> (Join-Path $evidence 'compile.log')
 if ($LASTEXITCODE -ne 0) { throw "Native compilation failed; see $evidence" }

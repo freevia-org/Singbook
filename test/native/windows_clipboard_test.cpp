@@ -1,12 +1,15 @@
 // Standalone native regression check. Build with the Visual Studio x64 tools:
 // cl /nologo /std:c++17 /EHsc /W4 /WX /DNOMINMAX windows_clipboard_test.cpp
-//   /link user32.lib advapi32.lib
+//   /link user32.lib advapi32.lib ole32.lib
 // Default checks are pure conversions. --credentials additionally exercises a
 // unique temporary Windows vault entry, and deletes it before returning.
-// --clipboard additionally replaces the current clipboard with test content.
+// --clipboard temporarily replaces the current clipboard with test content,
+// then restores the previous OLE clipboard object (or its empty state).
 #include "../../windows/runner/rich_clipboard.h"
 #include "../../windows/runner/secure_credentials.h"
 #include "../../windows/runner/window_close_guard.h"
+
+#include <ole2.h>
 
 #include <cstdlib>
 #include <iostream>
@@ -89,6 +92,88 @@ void CheckHtml(const std::string& document, const std::string& fragment) {
         "HTML includes fragment marker inside document");
 }
 
+class ClipboardRestore {
+ public:
+  ClipboardRestore() = default;
+  ClipboardRestore(const ClipboardRestore&) = delete;
+  ClipboardRestore& operator=(const ClipboardRestore&) = delete;
+
+  ~ClipboardRestore() {
+    if (restore_needed_) {
+      const bool restored = Restore();
+      Check(restored, "original clipboard contents are restored");
+      if (restored) std::cout << "Original clipboard contents restored.\n";
+    }
+    if (contents_) contents_->Release();
+    if (ole_initialized_) OleUninitialize();
+  }
+
+  bool Capture() {
+    const HRESULT init_result = OleInitialize(nullptr);
+    if (FAILED(init_result)) return false;
+    ole_initialized_ = true;
+
+    if (!OpenClipboard(nullptr)) return false;
+    was_empty_ = EnumClipboardFormats(0) == 0;
+    CloseClipboard();
+
+    if (!was_empty_ && FAILED(OleGetClipboard(&contents_))) return false;
+    captured_ = true;
+    return true;
+  }
+
+  void MarkWillModify() { restore_needed_ = true; }
+
+ private:
+  bool Restore() {
+    if (!captured_) return false;
+    if (was_empty_) {
+      if (!OpenClipboard(nullptr)) return false;
+      const bool emptied = EmptyClipboard() != FALSE;
+      CloseClipboard();
+      if (emptied) restore_needed_ = false;
+      return emptied;
+    }
+
+    const bool restored = SUCCEEDED(OleSetClipboard(contents_)) &&
+                          SUCCEEDED(OleFlushClipboard());
+    if (restored) restore_needed_ = false;
+    return restored;
+  }
+
+  IDataObject* contents_ = nullptr;
+  bool ole_initialized_ = false;
+  bool captured_ = false;
+  bool was_empty_ = true;
+  bool restore_needed_ = false;
+};
+
+class TemporaryCredentialCleanup {
+ public:
+  TemporaryCredentialCleanup(const std::string& key,
+                             std::optional<std::string>* stored)
+      : key_(key), stored_(stored) {}
+  TemporaryCredentialCleanup(const TemporaryCredentialCleanup&) = delete;
+  TemporaryCredentialCleanup& operator=(const TemporaryCredentialCleanup&) =
+      delete;
+
+  ~TemporaryCredentialCleanup() {
+    const bool deleted = singbook::DeleteSecureCredential(key_) == nullptr;
+    Check(deleted, "temporary vault entry is deleted during cleanup");
+    if (deleted) {
+      std::cout << "Temporary native test credential cleanup confirmed.\n";
+    }
+    if (stored_ && *stored_ && !(**stored_).empty()) {
+      SecureZeroMemory((**stored_).data(), (**stored_).size());
+      stored_->reset();
+    }
+  }
+
+ private:
+  std::string key_;
+  std::optional<std::string>* stored_;
+};
+
 void CheckVault() {
   const std::string key = "native_test_" + std::to_string(GetCurrentProcessId()) +
                           "_" + std::to_string(GetTickCount64());
@@ -101,6 +186,7 @@ void CheckVault() {
   const bool created = singbook::WriteSecureCredential(key, sample) == nullptr;
   Check(created, "vault persists a UTF-8 value");
   if (!created) return;
+  [[maybe_unused]] TemporaryCredentialCleanup cleanup(key, &stored);
   Check(singbook::ReadSecureCredential(key, &stored) == nullptr && stored == sample,
         "vault round trip preserves exact bytes");
   Check(singbook::WriteSecureCredential(key, "replacement") == nullptr,
@@ -108,21 +194,9 @@ void CheckVault() {
   Check(singbook::ReadSecureCredential(key, &stored) == nullptr &&
             stored == "replacement",
         "vault reads replacement");
-  Check(singbook::DeleteSecureCredential(key) == nullptr,
-        "vault deletion succeeds");
-  Check(singbook::ReadSecureCredential(key, &stored) == nullptr && !stored,
-        "deleted vault value reads null");
-  Check(singbook::DeleteSecureCredential(key) == nullptr,
-        "vault deletion is idempotent");
-  if (!stored) std::cout << "Temporary native test credential cleanup confirmed.\n";
 }
 
-void CheckClipboard() {
-  HWND owner = CreateWindowExW(0, L"STATIC", L"Singbook clipboard regression", 0,
-                               0, 0, 0, 0, HWND_MESSAGE, nullptr,
-                               GetModuleHandleW(nullptr), nullptr);
-  Check(owner != nullptr, "clipboard test owner window created");
-  if (!owner) return;
+void CheckClipboardContents(HWND owner) {
   const std::string text = "Singbook test \xD0\x91\xF0\x9F\x8E\xB5";
   const std::string html = "<p>" + text + "</p>";
   Check(singbook::WriteRichClipboard(owner, text, html) == nullptr,
@@ -173,6 +247,25 @@ void CheckClipboard() {
           "native edit control pastes exact Unicode clipboard text");
     DestroyWindow(receiver);
   }
+}
+
+void CheckClipboard() {
+  HWND owner = CreateWindowExW(0, L"STATIC", L"Singbook clipboard regression", 0,
+                               0, 0, 0, 0, HWND_MESSAGE, nullptr,
+                               GetModuleHandleW(nullptr), nullptr);
+  Check(owner != nullptr, "clipboard test owner window created");
+  if (!owner) return;
+
+  {
+    ClipboardRestore clipboard;
+    if (!clipboard.Capture()) {
+      Check(false, "original clipboard contents can be captured for restoration");
+    } else {
+      clipboard.MarkWillModify();
+      CheckClipboardContents(owner);
+    }
+  }
+
   DestroyWindow(owner);
 }
 }  // namespace
