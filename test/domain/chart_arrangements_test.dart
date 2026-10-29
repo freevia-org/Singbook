@@ -39,6 +39,19 @@ TUNED HALF STEP DOWN - Eb Ab Db Gb Bb Eb
     expect(views.last.metadata['capo'], 0);
   });
 
+  test('a retuning note without notes names the lowered pitches', () {
+    for (final (note, tuning) in [
+      ('Tuned half step down', 'Eb Ab Db Gb Bb Eb'),
+      ('Half step down tuning', 'Eb Ab Db Gb Bb Eb'),
+      ('Tuned down a whole step', 'D G C F A D'),
+    ]) {
+      final views = splitChartArrangements(
+        _source('[C]amber harbor\n$note\n[D]amber harbor'),
+      );
+      expect(views.last.metadata['tuning'], tuning, reason: note);
+    }
+  });
+
   test('a retuning note before any chords splits nothing', () {
     expect(
       splitChartArrangements(

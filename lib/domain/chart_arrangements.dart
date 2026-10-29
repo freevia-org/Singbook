@@ -46,17 +46,20 @@ const _romanCapos = {
 };
 const _arrangementFields = {'capo', 'key', 'tuning', 'timeSignature'};
 
-/// The tuning a retuning note declares: its string notes when it lists
-/// six, otherwise the note itself.
+/// The tuning a retuning note declares, as string pitches so it compares
+/// with a source that lists them: the six notes it names, else standard
+/// tuning lowered a half or a whole step. Anything else stays the note.
 String? _detunedValue(String line) {
   final match = _detunedLine.firstMatch(line);
   if (match == null) return null;
   final notes = RegExp(
     r'[A-G][#b]?',
   ).allMatches(match.group(1)!).map((note) => note[0]!).toList();
-  return notes.length == 6
-      ? notes.join(' ')
-      : line.trim().replaceAll(RegExp(r'[\[\]]'), '');
+  if (notes.length == 6) return notes.join(' ');
+  final text = line.toLowerCase();
+  if (RegExp(r'\b(?:half|1/2)\b').hasMatch(text)) return 'Eb Ab Db Gb Bb Eb';
+  if (RegExp(r'\b(?:whole|full)\b').hasMatch(text)) return 'D G C F A D';
+  return line.trim().replaceAll(RegExp(r'[\[\]]'), '');
 }
 
 int? _capoValue(String line) {
