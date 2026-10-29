@@ -8,7 +8,7 @@ name: Package and smoke test Microsoft Store release
 # Adding a release: add a `release` choice and a matching block in the
 # "Resolve release pins" step. Releases whose CI artifact pins were supplied at
 # dispatch time (29, 30) still require all five artifact inputs; releases with
-# frozen pins (32, 33, 34, 35, 36, 37, 38, 44, 45) reject overrides.
+# frozen pins (32, 33, 34, 35, 36, 37, 38, 44, 45, 46) reject overrides.
 #
 # Start this package and smoke test explicitly from the Actions tab.
 on:
@@ -19,7 +19,7 @@ on:
         required: true
         default: '45'
         type: choice
-        options: ['29', '30', '32', '33', '34', '35', '36', '37', '38', '44', '45']
+        options: ['29', '30', '32', '33', '34', '35', '36', '37', '38', '44', '45', '46']
       ci_run_id:
         description: Successful CI run ID for the pinned release commit (releases 29 and 30 only)
         required: false
@@ -249,6 +249,23 @@ jobs:
                 CI_ARTIFACT_DIGEST = 'sha256:0965bff4e834eb5bc48a459ffae09d6a88b008efadc7f3b0df0f5963ece9d9f2'
                 PORTABLE_MANIFEST_SHA256 = '380adc5e245d5c9b0da14af8ef2a89aad674620b1d05c15afc2b1d33648f2622'
                 PORTABLE_ZIP_SHA256 = '413f7d5612a3e55b6b0976ad4d77f0e82046d09d40b20c23e6f05dbf92a53590'
+              }
+            }
+            '46' {
+              # Exact successful PR233 CI artifact; the merged main tree is verified identical.
+              $pins = [ordered]@{
+                RELEASE_HEAD_SHA = '72dd71fe79aef8af8edc2b71ecc1845a778b3e87'
+                RELEASE_COMPILED_SOURCE_SHA = '72dd71fe79aef8af8edc2b71ecc1845a778b3e87'
+                RELEASE_SOURCE_TREE = '87b59106b3bfbe56b8e479b90582442a2d953eea'
+                RELEASE_PRODUCT_VERSION = '0.2.32+46'
+                RELEASE_CI_BRANCH = 'codex/release-46-version'
+              }
+              $artifactPins = [ordered]@{
+                CI_RUN_ID = '40814477360'
+                CI_ARTIFACT_ID = '12872757238'
+                CI_ARTIFACT_DIGEST = 'sha256:abb22e49ec69fdc55710d788361ab6f31399230986791d599eb2bd74762bb5a8'
+                PORTABLE_MANIFEST_SHA256 = 'b44d4fc70f93711166dd2b1e9102485f456ed893432adf296a3813389b4271fe'
+                PORTABLE_ZIP_SHA256 = '00bde55a35d7e83e48e953f423a359d467620e6d640429c6ea1f59780ed35c19'
               }
             }
             default { throw "Unknown Store release '$($env:RELEASE)'." }
