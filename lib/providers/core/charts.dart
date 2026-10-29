@@ -558,9 +558,10 @@ class UltimateGuitarProvider implements LyricsProvider {
   }
 
   /// Whether a chord row holds nothing besides its chords but footnote
-  /// marks ("*"), so its chords still belong over the lyric row below.
+  /// marks ("*") or comma and dash separators, so its chords still belong
+  /// over the lyric row below. Bar lines and repeat counts keep it apart.
   static bool _chordRowResidue(String residual) =>
-      RegExp(r'^[\s*]*$').hasMatch(residual);
+      RegExp(r'^[\s*,\-]*$').hasMatch(residual);
 
   static String _expand(String value, int start) {
     final result = StringBuffer();
