@@ -20,7 +20,7 @@ jobs:
   # mock-only regression groups that run with the source catalog disabled.
   regressions:
     name: Wikisource ${{ matrix.group }}
-    runs-on: ubuntu-latest
+    runs-on: singbook-i5-linux
     timeout-minutes: 20
     strategy:
       fail-fast: false
