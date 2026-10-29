@@ -1,0 +1,19 @@
+{
+  "proposalOnly": true,
+  "productionConfigChanged": false,
+  "candidate": {
+    "id": "mutopia",
+    "name": "Mutopia Project",
+    "firstSeen": "2026-10-29",
+    "lastChecked": "2026-10-29",
+    "status": "deferred",
+    "documentation": [
+      "https://www.mutopiaproject.org/",
+      "https://www.mutopiaproject.org/legal.html",
+      "https://www.mutopiaproject.org/contribute.html",
+      "https://github.com/MutopiaProject/MutopiaProject"
+    ],
+    "endpoint": "https://www.mutopiaproject.org",
+    "reason": "Open score-edition source with publisher-displayed2124 total pieces; lyric/chord subset size and overlap are unmeasured. Four bounded ordinary local HTTPS reads on2026-10-29 returned200 with no retries: detail and LilyPond source for secular vocal editions2244 and2243. Both publisher records and source headers label Public Domain and retain separate composer, lyricist, arranger, source edition and revision identity. Files contain2/1 lyric-underlay blocks and no explicit chordmode blocks. This is field discovery, not full native extraction or recording identity proof. LilyPond is executable notation: a bounded inert parser must never execute Scheme/includes and must handle language/underlay/version semantics rather than flattening streams or inventing recording timing/chords. Defer pending compatible parser, search/identity, two full native extraction canaries, attribution/licensing, persistence/export/UI and cloud qualification. No source registered or activated."
+  }
+}

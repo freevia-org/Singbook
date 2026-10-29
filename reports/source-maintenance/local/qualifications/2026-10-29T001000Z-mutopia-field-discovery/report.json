@@ -1,0 +1,121 @@
+{
+  "schemaVersion": 1,
+  "qualificationKind": "field_discovery_only",
+  "runtime": "local Python standard-library HTTPS; not native provider or managed cloud",
+  "measuredAt": "2026-10-29T00:10:00.742386+00:00",
+  "sourceCommitReference": "8c852e873f9c82c1fcf6fe336e22f7bc690de9c9",
+  "candidate": "Mutopia Project",
+  "sourceRegistered": false,
+  "sourceActivated": false,
+  "httpAttempts": 4,
+  "transportRetries": 0,
+  "documentationWebReadsIncludedInHttpCount": false,
+  "rawDocumentsPublished": false,
+  "cases": [
+    {
+      "sourceEditionId": "2244",
+      "editionRevisionLabel": "Mutopia-2019/07/12-2244",
+      "title": "Notte e giorno (Don Giovanni)",
+      "composerCredit": "Wolfgang Amadeus Mozart (1756-1791)",
+      "lyricistCredit": "Lorenzo da Ponte (1749-1838)",
+      "arrangerCredit": "Natalia MacFarren (1826-1916)",
+      "sourceEditionCreditRetained": true,
+      "licenseLabel": "Public Domain",
+      "lilypondVersion": "2.18.2",
+      "lyricmodeOccurrences": 2,
+      "lyricstoOccurrences": 2,
+      "chordmodeOccurrences": 0,
+      "includeCount": 0,
+      "containsSchemeSyntax": true,
+      "responses": [
+        {
+          "kind": "detail",
+          "url": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2244",
+          "status": 200,
+          "contentType": "text/html; charset: utf8",
+          "bytes": 6241,
+          "sha256": "6eb22f96922bb59f30211f0466e10e7e513b47ef9e6f64643c0317238072db5a",
+          "measuredAt": "2026-10-29T00:09:54.038775+00:00"
+        },
+        {
+          "kind": "lilypond",
+          "url": "https://www.mutopiaproject.org/ftp/MozartWA/KV527/NotteEGiorno/NotteEGiorno.ly",
+          "status": 200,
+          "contentType": "text/x-lilypond",
+          "bytes": 13611,
+          "sha256": "a4528c885c201f7e5408c6e1d2873372a97f020cc0b3fa3809f0c4e02caf5541",
+          "measuredAt": "2026-10-29T00:09:55.973636+00:00"
+        }
+      ]
+    },
+    {
+      "sourceEditionId": "2243",
+      "editionRevisionLabel": "Mutopia-2019/07/12-2243",
+      "title": "What power art thou (King Arthur)",
+      "composerCredit": "Henry Purcell (1659-1695)",
+      "lyricistCredit": "John Dryden (1631-1700)",
+      "arrangerCredit": "Sir George Alexander Macfarren (1813-1887)",
+      "sourceEditionCreditRetained": true,
+      "licenseLabel": "Public Domain",
+      "lilypondVersion": "2.18.2",
+      "lyricmodeOccurrences": 1,
+      "lyricstoOccurrences": 1,
+      "chordmodeOccurrences": 0,
+      "includeCount": 0,
+      "containsSchemeSyntax": true,
+      "responses": [
+        {
+          "kind": "detail",
+          "url": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2243",
+          "status": 200,
+          "contentType": "text/html; charset: utf8",
+          "bytes": 6316,
+          "sha256": "751b19cc5cfb90f5dc68eee0071b3902257c9079dafb7df7fe5d2c0eb08dcab0",
+          "measuredAt": "2026-10-29T00:09:57.645613+00:00"
+        },
+        {
+          "kind": "lilypond",
+          "url": "https://www.mutopiaproject.org/ftp/PurcellH/Z628/WhatPowerArtThou/WhatPowerArtThou.ly",
+          "status": 200,
+          "contentType": "text/x-lilypond",
+          "bytes": 10441,
+          "sha256": "79ab4ad4c8daaf170432629653cbd8b1d3b840a8ecf5cbf6369b2a700953e8b4",
+          "measuredAt": "2026-10-29T00:09:59.213783+00:00"
+        }
+      ]
+    }
+  ],
+  "documentation": [
+    {
+      "url": "https://www.mutopiaproject.org/",
+      "finding": "Publisher displays2124 total score editions,395 guitar entries and110 folk entries. Publisher figures, not independently counted lyrics/chord coverage."
+    },
+    {
+      "url": "https://www.mutopiaproject.org/legal.html",
+      "finding": "Publisher permits reuse and modification subject to each edition license; both selected editions explicitly label Public Domain."
+    },
+    {
+      "url": "https://www.mutopiaproject.org/contribute.html",
+      "finding": "Publisher documents named header fields for composition, lyricist, instrument, source edition, contributor and licensing, and publishes source in its official GitHub repository."
+    }
+  ],
+  "interpretation": [
+    "Stable numeric IDs identify score editions, not recordings, albums or universal song IDs. Preserve composer, lyricist, arranger and typesetter roles separately.",
+    "The two source files contain lyric-underlay grammar; two lyric streams in2244 must not be blindly concatenated or represented as one language/version.",
+    "Neither canary contains an explicit chordmode block; do not infer chord charts, chord accuracy or recording timing from notation.",
+    "LilyPond includes executable constructs. Read only as bounded inert data: never execute Scheme, LilyPond source, includes or compiler commands to perform app extraction.",
+    "HTML/header field inspection is not full native extraction, search matching, persistence, ChordPro compatibility, musical accuracy or managed-cloud reachability.",
+    "Purcell detail page lists birth year1658 while source credit says1659. Preserve both raw source facts rather than silently canonicalizing the conflicting date.",
+    "Web reader rejected text/x-lilypond as an unsupported format; ordinary direct HTTPS returned200. This was a reader-format limitation, not an access block."
+  ],
+  "remainingGates": [
+    "Bounded non-executing lyric-underlay parser with explicit supported grammar and variant/language handling",
+    "Search/edition identity, two independent full native extraction canaries and per-edition licensing/attribution",
+    "Original source retention, save/reopen/export and UI verification",
+    "Managed-cloud reachability and compatible catalog/app release"
+  ],
+  "privateFieldReportSha256": "c8e759bf0c2282f337b6eeca4ff40732517ed2739d301c34959cacdaa3e22412",
+  "productionReportsOrCatalogsChanged": false,
+  "sdkOrDeviceOperations": 0,
+  "pythonVersion": "3.13.14"
+}
