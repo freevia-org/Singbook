@@ -3768,7 +3768,17 @@ SongDocument combineSources(
     origins['sections'] = sectionSourceIds.first;
     fieldContributors['sections'] = sectionSourceIds.toSet();
   }
-  final sourcesById = {for (final source in matching) source.id: source};
+  // A search-evidence entry can share its ID with the fetched source; the
+  // fetched one carries the chart and its key shift.
+  final sourcesById = <String, SourceResult>{};
+  for (final source in matching) {
+    final known = sourcesById[source.id];
+    if (known == null ||
+        known.extra['searchEvidenceOnly'] == true &&
+            source.extra['searchEvidenceOnly'] != true) {
+      sourcesById[source.id] = source;
+    }
+  }
   final arrangementSourceIds = <String>{best.id};
   for (final sourceId in chordSourceIds) {
     final source = sourcesById[sourceId];

@@ -139,6 +139,33 @@ void main() {
     expect(doc.metadata['key'], 'E');
   });
 
+  test('a chart found again by search keeps its key shift', () {
+    const candidate = SongCandidate(
+      providerId: 'ug',
+      id: 'ug',
+      title: 'Harbor Song',
+      artist: 'Test Artist',
+    );
+    final chart = SourceResult(
+      candidate: candidate,
+      body: _inG,
+      matchKind: MatchKind.sameSong,
+      metadata: const {'key': 'G'},
+      extra: {
+        'keyConsensus': false,
+        'keyShift': 9,
+        // Discovery saw the same chart among its search candidates.
+        'discoveryEvidence': {
+          'searchCandidates': [
+            {'candidate': candidate.toJson()},
+          ],
+        },
+      },
+    );
+    final doc = combineSources(_selected, [_source('lyrics', _lyrics), chart]);
+    expect(doc.extra['chordKeyShifts'], {chart.id: 9});
+  });
+
   test('a label contradicting its chords can settle the key', () {
     final inC = transposeBody(_clearE, 8);
     // The C chart says it is in E; with the E chart that is a majority.
