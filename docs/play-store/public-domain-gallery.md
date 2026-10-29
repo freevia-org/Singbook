@@ -26,6 +26,13 @@ The raw 1080×1920 artifact contains these checkpoints:
 4. `04-setlists-device.png` — saved two-song rehearsal setlist.
 5. `05-appearance-device.png` — actual appearance settings.
 
+The tagged Android Gradle build exposes `singbookFixtureE2e` as a Debug-only
+opt-in. The capture script sets it via `ORG_GRADLE_PROJECT_singbookFixtureE2e`
+to exclude the `cronet-shared` dependency during this isolated test build;
+without it, Android Gradle Plugin 9 rejects duplicate `org.chromium.net`
+namespaces from `cronet-api` and `cronet-shared`. Release dependency packaging
+is not changed. The capture does not exercise online providers.
+
 The artifact also includes SHA-256 hashes, the Flutter test log, and native
 full-device PNGs. Android status/navigation bars are part of the originals.
 Any later crop or color conversion needs separate pixel-level verification and
