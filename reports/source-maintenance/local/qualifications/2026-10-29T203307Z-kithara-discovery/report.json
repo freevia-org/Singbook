@@ -1,0 +1,70 @@
+{
+  "sourceId": "candidate:kithara",
+  "phase": "anonymous-public-document-discovery-only",
+  "runtime": "local-windows-python",
+  "repositoryCommit": "ac8781ffb8ab0d36be796a7e2f63d91281cc029d",
+  "atUtc": "2026-10-29T20:33:07.697188+00:00",
+  "requests": [
+    {
+      "url": "https://kithara.to/robots.txt",
+      "atUtc": "2026-10-29T20:33:07.331238+00:00",
+      "status": 200,
+      "headers": {
+        "Content-Type": "text/plain; charset=utf-8",
+        "Content-Length": "2676"
+      },
+      "bodyBytes": 2676,
+      "sha256": "3073d1e371afb3271c7666148766fedc5145f7d8440f7114062db79b7bd58add",
+      "error": null,
+      "retries": 0,
+      "offlineBrowserDenial": false
+    },
+    {
+      "url": "https://kithara.to/fi",
+      "atUtc": "2026-10-29T20:33:07.505450+00:00",
+      "status": 403,
+      "headers": {
+        "Content-Type": "text/html; charset=UTF-8"
+      },
+      "bodyBytes": 6314,
+      "sha256": "e2bca7c79623ac81742f70c813baf1a0bf79ffde632003cbdb0a96c677af87ad",
+      "error": "http_error",
+      "retries": 0,
+      "offlineBrowserDenial": false
+    }
+  ],
+  "requestCount": 2,
+  "retries": 0,
+  "cookiesOrCredentialsUsed": false,
+  "adapterExtractionCanaries": 0,
+  "policy": {
+    "state": "parsed",
+    "searchPageAllowed": true,
+    "crawlDelay": null
+  },
+  "publicSearchForms": [],
+  "activated": false,
+  "qualificationStatus": "blocked_before_song_extraction",
+  "targetPublicMain": "dc59d732b1aa6623b56aaecf0e5653959fee7cad",
+  "blockEvidence": {
+    "status": 403,
+    "title": "Attention Required! | Cloudflare",
+    "challengePlatformMarker": true
+  },
+  "publisherObservations": {
+    "homepage": "https://kithara.to/",
+    "reportedEntries": 45802,
+    "publisherUpdatedOn": "2026-10-25",
+    "countIsNotMeasuredUniqueCoverage": true,
+    "searchDocumentation": "https://kithara.to/fi",
+    "searchUsesGreekLettersAndIgnoresAccents": true,
+    "retrieval": "first-party pages through web reader; not local app transport proof",
+    "footerRightsScope": "site footer reserves rights; underlying work/arrangement rights unverified"
+  },
+  "decision": {
+    "status": "deferred",
+    "registered": false,
+    "cloudReachability": "untested",
+    "requiredNextGate": "publisher-supported automated access, bounded adapter and two independent extraction canaries before app integration"
+  }
+}
