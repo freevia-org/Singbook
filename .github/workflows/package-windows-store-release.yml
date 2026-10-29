@@ -51,7 +51,7 @@ concurrency:
 jobs:
   package-and-smoke:
     name: package-and-smoke (release ${{ inputs.release || '45' }})
-    runs-on: singbook-i5-windows
+    runs-on: windows-latest
     timeout-minutes: 25
     env:
       RELEASE: ${{ inputs.release || '45' }}
