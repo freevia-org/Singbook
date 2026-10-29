@@ -81,7 +81,7 @@ jobs:
         run: flutter pub get --enforce-lockfile --no-example
 
       - name: Test
-        run: flutter test --no-pub --exclude-tags=performance
+        run: flutter test --no-pub --exclude-tags=performance --concurrency=2
 
       - name: Verify isolated performance bounds
         run: >-
