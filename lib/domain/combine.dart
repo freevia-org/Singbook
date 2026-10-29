@@ -1462,58 +1462,7 @@ _corroboratedArrangementKeyClaims(SongDocument song) {
         !declaredKeyFitsChords(source.body, key as String, donorCapo)) {
       continue;
     }
-    var compatible = true;
-    for (final field in const ['capo', 'tuning', 'timeSignature']) {
-      final baseValue = _nonemptyFallback(
-        song.metadata[field],
-        selected.metadata[field],
-      );
-      final donorValue = _nonemptyFallback(
-        source.metadata[field],
-        source.candidate.metadata[field],
-      );
-      // An absent capo claim means the displayed chart defaults to zero.
-      // Treat an explicit capo 0 claim as compatible after its chord anchors
-      // have been corroborated against that unchanged chart.
-      if (field == 'capo' &&
-          !_hasMetadata(baseValue) &&
-          _hasMetadata(donorValue) &&
-          _isExplicitZeroCapo(donorValue)) {
-        continue;
-      }
-      // Match the chart overlay policy: an omitted tuning is compatible with
-      // ordinary standard guitar tuning. Alternate or conflicting tunings
-      // still need explicit agreement before a key can be borrowed.
-      if (field == 'tuning') {
-        if (!_compatibleChartTuning(baseValue, donorValue)) {
-          compatible = false;
-          break;
-        }
-        continue;
-      }
-      String normalize(Object? value) {
-        // ChordPro headers serialize list tuning as "[E, A, ...]". Compare
-        // those saved headers with the provider's equivalent string array.
-        if (field == 'tuning') {
-          final text = value is List ? value.join(' ') : value.toString();
-          return text
-              .toLowerCase()
-              .split(RegExp(r'[\s,\[\]]+'))
-              .where((note) => note.isNotEmpty)
-              .join(' ');
-        }
-        return value.toString().trim().toLowerCase();
-      }
-
-      // Unknown capo/tuning cannot prove that displayed shapes sound alike.
-      if ((_hasMetadata(baseValue) != _hasMetadata(donorValue)) ||
-          (_hasMetadata(baseValue) &&
-              normalize(baseValue) != normalize(donorValue))) {
-        compatible = false;
-        break;
-      }
-    }
-    if (!compatible) continue;
+    if (_arrangementKeySetupMismatchFields(song, source).isNotEmpty) continue;
     // A positively identified source key that agrees with a known harmony
     // reading of the saved chart does not depend on its lyric line layout.
     // Keep chord-anchor corroboration below for sparse or modulating charts.
@@ -1555,11 +1504,15 @@ _corroboratedArrangementKeyClaims(SongDocument song) {
       }
       if (contradicts) break;
     }
+    final soundingRoots = {
+      for (final root in roots)
+        ((int.parse(root) + _capoOf(donorCapo)) % 12).toString(),
+    };
     if (contradicts ||
         agreements < 3 ||
         roots.length < 3 ||
         matchedLines.length < 2 ||
-        !roots.contains(identity.split(':').first)) {
+        !soundingRoots.contains(identity.split(':').first)) {
       continue;
     }
     final claim = claims.putIfAbsent(
@@ -1591,6 +1544,135 @@ _corroboratedArrangementKeyClaims(SongDocument song) {
 ({String key, List<String> sourceIds})? corroboratedArrangementKey(
   SongDocument song,
 ) => _bestKeyClaim(song, _corroboratedArrangementKeyClaims(song));
+
+List<String> _arrangementKeySetupMismatchFields(
+  SongDocument song,
+  SourceResult source,
+) {
+  final selected =
+      song.selectedRecording ??
+      SongCandidate(
+        providerId: 'library',
+        id: song.id,
+        title: song.title,
+        artist: song.artist,
+      );
+  final mismatches = <String>[];
+  for (final field in const ['capo', 'tuning', 'timeSignature']) {
+    final baseValue = _nonemptyFallback(
+      song.metadata[field],
+      selected.metadata[field],
+    );
+    final donorValue = _nonemptyFallback(
+      source.metadata[field],
+      source.candidate.metadata[field],
+    );
+    if (field == 'capo' &&
+        !_hasMetadata(baseValue) &&
+        _hasMetadata(donorValue) &&
+        _isExplicitZeroCapo(donorValue)) {
+      continue;
+    }
+    if (field == 'tuning') {
+      if (!_compatibleChartTuning(baseValue, donorValue)) {
+        mismatches.add(field);
+      }
+      continue;
+    }
+    if (_hasMetadata(baseValue) != _hasMetadata(donorValue) ||
+        _hasMetadata(baseValue) &&
+            '$baseValue'.trim().toLowerCase() !=
+                '$donorValue'.trim().toLowerCase()) {
+      mismatches.add(field);
+    }
+  }
+  return mismatches;
+}
+
+/// Redacted setup diagnostics for evaluating chart key claims.
+List<JsonMap> arrangementKeySetupDiagnostics(SongDocument song) {
+  if (_hasMetadata(song.metadata['key']) ||
+      jsonMap(song.extra['fieldOrigins'])['key'] == 'user' ||
+      !song.hasChords) {
+    return const [];
+  }
+  final selected =
+      song.selectedRecording ??
+      SongCandidate(
+        providerId: 'library',
+        id: song.id,
+        title: song.title,
+        artist: song.artist,
+      );
+  final chordSourceIds =
+      (song.extra['chordSourceIds'] as List?)?.whereType<String>().toSet() ??
+      const <String>{};
+  final diagnostics = <JsonMap>[];
+  for (final source in song.sources) {
+    final declared = _keyIdentity(source.metadata['key']) != null
+        ? source.metadata['key']
+        : source.candidate.metadata['key'];
+    if (!source.hasChords || _keyIdentity(declared) == null) continue;
+    final chartCredit =
+        source.extra['requiresLyricsAgreement'] == true &&
+        chordSourceIds.contains(source.id) &&
+        _sameArrangedSong(source.candidate, selected);
+    final basicEligible =
+        (const {
+              MatchKind.sameSong,
+              MatchKind.sameRecording,
+            }.contains(source.matchKind) ||
+            source.matchKind == MatchKind.rejected &&
+                source.matchReason == 'incomplete_or_different_lyrics') &&
+        !source.hasPendingMatchCheck &&
+        (_sameSong(source.candidate, selected) || chartCredit) &&
+        _version(source.candidate.title) == _version(selected.title);
+    Object? selectedSetup(String field) =>
+        _nonemptyFallback(song.metadata[field], selected.metadata[field]);
+    Object? candidateSetup(String field) => _nonemptyFallback(
+      source.metadata[field],
+      source.candidate.metadata[field],
+    );
+    final diagnostic = <String, Object?>{
+      'sourceId': source.id,
+      'providerId': source.candidate.providerId,
+      'candidateKey': declared,
+      'basicEligible': basicEligible,
+      'keyFitsOwnChart': null,
+      'setupMismatchFields': <String>[],
+      'setupValues': {
+        for (final field in const ['capo', 'tuning', 'timeSignature'])
+          field: {
+            'selected': selectedSetup(field),
+            'candidate': candidateSetup(field),
+          },
+      },
+      'standardTuningDefaultCompatible': _compatibleChartTuning(
+        selectedSetup('tuning'),
+        candidateSetup('tuning'),
+      ),
+    };
+    diagnostics.add(diagnostic);
+    if (!basicEligible) continue;
+    final shift = jsonMap(song.extra['chordKeyShifts'])[source.id];
+    final shifted = shift is int && shift % 12 != 0;
+    final capo = candidateSetup('capo');
+    final key = shifted
+        ? declaredKeyAfterShift(source.body, declared as String, capo, shift)
+        : declared;
+    if (_keyIdentity(key) == null) continue;
+    final fits =
+        shifted || declaredKeyFitsChords(source.body, key as String, capo);
+    diagnostic['keyFitsOwnChart'] = fits;
+    if (fits) {
+      diagnostic['setupMismatchFields'] = _arrangementKeySetupMismatchFields(
+        song,
+        source,
+      );
+    }
+  }
+  return diagnostics;
+}
 
 /// Returns the best supported provider key for this song.
 ///

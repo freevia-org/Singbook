@@ -79,6 +79,45 @@ void main() {
     },
   );
 
+  test('capoed chart recovers its declared sounding key', () {
+    final chosen = _source('chosen', _body, metadata: {'capo': 1});
+    final donor = _source(
+      'capo-donor',
+      _donorBody,
+      metadata: {'key': 'Gm', 'capo': 1},
+    );
+    final combined = combineSources(_candidate, [
+      chosen,
+      donor,
+    ], preferredSourceId: chosen.id);
+    expect(combined.metadata['capo'], 1);
+    expect(combined.metadata['key'], 'Gm');
+    expect(combined.extra['fieldOrigins']['key'], donor.id);
+  });
+
+  test('setup diagnostics report only redacted key-gate facts', () {
+    final donor = _source(
+      'donor',
+      _donorBody,
+      metadata: {'key': 'F#m', 'timeSignature': '3/4'},
+    );
+    final song = _saved(
+      metadata: {
+        'tuning': ['E', 'A', 'D', 'G', 'B', 'E'],
+        'timeSignature': '4/4',
+      },
+      sources: [donor],
+    );
+    final diagnostics = arrangementKeySetupDiagnostics(song);
+    expect(diagnostics, hasLength(1));
+    expect(diagnostics.single['basicEligible'], isTrue);
+    expect(diagnostics.single['keyFitsOwnChart'], isTrue);
+    expect(diagnostics.single['setupMismatchFields'], ['timeSignature']);
+    expect(diagnostics.single.keys, isNot(contains('body')));
+    expect(diagnostics.single.keys, isNot(contains('lyrics')));
+    expect(diagnostics.single.keys, isNot(contains('chords')));
+  });
+
   test(
     'old saved chart resolves without rewriting metadata or source facts',
     () {
@@ -91,59 +130,62 @@ void main() {
     },
   );
 
-  test('known saved harmony can confirm a key without lyric line alignment', () {
-    const savedBody = '''
+  test(
+    'known saved harmony can confirm a key without lyric line alignment',
+    () {
+      const savedBody = '''
 [E] [A/E] [Am/E] [E]
 [E] [A/E] [C#m] [F#]
 [G#m] [F#] [B] [B/A]
 [E] [A/E] [C#m] [F#]
 [D/F#] [A/E] [E]
 ''';
-    final partialChart = _source(
-      'partial',
-      '[E]A different opening\n[A]Different middle\n[B]Different ending',
-      metadata: {'key': 'E'},
-    );
-    final conflictingChart = _source(
-      'conflicting',
-      partialChart.body,
-      metadata: {'key': 'D'},
-    );
+      final partialChart = _source(
+        'partial',
+        '[E]A different opening\n[A]Different middle\n[B]Different ending',
+        metadata: {'key': 'E'},
+      );
+      final conflictingChart = _source(
+        'conflicting',
+        partialChart.body,
+        metadata: {'key': 'D'},
+      );
 
-    expect(
-      corroboratedArrangementKey(
-        _saved(body: savedBody, sources: [partialChart]),
-      )?.key,
-      'E',
-    );
-    expect(
-      corroboratedArrangementKey(
-        _saved(body: savedBody, sources: [conflictingChart]),
-      ),
-      isNull,
-    );
-    final capoSong = SongDocument(
-      id: 'saved',
-      title: 'Song',
-      artist: 'Artist',
-      body: savedBody,
-      selectedRecording: const SongCandidate(
-        providerId: 'catalog',
-        id: 'song',
+      expect(
+        corroboratedArrangementKey(
+          _saved(body: savedBody, sources: [partialChart]),
+        )?.key,
+        'E',
+      );
+      expect(
+        corroboratedArrangementKey(
+          _saved(body: savedBody, sources: [conflictingChart]),
+        ),
+        isNull,
+      );
+      final capoSong = SongDocument(
+        id: 'saved',
         title: 'Song',
         artist: 'Artist',
-        metadata: {'capo': 2},
-      ),
-      sources: [
-        _source(
-          'capo-chart',
-          partialChart.body,
-          metadata: {'key': 'F#', 'capo': 2},
+        body: savedBody,
+        selectedRecording: const SongCandidate(
+          providerId: 'catalog',
+          id: 'song',
+          title: 'Song',
+          artist: 'Artist',
+          metadata: {'capo': 2},
         ),
-      ],
-    );
-    expect(corroboratedArrangementKey(capoSong)?.key, 'F#');
-  });
+        sources: [
+          _source(
+            'capo-chart',
+            partialChart.body,
+            metadata: {'key': 'F#', 'capo': 2},
+          ),
+        ],
+      );
+      expect(corroboratedArrangementKey(capoSong)?.key, 'F#');
+    },
+  );
 
   test('lyrics-only source key is usable without selecting its lyrics', () {
     const lyrics = 'Amber lanterns glow\nSilver rain returns';
@@ -159,20 +201,23 @@ void main() {
     expect(sourcedArrangementKey(song)?.sourceIds, ['key-provider:song']);
   });
 
-  test('lyrics-only key accepts omitted tuning and explicit zero capo defaults', () {
-    const lyrics = 'Amber lanterns glow\nSilver rain returns';
-    final source = _source(
-      'key-provider',
-      lyrics,
-      metadata: {'key': 'E', 'tuning': ' ', 'capo': ''},
-      candidateMetadata: {'tuning': 'E A D G B E', 'capo': 0},
-    );
+  test(
+    'lyrics-only key accepts omitted tuning and explicit zero capo defaults',
+    () {
+      const lyrics = 'Amber lanterns glow\nSilver rain returns';
+      final source = _source(
+        'key-provider',
+        lyrics,
+        metadata: {'key': 'E', 'tuning': ' ', 'capo': ''},
+        candidateMetadata: {'tuning': 'E A D G B E', 'capo': 0},
+      );
 
-    expect(
-      sourcedArrangementKey(_saved(body: lyrics, sources: [source]))?.key,
-      'E',
-    );
-  });
+      expect(
+        sourcedArrangementKey(_saved(body: lyrics, sources: [source]))?.key,
+        'E',
+      );
+    },
+  );
 
   test('lyrics-only source conflicts and unverified claims do not win', () {
     const lyrics = 'Amber lanterns glow\nSilver rain returns';
@@ -330,11 +375,10 @@ void main() {
         metadata: {'key': 'F#m'},
         matchKind: MatchKind.sameSong,
       );
-      final combined = combineSources(
-        _candidate,
-        [selected, groupedChart],
-        preferredSourceId: selected.id,
-      );
+      final combined = combineSources(_candidate, [
+        selected,
+        groupedChart,
+      ], preferredSourceId: selected.id);
 
       expect(combined.metadata['key'], 'F#m');
       expect(combined.body, _body);
@@ -376,12 +420,7 @@ void main() {
       matchReason: 'identity_mismatch',
     );
 
-    expect(
-      corroboratedArrangementKey(
-        _saved(sources: [rejected]),
-      ),
-      isNull,
-    );
+    expect(corroboratedArrangementKey(_saved(sources: [rejected])), isNull);
   });
 
   test('explicit saved key always wins', () {
@@ -503,22 +542,25 @@ void main() {
     );
   });
 
-  test('one provider cannot manufacture a key majority with duplicate claims', () {
-    const lyrics = 'Amber lanterns glow\nSilver rain returns';
-    expect(
-      sourcedArrangementKey(
-        _saved(
-          body: lyrics,
-          sources: [
-            _source('a1', lyrics, providerId: 'a', metadata: {'key': 'E'}),
-            _source('a2', lyrics, providerId: 'a', metadata: {'key': 'E'}),
-            _source('b', lyrics, metadata: {'key': 'G'}),
-          ],
+  test(
+    'one provider cannot manufacture a key majority with duplicate claims',
+    () {
+      const lyrics = 'Amber lanterns glow\nSilver rain returns';
+      expect(
+        sourcedArrangementKey(
+          _saved(
+            body: lyrics,
+            sources: [
+              _source('a1', lyrics, providerId: 'a', metadata: {'key': 'E'}),
+              _source('a2', lyrics, providerId: 'a', metadata: {'key': 'E'}),
+              _source('b', lyrics, metadata: {'key': 'G'}),
+            ],
+          ),
         ),
-      ),
-      isNull,
-    );
-  });
+        isNull,
+      );
+    },
+  );
 
   test('independent lyric claims can outweigh the chart-only majority', () {
     const lyrics = 'Amber lanterns glow\nSilver rain returns';
@@ -600,26 +642,32 @@ void main() {
     expect(corroboratedArrangementKey(_saved(sources: [donor]))?.key, 'F#m');
   });
 
-  test('blank resolved setup cannot hide candidate capo or alternate tuning', () {
-    final candidateCapo = _source(
-      'candidate-capo',
-      _donorBody,
-      metadata: {'key': 'F#m', 'capo': ''},
-      candidateMetadata: {'capo': 2},
-    );
-    final candidateTuning = _source(
-      'candidate-tuning',
-      _donorBody,
-      metadata: {'key': 'F#m', 'tuning': ' '},
-      candidateMetadata: {'tuning': 'D A D G B E'},
-    );
+  test(
+    'blank resolved setup cannot hide candidate capo or alternate tuning',
+    () {
+      final candidateCapo = _source(
+        'candidate-capo',
+        _donorBody,
+        metadata: {'key': 'F#m', 'capo': ''},
+        candidateMetadata: {'capo': 2},
+      );
+      final candidateTuning = _source(
+        'candidate-tuning',
+        _donorBody,
+        metadata: {'key': 'F#m', 'tuning': ' '},
+        candidateMetadata: {'tuning': 'D A D G B E'},
+      );
 
-    expect(corroboratedArrangementKey(_saved(sources: [candidateCapo])), isNull);
-    expect(
-      corroboratedArrangementKey(_saved(sources: [candidateTuning])),
-      isNull,
-    );
-  });
+      expect(
+        corroboratedArrangementKey(_saved(sources: [candidateCapo])),
+        isNull,
+      );
+      expect(
+        corroboratedArrangementKey(_saved(sources: [candidateTuning])),
+        isNull,
+      );
+    },
+  );
 
   test('standard tuning and omitted tuning support the same chart key', () {
     for (final tuning in [
@@ -686,7 +734,10 @@ void main() {
         [chosen],
       );
       expect(song.metadata['key'], 'F#m');
-      expect(song.extra['evidenceRanking']['chosenByField']['metadata.key']['sourceId'], 'catalog:song');
+      expect(
+        song.extra['evidenceRanking']['chosenByField']['metadata.key']['sourceId'],
+        'catalog:song',
+      );
     },
   );
 

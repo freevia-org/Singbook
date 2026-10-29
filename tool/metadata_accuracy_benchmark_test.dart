@@ -866,6 +866,15 @@ Map<String, Object?> _playerKeyResolution(SongDocument doc) {
     };
   }
 
+  final sourced = sourcedArrangementKey(doc);
+  if (sourced != null) {
+    return {
+      'key': sourced.key,
+      'source': 'sourcedArrangementKey',
+      'checkedEstimateBodyHashMatches': checkedBodyHashMatches,
+    };
+  }
+
   final shapeEstimate = _estimatedShapeKey(doc);
   if (shapeEstimate.key != null) {
     return {
@@ -1901,6 +1910,46 @@ void main() {
     expect(_playerKeyResolution(inferred), {
       'key': 'E',
       'source': 'rawChordEstimate',
+      'checkedEstimateBodyHashMatches': null,
+    });
+  });
+
+  test('player key report includes a corroborated sourced arrangement key', () {
+    const selected = SongCandidate(
+      providerId: 'catalog',
+      id: 'sourced-key',
+      title: 'Fixture',
+      artist: 'Fixture',
+    );
+    const chart = '''
+[E]Amber lanterns [A/E]glow tonight
+[C#m]Silver rain [F#]returns in spring
+[G#m]Morning [B]light is on the water
+[D/F#]Evening [E]brings the song
+''';
+    final song = SongDocument(
+      id: 'sourced-key',
+      title: selected.title,
+      artist: selected.artist,
+      body: chart,
+      sources: [
+        SourceResult(
+          candidate: const SongCandidate(
+            providerId: 'chart',
+            id: 'fixture-chart',
+            title: 'Fixture',
+            artist: 'Fixture',
+          ),
+          body: chart,
+          metadata: const {'key': 'E'},
+          matchKind: MatchKind.sameSong,
+        ),
+      ],
+      selectedRecording: selected,
+    );
+    expect(_playerKeyResolution(song), {
+      'key': 'E',
+      'source': 'sourcedArrangementKey',
       'checkedEstimateBodyHashMatches': null,
     });
   });
@@ -3411,9 +3460,12 @@ Future<void> _benchmark() async {
         'normalizedLyricsSha256': lyricsHash,
         'key': key,
         'playerKeyResolution': playerKeyResolution,
+        'arrangementKeySetupDiagnostics': arrangementKeySetupDiagnostics(doc),
         'keyOrigin': keyOrigin,
         'keySourceIds': keySourceIds,
-        'keyEvidence': doc.metadata['key'] != null
+        'keyEvidence':
+            doc.metadata['key'] != null ||
+                playerKeyResolution['source'] == 'sourcedArrangementKey'
             ? 'source'
             : _estimatedShapeKey(doc).evidence,
         'keyClaimScope': key == null ? null : keyClaimScope,
