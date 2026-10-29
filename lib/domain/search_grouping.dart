@@ -276,11 +276,15 @@ class SearchRecordingGroup {
   );
 }
 
+/// Metadata keys holding a search row's displayed album and length, read
+/// only when the combined song states none of its own.
+const rowAlbumKey = 'searchRowAlbum', rowDurationKey = 'searchRowDuration';
+
 /// [candidate] with a search row's displayed [album] and [durationSeconds]
 /// where it has none of its own, so the opened song keeps the facts shown in
 /// search. A group's members never disagree on a known album. They are
-/// display metadata only: the row's own fields still decide which sources
-/// match it, as another member's album or length is not its identity.
+/// display facts only: discovery and matching never read them, as another
+/// member's album or length is not this row's identity.
 SongCandidate withRowFacts(
   SongCandidate candidate, {
   String? album,
@@ -300,8 +304,8 @@ SongCandidate withRowFacts(
     url: candidate.url,
     metadata: {
       ...candidate.metadata,
-      'album': ?(addAlbum ? album : null),
-      'durationSeconds': ?(addDuration ? durationSeconds : null),
+      rowAlbumKey: ?(addAlbum ? album : null),
+      rowDurationKey: ?(addDuration ? durationSeconds : null),
     },
     recordingIds: candidate.recordingIds,
     extra: candidate.extra,

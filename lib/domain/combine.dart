@@ -10,6 +10,7 @@ import 'artist_credit.dart';
 import 'reviewed_chart_artist.dart';
 import 'metadata_artist_credit.dart';
 import 'published_name_alias.dart';
+import 'search_grouping.dart' show rowAlbumKey, rowDurationKey;
 import 'arrangement_context.dart';
 import 'contextual_chart_lyrics.dart';
 import 'compact_chord_alignment.dart';
@@ -3717,7 +3718,7 @@ SongDocument combineSources(
   final metadata = <String, dynamic>{
     ...selected.metadata,
     if (selected.album != null) 'album': selected.album,
-  };
+  }..removeWhere((key, _) => key == rowAlbumKey || key == rowDurationKey);
   metadata.removeWhere((_, value) => !_hasMetadata(value));
   final selectedDuration =
       _validDuration(selected.durationSeconds) ??
@@ -4214,6 +4215,18 @@ SongDocument combineSources(
         )
       : (body: sectioned, lines: 0);
   final finalBody = filled.body;
+  // The search row's album and length fill only what no source stated.
+  metadata.removeWhere((key, _) => key == rowAlbumKey || key == rowDurationKey);
+  for (final (field, value) in [
+    ('album', selected.metadata[rowAlbumKey]),
+    ('durationSeconds', _validDuration(selected.metadata[rowDurationKey])),
+  ]) {
+    if (_hasMetadata(metadata[field]) || value is! Object) continue;
+    if (value is String && value.trim().isEmpty) continue;
+    metadata[field] = value;
+    origins[field] = selected.identity;
+    fieldContributors[field] = {selected.identity};
+  }
   final song = SongDocument(
     id: newId(),
     title: selected.title,

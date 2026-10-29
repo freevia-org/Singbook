@@ -55,8 +55,8 @@ void main() {
       _row('genius'),
     ], preferredProviderId: 'genius').single;
     expect(group.selection.identity, 'genius:1');
-    expect(group.selection.metadata['album'], 'Demo Album');
-    expect(group.selection.metadata['durationSeconds'], 269);
+    expect(group.selection.metadata[rowAlbumKey], 'Demo Album');
+    expect(group.selection.metadata[rowDurationKey], 269);
     // Borrowed facts do not become the row's identity.
     expect(group.selection.album, isNull);
     expect(group.selection.durationSeconds, isNull);
