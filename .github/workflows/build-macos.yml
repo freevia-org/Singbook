@@ -41,7 +41,17 @@ jobs:
           -derivedDataPath build/macos CODE_SIGNING_ALLOWED=NO build
       - name: Verify universal executable
         run: |
-          lipo build/macos/Build/Products/Release/Singbook.app/Contents/MacOS/Singbook -verify_arch arm64 x86_64
+          executable='build/macos/Build/Products/Release/Singbook.app/Contents/MacOS/Singbook'
+          architectures="$(lipo -archs "$executable")"
+          for architecture in arm64 x86_64; do
+            case " $architectures " in
+              *" $architecture "*) ;;
+              *)
+                echo "::error::Expected $architecture in universal executable; found: $architectures"
+                exit 1
+                ;;
+            esac
+          done
       - name: Preserve compile output
         uses: actions/upload-artifact@v7
         with:

@@ -36,10 +36,11 @@ runtimes. Keep the entire extracted `Singbook` directory together.
 Packaging alone does not establish clean-machine runtime acceptance.
 
 The executable is under `build/windows/x64/runner/Debug/` with Flutter's
-runtime DLLs and `data/` directory beside it. The Windows CI job compiles this
-release bundle on `windows-latest`. Its required runtime/asset manifest and ZIP
-are preserved as a workflow artifact. Source-only packaging changes still need a
-successful release build and extracted-bundle acceptance.
+runtime DLLs and `data/` directory beside it. The manual Windows CI job compiles
+this release bundle on the dedicated `singbook-i5-windows` runner. Its required
+runtime/asset manifest and ZIP are preserved as a workflow artifact. Source-only
+packaging changes still need a successful release build and extracted-bundle
+acceptance.
 
 ## Current scope
 

@@ -87,6 +87,7 @@ class ProviderTransport {
   final Set<Future<void>> _inFlight = {};
   final Map<Future<void>, void Function()> _aborters = {};
   bool _closed = false;
+  final Set<Completer<void>> _waiters = {};
   Future<void>? _closing;
 
   Future<String> getText(
@@ -303,12 +304,71 @@ class ProviderTransport {
   String _rateKey(String host) =>
       host == 'www.musicbrainz.org' ? 'musicbrainz.org' : host;
 
+  String? _header(Map<String, String> headers, String name) {
+    final values = headers.entries
+        .where((entry) => entry.key.toLowerCase() == name)
+        .map((entry) => entry.value.trim())
+        .toSet();
+    return values.length == 1 ? values.single : null;
+  }
+
+  int? _windowNumber(Map<String, String> headers, String name) {
+    final value = _header(headers, name);
+    if (value == null || !RegExp(r'^[0-9]{1,10}$').hasMatch(value)) {
+      return null;
+    }
+    return int.tryParse(value);
+  }
+
+  Duration? _publisherDelay(int status, Map<String, String> headers) {
+    Duration? delay;
+    if (status == 429 || status == 503) {
+      final seconds = int.tryParse(_header(headers, 'retry-after') ?? '');
+      if (seconds != null) {
+        delay = Duration(seconds: seconds.clamp(0, 86400));
+      }
+    }
+    // Reset-In is relative to response receipt, so it does not depend on the
+    // device's wall clock agreeing with the publisher. A non-exhausted or
+    // malformed window never introduces a cooldown. Keep headers private.
+    final reset = _windowNumber(headers, 'x-ratelimit-reset-in');
+    if (reset != null &&
+        (status == 429 ||
+            _windowNumber(headers, 'x-ratelimit-remaining') == 0)) {
+      final window = Duration(seconds: reset.clamp(0, 86400));
+      if (delay == null || window > delay) delay = window;
+    }
+    return delay;
+  }
+
+  void _rememberCooldown(String host, Duration? delay) {
+    if (delay == null) return;
+    final key = _rateKey(host);
+    final until = DateTime.now().add(delay);
+    final previous = _next[key];
+    if (previous == null || until.isAfter(previous)) _next[key] = until;
+  }
+
+  Future<void> _wait(Duration delay, CancellationToken? cancel) async {
+    if (_closed) throw const ProviderException('transport_closed');
+    cancel?.throwIfCancelled();
+    final done = Completer<void>();
+    final timer = Timer(delay, () => done.complete());
+    _waiters.add(done);
+    try {
+      await _cancellable(done.future, cancel);
+    } finally {
+      timer.cancel();
+      _waiters.remove(done);
+    }
+  }
+
   Future<void> _pace(String host, CancellationToken? cancel) async {
     final wait = (_next[_rateKey(host)] ?? DateTime.now()).difference(
       DateTime.now(),
     );
     if (wait > Duration.zero) {
-      await _cancellable(Future<void>.delayed(wait), cancel);
+      await _wait(wait, cancel);
     }
     if (_closed) throw const ProviderException('transport_closed');
     cancel?.throwIfCancelled();
@@ -377,26 +437,14 @@ class ProviderTransport {
         url = target;
         continue;
       }
-      Duration? retryAfter;
-      if (code == 429 || code == 503) {
-        final asked = int.tryParse(reply.headers['retry-after']?.trim() ?? '');
-        if (asked != null) {
-          retryAfter = Duration(seconds: asked.clamp(0, 86400));
-          // A server cooldown belongs to the host, not just this retry. Keep
-          // it after cancellation or when the retry budget is exhausted.
-          final key = _rateKey(url.host);
-          final until = DateTime.now().add(retryAfter);
-          final previous = _next[key];
-          if (previous == null || until.isAfter(previous)) _next[key] = until;
-        }
-      }
+      final retryAfter = _publisherDelay(code, reply.headers);
       if ((code == 429 || code == 503) &&
           verb == 'GET' &&
           retries < maxRetries) {
         final delay = retryAfter ?? retryBaseDelay * (1 << retries);
         if (delay <= maxRetryDelay) {
           retries++;
-          await _cancellable(Future<void>.delayed(delay), cancel);
+          await _wait(delay, cancel);
           if (_closed) throw const ProviderException('transport_closed');
           continue;
         }
@@ -448,6 +496,10 @@ class ProviderTransport {
         cancel?.throwIfCancelled();
         final response = await _client.send(request);
         final code = response.statusCode;
+        // Count the publisher's window as soon as headers arrive, even if
+        // reading this response is later cancelled, times out or exceeds its
+        // body limit. Cancellation must not erase the host's cooldown.
+        _rememberCooldown(url.host, _publisherDelay(code, response.headers));
         if (code < 200 || code >= 300) {
           await response.stream.listen((_) {}).cancel();
           return (status: code, headers: response.headers, bytes: null);
@@ -562,6 +614,11 @@ class ProviderTransport {
 
   Future<void> _close() async {
     _closed = true;
+    for (final waiter in _waiters.toList()) {
+      if (!waiter.isCompleted) {
+        waiter.completeError(const ProviderException('transport_closed'));
+      }
+    }
     for (final abort in _aborters.values.toList()) {
       abort();
     }

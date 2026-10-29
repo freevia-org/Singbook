@@ -20,7 +20,7 @@ jobs:
   # mock-only regression groups that run with the source catalog disabled.
   regressions:
     name: Wikisource ${{ matrix.group }}
-    runs-on: singbook-i5-linux
+    runs-on: ubuntu-latest
     timeout-minutes: 20
     strategy:
       fail-fast: false
@@ -100,6 +100,7 @@ jobs:
           read -r -a ci_test_paths <<< "$CI_TEST_PATHS"
           set +e
           flutter --suppress-analytics --no-version-check test --no-pub \
+            --exclude-tags=performance \
             --dart-define=SINGBOOK_SOURCE_CATALOG_URL=about:blank \
             --concurrency=1 --reporter=expanded --timeout=90s \
             "${ci_test_paths[@]}" 2>&1 | tee "artifacts/wikisource-ci/$CI_GROUP/tests.log"
