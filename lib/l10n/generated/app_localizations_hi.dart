@@ -2068,4 +2068,21 @@ class AppLocalizationsHi extends AppLocalizations {
   @override
   String get settingsShowPlayerControlsHint =>
       'प्लेयर पैनल दिखाने या छिपाने के लिए उसे टैप या स्वाइप भी कर सकते हैं।';
+
+  @override
+  String get sourceAnalysisHeading =>
+      'सबमिट किए गए ऑडियो का विश्लेषण (असत्यापित)';
+
+  @override
+  String sourceAnalysisCoverage(int shown, int total) {
+    return '$total में से $shown सबमिशन दिखाए गए';
+  }
+
+  @override
+  String sourceAnalysisSample(int number) {
+    return 'नमूना $number';
+  }
+
+  @override
+  String get sourceAnalysisEstimatedTempo => 'अनुमानित टेम्पो (BPM)';
 }

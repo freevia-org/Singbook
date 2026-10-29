@@ -2100,4 +2100,20 @@ class AppLocalizationsLv extends AppLocalizations {
   @override
   String get settingsShowPlayerControlsHint =>
       'Atskaņotāja paneli var parādīt vai paslēpt arī, pieskaroties tam vai pārvelkot.';
+
+  @override
+  String get sourceAnalysisHeading => 'Iesniegtā audio analīze (nepārbaudīta)';
+
+  @override
+  String sourceAnalysisCoverage(int shown, int total) {
+    return 'Parādīti $shown no $total iesniegtajiem ierakstiem';
+  }
+
+  @override
+  String sourceAnalysisSample(int number) {
+    return 'Paraugs $number';
+  }
+
+  @override
+  String get sourceAnalysisEstimatedTempo => 'Aprēķinātais temps (BPM)';
 }

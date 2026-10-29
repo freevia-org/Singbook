@@ -2099,4 +2099,21 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get settingsShowPlayerControlsHint =>
       'يمكنك أيضًا النقر على لوحة المشغّل أو تمريرها لإظهارها أو إخفائها.';
+
+  @override
+  String get sourceAnalysisHeading => 'تحليل الصوت المُقدَّم (غير موثّق)';
+
+  @override
+  String sourceAnalysisCoverage(int shown, int total) {
+    return '$shown من أصل $total من الإرسالات المعروضة';
+  }
+
+  @override
+  String sourceAnalysisSample(int number) {
+    return 'العينة $number';
+  }
+
+  @override
+  String get sourceAnalysisEstimatedTempo =>
+      'الإيقاع المقدّر (نبضة في الدقيقة)';
 }

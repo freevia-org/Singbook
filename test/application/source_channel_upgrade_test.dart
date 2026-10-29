@@ -14,7 +14,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   sqfliteFfiInit();
   test(
-    'offline channel9 enables qualified Chords and Tabs and keeps OpenScore off',
+    'offline channel10 enables qualified Chords and Tabs and keeps OpenScore off',
     () async {
       final repo = await LibraryRepository.open(
         path: inMemoryDatabasePath,
@@ -40,6 +40,7 @@ void main() {
         expect(app.providerEnabled('chordsandtabs'), true);
         expect(app.providerEnabled('pisni'), false);
         expect(app.providerEnabled('openscorelieder'), false);
+        expect(app.providerEnabled('acousticbrainz'), true);
         for (final id in [
           'touhoudb',
           'utaitedb',
@@ -62,9 +63,9 @@ void main() {
         );
         expect(
           app.discovery.catalogClient!.runtime.catalog!.sources,
-          hasLength(31),
+          hasLength(32),
         );
-        expect(app.discovery.catalogClient!.runtime.catalog!.revision, 22);
+        expect(app.discovery.catalogClient!.runtime.catalog!.revision, 23);
         expect(requests, 0);
         await app.setProviderEnabled('amll', false);
         await app.setProviderEnabled('vocadb', false);
@@ -75,6 +76,7 @@ void main() {
         await app.setProviderEnabled('chordsandtabs', false);
         await app.setProviderEnabled('pisni', false);
         await app.setProviderEnabled('openscorelieder', false);
+        await app.setProviderEnabled('acousticbrainz', false);
         expect(app.providerEnabled('amll'), false);
         expect(app.providerEnabled('vocadb'), false);
         expect(app.providerEnabled('touhoudb'), false);
@@ -84,6 +86,12 @@ void main() {
         expect(app.providerEnabled('chordsandtabs'), false);
         expect(app.providerEnabled('pisni'), false);
         expect(app.providerEnabled('openscorelieder'), false);
+        expect(app.providerEnabled('acousticbrainz'), false);
+        expect(
+          ((await repo.getSetting('app') as Map)['providers']
+              as Map)['acousticbrainz'],
+          false,
+        );
         expect(
           ((await repo.getSetting('app') as Map)['providers'] as Map)['amll'],
           false,
@@ -101,7 +109,7 @@ void main() {
     },
   );
   test(
-    'bootstrap upgrades saved libraries to channel9 without changing old data',
+    'bootstrap upgrades saved libraries to channel10 without changing old data',
     () async {
       final repo = await LibraryRepository.open(
         path: inMemoryDatabasePath,
@@ -263,10 +271,10 @@ void main() {
       try {
         await app.initialize();
         expect(await repo.getSetting(SourceCatalogClient.cacheKey), isNull);
-        expect(app.discovery.catalogClient!.runtime.catalog!.revision, 22);
+        expect(app.discovery.catalogClient!.runtime.catalog!.revision, 23);
         expect(
           app.discovery.catalogClient!.runtime.catalog!.sources,
-          hasLength(31),
+          hasLength(32),
         );
         expect(
           app.providers
@@ -292,7 +300,7 @@ void main() {
         );
         await app.refreshSources();
         expect(app.discovery.catalogClient!.lastErrorCode, isNull);
-        expect(seen.single.path, endsWith('/source-catalog-v9.json'));
+        expect(seen.single.path, endsWith('/source-catalog-v10.json'));
         expect(
           app.discovery.catalogClient!.runtime.catalog!.revision,
           nextRevision,
@@ -303,7 +311,10 @@ void main() {
           old2Text,
         );
         expect(await repo.getSetting(SourceCatalogClient.cacheKey), nextText);
-        expect(await repo.getSetting(SourceCatalogClient.channel8CacheKey), old8Text);
+        expect(
+          await repo.getSetting(SourceCatalogClient.channel8CacheKey),
+          old8Text,
+        );
         expect(
           await repo.getSetting(SourceCatalogClient.channel6CacheKey),
           old6Text,
@@ -376,7 +387,10 @@ void main() {
         expect(app.providerEnabled('roswellmusicjam'), true);
         expect(jsonEncode((await repo.listSongs()).single.toJson()), before);
         expect(await repo.getSetting(SourceCatalogClient.cacheKey), nextText);
-        expect(await repo.getSetting(SourceCatalogClient.channel8CacheKey), old8Text);
+        expect(
+          await repo.getSetting(SourceCatalogClient.channel8CacheKey),
+          old8Text,
+        );
         expect(await repo.getSetting('sourceCatalog'), old1Text);
         expect(
           await repo.getSetting(SourceCatalogClient.channel2CacheKey),
@@ -409,7 +423,7 @@ void main() {
         );
         expect(
           app.discovery.catalogClient!.runtime.catalog!.sources,
-          hasLength(31),
+          hasLength(32),
         );
         expect(app.providerEnabled('amll'), false);
         expect(app.providerEnabled('vocadb'), false);
@@ -469,7 +483,7 @@ void main() {
     final transport = ProviderTransport(
       client: MockClient((request) async {
         calls++;
-        expect(request.url.path, endsWith('/source-catalog-v9.json'));
+        expect(request.url.path, endsWith('/source-catalog-v10.json'));
         return http.Response(
           jsonEncode(next),
           200,
@@ -492,7 +506,8 @@ void main() {
       expect(
         app.discovery.catalogClient!.runtime.providers
             .singleWhere((p) => p.definition.id == 'openscorelieder')
-            .definition.enabledByDefault,
+            .definition
+            .enabledByDefault,
         true,
       );
       expect(app.providerEnabled('openscorelieder'), false);

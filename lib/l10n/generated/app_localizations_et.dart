@@ -2078,4 +2078,20 @@ class AppLocalizationsEt extends AppLocalizations {
   @override
   String get settingsShowPlayerControlsHint =>
       'Saad pleieripaneeli kuvamiseks või peitmiseks seda ka puudutada või libistada.';
+
+  @override
+  String get sourceAnalysisHeading => 'Esitatud heli analüüs (kinnitamata)';
+
+  @override
+  String sourceAnalysisCoverage(int shown, int total) {
+    return 'Kuvatakse $shown esitatud salvestist $total-st';
+  }
+
+  @override
+  String sourceAnalysisSample(int number) {
+    return 'Näidis $number';
+  }
+
+  @override
+  String get sourceAnalysisEstimatedTempo => 'Hinnanguline tempo (BPM)';
 }

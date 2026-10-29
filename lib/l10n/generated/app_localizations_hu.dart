@@ -2084,4 +2084,21 @@ class AppLocalizationsHu extends AppLocalizations {
   @override
   String get settingsShowPlayerControlsHint =>
       'A lejátszópanelt megérintéssel vagy elhúzással is megjelenítheted vagy elrejtheted.';
+
+  @override
+  String get sourceAnalysisHeading =>
+      'Beküldött hang elemzése (nem ellenőrzött)';
+
+  @override
+  String sourceAnalysisCoverage(int shown, int total) {
+    return '$shown / $total beküldés megjelenítve';
+  }
+
+  @override
+  String sourceAnalysisSample(int number) {
+    return 'Minta $number';
+  }
+
+  @override
+  String get sourceAnalysisEstimatedTempo => 'Becsült tempó (BPM)';
 }

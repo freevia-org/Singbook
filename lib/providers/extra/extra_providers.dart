@@ -12,6 +12,7 @@ import 'vocadb.dart';
 import 'chords_and_tabs.dart';
 import 'pisni.dart';
 import 'openscore_lieder.dart';
+import 'acousticbrainz.dart';
 
 export 'import_sources.dart';
 export 'metadata.dart';
@@ -26,6 +27,7 @@ export 'vocadb.dart';
 export 'chords_and_tabs.dart';
 export 'pisni.dart';
 export 'openscore_lieder.dart';
+export 'acousticbrainz.dart';
 
 /// All sources in the architecture, including truthful file-import-only routes.
 List<LyricsProvider> createExtraProviders({ProviderTransport? transport}) {
@@ -53,5 +55,6 @@ List<LyricsProvider> createExtraProviders({ProviderTransport? transport}) {
     ChordsAndTabsProvider(http),
     PisniProvider(http),
     OpenScoreLiederProvider(http),
+    AcousticBrainzProvider(http),
   ];
 }

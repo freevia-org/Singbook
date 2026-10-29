@@ -1969,4 +1969,20 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get settingsShowPlayerControlsHint => '也可以轻触或滑动播放器面板来显示或隐藏它。';
+
+  @override
+  String get sourceAnalysisHeading => '已提交音频分析（未验证）';
+
+  @override
+  String sourceAnalysisCoverage(int shown, int total) {
+    return '显示 $total 项提交中的 $shown 项';
+  }
+
+  @override
+  String sourceAnalysisSample(int number) {
+    return '样本 $number';
+  }
+
+  @override
+  String get sourceAnalysisEstimatedTempo => '估算节奏（BPM）';
 }

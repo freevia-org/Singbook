@@ -2076,4 +2076,20 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get settingsShowPlayerControlsHint =>
       'Oynatıcı panelini göstermek veya gizlemek için panele dokunabilir ya da kaydırabilirsiniz.';
+
+  @override
+  String get sourceAnalysisHeading => 'Gönderilen ses analizi (doğrulanmamış)';
+
+  @override
+  String sourceAnalysisCoverage(int shown, int total) {
+    return '$total gönderinin $shown tanesi gösteriliyor';
+  }
+
+  @override
+  String sourceAnalysisSample(int number) {
+    return 'Örnek $number';
+  }
+
+  @override
+  String get sourceAnalysisEstimatedTempo => 'Tahmini tempo (BPM)';
 }

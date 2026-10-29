@@ -2110,4 +2110,20 @@ class AppLocalizationsLt extends AppLocalizations {
   @override
   String get settingsShowPlayerControlsHint =>
       'Grotuvo skydelį taip pat galite parodyti arba paslėpti jį palietę ar perbraukę.';
+
+  @override
+  String get sourceAnalysisHeading => 'Pateikto garso analizė (nepatvirtinta)';
+
+  @override
+  String sourceAnalysisCoverage(int shown, int total) {
+    return 'Rodoma $shown iš $total pateiktų įrašų';
+  }
+
+  @override
+  String sourceAnalysisSample(int number) {
+    return 'Pavyzdys $number';
+  }
+
+  @override
+  String get sourceAnalysisEstimatedTempo => 'Numatomas tempas (BPM)';
 }

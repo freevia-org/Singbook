@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'core/recording_context.dart';
 
 import '../domain/models.dart';
 import 'provider.dart';
@@ -497,7 +498,10 @@ class SourceCatalogEntry {
 /// The factory preserves optional capabilities instead of advertising them
 /// for delegates that do not implement them.
 class ConfiguredBuiltinProvider
-    implements LyricsProvider, PublishedTitleAliasEvidence {
+    implements
+        LyricsProvider,
+        PublishedTitleAliasEvidence,
+        RecordingContextReceiver {
   factory ConfiguredBuiltinProvider(
     SourceCatalogEntry entry,
     LyricsProvider delegate,
@@ -514,6 +518,14 @@ class ConfiguredBuiltinProvider
 
   final SourceCatalogEntry entry;
   final LyricsProvider delegate;
+
+  @override
+  String? get requiredRecordingIdNamespace {
+    final inner = delegate;
+    return inner is RecordingContextReceiver
+        ? (inner as RecordingContextReceiver).requiredRecordingIdNamespace
+        : null;
+  }
 
   @override
   ProviderDefinition get definition {

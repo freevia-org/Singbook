@@ -2103,4 +2103,21 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String get settingsShowPlayerControlsHint =>
       'Je kunt het spelerspaneel ook aantikken of vegen om het te tonen of te verbergen.';
+
+  @override
+  String get sourceAnalysisHeading =>
+      'Ingediende audioanalyse (niet geverifieerd)';
+
+  @override
+  String sourceAnalysisCoverage(int shown, int total) {
+    return '$shown van $total inzendingen weergegeven';
+  }
+
+  @override
+  String sourceAnalysisSample(int number) {
+    return 'Voorbeeld $number';
+  }
+
+  @override
+  String get sourceAnalysisEstimatedTempo => 'Geschat tempo (BPM)';
 }

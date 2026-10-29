@@ -2113,4 +2113,21 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get settingsShowPlayerControlsHint =>
       'Панель плеера также можно показать или скрыть касанием или свайпом.';
+
+  @override
+  String get sourceAnalysisHeading =>
+      'Анализ отправленного аудио (не проверен)';
+
+  @override
+  String sourceAnalysisCoverage(int shown, int total) {
+    return 'Показано $shown из $total отправленных записей';
+  }
+
+  @override
+  String sourceAnalysisSample(int number) {
+    return 'Образец $number';
+  }
+
+  @override
+  String get sourceAnalysisEstimatedTempo => 'Предполагаемый темп (BPM)';
 }

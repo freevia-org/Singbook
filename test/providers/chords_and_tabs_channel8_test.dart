@@ -56,10 +56,10 @@ void main() {
     expect(chordsAndTabs['hosts'], ['www.chords-and-tabs.net']);
     expect(chordsAndTabs['attribution'], 'Chords and Tabs');
     expect(chordsAndTabs['probes'], hasLength(2));
-    expect(
-      (chordsAndTabs['probes'] as List).map((probe) => probe['id']),
-      ['hey-jude-beatles-chart-v4', 'bohemian-rhapsody-queen-chart-v8'],
-    );
+    expect((chordsAndTabs['probes'] as List).map((probe) => probe['id']), [
+      'hey-jude-beatles-chart-v4',
+      'bohemian-rhapsody-queen-chart-v8',
+    ]);
     final legacyChartProbe =
         (chordsAndTabs['probes'] as List).first as Map<String, dynamic>;
     final queenProbe =
@@ -99,13 +99,13 @@ void main() {
     expect(pisni['website'], 'https://www.pisni.org.ua/');
     expect(pisni['hosts'], ['www.pisni.org.ua']);
     expect(pisni['probes'], isEmpty);
-    expect(SourceCatalogClient.bundledAsset, 'config/source-catalog-v9.json');
-    expect(SourceCatalogClient.cacheKey, 'sourceCatalog:v9');
+    expect(SourceCatalogClient.bundledAsset, 'config/source-catalog-v10.json');
+    expect(SourceCatalogClient.cacheKey, 'sourceCatalog:v10');
     expect(SourceCatalogClient.channel8CacheKey, 'sourceCatalog:v8');
     expect(SourceCatalogClient.channel7CacheKey, 'sourceCatalog:v7');
     expect(
       SourceCatalogClient.defaultEndpoint,
-      endsWith('/source-catalog-v9.json'),
+      endsWith('/source-catalog-v10.json'),
     );
     expect(
       File('pubspec.yaml').readAsStringSync(),
@@ -123,7 +123,9 @@ void main() {
     final providers = [
       ...createCoreProviders(transport: transport),
       ...createExtraProviders(transport: transport).where(
-        (provider) => provider.definition.id != 'openscorelieder',
+        (provider) =>
+            provider.definition.id != 'openscorelieder' &&
+            provider.definition.id != 'acousticbrainz',
       ),
     ];
     final native = providers.whereType<ChordsAndTabsProvider>().single;
@@ -181,7 +183,9 @@ void main() {
     final providers = [
       ...createCoreProviders(transport: transport),
       ...createExtraProviders(transport: transport).where(
-        (provider) => provider.definition.id != 'openscorelieder',
+        (provider) =>
+            provider.definition.id != 'openscorelieder' &&
+            provider.definition.id != 'acousticbrainz',
       ),
     ];
     final catalog = SourceCatalog.parse(channel8File.readAsStringSync());
