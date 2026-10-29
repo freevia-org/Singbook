@@ -1108,7 +1108,7 @@ class AppController extends ChangeNotifier {
             results = _mergeDiscoveryResults(candidate, results, [result]);
             if (_immediateDiscoveryRecomputeCount < 2) {
               _immediateDiscoveryRecomputeCount++;
-              _combine(candidate);
+              _combine(candidate, preserveProgressRecomputeCount: true);
             } else {
               _scheduleDiscoveryCombine(candidate, epoch);
             }
@@ -1162,8 +1162,14 @@ class AppController extends ChangeNotifier {
     _pendingDiscoveryCombine = null;
   }
 
-  void _combine(SongCandidate candidate) {
+  void _combine(
+    SongCandidate candidate, {
+    bool preserveProgressRecomputeCount = false,
+  }) {
     _cancelPendingDiscoveryCombine();
+    if (!preserveProgressRecomputeCount) {
+      _immediateDiscoveryRecomputeCount = 0;
+    }
     final available = results
         .map(
           (source) => isSourceReady(source)
