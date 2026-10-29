@@ -1,0 +1,124 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "1a4573eefc7f0f0e28c8ab7ab77cd4479c1d2a05",
+  "catalogPath": "config/source-catalog-v10.json",
+  "catalogRevision": 23,
+  "localMeasuredAt": "2026-10-29T06:59:42.766868Z",
+  "priorLocalMeasuredAt": "2026-10-28T07:22:35.791499Z",
+  "cloudLatestEvidenceMeasuredAt": "2026-10-28T07:03:11.698726Z",
+  "cloudEvidenceIsOlderThanCurrentLocal": true,
+  "localSummary": {
+    "healthy": 24,
+    "unavailable": 1,
+    "import_only": 1,
+    "partial_coverage": 2,
+    "retired": 1,
+    "transient_error": 1,
+    "disabled": 2
+  },
+  "statusChanges": [
+    {
+      "source": "synclrc",
+      "prior": "unavailable",
+      "current": "healthy"
+    },
+    {
+      "source": "musicbrainz",
+      "prior": "identity_mismatch",
+      "current": "healthy"
+    },
+    {
+      "source": "lyricsplus",
+      "prior": "healthy",
+      "current": "transient_error"
+    },
+    {
+      "source": "chordsandtabs",
+      "prior": "disabled",
+      "current": "healthy"
+    },
+    {
+      "source": "openscorelieder",
+      "prior": "not_in_prior_roster",
+      "current": "disabled"
+    },
+    {
+      "source": "acousticbrainz",
+      "prior": "not_in_prior_roster",
+      "current": "healthy"
+    }
+  ],
+  "ordinaryCliHttpRequests": 105,
+  "ordinaryCliHttpStatuses": {
+    "200": 101,
+    "401": 1,
+    "429": 0,
+    "502": 2,
+    "503": 1
+  },
+  "fileImportHttpRequests": 2,
+  "rateLimitFinding": "No HTTP429. MusicBrainz503/Retry-After0 recovered through ordinary retry. The two LyricsPlus502s and BetterLyrics401 are different outcomes, not proof of excessive scheduling.",
+  "roadblocks": [
+    {
+      "source": "betterlyrics",
+      "reason": "Anonymous canary returned401; current publisher authentication docs describe key-gated cache misses and closed new-key issuance. App already reports unavailable. Exact source response body was not retained; no invalid credential claim.",
+      "tried": "One daily canary, no retry or credential change; reviewed publisher authentication docs.",
+      "resolved": false,
+      "userAction": "None required; no new key can be provisioned from the documented closed issuance."
+    },
+    {
+      "source": "lyricsplus",
+      "reason": "Both canary searches returned200 and each selected detail request returned502; response not usable. No parser regression inferred.",
+      "tried": "Two ordinary daily canaries, no additional live rerun.",
+      "resolved": false,
+      "userAction": "None required; wait for publisher recovery."
+    },
+    {
+      "source": "chordie",
+      "reason": "Search/chords/lyrics/metadata passed; separate fileImport flow not measured by ordinary CLI or Ozbcoz phase.",
+      "resolved": false,
+      "userAction": "None required; needs separate capability qualification."
+    },
+    {
+      "source": "wikisource",
+      "reason": "Both current catalog/extraction/metadata canaries passed; separate export/import flow not measured by ordinary CLI or Ozbcoz phase.",
+      "resolved": false,
+      "userAction": "None required; needs separate capability qualification."
+    },
+    {
+      "source": "pisni",
+      "reason": "Registered source intentionally disabled/off pending separate managed-cloud qualification and rights review. No bypass/activation was attempted.",
+      "resolved": false,
+      "userAction": "None required; integration review remains."
+    },
+    {
+      "source": "openscorelieder",
+      "reason": "Registered source intentionally disabled/off pending rights and remaining native/cloud qualification. No activation was attempted.",
+      "resolved": false,
+      "userAction": "None required; integration review remains."
+    },
+    {
+      "source": "host_import_setup",
+      "reason": "Isolated checkout initially lacked package_graph; default offline pub cache lacked locked wakelock_plus.",
+      "tried": "Restored locked dependencies using existing shared PUB_CACHE with offline/enforce-lockfile, then ran host import check once; no live requests occurred during failed setup attempts.",
+      "resolved": true,
+      "userAction": "None."
+    },
+    {
+      "source": "secondhandsongs_discovery",
+      "reason": "Direct publisher documentation opens403; indexed publisher terms require written authorization for public-app use.",
+      "tried": "Documentation-only review; no API/content calls, workaround or account.",
+      "resolved": false,
+      "userAction": "None required for this run; integration would require publisher permission."
+    },
+    {
+      "source": "mutopia_discovery",
+      "reason": "Field evidence exists, but safe inert LilyPond parser and two full native canaries/persistence/cloud coverage remain unqualified.",
+      "tried": "Reused same-day field evidence and reviewed publisher license; no repeat content calls.",
+      "resolved": false,
+      "userAction": "None required; deferred adapter work."
+    }
+  ],
+  "documentsRetained": false,
+  "secretsRetained": false
+}
