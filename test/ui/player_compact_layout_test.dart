@@ -187,7 +187,7 @@ void main() {
   ]) {
     for (final fullscreen in [false, true]) {
       testWidgets(
-        'lyrics corner settings remains reachable ${scenario.$1} fullscreen=$fullscreen',
+        'settings stays in its platform panel ${scenario.$1} fullscreen=$fullscreen',
         (tester) async {
           final controller = _Controller()..playerControlsExpanded = true;
           addTearDown(controller.dispose);
@@ -201,7 +201,37 @@ void main() {
             onFullScreenChanged: (_) {},
           );
           final settings = find.byKey(const ValueKey('player-settings-button'));
+          final mobile =
+              defaultTargetPlatform == TargetPlatform.android ||
+              defaultTargetPlatform == TargetPlatform.iOS;
+          if (mobile && fullscreen) {
+            expect(settings, findsNothing);
+            expect(
+              find
+                  .byKey(const ValueKey('player-exit-fullscreen'))
+                  .hitTestable(),
+              findsOneWidget,
+            );
+            expect(tester.takeException(), isNull);
+            return;
+          }
           expect(settings.hitTestable(), findsOneWidget);
+          if (mobile) {
+            expect(
+              find.descendant(
+                of: find.byKey(const ValueKey('player-controls-panel')),
+                matching: settings,
+              ),
+              findsOneWidget,
+            );
+            final timeline = find.byKey(
+              const ValueKey('player-mobile-timeline'),
+            );
+            expect(
+              find.descendant(of: timeline, matching: settings),
+              findsOneWidget,
+            );
+          }
           expect(
             tester.getSize(settings).height,
             greaterThanOrEqualTo(
@@ -226,6 +256,33 @@ void main() {
       );
     }
   }
+  testWidgets(
+    'mobile timeline is shorter without shrinking controls or time labels',
+    (tester) async {
+      final controller = _Controller();
+      addTearDown(controller.dispose);
+      await _pump(tester, controller, size: const Size(390, 844));
+      final slider = find.byKey(const ValueKey('player-seek-slider'));
+      final settings = find.byKey(const ValueKey('player-settings-button'));
+      final timeline = find.byKey(const ValueKey('player-mobile-timeline'));
+      expect(tester.getSize(slider).height, greaterThanOrEqualTo(48));
+      expect(tester.getSize(settings), const Size(48, 48));
+      final duration = find.text('4:00').first;
+      final labelHeight = tester.getSize(duration).height;
+      // Previously the time row followed the entire 48 dp slider row.
+      expect(tester.getSize(timeline).height, closeTo(48 + labelHeight - 8, 1));
+      expect(
+        tester.getRect(duration).right,
+        lessThanOrEqualTo(tester.getRect(settings).left),
+      );
+      expect(tester.takeException(), isNull);
+    },
+    variant: TargetPlatformVariant({
+      TargetPlatform.android,
+      TargetPlatform.iOS,
+    }),
+  );
+
   testWidgets(
     'wide mobile timeline retains a full touch target',
     (tester) async {
@@ -998,17 +1055,39 @@ void main() {
         expect(listRect.left, lyricsRect.left);
         expect(listRect.right, lyricsRect.right);
         expect(listRect.bottom, lyricsRect.bottom);
-        final settingsRect = tester.getRect(
-          find.byKey(const ValueKey('player-settings-button')),
-        );
-        expect(listRect.top, greaterThanOrEqualTo(settingsRect.bottom));
+        if (defaultTargetPlatform == TargetPlatform.macOS) {
+          final settingsRect = tester.getRect(
+            find.byKey(const ValueKey('player-settings-button')),
+          );
+          expect(listRect.top, greaterThanOrEqualTo(settingsRect.bottom));
+        } else {
+          // Mobile settings belongs to the hidden/collapsed playback panel.
+          expect(
+            find.byKey(const ValueKey('player-settings-button')),
+            findsNothing,
+          );
+        }
         expect(actionFinder.hitTestable(), findsOneWidget);
         expect(tester.widget<IconButton>(actionFinder).tooltip, isNotEmpty);
         if (direction == TextDirection.rtl) {
-          expect(action.left, closeTo(lyricsRect.left + 48, 1));
+          expect(
+            action.left,
+            closeTo(
+              lyricsRect.left +
+                  (defaultTargetPlatform == TargetPlatform.macOS ? 48 : 0),
+              1,
+            ),
+          );
           expect(padding.left, padding.right);
         } else {
-          expect(action.right, closeTo(lyricsRect.right - 48, 1));
+          expect(
+            action.right,
+            closeTo(
+              lyricsRect.right -
+                  (defaultTargetPlatform == TargetPlatform.macOS ? 48 : 0),
+              1,
+            ),
+          );
           expect(padding.right, padding.left);
         }
         final paragraphFinder = find.text(text);

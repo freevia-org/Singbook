@@ -888,5 +888,26 @@
   },
   "@settingsStartupLastView": {
     "description": "Option that opens the last view used before the app was closed."
-  }
+  },
+  "sourceAnalysisHeading": "Anailís ar fhuaim a cuireadh isteach (neamhfhíoraithe)",
+  "sourceAnalysisCoverage": "Taispeántar {shown} as {total} taifeadadh a cuireadh isteach",
+  "@sourceAnalysisCoverage": {
+    "placeholders": {
+      "shown": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "sourceAnalysisSample": "Sampla {number}",
+  "@sourceAnalysisSample": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "sourceAnalysisEstimatedTempo": "Luas measta (BPM)"
 }

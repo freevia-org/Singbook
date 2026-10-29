@@ -2073,4 +2073,21 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get settingsShowPlayerControlsHint =>
       'Bạn cũng có thể chạm hoặc vuốt bảng trình phát để hiện hoặc ẩn bảng.';
+
+  @override
+  String get sourceAnalysisHeading =>
+      'Phân tích âm thanh đã gửi (chưa xác minh)';
+
+  @override
+  String sourceAnalysisCoverage(int shown, int total) {
+    return 'Đang hiển thị $shown/$total nội dung gửi';
+  }
+
+  @override
+  String sourceAnalysisSample(int number) {
+    return 'Mẫu $number';
+  }
+
+  @override
+  String get sourceAnalysisEstimatedTempo => 'Tempo ước tính (BPM)';
 }

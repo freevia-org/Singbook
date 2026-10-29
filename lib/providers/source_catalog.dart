@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'core/recording_context.dart';
 
 import '../domain/models.dart';
 import 'provider.dart';
@@ -368,6 +369,18 @@ class SourceCatalogEntry {
         final candidate = _map(probe['candidate'], 'probe candidate');
         try {
           final parsedCandidate = SongCandidate.fromJson(candidate);
+          // Some canonical charts have no performer credit. Pin both search
+          // and stable identity instead of fabricating an artist for a probe.
+          // This does not relax the discovery/combine identity matchers.
+          final canonicalArrangement =
+              capabilities.contains('chords') &&
+              parsedCandidate.metadata['identityScope'] == 'arrangement' &&
+              parsedCandidate.recordingIds.isEmpty &&
+              probe['query'] is String &&
+              (probe['query'] as String).trim().isNotEmpty &&
+              probe['expectedTitle'] == parsedCandidate.title &&
+              safeHttpsUrl(parsedCandidate.url) != null &&
+              hostSet.contains(Uri.tryParse(parsedCandidate.url!)?.host);
           if (parsedCandidate.providerId != id ||
               parsedCandidate.id.trim().isEmpty ||
               parsedCandidate.id.length > 300 ||
@@ -375,6 +388,7 @@ class SourceCatalogEntry {
               parsedCandidate.title.length > 300 ||
               parsedCandidate.artist.length > 300 ||
               parsedCandidate.artist.trim().isEmpty &&
+                  !canonicalArrangement &&
                   (capabilities.contains('lyrics') ||
                       capabilities.contains('chords'))) {
             _invalid('probe candidate identity must be non-empty and bounded');
@@ -481,15 +495,37 @@ class SourceCatalogEntry {
 }
 
 /// Exposes the catalog definition while preserving an existing builtin's work.
-class ConfiguredBuiltinProvider implements LyricsProvider {
-  ConfiguredBuiltinProvider(this.entry, this.delegate) {
+/// The factory preserves optional capabilities instead of advertising them
+/// for delegates that do not implement them.
+class ConfiguredBuiltinProvider
+    implements
+        LyricsProvider,
+        PublishedTitleAliasEvidence,
+        RecordingContextReceiver {
+  factory ConfiguredBuiltinProvider(
+    SourceCatalogEntry entry,
+    LyricsProvider delegate,
+  ) {
     if (entry.adapter != 'builtin' || entry.id != delegate.definition.id) {
       throw ArgumentError('Builtin entry and delegate ids must match');
     }
+    return delegate is ContextualLyricsSearch
+        ? _ConfiguredContextualBuiltinProvider(entry, delegate)
+        : ConfiguredBuiltinProvider._(entry, delegate);
   }
+
+  ConfiguredBuiltinProvider._(this.entry, this.delegate);
 
   final SourceCatalogEntry entry;
   final LyricsProvider delegate;
+
+  @override
+  String? get requiredRecordingIdNamespace {
+    final inner = delegate;
+    return inner is RecordingContextReceiver
+        ? (inner as RecordingContextReceiver).requiredRecordingIdNamespace
+        : null;
+  }
 
   @override
   ProviderDefinition get definition {
@@ -515,11 +551,55 @@ class ConfiguredBuiltinProvider implements LyricsProvider {
     CancellationToken? cancel,
   }) => delegate.search(query, cancel: cancel);
 
+  bool canReuseSearchForSelection(
+    SongCandidate selection,
+    List<SongCandidate> candidates,
+  ) {
+    final inner = delegate;
+    return inner is! ContextualLyricsSearch ||
+        (inner as ContextualLyricsSearch).canReuseSearchForSelection(
+          selection,
+          candidates,
+        );
+  }
+
+  Future<List<SongCandidate>> searchForSelection(
+    SongCandidate selection, {
+    required String fallbackQuery,
+    CancellationToken? cancel,
+  }) {
+    final inner = delegate;
+    return inner is ContextualLyricsSearch
+        ? (inner as ContextualLyricsSearch).searchForSelection(
+            selection,
+            fallbackQuery: fallbackQuery,
+            cancel: cancel,
+          )
+        : inner.search(fallbackQuery, cancel: cancel);
+  }
+
+  @override
+  String? publishedTitleAliasForSelection(
+    SongCandidate selection,
+    SongCandidate candidate,
+  ) {
+    final inner = delegate;
+    return inner is PublishedTitleAliasEvidence
+        ? (inner as PublishedTitleAliasEvidence)
+              .publishedTitleAliasForSelection(selection, candidate)
+        : null;
+  }
+
   @override
   Future<SourceResult> resolve(
     SongCandidate candidate, {
     CancellationToken? cancel,
   }) => delegate.resolve(candidate, cancel: cancel);
+}
+
+class _ConfiguredContextualBuiltinProvider extends ConfiguredBuiltinProvider
+    implements ContextualLyricsSearch {
+  _ConfiguredContextualBuiltinProvider(super.entry, super.delegate) : super._();
 }
 
 /// Applies whole catalog snapshots atomically; omitted and inactive entries are
@@ -542,6 +622,11 @@ class SourceCatalogRuntime {
   SourceCatalog? _catalog;
   SourceCatalog? get catalog => _catalog;
   final Map<String, SourceCatalogEntry> _entryHistory = {};
+
+  /// An independent validation/transition boundary for a distribution channel.
+  /// It reuses compiled adapters, never the previous channel's revision history.
+  SourceCatalogRuntime fresh() =>
+      SourceCatalogRuntime(builtins: _builtins, createProvider: createProvider);
 
   List<LyricsProvider> _providers = const [];
   List<LyricsProvider> get providers =>

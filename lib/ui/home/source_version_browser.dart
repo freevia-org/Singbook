@@ -230,7 +230,9 @@ class _SourceVersionBrowserState extends State<_SourceVersionPages> {
     if (_saving) return;
     final version = _current[_visibleId];
     if (version == null ||
-        (!version.hasLyrics && version.savedSongId == null)) {
+        (!version.isUsableVersion &&
+            !version.hasLyrics &&
+            version.savedSongId == null)) {
       return;
     }
     // Save stays available while previews slide. Align a pending selection
@@ -274,7 +276,12 @@ class _SourceVersionBrowserState extends State<_SourceVersionPages> {
     }
     final version = _current[_visibleId];
     final ready = _current.values
-        .where((version) => version.hasLyrics || version.savedSongId != null)
+        .where(
+          (version) =>
+              version.isUsableVersion ||
+              version.hasLyrics ||
+              version.savedSongId != null,
+        )
         .map(versionSelectionId)
         .toSet()
         .length;

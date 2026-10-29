@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../../l10n/generated/app_localizations.dart';
+import '../../domain/acousticbrainz_analysis.dart';
 import '../format.dart';
 import '../localized_labels.dart';
 import '../verse_ui_state.dart';
@@ -63,6 +64,7 @@ void showComparisonVersionInfo(
         ),
       ),
       ..._metadataFields(l10n, value.metadata),
+      ..._recordingAnalysisFields(l10n, value),
       if (value.rating != null)
         Padding(
           padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
@@ -339,6 +341,32 @@ List<Widget> _metadataFields(
   ]),
   _field(l10n.searchVersionMediaLinks, metadata['mediaLinks']),
 ];
+
+List<Widget> _recordingAnalysisFields(
+  AppLocalizations l10n,
+  SourceVersionData version,
+) {
+  final analysis = AcousticBrainzAnalysis.fromMetadata(
+    version.providerId,
+    version.metadata,
+  );
+  if (analysis == null) return const [];
+  return [
+    _paragraph(l10n.sourceAnalysisHeading),
+    _paragraph(
+      l10n.sourceAnalysisCoverage(
+        analysis.samples.length,
+        analysis.submissionCount,
+      ),
+    ),
+    for (final sample in analysis.samples) ...[
+      _field(l10n.sourceAnalysisSample(sample.offset + 1), [
+        '${l10n.playerEstimatedKey}: ${sample.tonic}${sample.scale == 'minor' ? 'm' : ''}',
+        '${l10n.sourceAnalysisEstimatedTempo}: ${sample.bpm}',
+      ]),
+    ],
+  ];
+}
 
 String _role(AppLocalizations l10n, String role) => switch (role) {
   'lyrics' => l10n.providerCapabilityLyrics,

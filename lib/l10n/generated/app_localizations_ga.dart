@@ -2101,4 +2101,21 @@ class AppLocalizationsGa extends AppLocalizations {
   @override
   String get settingsShowPlayerControlsHint =>
       'Is féidir leat painéal an tseinnteora a thapáil nó a shleamhnú freisin chun é a thaispeáint nó a cheilt.';
+
+  @override
+  String get sourceAnalysisHeading =>
+      'Anailís ar fhuaim a cuireadh isteach (neamhfhíoraithe)';
+
+  @override
+  String sourceAnalysisCoverage(int shown, int total) {
+    return 'Taispeántar $shown as $total taifeadadh a cuireadh isteach';
+  }
+
+  @override
+  String sourceAnalysisSample(int number) {
+    return 'Sampla $number';
+  }
+
+  @override
+  String get sourceAnalysisEstimatedTempo => 'Luas measta (BPM)';
 }

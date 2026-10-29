@@ -7,7 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:xml/xml.dart' show XmlException;
 import '../data/library_repository.dart';
-import '../domain/arrangement.dart' show plainLyrics;
+import '../domain/arrangement.dart' show parseArrangement, plainLyrics;
 import '../domain/models.dart';
 import '../domain/chordpro.dart';
 import '../domain/combine.dart';
@@ -260,8 +260,10 @@ class AppController extends ChangeNotifier {
   /// Automatic sync is enabled for signed-in accounts.
   bool get autoSyncEnabled => true;
   int _searchEpoch = 0, _discoveryEpoch = 0;
+  int _immediateDiscoveryRecomputeCount = 0;
   CancellationToken? _searchCancel, _discoveryCancel;
   CancellationToken? _youtubeDiscoveryCancel;
+  Timer? _pendingDiscoveryCombine;
   String? _searchProviderId;
   bool _disposed = false;
   Future<void>? _activeSyncAction;
@@ -553,6 +555,32 @@ class AppController extends ChangeNotifier {
         },
         writeCache: (value) =>
             repository.setSetting(SourceCatalogClient.cacheKey, value),
+        readPreviousCaches: () async {
+          final current = int.tryParse(
+            SourceCatalogClient.cacheKey.split(':v').last,
+          );
+          if (current == null || current < 2) return [];
+          final previous = <PreviousSourceCatalogCache>[];
+          for (var channel = current - 1; channel >= 1; channel--) {
+            final key = channel == 1
+                ? SourceCatalogClient.legacyCacheKey
+                : 'sourceCatalog:v$channel';
+            try {
+              final cached = await repository.getSetting(key);
+              if (cached is! String) continue;
+              final asset = channel == 1
+                  ? 'config/source-catalog.json'
+                  : 'config/source-catalog-v$channel.json';
+              previous.add((
+                bundled: await rootBundle.loadString(asset),
+                cached: cached,
+              ));
+            } catch (_) {
+              // A missing or damaged older channel never prevents bootstrap.
+            }
+          }
+          return previous;
+        },
       );
     }
     await discovery.catalogClient?.initialize();
@@ -573,10 +601,13 @@ class AppController extends ChangeNotifier {
     sourcesRefreshing = true;
     sourceRefreshError = null;
     _emit();
-    final previous = client.runtime.catalog?.revision;
+    final previous = client.runtime.catalog;
     final success = await client.refresh();
     if (_disposed) return false;
-    if (success && previous != client.runtime.catalog?.revision) {
+    final current = client.runtime.catalog;
+    if (success &&
+        current != null &&
+        (previous == null || !previous.sameContent(current))) {
       cancelSearch();
     }
     sourcesRefreshing = false;
@@ -846,6 +877,8 @@ class AppController extends ChangeNotifier {
 
   void cancelDiscovery() {
     ++_discoveryEpoch;
+    _immediateDiscoveryRecomputeCount = 0;
+    _cancelPendingDiscoveryCombine();
     _discoveryCancel?.cancel();
     for (final token in _providerDiscoveryCancellations.values) {
       token.cancel();
@@ -1073,7 +1106,12 @@ class AppController extends ChangeNotifier {
               !(result.hasChords &&
                   _cachedDiscoverySourceIds.contains(result.id))) {
             results = _mergeDiscoveryResults(candidate, results, [result]);
-            _combine(candidate);
+            if (_immediateDiscoveryRecomputeCount < 2) {
+              _immediateDiscoveryRecomputeCount++;
+              _combine(candidate, preserveProgressRecomputeCount: true);
+            } else {
+              _scheduleDiscoveryCombine(candidate, epoch);
+            }
           }
           _emit();
         },
@@ -1102,7 +1140,36 @@ class AppController extends ChangeNotifier {
     }
   }
 
-  void _combine(SongCandidate candidate) {
+  static const _discoveryCombineInterval = Duration(milliseconds: 50);
+
+  void _scheduleDiscoveryCombine(SongCandidate candidate, int epoch) {
+    if (_pendingDiscoveryCombine != null) return;
+    _pendingDiscoveryCombine = Timer(_discoveryCombineInterval, () {
+      _pendingDiscoveryCombine = null;
+      if (_disposed ||
+          epoch != _discoveryEpoch ||
+          !discovering ||
+          selection?.identity != candidate.identity) {
+        return;
+      }
+      _combine(candidate);
+      _emit();
+    });
+  }
+
+  void _cancelPendingDiscoveryCombine() {
+    _pendingDiscoveryCombine?.cancel();
+    _pendingDiscoveryCombine = null;
+  }
+
+  void _combine(
+    SongCandidate candidate, {
+    bool preserveProgressRecomputeCount = false,
+  }) {
+    _cancelPendingDiscoveryCombine();
+    if (!preserveProgressRecomputeCount) {
+      _immediateDiscoveryRecomputeCount = 0;
+    }
     final available = results
         .map(
           (source) => isSourceReady(source)
@@ -1117,10 +1184,16 @@ class AppController extends ChangeNotifier {
       (r) =>
           (r.matchKind != MatchKind.rejected ||
               _historicalCacheUses.any((use) => use.allows(candidate, r))) &&
-          plainLyrics(r.body).trim().isNotEmpty,
+          (plainLyrics(r.body).trim().isNotEmpty ||
+              parseArrangement(
+                r.body,
+              ).any((line) => !line.directive && line.chords.isNotEmpty)),
     );
     try {
       if (usable.isNotEmpty) {
+        // A verified own arrangement may contain only chord rows. This is a
+        // content prefilter; combineSources still decides identity, readiness,
+        // editions and whether the chart is eligible without a lyric base.
         combined = combineSources(
           candidate,
           available,
@@ -2107,6 +2180,7 @@ class AppController extends ChangeNotifier {
   @override
   void dispose() {
     _disposed = true;
+    _cancelPendingDiscoveryCombine();
     _historicalCacheUses = const [];
     _autoSyncTimer?.cancel();
     for (final service in {..._syncProviders.values, ?_sync}) {

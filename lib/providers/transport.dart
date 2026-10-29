@@ -33,7 +33,7 @@ class CancellationToken {
 
 /// Application version sent in the User-Agent. Keep in sync with the
 /// `version:` line in pubspec.yaml (a unit test enforces this).
-const singbookVersion = '0.2.25';
+const singbookVersion = '0.2.31';
 
 /// Public project contact for API operators, including maintenance invocations
 /// without app build defines. An explicit contact URL may override this real
@@ -87,6 +87,7 @@ class ProviderTransport {
   final Set<Future<void>> _inFlight = {};
   final Map<Future<void>, void Function()> _aborters = {};
   bool _closed = false;
+  final Set<Completer<void>> _waiters = {};
   Future<void>? _closing;
 
   Future<String> getText(
@@ -147,6 +148,79 @@ class ProviderTransport {
     }
   }
 
+  /// A bounded conditional GET for adapters with a publisher ETag contract.
+  /// Only a supplied, valid single entity tag can authorize a 304. Ordinary
+  /// request methods retain their existing non-2xx behavior. No other response
+  /// headers except Content-Type (in particular cookies) are exposed. Body
+  /// bytes are retained for source provenance, not reconstructed from JSON.
+  Future<
+    ({
+      dynamic value,
+      String? etag,
+      bool notModified,
+      Uint8List? bytes,
+      String? contentType,
+    })
+  >
+  getConditionalJson(
+    Uri url, {
+    String? etag,
+    CancellationToken? cancel,
+    int? maxBytes,
+    Duration? timeout,
+    Set<String>? allowedHosts,
+  }) async {
+    if (etag != null && !_validEntityTag(etag)) {
+      throw const ProviderException('invalid_response');
+    }
+    final reply = await _requestBytes(
+      url,
+      method: 'GET',
+      headers: {'Accept': 'application/json', 'If-None-Match': ?etag},
+      cancel: cancel,
+      maxBytes: maxBytes,
+      timeout: timeout,
+      allowedHosts: allowedHosts,
+      acceptNotModified: etag != null,
+    );
+    final received = reply.headers['etag'];
+    final nextTag = received != null && _validEntityTag(received)
+        ? received
+        : null;
+    if (reply.status == 304) {
+      // If supplied, the response tag must weakly match the cached entity.
+      // A 304 with a contradictory/new tag cannot validate cached bytes.
+      if (received != null &&
+          (nextTag == null || _opaqueTag(nextTag) != _opaqueTag(etag!))) {
+        throw const ProviderException('invalid_response');
+      }
+      return (
+        value: null,
+        etag: nextTag ?? etag,
+        notModified: true,
+        bytes: null,
+        contentType: reply.headers['content-type'],
+      );
+    }
+    try {
+      return (
+        value: jsonDecode(_decode(reply.bytes!, reply.headers['content-type'])),
+        etag: nextTag,
+        notModified: false,
+        bytes: reply.bytes!.asUnmodifiableView(),
+        contentType: reply.headers['content-type'],
+      );
+    } catch (_) {
+      throw const ProviderException('invalid_response', 'Invalid JSON');
+    }
+  }
+
+  static bool _validEntityTag(String value) =>
+      value.length <= 512 &&
+      RegExp(r'^(?:W/)?"[\x21\x23-\x7e]*"$').hasMatch(value);
+  static String _opaqueTag(String value) =>
+      value.startsWith('W/') ? value.substring(2) : value;
+
   static bool _validUrl(Uri url) =>
       url.scheme == 'https' &&
       url.host.isNotEmpty &&
@@ -187,6 +261,7 @@ class ProviderTransport {
     int? maxBytes,
     Duration? timeout,
     Set<String>? allowedHosts,
+    bool acceptNotModified = false,
   }) async {
     if (_closed) throw const ProviderException('transport_closed');
     if (!_validUrl(url)) throw const ProviderException('invalid_url');
@@ -201,8 +276,17 @@ class ProviderTransport {
     final queueKey = _rateKey(url.host);
     final previous = _queues[queueKey] ?? Future<void>.value();
     final result = previous.then(
-      (_) =>
-          _run(url, method, headers, body, cancel, limit, timeout, hostPolicy),
+      (_) => _run(
+        url,
+        method,
+        headers,
+        body,
+        cancel,
+        limit,
+        timeout,
+        hostPolicy,
+        acceptNotModified,
+      ),
     );
     _queues[queueKey] = result.then<void>((_) {}, onError: (Object _) {});
     return _cancellable(result, cancel);
@@ -220,12 +304,71 @@ class ProviderTransport {
   String _rateKey(String host) =>
       host == 'www.musicbrainz.org' ? 'musicbrainz.org' : host;
 
+  String? _header(Map<String, String> headers, String name) {
+    final values = headers.entries
+        .where((entry) => entry.key.toLowerCase() == name)
+        .map((entry) => entry.value.trim())
+        .toSet();
+    return values.length == 1 ? values.single : null;
+  }
+
+  int? _windowNumber(Map<String, String> headers, String name) {
+    final value = _header(headers, name);
+    if (value == null || !RegExp(r'^[0-9]{1,10}$').hasMatch(value)) {
+      return null;
+    }
+    return int.tryParse(value);
+  }
+
+  Duration? _publisherDelay(int status, Map<String, String> headers) {
+    Duration? delay;
+    if (status == 429 || status == 503) {
+      final seconds = int.tryParse(_header(headers, 'retry-after') ?? '');
+      if (seconds != null) {
+        delay = Duration(seconds: seconds.clamp(0, 86400));
+      }
+    }
+    // Reset-In is relative to response receipt, so it does not depend on the
+    // device's wall clock agreeing with the publisher. A non-exhausted or
+    // malformed window never introduces a cooldown. Keep headers private.
+    final reset = _windowNumber(headers, 'x-ratelimit-reset-in');
+    if (reset != null &&
+        (status == 429 ||
+            _windowNumber(headers, 'x-ratelimit-remaining') == 0)) {
+      final window = Duration(seconds: reset.clamp(0, 86400));
+      if (delay == null || window > delay) delay = window;
+    }
+    return delay;
+  }
+
+  void _rememberCooldown(String host, Duration? delay) {
+    if (delay == null) return;
+    final key = _rateKey(host);
+    final until = DateTime.now().add(delay);
+    final previous = _next[key];
+    if (previous == null || until.isAfter(previous)) _next[key] = until;
+  }
+
+  Future<void> _wait(Duration delay, CancellationToken? cancel) async {
+    if (_closed) throw const ProviderException('transport_closed');
+    cancel?.throwIfCancelled();
+    final done = Completer<void>();
+    final timer = Timer(delay, () => done.complete());
+    _waiters.add(done);
+    try {
+      await _cancellable(done.future, cancel);
+    } finally {
+      timer.cancel();
+      _waiters.remove(done);
+    }
+  }
+
   Future<void> _pace(String host, CancellationToken? cancel) async {
     final wait = (_next[_rateKey(host)] ?? DateTime.now()).difference(
       DateTime.now(),
     );
     if (wait > Duration.zero) {
-      await _cancellable(Future<void>.delayed(wait), cancel);
+      await _wait(wait, cancel);
     }
     if (_closed) throw const ProviderException('transport_closed');
     cancel?.throwIfCancelled();
@@ -240,6 +383,7 @@ class ProviderTransport {
     int limit,
     Duration? timeout,
     Set<String>? allowedHosts,
+    bool acceptNotModified,
   ) async {
     if (_closed) throw const ProviderException('transport_closed');
     cancel?.throwIfCancelled();
@@ -259,6 +403,7 @@ class ProviderTransport {
       );
       final code = reply.status;
       if (code >= 200 && code < 300) return reply;
+      if (code == 304 && acceptNotModified && verb == 'GET') return reply;
       if ({301, 302, 303, 307, 308}.contains(code)) {
         final location = reply.headers['location'];
         final parsed = location == null || location.trim().isEmpty
@@ -292,16 +437,14 @@ class ProviderTransport {
         url = target;
         continue;
       }
+      final retryAfter = _publisherDelay(code, reply.headers);
       if ((code == 429 || code == 503) &&
           verb == 'GET' &&
           retries < maxRetries) {
-        final asked = int.tryParse(reply.headers['retry-after']?.trim() ?? '');
-        final delay = asked != null
-            ? Duration(seconds: asked.clamp(0, 86400))
-            : retryBaseDelay * (1 << retries);
+        final delay = retryAfter ?? retryBaseDelay * (1 << retries);
         if (delay <= maxRetryDelay) {
           retries++;
-          await _cancellable(Future<void>.delayed(delay), cancel);
+          await _wait(delay, cancel);
           if (_closed) throw const ProviderException('transport_closed');
           continue;
         }
@@ -353,6 +496,10 @@ class ProviderTransport {
         cancel?.throwIfCancelled();
         final response = await _client.send(request);
         final code = response.statusCode;
+        // Count the publisher's window as soon as headers arrive, even if
+        // reading this response is later cancelled, times out or exceeds its
+        // body limit. Cancellation must not erase the host's cooldown.
+        _rememberCooldown(url.host, _publisherDelay(code, response.headers));
         if (code < 200 || code >= 300) {
           await response.stream.listen((_) {}).cancel();
           return (status: code, headers: response.headers, bytes: null);
@@ -400,14 +547,19 @@ class ProviderTransport {
       throw const ProviderException('network');
     } finally {
       final key = _rateKey(url.host);
-      // MusicBrainz's per-second policy also applies to retries and redirects,
-      // which run inside the transport and bypass the adapter's outer queue.
-      const musicBrainzInterval = Duration(milliseconds: 1100);
-      final interval =
-          key == 'musicbrainz.org' && hostInterval < musicBrainzInterval
-          ? musicBrainzInterval
-          : hostInterval;
-      _next[key] = DateTime.now().add(interval);
+      // Publisher limits include retries and redirects, which bypass an
+      // adapter's outer queue. SyncLRC shares its 30/min limit across routes.
+      final minimum = switch (key) {
+        'musicbrainz.org' => const Duration(milliseconds: 1100),
+        'api.synclrc.dev' => const Duration(milliseconds: 2100),
+        _ => Duration.zero,
+      };
+      final interval = hostInterval < minimum ? minimum : hostInterval;
+      final pacedUntil = DateTime.now().add(interval);
+      final previous = _next[key];
+      _next[key] = previous != null && previous.isAfter(pacedUntil)
+          ? previous
+          : pacedUntil;
     }
   }
 
@@ -462,6 +614,11 @@ class ProviderTransport {
 
   Future<void> _close() async {
     _closed = true;
+    for (final waiter in _waiters.toList()) {
+      if (!waiter.isCompleted) {
+        waiter.completeError(const ProviderException('transport_closed'));
+      }
+    }
     for (final abort in _aborters.values.toList()) {
       abort();
     }

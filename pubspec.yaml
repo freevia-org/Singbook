@@ -4,7 +4,7 @@ homepage: https://freevia.org/singbook/
 repository: https://github.com/freevia-org/Singbook
 issue_tracker: https://github.com/freevia-org/Singbook/issues
 publish_to: 'none'
-version: 0.2.25+39
+version: 0.2.31+45
 
 environment:
   sdk: ^3.12.2
@@ -51,6 +51,14 @@ flutter:
   assets:
     - config/source-catalog.json
     - config/source-catalog-v2.json
+    - config/source-catalog-v3.json
+    - config/source-catalog-v4.json
+    - config/source-catalog-v5.json
+    - config/source-catalog-v6.json
+    - config/source-catalog-v7.json
+    - config/source-catalog-v8.json
+    - config/source-catalog-v9.json
+    - config/source-catalog-v10.json
     - assets/fonts/
     - assets/fonts/brand-candidates/Lora-OFL.txt
     - assets/branding/singbook-icon.png

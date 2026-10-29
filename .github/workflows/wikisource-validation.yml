@@ -1,33 +1,6 @@
 name: Wikisource validation
 
 "on":
-  pull_request:
-    paths:
-      - .github/workflows/wikisource-validation.yml
-      - lib/application/app_controller.dart
-      - lib/domain/combine.dart
-      - lib/providers/core/service.dart
-      - lib/providers/extra/import_sources.dart
-      - lib/ui/app_controller_adapter.dart
-      - test/application/historical_text_import_test.dart
-      - test/domain/historical_text_import_test.dart
-      - test/domain/recording_scope_test.dart
-      - test/fixtures/wikisource_legacy_saved_song.json
-      - test/providers/extra/adversarial_test.dart
-      - test/providers/extra/extra_providers_test.dart
-      - test/providers/extra/wikisource_identity_test.dart
-      - test/ui/wikisource_cached_comparison_test.dart
-      # Every other file the regression matrix below runs, plus dependency pins.
-      - test/providers/core/providers_test.dart
-      - test/domain/combined_enrichment_test.dart
-      - test/domain/combined_chord_union_test.dart
-      - test/application/ready_source_save_test.dart
-      - test/application/youtube_provider_toggle_test.dart
-      - test/ui/followup_ux_test.dart
-      - test/ui/comparison_diagnostics_mapping_test.dart
-      - test/ui/app_controller_adapter_test.dart
-      - pubspec.yaml
-      - pubspec.lock
   workflow_dispatch:
 
 permissions:
@@ -127,6 +100,7 @@ jobs:
           read -r -a ci_test_paths <<< "$CI_TEST_PATHS"
           set +e
           flutter --suppress-analytics --no-version-check test --no-pub \
+            --exclude-tags=performance \
             --dart-define=SINGBOOK_SOURCE_CATALOG_URL=about:blank \
             --concurrency=1 --reporter=expanded --timeout=90s \
             "${ci_test_paths[@]}" 2>&1 | tee "artifacts/wikisource-ci/$CI_GROUP/tests.log"

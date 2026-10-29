@@ -2095,4 +2095,21 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get settingsShowPlayerControlsHint =>
       'También puedes tocar o deslizar el panel del reproductor para mostrarlo u ocultarlo.';
+
+  @override
+  String get sourceAnalysisHeading =>
+      'Análisis del audio enviado (sin verificar)';
+
+  @override
+  String sourceAnalysisCoverage(int shown, int total) {
+    return 'Se muestran $shown de $total envíos';
+  }
+
+  @override
+  String sourceAnalysisSample(int number) {
+    return 'Muestra $number';
+  }
+
+  @override
+  String get sourceAnalysisEstimatedTempo => 'Tempo estimado (BPM)';
 }

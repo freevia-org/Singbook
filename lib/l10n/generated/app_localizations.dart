@@ -3647,6 +3647,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You can also tap or swipe the player panel to show or hide it.'**
   String get settingsShowPlayerControlsHint;
+
+  /// No description provided for @sourceAnalysisHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Submitted audio analysis (unverified)'**
+  String get sourceAnalysisHeading;
+
+  /// No description provided for @sourceAnalysisCoverage.
+  ///
+  /// In en, this message translates to:
+  /// **'{shown} of {total} submissions shown'**
+  String sourceAnalysisCoverage(int shown, int total);
+
+  /// No description provided for @sourceAnalysisSample.
+  ///
+  /// In en, this message translates to:
+  /// **'Sample {number}'**
+  String sourceAnalysisSample(int number);
+
+  /// No description provided for @sourceAnalysisEstimatedTempo.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated tempo (BPM)'**
+  String get sourceAnalysisEstimatedTempo;
 }
 
 class _AppLocalizationsDelegate

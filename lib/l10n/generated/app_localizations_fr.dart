@@ -2108,4 +2108,21 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get settingsShowPlayerControlsHint =>
       'Vous pouvez aussi toucher ou balayer le panneau du lecteur pour l’afficher ou le masquer.';
+
+  @override
+  String get sourceAnalysisHeading =>
+      'Analyse de l’audio soumis (non vérifiée)';
+
+  @override
+  String sourceAnalysisCoverage(int shown, int total) {
+    return '$shown envois affichés sur $total';
+  }
+
+  @override
+  String sourceAnalysisSample(int number) {
+    return 'Échantillon $number';
+  }
+
+  @override
+  String get sourceAnalysisEstimatedTempo => 'Tempo estimé (BPM)';
 }

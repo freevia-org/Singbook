@@ -345,5 +345,26 @@
   },
   "@settingsStartupLastView": {
     "description": "Option that opens the last view used before the app was closed."
-  }
+  },
+  "sourceAnalysisHeading": "Аналіз надісланого аудіо (не перевірено)",
+  "sourceAnalysisCoverage": "Показано {shown} із {total} надісланих записів",
+  "@sourceAnalysisCoverage": {
+    "placeholders": {
+      "shown": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "sourceAnalysisSample": "Зразок {number}",
+  "@sourceAnalysisSample": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "sourceAnalysisEstimatedTempo": "Орієнтовний темп (BPM)"
 }

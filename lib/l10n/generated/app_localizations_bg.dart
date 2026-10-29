@@ -2080,4 +2080,21 @@ class AppLocalizationsBg extends AppLocalizations {
   @override
   String get settingsShowPlayerControlsHint =>
       'Можете също да докоснете или плъзнете панела на плейъра, за да го покажете или скриете.';
+
+  @override
+  String get sourceAnalysisHeading =>
+      'Анализ на подаденото аудио (непотвърден)';
+
+  @override
+  String sourceAnalysisCoverage(int shown, int total) {
+    return 'Показани са $shown от $total подадени записа';
+  }
+
+  @override
+  String sourceAnalysisSample(int number) {
+    return 'Запис $number';
+  }
+
+  @override
+  String get sourceAnalysisEstimatedTempo => 'Ориентировъчно темпо (BPM)';
 }

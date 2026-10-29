@@ -2094,4 +2094,21 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get settingsShowPlayerControlsHint =>
       'Puoi anche toccare o scorrere il pannello del lettore per mostrarlo o nasconderlo.';
+
+  @override
+  String get sourceAnalysisHeading =>
+      'Analisi dell’audio inviato (non verificata)';
+
+  @override
+  String sourceAnalysisCoverage(int shown, int total) {
+    return 'Visualizzati $shown invii su $total';
+  }
+
+  @override
+  String sourceAnalysisSample(int number) {
+    return 'Campione $number';
+  }
+
+  @override
+  String get sourceAnalysisEstimatedTempo => 'Tempo stimato (BPM)';
 }

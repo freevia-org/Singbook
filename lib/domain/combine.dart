@@ -9,10 +9,21 @@ import 'arrangement.dart';
 import 'artist_credit.dart';
 import 'reviewed_chart_artist.dart';
 import 'metadata_artist_credit.dart';
+import 'published_name_alias.dart';
 import 'arrangement_context.dart';
+import 'contextual_chart_lyrics.dart';
+import 'compact_chord_alignment.dart';
 import 'lyric_word_identity.dart';
 import 'short_lyric_reference.dart';
-import 'chord_key_estimate.dart' show estimateChordKey;
+import 'chord_key_estimate.dart'
+    show
+        estimateChordKey,
+        rankChordKeyCandidates,
+        chartSupportsDeclaredTonic,
+        chartSupportsBoundaryTonic;
+import 'evidence_ranking.dart';
+import 'source_evidence.dart';
+import 'chart_arrangements.dart';
 import 'timing.dart' show timingOccurrenceMap;
 
 SourceResult? bestLyricsFallback(Iterable<SourceResult> sources) {
@@ -184,8 +195,10 @@ bool _sameSong(SongCandidate a, SongCandidate b) {
   final artist = _identityNorm(a.artist), title = _baseTitle(a.title);
   // Two unknown (empty) artists or titles are not evidence of the same song.
   if (artist.isEmpty || title.isEmpty) return false;
-  return title == _baseTitle(b.title) &&
+  final titles = publishedNameVariants(a.title).map(_baseTitle).toSet();
+  return publishedNameVariants(b.title).map(_baseTitle).any(titles.contains) &&
       (artist == _identityNorm(b.artist) ||
+          publishedNamesMatch(a.artist, b.artist) ||
           sameGeniusPrimaryCredit(a, b, _identityNorm) ||
           sameReviewedChartArtist(a, b) ||
           musicBrainzArtistCreditEvidence(a, b, _identityNorm) != null);
@@ -204,13 +217,20 @@ bool _sameArrangedSong(SongCandidate a, SongCandidate b) {
   String title(String value) => _baseTitle(
     foldLyricVowelAccents(value),
   ).replaceFirst(RegExp(r'^(?:the|a|an) '), '');
-  final song = title(a.title);
-  if (song.isEmpty || song != title(b.title)) return false;
+  final songs = publishedNameVariants(
+    a.title,
+  ).map(title).where((s) => s.isNotEmpty).toSet();
+  if (!publishedNameVariants(b.title).map(title).any(songs.contains)) {
+    return false;
+  }
+  final artistA = reviewedChartArtistCredit(a)?.canonicalName ?? a.artist;
+  final artistB = reviewedChartArtistCredit(b)?.canonicalName ?? b.artist;
   return artistCreditsMatch(
-    reviewedChartArtistCredit(a)?.canonicalName ?? a.artist,
-    reviewedChartArtistCredit(b)?.canonicalName ?? b.artist,
-    (value) => _identityNorm(foldLyricVowelAccents(value)),
-  );
+        artistA,
+        artistB,
+        (value) => _identityNorm(foldLyricVowelAccents(value)),
+      ) ||
+      publishedNamesMatch(artistA, artistB);
 }
 
 bool _hasRecordingIdentityScope(SongCandidate candidate) =>
@@ -345,6 +365,52 @@ bool declaredKeyFitsChords(String chart, String declared, Object? capo) {
   final estimate = estimateChordKey(chart)?.key;
   if (estimate == null) return true;
   return _keyDistance(estimate, declared) == _capoOf(capo);
+}
+
+bool _keyFitsKnownChords(SongDocument song, String key) {
+  return estimateChordKey(song.body) != null &&
+      declaredKeyFitsChords(
+        song.body,
+        key,
+        _nonemptyFallback(
+          song.metadata['capo'],
+          song.selectedRecording?.metadata['capo'],
+        ),
+      );
+}
+
+Object? _nonemptyFallback(Object? preferred, Object? fallback) =>
+    _hasMetadata(preferred) ? preferred : fallback;
+
+int _keyEvidenceCompare(
+  SongDocument song,
+  ({String key, List<String> sourceIds}) a,
+  ({String key, List<String> sourceIds}) b,
+) {
+  int distinctProviders(({String key, List<String> sourceIds}) claim) => song
+      .sources
+      .where((source) => claim.sourceIds.contains(source.id))
+      .map((source) => source.candidate.providerId)
+      .toSet()
+      .length;
+  int recordingMatches(({String key, List<String> sourceIds}) claim) => song
+      .sources
+      .where(
+        (source) =>
+            claim.sourceIds.contains(source.id) &&
+            source.matchKind == MatchKind.sameRecording,
+      )
+      .map((source) => source.candidate.providerId)
+      .toSet()
+      .length;
+  final providers = distinctProviders(b).compareTo(distinctProviders(a));
+  if (providers != 0) return providers;
+  final recordings = recordingMatches(b).compareTo(recordingMatches(a));
+  if (recordings != 0) return recordings;
+  final aFits = _keyFitsKnownChords(song, a.key);
+  final bFits = _keyFitsKnownChords(song, b.key);
+  if (aFits != bFits) return aFits ? -1 : 1;
+  return 0;
 }
 
 /// The declared key to keep for a chart whose chords were moved [shift]
@@ -538,6 +604,10 @@ bool? _chartSpelling(String body) {
 }
 
 bool recordingCompatible(SongCandidate selected, SourceResult result) {
+  if (result.extra['recordingArrangement'] is Map ||
+      result.extra['alternatePerformerChart'] == true) {
+    return false;
+  }
   if (!explicitEditionsCompatible(
     selected,
     result.candidate,
@@ -893,15 +963,42 @@ String _escapeLiteralChordTokens(String text) {
 
 String _escapeBackslashes(String text) => text.replaceAll('\\', '\\\\');
 
+final _normalizedLineLetterOrNumber = RegExp(r'[\p{L}\p{N}]', unicode: true);
+
 ({String text, List<int> offsets}) _normalizedLine(String text) {
+  // Most lyric text is ASCII. Avoid building grapheme and RegExp objects for
+  // every character while retaining the same normalized-to-original offsets.
+  if (text.codeUnits.every((unit) => unit < 0x80)) {
+    final normalized = StringBuffer();
+    final offsets = <int>[];
+    var pendingSeparator = false;
+    for (var index = 0; index < text.length; index++) {
+      var unit = text.codeUnitAt(index);
+      if (unit >= 0x41 && unit <= 0x5a) unit += 0x20;
+      final isLetterOrNumber =
+          (unit >= 0x61 && unit <= 0x7a) || (unit >= 0x30 && unit <= 0x39);
+      if (!isLetterOrNumber) {
+        if (normalized.isNotEmpty) pendingSeparator = true;
+        continue;
+      }
+      if (pendingSeparator && normalized.isNotEmpty) {
+        normalized.write(' ');
+        offsets.add(index);
+      }
+      normalized.writeCharCode(unit);
+      offsets.add(index);
+      pendingSeparator = false;
+    }
+    return (text: normalized.toString(), offsets: offsets);
+  }
+
   final normalized = StringBuffer();
   final offsets = <int>[];
   var pendingSeparator = false;
   final graphemes = text.characters.toList();
-  final letterOrNumber = RegExp(r'[\p{L}\p{N}]', unicode: true);
   for (var index = 0; index < graphemes.length; index++) {
     final lowered = graphemes[index].toLowerCase().characters;
-    final kept = lowered.where(letterOrNumber.hasMatch).toList();
+    final kept = lowered.where(_normalizedLineLetterOrNumber.hasMatch).toList();
     if (kept.isEmpty) {
       if (normalized.isNotEmpty) pendingSeparator = true;
       continue;
@@ -947,7 +1044,9 @@ Map<int, List<ChordAnchor>> _phraseChords(
   final phraseIndex = <int, Map<String, List<int>>>{};
   List<int> startsFor(String phrase) {
     final tokens = phrase.split(' ');
-    final count = tokens.length.clamp(1, 3);
+    // Four-word keys avoid scanning every repeated three-word opening while
+    // remaining a necessary prefix for every valid full-phrase occurrence.
+    final count = tokens.length.clamp(1, 4);
     final index = phraseIndex.putIfAbsent(count, () {
       final value = <String, List<int>>{};
       for (var i = 0; i + count <= words.length; i++) {
@@ -1245,8 +1344,24 @@ bool _compatibleMetadataKeySource(SongDocument song, SourceResult source) {
     return false;
   }
   for (final field in const ['capo', 'tuning', 'timeSignature']) {
-    final base = song.metadata[field] ?? selected.metadata[field];
-    final donor = source.metadata[field] ?? source.candidate.metadata[field];
+    final base = _nonemptyFallback(
+      song.metadata[field],
+      selected.metadata[field],
+    );
+    final donor = _nonemptyFallback(
+      source.metadata[field],
+      source.candidate.metadata[field],
+    );
+    if (field == 'capo' &&
+        !_hasMetadata(base) &&
+        _hasMetadata(donor) &&
+        _isExplicitZeroCapo(donor)) {
+      continue;
+    }
+    if (field == 'tuning') {
+      if (!_compatibleChartTuning(base, donor)) return false;
+      continue;
+    }
     if (_hasMetadata(base) != _hasMetadata(donor)) return false;
     if (!_hasMetadata(base)) continue;
     String normalize(Object? value) {
@@ -1266,148 +1381,15 @@ bool _compatibleMetadataKeySource(SongDocument song, SourceResult source) {
   return true;
 }
 
-List<String> _arrangementKeySetupMismatchFields(
-  SongDocument song,
-  SourceResult source,
-) {
-  final mismatches = <String>[];
-  for (final field in const ['capo', 'tuning', 'timeSignature']) {
-    final baseValue = song.metadata[field];
-    final donorValue =
-        source.metadata[field] ?? source.candidate.metadata[field];
-    // An absent capo claim means the displayed chart defaults to zero.
-    // Treat an explicit capo 0 claim as compatible after its chord anchors
-    // have been corroborated against that unchanged chart.
-    if (field == 'capo' &&
-        !_hasMetadata(baseValue) &&
-        _hasMetadata(donorValue) &&
-        _isExplicitZeroCapo(donorValue)) {
-      continue;
-    }
-    // The app's chart-tuning compatibility rule accepts an omitted value only
-    // when the known side is ordinary standard guitar tuning.
-    if (field == 'tuning') {
-      if (!_compatibleChartTuning(baseValue, donorValue)) {
-        mismatches.add(field);
-      }
-      continue;
-    }
-    String normalize(Object? value) {
-      return value.toString().trim().toLowerCase();
-    }
-
-    // Unknown capo/tuning cannot prove that displayed shapes sound alike.
-    if ((_hasMetadata(baseValue) != _hasMetadata(donorValue)) ||
-        (_hasMetadata(baseValue) &&
-            normalize(baseValue) != normalize(donorValue))) {
-      mismatches.add(field);
-    }
-  }
-  return mismatches;
-}
-
-/// Redacted view of the early gates used when considering chart-provided keys.
-/// It never includes lyric/chord bodies and does not affect key selection.
-List<JsonMap> arrangementKeySetupDiagnostics(SongDocument song) {
-  if (_hasMetadata(song.metadata['key']) ||
-      jsonMap(song.extra['fieldOrigins'])['key'] == 'user' ||
-      !song.hasChords) {
-    return const [];
-  }
-  final selected =
-      song.selectedRecording ??
-      SongCandidate(
-        providerId: 'library',
-        id: song.id,
-        title: song.title,
-        artist: song.artist,
-      );
-  final chordSourceIds =
-      (song.extra['chordSourceIds'] as List?)?.whereType<String>().toSet() ??
-      const <String>{};
-  final diagnostics = <JsonMap>[];
-  for (final source in song.sources) {
-    final declared = _keyIdentity(source.metadata['key']) != null
-        ? source.metadata['key'] as String
-        : source.candidate.metadata['key'];
-    if (!source.hasChords || _keyIdentity(declared) == null) continue;
-    final chartCredit =
-        source.extra['requiresLyricsAgreement'] == true &&
-        chordSourceIds.contains(source.id) &&
-        _sameArrangedSong(source.candidate, selected);
-    final basicEligible =
-        (const {
-              MatchKind.sameSong,
-              MatchKind.sameRecording,
-            }.contains(source.matchKind) ||
-            (source.matchKind == MatchKind.rejected &&
-                source.matchReason == 'incomplete_or_different_lyrics')) &&
-        !source.hasPendingMatchCheck &&
-        (_sameSong(source.candidate, selected) ||
-            (source.matchKind == MatchKind.sameSong &&
-                _version(source.candidate.title) == _version(selected.title)) ||
-            chartCredit) &&
-        _version(source.candidate.title) == _version(selected.title);
-    final diagnostic = <String, Object?>{
-      'sourceId': source.id,
-      'providerId': source.candidate.providerId,
-      'candidateKey': declared,
-      'basicEligible': basicEligible,
-      'keyFitsOwnChart': null,
-      'setupMismatchFields': <String>[],
-      'setupValues': {
-        for (final field in const ['capo', 'tuning', 'timeSignature'])
-          field: {
-            'selected': song.metadata[field],
-            'candidate':
-                source.metadata[field] ?? source.candidate.metadata[field],
-          },
-      },
-      'standardTuningDefaultCompatible': _compatibleChartTuning(
-        song.metadata['tuning'],
-        source.metadata['tuning'] ?? source.candidate.metadata['tuning'],
-      ),
-    };
-    diagnostics.add(diagnostic);
-    if (!basicEligible) continue;
-    final shift = jsonMap(song.extra['chordKeyShifts'])[source.id];
-    final shifted = shift is int && shift % 12 != 0;
-    final key = shifted
-        ? declaredKeyAfterShift(
-            source.body,
-            declared as String,
-            source.metadata['capo'] ?? source.candidate.metadata['capo'],
-            shift,
-          )
-        : declared;
-    if (_keyIdentity(key) == null) continue;
-    final fits =
-        shifted ||
-        declaredKeyFitsChords(
-          source.body,
-          key as String,
-          source.metadata['capo'] ?? source.candidate.metadata['capo'],
-        );
-    diagnostic['keyFitsOwnChart'] = fits;
-    if (!fits) continue;
-    diagnostic['setupMismatchFields'] = _arrangementKeySetupMismatchFields(
-      song,
-      source,
-    );
-  }
-  return diagnostics;
-}
-
 /// Recovers a supplied key only from charts corroborated against the actual
 /// saved chords. Catalog keys and the first chord are not key evidence. This is
 /// also usable for old saved imports, without rewriting their library records.
-({String key, List<String> sourceIds})? corroboratedArrangementKey(
-  SongDocument song,
-) {
+Map<String, ({String key, List<String> sourceIds})>
+_corroboratedArrangementKeyClaims(SongDocument song) {
   if (_hasMetadata(song.metadata['key']) ||
       jsonMap(song.extra['fieldOrigins'])['key'] == 'user' ||
       !song.hasChords) {
-    return null;
+    return const {};
   }
   final selected =
       song.selectedRecording ??
@@ -1458,6 +1440,10 @@ List<JsonMap> arrangementKeySetupDiagnostics(SongDocument song) {
     // in that key (see [_keyCorrectedBody] and [declaredKeyAfterShift]).
     final shift = jsonMap(song.extra['chordKeyShifts'])[source.id];
     final shifted = shift is int && shift % 12 != 0;
+    final donorCapo = _nonemptyFallback(
+      source.metadata['capo'],
+      source.candidate.metadata['capo'],
+    );
     final declared = _keyIdentity(source.metadata['key']) != null
         ? source.metadata['key'] as String
         : source.candidate.metadata['key'];
@@ -1465,7 +1451,7 @@ List<JsonMap> arrangementKeySetupDiagnostics(SongDocument song) {
         ? declaredKeyAfterShift(
             source.body,
             declared is String ? declared : null,
-            source.metadata['capo'] ?? source.candidate.metadata['capo'],
+            donorCapo,
             shift,
           )
         : declared;
@@ -1473,14 +1459,19 @@ List<JsonMap> arrangementKeySetupDiagnostics(SongDocument song) {
     if (identity == null) continue;
     // A label contradicting the chart's own chords is not evidence of a key.
     if (!shifted &&
-        !declaredKeyFitsChords(
-          source.body,
-          key as String,
-          source.metadata['capo'] ?? source.candidate.metadata['capo'],
-        )) {
+        !declaredKeyFitsChords(source.body, key as String, donorCapo)) {
       continue;
     }
-    if (_arrangementKeySetupMismatchFields(song, source).isNotEmpty) {
+    if (_arrangementKeySetupMismatchFields(song, source).isNotEmpty) continue;
+    // A positively identified source key that agrees with a known harmony
+    // reading of the saved chart does not depend on its lyric line layout.
+    // Keep chord-anchor corroboration below for sparse or modulating charts.
+    if (_keyFitsKnownChords(song, key as String)) {
+      final claim = claims.putIfAbsent(
+        identity,
+        () => (key: key.trim(), sourceIds: []),
+      );
+      claim.sourceIds.add(source.id);
       continue;
     }
     final keyEvidenceBody = shifted
@@ -1513,11 +1504,9 @@ List<JsonMap> arrangementKeySetupDiagnostics(SongDocument song) {
       }
       if (contradicts) break;
     }
-    final capo = _capoOf(
-      source.metadata['capo'] ?? source.candidate.metadata['capo'],
-    );
     final soundingRoots = {
-      for (final root in roots) ((int.parse(root) + capo) % 12).toString(),
+      for (final root in roots)
+        ((int.parse(root) + _capoOf(donorCapo)) % 12).toString(),
     };
     if (contradicts ||
         agreements < 3 ||
@@ -1528,28 +1517,192 @@ List<JsonMap> arrangementKeySetupDiagnostics(SongDocument song) {
     }
     final claim = claims.putIfAbsent(
       identity,
-      () => (key: (key as String).trim(), sourceIds: []),
+      () => (key: key.trim(), sourceIds: []),
     );
     claim.sourceIds.add(source.id);
   }
-  // A relative-major/minor disagreement cannot be resolved by matching roots.
-  return claims.length == 1 ? claims.values.single : null;
+  // Resolve competing verified claims by distinct provider count first,
+  // then recording-level match quality, then fit to the saved arrangement.
+  // An exact evidence tie stays unresolved; key identity order is not evidence.
+  return claims;
 }
 
-/// Returns one non-conflicting provider key for this song.
+({String key, List<String> sourceIds})? _bestKeyClaim(
+  SongDocument song,
+  Map<String, ({String key, List<String> sourceIds})> claims,
+) {
+  if (claims.isEmpty) return null;
+  final ranked = claims.values.toList()
+    ..sort((a, b) => _keyEvidenceCompare(song, a, b));
+  if (ranked.length > 1 &&
+      _keyEvidenceCompare(song, ranked[0], ranked[1]) == 0) {
+    return null;
+  }
+  return ranked.first;
+}
+
+({String key, List<String> sourceIds})? corroboratedArrangementKey(
+  SongDocument song,
+) => _bestKeyClaim(song, _corroboratedArrangementKeyClaims(song));
+
+List<String> _arrangementKeySetupMismatchFields(
+  SongDocument song,
+  SourceResult source,
+) {
+  final selected =
+      song.selectedRecording ??
+      SongCandidate(
+        providerId: 'library',
+        id: song.id,
+        title: song.title,
+        artist: song.artist,
+      );
+  final mismatches = <String>[];
+  for (final field in const ['capo', 'tuning', 'timeSignature']) {
+    final baseValue = _nonemptyFallback(
+      song.metadata[field],
+      selected.metadata[field],
+    );
+    final donorValue = _nonemptyFallback(
+      source.metadata[field],
+      source.candidate.metadata[field],
+    );
+    if (field == 'capo' &&
+        !_hasMetadata(baseValue) &&
+        _hasMetadata(donorValue) &&
+        _isExplicitZeroCapo(donorValue)) {
+      continue;
+    }
+    if (field == 'tuning') {
+      if (!_compatibleChartTuning(baseValue, donorValue)) {
+        mismatches.add(field);
+      }
+      continue;
+    }
+    if (_hasMetadata(baseValue) != _hasMetadata(donorValue) ||
+        _hasMetadata(baseValue) &&
+            '$baseValue'.trim().toLowerCase() !=
+                '$donorValue'.trim().toLowerCase()) {
+      mismatches.add(field);
+    }
+  }
+  return mismatches;
+}
+
+/// Redacted setup diagnostics for evaluating chart key claims.
+List<JsonMap> arrangementKeySetupDiagnostics(SongDocument song) {
+  if (_hasMetadata(song.metadata['key']) ||
+      jsonMap(song.extra['fieldOrigins'])['key'] == 'user' ||
+      !song.hasChords) {
+    return const [];
+  }
+  final selected =
+      song.selectedRecording ??
+      SongCandidate(
+        providerId: 'library',
+        id: song.id,
+        title: song.title,
+        artist: song.artist,
+      );
+  final chordSourceIds =
+      (song.extra['chordSourceIds'] as List?)?.whereType<String>().toSet() ??
+      const <String>{};
+  final diagnostics = <JsonMap>[];
+  for (final source in song.sources) {
+    final declared = _keyIdentity(source.metadata['key']) != null
+        ? source.metadata['key']
+        : source.candidate.metadata['key'];
+    if (!source.hasChords || _keyIdentity(declared) == null) continue;
+    final chartCredit =
+        source.extra['requiresLyricsAgreement'] == true &&
+        chordSourceIds.contains(source.id) &&
+        _sameArrangedSong(source.candidate, selected);
+    final basicEligible =
+        (const {
+              MatchKind.sameSong,
+              MatchKind.sameRecording,
+            }.contains(source.matchKind) ||
+            source.matchKind == MatchKind.rejected &&
+                source.matchReason == 'incomplete_or_different_lyrics') &&
+        !source.hasPendingMatchCheck &&
+        (_sameSong(source.candidate, selected) || chartCredit) &&
+        _version(source.candidate.title) == _version(selected.title);
+    Object? selectedSetup(String field) =>
+        _nonemptyFallback(song.metadata[field], selected.metadata[field]);
+    Object? candidateSetup(String field) => _nonemptyFallback(
+      source.metadata[field],
+      source.candidate.metadata[field],
+    );
+    final diagnostic = <String, Object?>{
+      'sourceId': source.id,
+      'providerId': source.candidate.providerId,
+      'candidateKey': declared,
+      'basicEligible': basicEligible,
+      'keyFitsOwnChart': null,
+      'setupMismatchFields': <String>[],
+      'setupValues': {
+        for (final field in const ['capo', 'tuning', 'timeSignature'])
+          field: {
+            'selected': selectedSetup(field),
+            'candidate': candidateSetup(field),
+          },
+      },
+      'standardTuningDefaultCompatible': _compatibleChartTuning(
+        selectedSetup('tuning'),
+        candidateSetup('tuning'),
+      ),
+    };
+    diagnostics.add(diagnostic);
+    if (!basicEligible) continue;
+    final shift = jsonMap(song.extra['chordKeyShifts'])[source.id];
+    final shifted = shift is int && shift % 12 != 0;
+    final capo = candidateSetup('capo');
+    final key = shifted
+        ? declaredKeyAfterShift(source.body, declared as String, capo, shift)
+        : declared;
+    if (_keyIdentity(key) == null) continue;
+    final fits =
+        shifted || declaredKeyFitsChords(source.body, key as String, capo);
+    diagnostic['keyFitsOwnChart'] = fits;
+    if (fits) {
+      diagnostic['setupMismatchFields'] = _arrangementKeySetupMismatchFields(
+        song,
+        source,
+      );
+    }
+  }
+  return diagnostics;
+}
+
+/// Returns the best supported provider key for this song.
 ///
 /// A key attached to a chord chart must first pass the stricter chord
 /// corroboration above. A lyrics-only source can still contribute its
 /// explicit key when it is positively matched to the same song and edition;
-/// a bare catalog/search candidate or an unverified result cannot. If
-/// providers disagree, leave the field unresolved rather than picking the
-/// first result. This keeps key metadata independent from which provider's
-/// lyrics were selected while retaining its source provenance.
+/// a bare catalog/search candidate or an unverified result cannot. When
+/// sources disagree, independent corroboration and recording-level matches
+/// determine the winner, with fit to saved chords as the final evidence tie
+/// breaker. Section or bridge arrangement differences do not affect home key.
 ({String key, List<String> sourceIds})? sourcedArrangementKey(
   SongDocument song,
 ) {
   if (_hasMetadata(song.metadata['key']) ||
       jsonMap(song.extra['fieldOrigins'])['key'] == 'user') {
+    return null;
+  }
+  final ranked = jsonMap(song.extra['evidenceRanking']);
+  final rankedSourceIds = (ranked['claims'] as List? ?? const [])
+      .whereType<Map>()
+      .map((claim) => claim['sourceId'])
+      .toSet();
+  final hasAdditionalEvidence = song.sources.any(
+    (source) => !rankedSourceIds.contains(source.id),
+  );
+  if (ranked['version'] == 1 &&
+      ranked['selectionMode'] != 'explicitSource' &&
+      !hasAdditionalEvidence) {
+    // A new combined document has already compared these source claims.
+    // Do not resurrect a weaker key over its ranked inferred choice.
     return null;
   }
   final claims = <String, ({String key, List<String> sourceIds})>{};
@@ -1568,6 +1721,17 @@ List<JsonMap> arrangementKeySetupDiagnostics(SongDocument song) {
         : source.candidate.metadata['key'];
     final identity = _keyIdentity(key);
     if (identity == null) continue;
+    if (song.hasChords &&
+        !declaredKeyFitsChords(
+          song.body,
+          key as String,
+          _nonemptyFallback(
+            source.metadata['capo'],
+            source.candidate.metadata['capo'],
+          ),
+        )) {
+      continue;
+    }
     final claim = claims.putIfAbsent(
       identity,
       () => (key: (key as String).trim(), sourceIds: []),
@@ -1576,21 +1740,31 @@ List<JsonMap> arrangementKeySetupDiagnostics(SongDocument song) {
   }
 
   // Chord-bearing metadata remains subject to line-level corroboration.
-  final chartClaim = corroboratedArrangementKey(song);
-  if (chartClaim != null) {
-    final identity = _keyIdentity(chartClaim.key)!;
-    final claim = claims.putIfAbsent(identity, () => chartClaim);
-    for (final id in chartClaim.sourceIds) {
+  for (final entry in _corroboratedArrangementKeyClaims(song).entries) {
+    final claim = claims.putIfAbsent(entry.key, () => entry.value);
+    for (final id in entry.value.sourceIds) {
       if (!claim.sourceIds.contains(id)) claim.sourceIds.add(id);
     }
   }
-  return claims.length == 1 ? claims.values.single : null;
+  return _bestKeyClaim(song, claims);
 }
 
-Object? _setupValue(SourceResult source, SongCandidate selected, String key) =>
-    source.metadata[key] ??
-    source.candidate.metadata[key] ??
-    selected.metadata[key];
+Object? _setupValue(SourceResult source, SongCandidate selected, String key) {
+  for (final value in [
+    source.metadata[key],
+    source.candidate.metadata[key],
+    selected.metadata[key],
+  ]) {
+    if (value == null ||
+        value is String && value.trim().isEmpty ||
+        value is Iterable && value.isEmpty ||
+        value is Map && value.isEmpty) {
+      continue;
+    }
+    return value;
+  }
+  return null;
+}
 
 bool _compatibleArrangementSetup(
   SourceResult base,
@@ -1682,6 +1856,21 @@ String? checkedChordKeyEstimate(SongDocument song) {
       ? key
       : null;
 }
+
+/// The winning inferred home key from the persisted evidence comparison.
+/// It remains an estimate, bound to the exact saved chart, not a provider fact.
+String? rankedChordKeyEstimate(SongDocument song) =>
+    jsonMap(song.extra['chordKeyEstimate'])['ranked'] == true
+    ? checkedChordKeyEstimate(song)
+    : null;
+
+bool rankedKeyNeedsReview(SongDocument song) =>
+    jsonMap(
+      jsonMap(
+        jsonMap(song.extra['evidenceRanking'])['appliedFields'],
+      )['metadata.key'],
+    )['provisional'] ==
+    true;
 
 /// 2 for a chart discovery found in the majority key, 1 when no check was
 /// needed or possible or the chart was moved into that key, 0 for a chart
@@ -1970,6 +2159,9 @@ Map<int, List<ChordAnchor>> _fuzzyLineChords(
 ) {
   bool plainText(String text) => text.characters.length == text.length;
   final parsedDonors = parseArrangement(chart);
+  final wordCache = <String, _Words>{};
+  _Words lineWords(String text) =>
+      wordCache.putIfAbsent(text, () => _lineWords(text));
   final donors =
       <
         ({
@@ -1977,33 +2169,28 @@ Map<int, List<ChordAnchor>> _fuzzyLineChords(
           _Words words,
           Map<int, int> trailingWordOverrides,
         })
-      >[
-        for (final line in parsedDonors)
-          if (!line.directive &&
-              line.chords.isNotEmpty &&
-              plainText(line.text) &&
-              _lineWords(line.text).length >= 3 &&
-              _lineWords(line.text).length <= 40)
-            (
-              line: line,
-              words: _lineWords(line.text),
-              trailingWordOverrides: const {},
-            ),
-      ];
-  final donorRanges = <(int, int)>[
-    for (var i = 0; i < parsedDonors.length; i++)
-      if (!parsedDonors[i].directive &&
-          parsedDonors[i].chords.isNotEmpty &&
-          plainText(parsedDonors[i].text) &&
-          _lineWords(parsedDonors[i].text).length >= 3 &&
-          _lineWords(parsedDonors[i].text).length <= 40)
-        (i, i + 1),
-  ];
-  final targetLineCount = target.where((line) {
-    if (line.directive || !plainText(line.text)) return false;
-    final words = _lineWords(line.text);
-    return words.isNotEmpty && words.length <= 40;
-  }).length;
+      >[];
+  final donorRanges = <(int, int)>[];
+  for (var i = 0; i < parsedDonors.length; i++) {
+    final line = parsedDonors[i];
+    if (line.directive || line.chords.isEmpty || !plainText(line.text)) {
+      continue;
+    }
+    final words = lineWords(line.text);
+    if (words.length < 3 || words.length > 40) continue;
+    donors.add((line: line, words: words, trailingWordOverrides: const {}));
+    donorRanges.add((i, i + 1));
+  }
+  final eligibleTargets = <({int index, _Words words})>[];
+  for (var i = 0; i < target.length; i++) {
+    final line = target[i];
+    if (line.directive || !plainText(line.text)) continue;
+    final words = lineWords(line.text);
+    if (words.isNotEmpty && words.length <= 40) {
+      eligibleTargets.add((index: i, words: words));
+    }
+  }
+  final targetLineCount = eligibleTargets.length;
   if (targetLineCount == 0) return const {};
   final donorLimit = 40000 ~/ targetLineCount;
   if (donors.length > donorLimit) return const {};
@@ -2026,8 +2213,8 @@ Map<int, List<ChordAnchor>> _fuzzyLineChords(
     if (first.directive ||
         first.chords.isEmpty ||
         !plainText(first.text) ||
-        _lineWords(first.text).length > 6 ||
-        _lineWords(first.text).isEmpty) {
+        lineWords(first.text).length > 6 ||
+        lineWords(first.text).isEmpty) {
       continue;
     }
     final text = StringBuffer();
@@ -2038,7 +2225,7 @@ Map<int, List<ChordAnchor>> _fuzzyLineChords(
     var previousTrailingWordOverrides = <int, int>{};
     for (var end = start; end < parsedDonors.length && end < start + 8; end++) {
       final line = parsedDonors[end];
-      final words = _lineWords(line.text);
+      final words = lineWords(line.text);
       if (line.directive ||
           line.chords.isEmpty ||
           !plainText(line.text) ||
@@ -2073,7 +2260,7 @@ Map<int, List<ChordAnchor>> _fuzzyLineChords(
         );
         contextDonors.add((
           line: combined,
-          words: _lineWords(combined.text),
+          words: lineWords(combined.text),
           trailingWordOverrides: Map.unmodifiable(
             internalTrailingWordOverrides,
           ),
@@ -2135,12 +2322,8 @@ Map<int, List<ChordAnchor>> _fuzzyLineChords(
 
   // Lines of one or two words take part only joined with the next line.
   final lyrics = [
-    for (var i = 0; i < target.length; i++)
-      if (!target[i].directive &&
-          plainText(target[i].text) &&
-          _lineWords(target[i].text).isNotEmpty &&
-          _lineWords(target[i].text).length <= 40)
-        (index: i, words: known(_lineWords(target[i].text))),
+    for (final target in eligibleTargets)
+      (index: target.index, words: known(target.words)),
   ];
   if (donors.isEmpty ||
       lyrics.isEmpty ||
@@ -2666,8 +2849,9 @@ _overlayChords(
   String body,
   List<SourceResult> sources,
   SongCandidate selected,
-  SourceResult base,
-) {
+  SourceResult base, {
+  Map<String, int> evidenceScores = const {},
+}) {
   final lines = parseArrangement(body);
   final plain = [
     for (final line in lines)
@@ -2733,6 +2917,15 @@ _overlayChords(
           );
       if (!agrees) chords[entry.key] = entry.value;
     }
+    // Some page layouts split words around chord anchors. Recover placements
+    // only where the complete donor line has the same ordered letters, keeping
+    // the selected lyrics and any placement already established above.
+    final compact = compactLineChords(plain, donorBody);
+    for (final entry in compact.entries) {
+      if (chords[entry.key]?.isNotEmpty ?? false) continue;
+      chords[entry.key] = entry.value;
+      contextSources.add(source.id);
+    }
     if (contexts.entries.any(
       (entry) =>
           identical(chords[entry.key], entry.value) &&
@@ -2764,6 +2957,10 @@ _overlayChords(
     ));
   }
   candidates.sort((a, b) {
+    final evidence = (evidenceScores[b.source.id] ?? 0).compareTo(
+      evidenceScores[a.source.id] ?? 0,
+    );
+    if (evidence != 0) return evidence;
     // Discovery double checks disagreeing charts against more charts of the
     // song; a chart transposed from the key most charts share (for example a
     // capo chart in G of a song recorded in E) comes last.
@@ -3032,6 +3229,12 @@ SongDocument combineSources(
   bool allowRejectedPreferredSource = false,
   List<HistoricalCacheUse> historicalCacheUses = const [],
 }) {
+  final inputSources = List<SourceResult>.of(results);
+  results = _retainedSourceEvidence(selected, results);
+  results = [...results, ..._recordingArrangementViews(selected, results)];
+  bool materialSource(SourceResult source) =>
+      source.extra['hasArrangementViews'] != true ||
+      source.id == preferredSourceId;
   // Contextual composer/work credits can authorize a chart only through a
   // resolved full lyric reference belonging to this selected recording.
   bool enoughLyricEvidence(SourceResult source) =>
@@ -3097,7 +3300,18 @@ SongDocument combineSources(
 
   bool contextMatches(SourceResult chart) => arrangementContexts.any(
     (reference) =>
-        contextualArrangementCandidate(reference.candidate, chart.candidate) &&
+        contextualArrangementCandidate(
+          reference.candidate,
+          chart.candidate,
+          allowAlternatePerformers:
+              chart.extra['alternatePerformerChart'] == true,
+        ) &&
+        (chart.extra['alternatePerformerChart'] != true ||
+            contextualChartLyricsMatch(
+              chart.body,
+              reference.body,
+              allowPartial: true,
+            )) &&
         explicitEditionsCompatible(
           reference.candidate,
           chart.candidate,
@@ -3108,9 +3322,38 @@ SongDocument combineSources(
   bool historicalMatches(SourceResult source) =>
       explicitHistoricalWorkMatches(selected, source) ||
       historicalCacheUses.any((use) => use.allows(selected, source));
+  // A canonical arrangement selection with no artist credit authorizes only
+  // its own resolved source. It never matches another provider by title alone.
+  bool selectedArrangementMatches(SourceResult source) =>
+      source.candidate.identity == selected.identity &&
+      source.candidate.metadata['identityScope'] == 'arrangement' &&
+      _identityNorm(source.candidate.title).isNotEmpty &&
+      _identityNorm(source.candidate.title) == _identityNorm(selected.title) &&
+      _identityNorm(source.candidate.artist) ==
+          _identityNorm(selected.artist) &&
+      source.hasChords &&
+      !source.hasPendingMatchCheck &&
+      source.extra['requiresLyricsAgreement'] != true &&
+      source.extra['requiresRecordingLyricsAgreement'] != true &&
+      !selected.recordingIds.entries.any(
+        (entry) =>
+            source.candidate.recordingIds.containsKey(entry.key) &&
+            source.candidate.recordingIds[entry.key] != entry.value,
+      ) &&
+      const {
+        MatchKind.sameSong,
+        MatchKind.sameRecording,
+      }.contains(source.matchKind) &&
+      explicitEditionsCompatible(
+        selected,
+        source.candidate,
+        metadata: source.metadata,
+        extra: source.extra,
+      );
   final lyricReferences = results
       .where(
         (source) =>
+            materialSource(source) &&
             !source.hasChords &&
             const {
               MatchKind.sameSong,
@@ -3138,18 +3381,37 @@ SongDocument combineSources(
       : shortRecordingReferences;
   final matching = results.where((s) {
     final wikiSource = s.candidate.providerId == 'wikisource';
+    final searchMetadataMatches =
+        s.extra['searchEvidenceOnly'] == true &&
+        s.extra['searchArrangementMatch'] == true;
     final allowedRejectedAlternative =
         allowRejectedPreferredSource &&
         s.id == preferredSourceId &&
         !wikiSource;
+    // A coverage rejection describes a weaker partial arrangement, not a
+    // different song. Retain and rank its dimensions against stronger data.
+    final coverageOnlyAlternative =
+        (s.matchKind == MatchKind.rejected &&
+        s.matchReason == 'incomplete_or_different_lyrics' &&
+        (_sameSong(selected, s.candidate) ||
+            s.extra['requiresLyricsAgreement'] == true &&
+                _sameArrangedSong(selected, s.candidate)) &&
+        explicitEditionsCompatible(
+          selected,
+          s.candidate,
+          metadata: s.metadata,
+          extra: s.extra,
+        ));
+
     if (!allowedRejectedAlternative &&
         s.id != preferredSourceId &&
         s.hasChords &&
         shortRecordingReferences.isNotEmpty &&
-        (!const {
-              MatchKind.sameSong,
-              MatchKind.sameRecording,
-            }.contains(s.matchKind) ||
+        (!(coverageOnlyAlternative ||
+                const {
+                  MatchKind.sameSong,
+                  MatchKind.sameRecording,
+                }.contains(s.matchKind)) ||
             !shortRecordingReferences.any(
               (reference) =>
                   shortRecordingLyricAgreement(s.body, reference.body),
@@ -3160,20 +3422,22 @@ SongDocument combineSources(
         s.extra['requiresRecordingLyricsAgreement'] == true;
     if (!allowedRejectedAlternative &&
         requiresRecordingContext &&
-        (!const {
-              MatchKind.sameSong,
-              MatchKind.sameRecording,
-            }.contains(s.matchKind) ||
+        (!(coverageOnlyAlternative ||
+                const {
+                  MatchKind.sameSong,
+                  MatchKind.sameRecording,
+                }.contains(s.matchKind)) ||
             !s.hasChords ||
             !contextMatches(s))) {
       return false;
     }
     if (!allowedRejectedAlternative &&
         s.extra['requiresLyricsAgreement'] == true &&
-        (!const {
-              MatchKind.sameSong,
-              MatchKind.sameRecording,
-            }.contains(s.matchKind) ||
+        (!(coverageOnlyAlternative ||
+                const {
+                  MatchKind.sameSong,
+                  MatchKind.sameRecording,
+                }.contains(s.matchKind)) ||
             !donorReferences.any(
               (reference) =>
                   !isShortRecordingLyricBody(reference.body) ||
@@ -3191,7 +3455,9 @@ SongDocument combineSources(
         s.id == preferredSourceId;
     final identityMatches = wikiSource
         ? historicalMatches(s)
-        : ((_sameSong(s.candidate, selected) ||
+        : ((selectedArrangementMatches(s) ||
+                      searchMetadataMatches ||
+                      _sameSong(s.candidate, selected) ||
                       metadataContextMatches(s) ||
                       (s.hasChords &&
                           s.extra['requiresLyricsAgreement'] == true &&
@@ -3202,11 +3468,23 @@ SongDocument combineSources(
               allowedRejectedAlternative;
     return identityMatches &&
         (s.matchKind != MatchKind.rejected ||
+            coverageOnlyAlternative ||
             wikiSource && historicalMatches(s) ||
             allowedRejectedAlternative);
   }).toList();
+  bool? hasLyricBase;
+  bool matchingHasLyrics() => hasLyricBase ??= matching.any(
+    (s) => materialSource(s) && plainLyrics(s.body).trim().isNotEmpty,
+  );
   final accepted = matching
-      .where((s) => plainLyrics(s.body).trim().isNotEmpty)
+      .where(
+        (s) =>
+            materialSource(s) &&
+            (plainLyrics(s.body).trim().isNotEmpty ||
+                (selectedArrangementMatches(s) &&
+                    (s.id == preferredSourceId ||
+                        preferredSourceId == null && !matchingHasLyrics()))),
+      )
       .toList();
   if (accepted.isEmpty) {
     throw const FormatException('No matching lyrics are available to save.');
@@ -3238,7 +3516,10 @@ SongDocument combineSources(
   final eligible = accepted
       .where(
         (source) =>
+            preferredSourceId == null ||
             (allowRejectedPreferredSource && source.id == preferredSourceId) ||
+            (source.id == preferredSourceId &&
+                selectedArrangementMatches(source)) ||
             !source.hasChords ||
             references.isEmpty ||
             _completeChart(source.body, references.first.body),
@@ -3251,35 +3532,44 @@ SongDocument combineSources(
   // longer same-song result from another performance must not replace them.
   // Keep the normal fallback when no recording-compatible lyrics are present;
   // a user-selected source also remains authoritative below.
-  final recordingAnchored = preferredSourceId == null
-      ? eligible
-            .where((source) => recordingCompatible(selected, source))
-            .toList()
-      : <SourceResult>[];
-  final rankedEligible = recordingAnchored.isEmpty
-      ? eligible
-      : eligible.where((source) {
-          if (recordingAnchored.contains(source)) return true;
-          // Keep an otherwise complete chart when it carries the exact same
-          // lyric sequence. Chords/formatting can improve that text without
-          // choosing a different performance's extra verses or remix intro.
-          if (!source.hasChords) return false;
-          final words = _norm(plainLyrics(source.body));
-          return recordingAnchored.any(
-            (anchor) => _norm(plainLyrics(anchor.body)) == words,
-          );
-        }).toList();
-  int rank(SourceResult s) =>
-      _norm(plainLyrics(s.body)).length.clamp(0, 100000) * 1000 +
-      lyricLines(s.body).length.clamp(0, 100) +
-      (recordingCompatible(selected, s)
-          ? 300
-          : s.matchKind == MatchKind.sameSong
-          ? 200
-          : 0) +
-      (s.hasChords && s.extra['keyConsensus'] != false ? 500 : 0);
+  final rankedEligible = [...eligible];
+  final evidencePlan = _rankSourceCombination(
+    selected,
+    results,
+    lyricSourceIds: eligible.map((s) => s.id).toSet(),
+    chartSourceIds: matching
+        .where((s) => s.hasChords && materialSource(s))
+        .map((s) => s.id)
+        .toSet(),
+    factSourceIds: matching.map((s) => s.id).toSet(),
+    metadataContextMatches: metadataContextMatches,
+    preferredSourceId: preferredSourceId,
+  );
+  final lyricScores = <String, int>{};
+  final chordScores = <String, int>{};
+  for (final item in evidencePlan.claims) {
+    if (item.claim.field == 'lyrics') {
+      lyricScores.update(
+        item.claim.sourceId,
+        (n) => math.max(n, item.score),
+        ifAbsent: () => item.score,
+      );
+    }
+    if (item.claim.field == 'chords') {
+      chordScores.update(
+        item.claim.sourceId,
+        (n) => math.max(n, item.score),
+        ifAbsent: () => item.score,
+      );
+    }
+  }
+  final selectedLyrics = evidencePlan.chosenByField['lyrics'];
   rankedEligible.sort((a, b) {
-    final score = rank(b).compareTo(rank(a));
+    final chosen = (b.id == selectedLyrics?.sourceId ? 1 : 0).compareTo(
+      a.id == selectedLyrics?.sourceId ? 1 : 0,
+    );
+    if (chosen != 0) return chosen;
+    final score = (lyricScores[b.id] ?? 0).compareTo(lyricScores[a.id] ?? 0);
     return score != 0 ? score : a.id.compareTo(b.id);
   });
   final preferred = eligible.where((s) => s.id == preferredSourceId);
@@ -3289,8 +3579,37 @@ SongDocument combineSources(
     );
   }
   final best = preferred.isEmpty ? rankedEligible.first : preferred.first;
+  final selectedChart = evidencePlan.chosenByField['chords'];
+  final chartWinner = matching
+      .where((s) => s.id == selectedChart?.sourceId && s.hasChords)
+      .firstOrNull;
+  if (chartWinner != null) {
+    chordScores[chartWinner.id] = (chordScores[chartWinner.id] ?? 0) + 10000;
+  }
+  final keepBaseChords =
+      preferredSourceId != null ||
+      best.hasChords && (chartWinner == null || chartWinner.id == best.id);
+  final initialBody = keepBaseChords
+      ? _keyCorrectedBody(best)
+      : _withoutChordAnchors(_keyCorrectedBody(best));
+  final overlayBase = chartWinner == null || keepBaseChords
+      ? best
+      : SourceResult(
+          candidate: chartWinner.candidate,
+          body: initialBody,
+          arrangementId: chartWinner.arrangementId,
+          metadata: chartWinner.metadata,
+          matchKind: chartWinner.matchKind,
+          matchReason: chartWinner.matchReason,
+          extra: chartWinner.extra,
+        );
   final chordOverlaySources = <SourceResult>[
-    ...accepted.where((source) => source.id != best.id),
+    ...matching.where(
+      (source) =>
+          source.hasChords &&
+          materialSource(source) &&
+          (!keepBaseChords || source.id != best.id),
+    ),
   ];
   // A chart rejected only for incomplete/different lyric coverage can still
   // supply chords when multiple chart lines align clearly with the selected
@@ -3303,6 +3622,7 @@ SongDocument combineSources(
         ArrangementLine(line.text, const [], directive: line.directive),
     ];
     for (final source in results) {
+      if (!materialSource(source)) continue;
       final chartCreditMatches =
           source.extra['requiresLyricsAgreement'] == true &&
           _sameArrangedSong(source.candidate, selected);
@@ -3366,10 +3686,11 @@ SongDocument combineSources(
   }
   final merged = preferredSourceId == null
       ? _overlayChords(
-          _keyCorrectedBody(best),
+          initialBody,
           chordOverlaySources,
           selected,
-          best,
+          overlayBase,
+          evidenceScores: chordScores,
         )
       : (
           body: best.body,
@@ -3431,7 +3752,7 @@ SongDocument combineSources(
         },
   };
   final chordSourceIds = <String>{
-    if (best.hasChords) best.id,
+    if (keepBaseChords && best.hasChords) best.id,
     ...merged.sourceIds,
   }.toList();
   if (chordSourceIds.isNotEmpty) origins['chords'] = chordSourceIds.first;
@@ -3530,17 +3851,27 @@ SongDocument combineSources(
         if (_lendsAlbumDisplay(selected, source, displayAlbum))
           ?_sourceDuration(source),
   ]);
-  for (final source in [best, ...remaining]) {
+  for (final source
+      in preferredSourceId == null
+          ? const <SourceResult>[]
+          : [best, ...remaining]) {
     final candidateDuration =
         _validDuration(source.candidate.durationSeconds) ??
         _validDuration(source.candidate.metadata['durationSeconds']) ??
         _validDuration(source.candidate.metadata['duration']);
-    final facts = {
+    final facts = <String, dynamic>{
       ...source.candidate.metadata,
       if (source.candidate.album != null) 'album': source.candidate.album,
       'durationSeconds': candidateDuration,
-      ...source.metadata,
     };
+    for (final entry in source.metadata.entries) {
+      if (!_hasMetadata(entry.value)) continue;
+      facts[entry.key] = _mergeMetadataFact(
+        facts[entry.key],
+        entry.value,
+        mergeLists: !arrangementFields.contains(entry.key),
+      );
+    }
     final sourceDuration =
         _validDuration(source.metadata['durationSeconds']) ??
         candidateDuration ??
@@ -3891,7 +4222,7 @@ SongDocument combineSources(
         : historicalAuthor ?? selected.artist,
     body: finalBody,
     metadata: metadata,
-    sources: results,
+    sources: _sourceDocuments(inputSources, results),
     timingTracks: tracks.values.toList(),
     selectedRecording: selected,
     activeTimingTrackId: usable.isEmpty ? null : usable.first.id,
@@ -3964,8 +4295,12 @@ SongDocument combineSources(
           .toList(),
     },
   );
-  final corroboratedKey = corroboratedArrangementKey(song);
-  final recoveredKey = sourcedArrangementKey(song);
+  final corroboratedKey = preferredSourceId == null
+      ? null
+      : corroboratedArrangementKey(song);
+  final recoveredKey = preferredSourceId == null
+      ? null
+      : sourcedArrangementKey(song);
   if (recoveredKey != null) {
     metadata['key'] = recoveredKey.key;
     origins['key'] = recoveredKey.sourceIds.first;
@@ -3976,6 +4311,58 @@ SongDocument combineSources(
         _keyIdentity(corroboratedKey.key) == _keyIdentity(recoveredKey.key)) {
       song.extra['corroboratedKeySourceIds'] = corroboratedKey.sourceIds;
     }
+  }
+  if (preferredSourceId == null) {
+    // Placement can supersede the initially preferred chart. Reconcile setup
+    // and key against the surviving anchors, including any capo conversion.
+    final appliedPlan = _rankSourceCombination(
+      selected,
+      results,
+      lyricSourceIds: {best.id},
+      chartSourceIds: chordSourceIds
+          .where((id) => !merged.movedIds.contains(id))
+          .toSet(),
+      factSourceIds: matching.map((source) => source.id).toSet(),
+      metadataContextMatches: metadataContextMatches,
+    );
+    _applyRankedMetadata(song, appliedPlan);
+    (song.extra['evidenceRanking']
+        as Map<String, dynamic>)['initialSelection'] = {
+      'chosenByField': {
+        for (final entry in evidencePlan.chosenByField.entries)
+          if (const {
+            'lyrics',
+            'chords',
+            'metadata.key',
+            'metadata.capo',
+            'metadata.tuning',
+          }.contains(entry.key))
+            entry.key: {
+              'sourceId': entry.value.sourceId,
+              'value': entry.value.value,
+            },
+      },
+      'alternatives': [
+        for (final option in evidencePlan.claims)
+          if (option.claim.field == 'chords' ||
+              option.claim.field == 'metadata.key' &&
+                  (option.claim.origin != EvidenceOrigin.inferred ||
+                      option.rank < 3))
+            option.toJson(),
+      ],
+    };
+    (song.extra['evidenceRanking']
+        as Map<String, dynamic>)['arrangementBinding'] = {
+      'bodyHash': _bodyHash(song.body),
+      'chordSourceIds': chordSourceIds,
+      'transposedSourceIds': merged.movedIds.toList()..sort(),
+    };
+  } else {
+    song.extra['evidenceRanking'] = {
+      'version': 1,
+      ...evidencePlan.toJson(),
+      'selectionMode': 'explicitSource',
+    };
   }
   return enrichCombinedDisplayMetadata(
     song,
@@ -3988,3 +4375,1465 @@ bool _hasMetadata(Object? value) =>
     (value is! String || value.trim().isNotEmpty) &&
     (value is! Iterable || value.isNotEmpty) &&
     (value is! Map || value.isNotEmpty);
+
+/// Combines nonempty resolved metadata with facts from its search candidate.
+/// Null and blank values mean the resolved response omitted a fact; they do
+/// not erase a usable search-hit value. Nested maps retain candidate entries
+/// while allowing nonempty resolved entries to take precedence.
+Object? _mergeMetadataFact(
+  Object? existing,
+  Object? incoming, {
+  bool mergeLists = false,
+}) {
+  if (!_hasMetadata(incoming)) return existing;
+  if (existing is List && incoming is List) {
+    if (!mergeLists) return incoming;
+    final seen = <String>{};
+    return [
+      for (final value in [...existing, ...incoming])
+        if (seen.add(jsonEncode(value))) value,
+    ];
+  }
+  if (existing is! Map || incoming is! Map) return incoming;
+
+  final merged = jsonMap(existing);
+  for (final entry in jsonMap(incoming).entries) {
+    if (!_hasMetadata(entry.value)) continue;
+    final prior = merged[entry.key];
+    merged[entry.key] = _mergeMetadataFact(prior, entry.value);
+  }
+  return merged;
+}
+
+/// Resolve every payload already returned by discovery without another fetch.
+/// The original envelope remains intact, including failed search observations.
+List<SourceResult> _sourceDocuments(
+  List<SourceResult> input,
+  List<SourceResult> observations,
+) {
+  final documents = <String, SourceResult>{};
+  final snapshots = <String, List<JsonMap>>{};
+  for (final source in input) {
+    documents[source.id] = source;
+    snapshots.putIfAbsent(source.id, () => []).add(source.toJson());
+  }
+  for (final source in observations) {
+    if (source.extra['searchEvidenceOnly'] == true) continue;
+    documents.putIfAbsent(source.id, () => source);
+  }
+  for (final entry in snapshots.entries) {
+    if (entry.value.length < 2) continue;
+    final source = documents[entry.key]!;
+    documents[entry.key] = source.copyWith(
+      extra: {...source.extra, 'sourceEvidenceSnapshots': entry.value},
+    );
+  }
+  return documents.values.toList();
+}
+
+List<SourceResult> _retainedSourceEvidence(
+  SongCandidate selected,
+  List<SourceResult> input,
+) {
+  final result = <SourceResult>[];
+  final seen = <String>{};
+  final currentById = {for (final source in input) source.id: source};
+  String fingerprint(SourceResult source, {bool payloadOnly = false}) {
+    final values = {...source.toJson()};
+    if (payloadOnly) {
+      values.remove('discoveryEvidence');
+      values.remove('providerAlternatives');
+    }
+    try {
+      return jsonEncode(values);
+    } on Object {
+      return values.toString();
+    }
+  }
+
+  void add(SourceResult source, {bool snapshot = false}) {
+    if (snapshot &&
+        result.any(
+          (existing) =>
+              fingerprint(existing, payloadOnly: true) ==
+              fingerprint(source, payloadOnly: true),
+        )) {
+      return;
+    }
+    final current = currentById[source.id];
+    if (source.arrangementId == null &&
+        current != null &&
+        source.body.trim().isNotEmpty &&
+        source.body != current.body) {
+      final viewId =
+          'snapshot-${_bodyHash(jsonEncode({
+            'body': source.body,
+            'metadata': {...source.candidate.metadata, ...source.metadata},
+          })).substring(0, 16)}';
+      source = SourceResult(
+        candidate: source.candidate,
+        body: source.body,
+        metadata: source.metadata,
+        timingTracks: source.timingTracks,
+        matchKind: source.matchKind,
+        attribution: source.attribution,
+        matchReason: source.matchReason,
+        retrievedAt: source.retrievedAt,
+        arrangementId: viewId,
+        extra: {
+          ...source.extra,
+          'parentSourceId': source.id,
+          'parentCandidate': source.candidate.toJson(),
+          'retainedPayloadView': true,
+        },
+      );
+    }
+    if (seen.add(fingerprint(source))) result.add(source);
+  }
+
+  void payload(Object? raw, {String? rejectedReason}) {
+    if (raw is! Map || raw['candidate'] is! Map) return;
+    try {
+      final data = jsonMap(raw);
+      final candidate = SongCandidate.fromJson(jsonMap(data['candidate']));
+      final arrangementId = data['arrangementId'];
+      final observedId = arrangementId is String
+          ? '${candidate.identity}#arrangement=$arrangementId'
+          : candidate.identity;
+      final current = currentById[observedId];
+      if (current != null) {
+        // Discovery snapshots precede chart corroboration. Apply the current
+        // derived context to every view of this ID; retain published/raw facts.
+        for (final key in const [
+          'keyConsensus',
+          'keyShift',
+          'keyEstimate',
+          'keyRecording',
+          'pendingMatchCheck',
+          'requiresLyricsAgreement',
+          'requiresRecordingLyricsAgreement',
+          'alternatePerformerChart',
+          'lyricRepresentation',
+          'lyricRepresentationEvidence',
+          'partialLyricSupport',
+        ]) {
+          data.remove(key);
+          if (current.extra.containsKey(key)) data[key] = current.extra[key];
+        }
+      }
+      // A terminal rejection supersedes an earlier tentative acceptance of
+      // this same source. The original observation stays in its envelope.
+      final currentRejection = current?.matchKind == MatchKind.rejected;
+      add(
+        SourceResult.fromJson({
+          ...data,
+          if (rejectedReason != null) 'matchKind': MatchKind.rejected.name,
+          'matchReason': ?rejectedReason,
+          if (currentRejection) 'matchKind': MatchKind.rejected.name,
+          if (currentRejection) 'matchReason': current!.matchReason,
+          if (current?.hasPendingMatchCheck == true) 'pendingMatchCheck': true,
+        }),
+        snapshot: true,
+      );
+    } on Object {
+      // Malformed envelopes remain preserved on the original source. They
+      // cannot safely become a resolved source document.
+    }
+  }
+
+  // Canonical resolved results must precede every discovery observation. An
+  // earlier provider envelope can mention a later result's ID; that preview
+  // must not supply the body or setup used to check the resolved chart.
+  for (final source in currentById.values) {
+    add(source);
+  }
+  for (final source in input) {
+    add(source);
+  }
+  for (final source in input) {
+    final envelope = jsonMap(source.extra['discoveryEvidence']);
+    for (final raw
+        in source.extra['sourceEvidenceSnapshots'] as List? ?? const []) {
+      payload(raw);
+    }
+    for (final raw in envelope['acceptedPayloads'] as List? ?? const []) {
+      payload(raw);
+    }
+    for (final raw in envelope['rejectedPayloads'] as List? ?? const []) {
+      final entry = jsonMap(raw);
+      payload(entry['payload'], rejectedReason: entry['reason'] as String?);
+    }
+    for (final raw
+        in source.extra['providerAlternatives'] as List? ?? const []) {
+      payload(raw);
+    }
+    for (final raw in envelope['searchCandidates'] as List? ?? const []) {
+      final candidate = jsonMap(jsonMap(raw)['candidate']);
+      if (candidate.isEmpty) continue;
+      try {
+        final observation = SongCandidate.fromJson(candidate);
+        final chartProvider =
+            source.hasChords ||
+            (envelope['capabilities'] is List &&
+                (envelope['capabilities'] as List).contains('chords'));
+        add(
+          SourceResult(
+            candidate: observation,
+            body: '',
+            matchKind: MatchKind.unverified,
+            extra: {
+              'searchEvidenceOnly': true,
+              'discoveredBy': source.id,
+              'searchArrangementMatch':
+                  chartProvider &&
+                  observation.providerId == source.candidate.providerId &&
+                  _sameArrangedSong(selected, observation),
+            },
+          ),
+        );
+      } on Object {
+        // The unparsed search observation is still in its discovery envelope.
+      }
+    }
+  }
+  final interpreted = <SourceResult>[];
+  final viewsById = <String, SourceResult>{};
+  for (final source in result) {
+    if (source.arrangementId != null &&
+        source.extra['retainedPayloadView'] != true) {
+      viewsById.putIfAbsent(source.id, () => source);
+      continue;
+    }
+    final views = splitChartArrangements(source);
+    if (views.isEmpty) {
+      interpreted.add(source);
+      continue;
+    }
+    interpreted.add(
+      source.copyWith(
+        extra: {
+          ...source.extra,
+          'hasArrangementViews': true,
+          'arrangementViewIds': views.map((view) => view.id).toList(),
+        },
+      ),
+    );
+    for (final view in views) {
+      viewsById.putIfAbsent(view.id, () => view);
+    }
+  }
+  return [...interpreted, ...viewsById.values];
+}
+
+const _rankedArrangementFields = {
+  'key',
+  'capo',
+  'tuning',
+  'tempo',
+  'timeSignature',
+  'difficulty',
+  'arrangement',
+};
+const _rankedRecordingFields = {
+  'album',
+  'artworkUrl',
+  'duration',
+  'durationSeconds',
+  'mediaLinks',
+  'recording',
+  'releaseDate',
+  'releaseDateDisplay',
+  'recordingLocation',
+  'recordingId',
+  'recordingIds',
+  'isrc',
+  'isrcs',
+  'musicbrainzRecordingId',
+  'musicbrainzReleaseId',
+  'relationships',
+  'year',
+};
+const _rankedControlFields = {
+  'identityScope',
+  'query',
+  'record',
+  'rights',
+  'url',
+  'providerId',
+  'id',
+  'title',
+  'artist',
+  'lyrics',
+  'body',
+  'hasLyrics',
+  'pendingMatchCheck',
+  'sourceId',
+  'timingTracks',
+  'fieldOrigins',
+  'fieldContributors',
+  'conflicts',
+  'evidenceOrigin',
+  'sourceOrigin',
+  'lineageId',
+  'sourceLineageId',
+  'providerLineage',
+};
+
+Iterable<JsonMap> _recordingAnalyses(SourceResult source) sync* {
+  final primary = jsonMap(source.extra['keyRecording']);
+  if (primary.isEmpty) return;
+  yield primary;
+  for (final raw
+      in primary['alternatives'] is List
+          ? primary['alternatives'] as List
+          : const []) {
+    if (raw is! Map) continue;
+    yield {
+      ...jsonMap(raw),
+      for (final field in const [
+        'recordingScope',
+        'selectedIdentity',
+        'identifierSourceIds',
+        'identifierProviders',
+      ])
+        if (primary.containsKey(field)) field: primary[field],
+    };
+  }
+}
+
+bool _recordingKeyBound(
+  SongCandidate selected,
+  List<SourceResult> sources,
+  JsonMap recording,
+) {
+  if (recording['recordingScope'] == 'song') return false;
+  final ids = (recording['ids'] as List? ?? const [])
+      .whereType<String>()
+      .toSet();
+  if (ids.isEmpty) return false;
+  if (recording['selectedIdentity'] == selected.identity) return true;
+  final known = <String>{...selected.recordingIds.values};
+  void addMetadata(JsonMap metadata) {
+    if (metadata['isrc'] is String) known.add(metadata['isrc'] as String);
+    if (metadata['isrcs'] is List) {
+      known.addAll((metadata['isrcs'] as List).whereType<String>());
+    }
+    for (final raw
+        in metadata['mediaLinks'] is List
+            ? metadata['mediaLinks'] as List
+            : const []) {
+      final url = jsonMap(raw)['url'];
+      final uri = url is String ? Uri.tryParse(url) : null;
+      if (uri?.host == 'open.spotify.com' &&
+          uri!.pathSegments.length >= 2 &&
+          uri.pathSegments[uri.pathSegments.length - 2] == 'track') {
+        known.add(uri.pathSegments.last);
+      }
+    }
+  }
+
+  addMetadata(selected.metadata);
+  for (final source in sources.where(
+    (source) => recordingCompatible(selected, source),
+  )) {
+    known.addAll(source.candidate.recordingIds.values);
+    addMetadata(source.candidate.metadata);
+    addMetadata(source.metadata);
+  }
+  return ids.any(known.contains);
+}
+
+/// Keep the published setup and offer a separately labelled playable setup
+/// for a bound recording key. Only the capo changes; source text stays exact.
+/// Conflicting recording signatures produce competing options, never a veto.
+List<SourceResult> _recordingArrangementViews(
+  SongCandidate selected,
+  List<SourceResult> sources,
+) {
+  final targets = <String>[];
+  for (final source in sources) {
+    for (final recording in _recordingAnalyses(source)) {
+      final key = recording['key'];
+      if (key is String &&
+          _keyIdentity(key) != null &&
+          (_recordingKeyBound(selected, sources, recording) ||
+              const {
+                    MatchKind.sameSong,
+                    MatchKind.sameRecording,
+                  }.contains(source.matchKind) &&
+                  _sameArrangedSong(selected, source.candidate))) {
+        targets.add(key);
+      }
+    }
+  }
+  targets.sort();
+  final signatures = <String>[];
+  for (final target in targets) {
+    if (!signatures.any((key) => _keyDistance(key, target) == 0)) {
+      signatures.add(target);
+    }
+  }
+  final views = <String, SourceResult>{};
+  for (final target in signatures) {
+    final bound = sources.any(
+      (source) => _recordingAnalyses(source).any((recording) {
+        final key = recording['key'];
+        return key is String &&
+            _keyDistance(key, target) == 0 &&
+            _recordingKeyBound(selected, sources, recording);
+      }),
+    );
+    for (final source in sources) {
+      if (!source.hasChords ||
+          source.extra['hasArrangementViews'] == true ||
+          source.extra['recordingArrangement'] is Map ||
+          source.extra['searchEvidenceOnly'] == true ||
+          source.hasPendingMatchCheck ||
+          !const {
+            MatchKind.sameSong,
+            MatchKind.sameRecording,
+          }.contains(source.matchKind) ||
+          !_sameArrangedSong(selected, source.candidate) ||
+          !explicitEditionsCompatible(
+            selected,
+            source.candidate,
+            metadata: source.metadata,
+            extra: source.extra,
+          ) ||
+          source.extra['keyShift'] is int && source.extra['keyShift'] != 0) {
+        continue;
+      }
+      // Published key declarations remain independent competitors. Derive a
+      // setup only where the chart has no literal key to contradict or rewrite.
+      if (_keyIdentity(_setupValue(source, selected, 'key')) != null) continue;
+      final hypotheses = rankChordKeyCandidates(source.body);
+      if (hypotheses.isEmpty) continue;
+      final oldCapo = _capoOf(_setupValue(source, selected, 'capo'));
+      final sounding = transposeChord(hypotheses.first.key, oldCapo);
+      final shift = _keyDistance(sounding, target);
+      if (shift == null ||
+          shift == 0 ||
+          _chartSupportsSoundingKey(source, selected, target)) {
+        continue;
+      }
+      final newCapo = (oldCapo + shift) % 12;
+      final descriptor = {
+        'parentSourceId': source.id,
+        'bodyHash': _bodyHash(source.body),
+        'publishedCapo': oldCapo,
+        'capo': newCapo,
+        'recordingKey': target,
+        'recordingScope': bound ? 'recording' : 'song',
+        'basis': bound
+            ? 'bound_recording_key_and_chart_harmony'
+            : 'same_song_key_and_chart_harmony',
+      };
+      final id =
+          'recording-${_bodyHash(jsonEncode(descriptor)).substring(0, 16)}';
+      final view = SourceResult(
+        candidate: SongCandidate.fromJson({
+          ...source.candidate.toJson(),
+          'metadata': {...source.candidate.metadata, 'capo': newCapo},
+        }),
+        body: source.body,
+        metadata: {...source.metadata, 'capo': newCapo},
+        matchKind: MatchKind.sameSong,
+        matchReason: source.matchReason,
+        attribution: source.attribution,
+        retrievedAt: source.retrievedAt,
+        arrangementId: id,
+        extra: {
+          for (final entry in source.extra.entries)
+            if (!const {
+              'discoveryEvidence',
+              'providerAlternatives',
+              'originalPayload',
+              'sourceEvidenceSnapshots',
+              'keyConsensus',
+              'keyShift',
+              'keyEstimate',
+              'keyRecording',
+            }.contains(entry.key))
+              entry.key: entry.value,
+          'parentSourceId': source.id,
+          'parentCandidate': source.candidate.toJson(),
+          'recordingArrangement': descriptor,
+        },
+      );
+      views.putIfAbsent(view.id, () => view);
+    }
+  }
+  return views.values.toList();
+}
+
+bool _chartSupportsSoundingKey(
+  SourceResult source,
+  SongCandidate selected,
+  String key,
+) {
+  final body = _keyCorrectedBody(source);
+  final capo = _capoOf(_setupValue(source, selected, 'capo'));
+  final shape = transposeChord(key, (12 - capo) % 12);
+  if (chartSupportsDeclaredTonic(body, shape)) return true;
+  final estimate = estimateChordKey(body);
+  if (estimate != null) {
+    return _keyDistance(transposeChord(estimate.key, capo), key) == 0;
+  }
+  return rankChordKeyCandidates(
+    body,
+  ).take(3).any((candidate) => _keyDistance(candidate.key, shape) == 0);
+}
+
+double _lyricVocabularyCoverage(String reference, String candidate) {
+  final words = _norm(
+    plainLyrics(reference),
+  ).split(' ').where((w) => w.isNotEmpty).toSet();
+  if (words.isEmpty) return 0;
+  final available = _norm(plainLyrics(candidate)).split(' ').toSet();
+  return words.intersection(available).length / words.length;
+}
+
+String _withoutChordAnchors(String body) {
+  final raw = body.split('\n');
+  final lines = parseArrangement(body);
+  return [
+    for (var i = 0; i < lines.length; i++)
+      lines[i].chords.isEmpty
+          ? raw[i]
+          : _escapeLiteralChordTokens(lines[i].text),
+  ].join('\n');
+}
+
+EvidenceClaim _rebuildClaim(
+  EvidenceClaim claim, {
+  Object? value,
+  EvidenceMatchQuality? matchQuality,
+  EvidenceHarmonyFit? harmonyFit,
+  EvidenceSourceScope? sourceScope,
+  String? contextId,
+  String? equivalenceKey,
+  bool? contextCompatible,
+  String? incompatibilityReason,
+  Map<String, int>? qualitySignals,
+}) => EvidenceClaim(
+  field: claim.field,
+  value: value ?? claim.value,
+  sourceId: claim.sourceId,
+  providerId: claim.providerId,
+  lineageId: claim.lineageId,
+  matchQuality: matchQuality ?? claim.matchQuality,
+  sourceScope: sourceScope ?? claim.sourceScope,
+  origin: claim.origin,
+  harmonyFit: harmonyFit ?? claim.harmonyFit,
+  contextId: contextId ?? claim.contextId,
+  contextCompatible: contextCompatible ?? claim.contextCompatible,
+  supportsCorroboration: claim.supportsCorroboration,
+  incompatibilityReason: incompatibilityReason ?? claim.incompatibilityReason,
+  equivalenceKey: equivalenceKey ?? claim.equivalenceKey,
+  qualitySignals: qualitySignals ?? claim.qualitySignals,
+);
+
+EvidenceRanking _rankSourceCombination(
+  SongCandidate selected,
+  List<SourceResult> sources, {
+  required Set<String> lyricSourceIds,
+  required Set<String> chartSourceIds,
+  required Set<String> factSourceIds,
+  required bool Function(SourceResult) metadataContextMatches,
+  String? preferredSourceId,
+}) {
+  final byId = <String, SourceResult>{};
+  final ordered = [...sources]
+    ..sort((a, b) {
+      final match = a.matchKind.index.compareTo(b.matchKind.index);
+      return match != 0
+          ? match
+          : _bodyHash(a.body).compareTo(_bodyHash(b.body));
+    });
+  for (final source in sources) {
+    byId.putIfAbsent(source.id, () => source);
+  }
+  final lyrics = ordered
+      .where(
+        (s) => lyricSourceIds.contains(s.id) && plainLyrics(s.body).isNotEmpty,
+      )
+      .toList();
+  final charts = ordered
+      .where((s) => chartSourceIds.contains(s.id) && s.hasChords)
+      .toList();
+  final recordingEvidence =
+      <({SourceResult source, JsonMap data, String key, bool bound})>[
+        for (final source in sources)
+          for (final analysis in _recordingAnalyses(source))
+            if (analysis['key'] case final String key)
+              if (_keyIdentity(key) != null)
+                (
+                  source: source,
+                  data: analysis,
+                  key: key,
+                  bound: _recordingKeyBound(selected, sources, analysis),
+                ),
+      ];
+  // All matching charts remain witnesses even when only one contributes
+  // anchors to the saved body. Provider identity deduplicates copied versions.
+  final chartKeyLeads = <({String key, String provider})>[
+    for (final source in ordered)
+      if (factSourceIds.contains(source.id) &&
+          source.hasChords &&
+          source.extra['hasArrangementViews'] != true &&
+          source.extra['recordingArrangement'] is! Map &&
+          !source.hasPendingMatchCheck)
+        if (rankChordKeyCandidates(source.body).firstOrNull case final lead?)
+          (
+            key: transposeChord(
+              lead.key,
+              _capoOf(_setupValue(source, selected, 'capo')),
+            ),
+            provider: source.candidate.providerId,
+          ),
+  ];
+  final references = [...lyrics]
+    ..sort((a, b) {
+      final recording = (recordingCompatible(selected, b) ? 1 : 0).compareTo(
+        recordingCompatible(selected, a) ? 1 : 0,
+      );
+      return recording != 0
+          ? recording
+          : lyricLines(b.body).length.compareTo(lyricLines(a.body).length);
+    });
+  final reference = references.firstOrNull;
+  final displayAlbum =
+      selected.album ??
+      selected.metadata['album'] ??
+      references
+          .where((source) => recordingCompatible(selected, source))
+          .map((source) => source.metadata['album'] ?? source.candidate.album)
+          .whereType<String>()
+          .firstOrNull;
+  final maximumWords = lyrics.fold<int>(
+    1,
+    (n, s) => math.max(n, _norm(plainLyrics(s.body)).split(' ').length),
+  );
+  bool compatible(SourceResult source, String field) {
+    if (field == 'lyrics') {
+      return lyricSourceIds.contains(source.id) &&
+          (preferredSourceId == null || source.id == preferredSourceId);
+    }
+    if (field == 'chords') {
+      return chartSourceIds.contains(source.id) &&
+          (preferredSourceId == null || source.id == preferredSourceId);
+    }
+    if (!field.startsWith('metadata.')) return false;
+    final top = field.substring(9).split('.').first;
+    if (_rankedControlFields.contains(top)) return false;
+    if (_rankedArrangementFields.contains(top) &&
+        top != 'key' &&
+        !chartSourceIds.contains(source.id) &&
+        !lyricSourceIds.contains(source.id)) {
+      return false;
+    }
+    if (source.id == selected.identity) return true;
+    if (!factSourceIds.contains(source.id)) return false;
+    if (!recordingCompatible(selected, source) &&
+        metadataContextMatches(source)) {
+      return top == 'artistCredits';
+    }
+    if (top == 'artistCredits' &&
+        source.candidate.providerId == 'musicbrainz' &&
+        !recordingCompatible(selected, source) &&
+        !metadataContextMatches(source)) {
+      return false;
+    }
+    final scope =
+        source.metadata['identityScope'] ??
+        source.candidate.metadata['identityScope'];
+    if (scope == 'image') return false;
+    final leaf = field.split('.').last.toLowerCase();
+    if ((_rankedRecordingFields.contains(top) ||
+            const {
+              'isrc',
+              'isrcs',
+              'recordingid',
+              'recordingids',
+            }.contains(leaf)) &&
+        !recordingCompatible(selected, source)) {
+      return const {'duration', 'durationSeconds'}.contains(top) &&
+          selected.recordingIds.isEmpty &&
+          displayAlbum is String &&
+          _lendsAlbumDisplay(selected, source, displayAlbum);
+    }
+    return true;
+  }
+
+  Map<String, int> quality(SourceResult source, String field) {
+    if (field == 'metadata.key' && source.extra['searchEvidenceOnly'] == true) {
+      final declared = _setupValue(source, selected, 'key');
+      if (declared is String && _keyIdentity(declared) != null) {
+        final supporting = chartKeyLeads
+            .where((lead) => _keyDistance(lead.key, declared) == 0)
+            .map((lead) => lead.provider)
+            .toSet()
+            .length;
+        final contraryConsensus = chartKeyLeads.any(
+          (lead) =>
+              _keyDistance(lead.key, declared) != 0 &&
+              chartKeyLeads
+                      .where((other) => _keyDistance(other.key, lead.key) == 0)
+                      .map((other) => other.provider)
+                      .toSet()
+                      .length >=
+                  math.max(2, supporting + 1),
+        );
+        if (contraryConsensus) {
+          return const {'unresolvedSearchVsChartConsensus': -8};
+        }
+      }
+    }
+    if (const {
+      'metadata.duration',
+      'metadata.durationSeconds',
+    }.contains(field)) {
+      final duration = _sourceDuration(source);
+      if (duration == null) return const {};
+      final peers = ordered
+          .where(
+            (other) =>
+                compatible(other, field) &&
+                _sourceDuration(other) != null &&
+                (_sourceDuration(other)! - duration).abs() <= 3,
+          )
+          .map((other) => other.candidate.providerId)
+          .toSet()
+          .length;
+      return {'durationAgreement': (peers - 1) * 6};
+    }
+    if (field == 'lyrics') {
+      final count = _norm(plainLyrics(source.body)).split(' ').length;
+      return {
+        'completeness': (12 * count / maximumWords).round(),
+        if (reference != null)
+          'referenceAgreement':
+              (12 * _lyricVocabularyCoverage(reference.body, source.body))
+                  .round(),
+      };
+    }
+    if (field == 'chords') {
+      final peers = charts.where(
+        (other) => _compatibleArrangementSetup(source, other, selected),
+      );
+      final peerText = peers
+          .map((other) => ' ${_norm(plainLyrics(other.body))} ')
+          .toList();
+      final referenceLines = reference == null
+          ? <String>[]
+          : lyricLines(
+              reference.body,
+            ).map(_norm).where((line) => line.isNotEmpty).toList();
+      final covered = referenceLines
+          .where((line) => peerText.any((text) => text.contains(' $line ')))
+          .length;
+      return {
+        if (reference != null)
+          'phraseCoverage':
+              (16 * _lyricVocabularyCoverage(reference.body, source.body))
+                  .round(),
+        'chartedLines': parseArrangement(
+          source.body,
+        ).where((line) => line.chords.isNotEmpty).length.clamp(0, 12),
+        if (referenceLines.isNotEmpty)
+          'compatibleChartCoverage': (16 * covered / referenceLines.length)
+              .round(),
+        if (source.extra['keyConsensus'] == true) 'sourceKeyAgreement': 6,
+        if (source.extra['keyConsensus'] == false)
+          'sourceKeyAgreement': source.extra['keyShift'] is int ? -6 : -12,
+        if (source.extra['alternatePerformerChart'] == true)
+          'alternatePerformerChart': -8,
+        if (source.extra['alternatePerformerChart'] == true &&
+            reference != null &&
+            !contextualChartLyricsMatch(source.body, reference.body))
+          'partialLyricSupport': -6,
+        if (source.extra['recordingArrangement'] is Map)
+          'derivedRecordingSetup':
+              jsonMap(source.extra['recordingArrangement'])['recordingScope'] ==
+                  'song'
+              ? -10
+              : -6,
+        if (recordingEvidence.any((evidence) => evidence.bound))
+          'recordingKeyAgreement':
+              recordingEvidence
+                  .where((evidence) => evidence.bound)
+                  .any(
+                    (evidence) => _chartSupportsSoundingKey(
+                      source,
+                      selected,
+                      evidence.key,
+                    ),
+                  )
+              ? 6
+              : -8,
+        if (!recordingEvidence.any((evidence) => evidence.bound) &&
+            recordingEvidence.isNotEmpty)
+          'songKeyAgreement':
+              recordingEvidence.any(
+                (evidence) =>
+                    _chartSupportsSoundingKey(source, selected, evidence.key),
+              )
+              ? 4
+              : -4,
+      };
+    }
+    return const {};
+  }
+
+  EvidenceHarmonyFit chartFit(SourceResult chart, Object value) {
+    if (value is! String || _keyIdentity(value) == null) {
+      return EvidenceHarmonyFit.neutral;
+    }
+    final capo = _capoOf(_setupValue(chart, selected, 'capo'));
+    final shapeKey = transposeChord(value, (12 - capo) % 12);
+    if (chartSupportsDeclaredTonic(_keyCorrectedBody(chart), shapeKey)) {
+      return EvidenceHarmonyFit.fitting;
+    }
+    if (estimateChordKey(_keyCorrectedBody(chart)) == null) {
+      final hypotheses = rankChordKeyCandidates(_keyCorrectedBody(chart));
+      final capo = _capoOf(_setupValue(chart, selected, 'capo'));
+      return hypotheses
+              .take(3)
+              .any(
+                (hypothesis) =>
+                    _keyDistance(transposeChord(hypothesis.key, capo), value) ==
+                    0,
+              )
+          ? EvidenceHarmonyFit.fitting
+          : EvidenceHarmonyFit.neutral;
+    }
+    return declaredKeyFitsChords(
+          _keyCorrectedBody(chart),
+          value,
+          _setupValue(chart, selected, 'capo'),
+        )
+        ? EvidenceHarmonyFit.fitting
+        : EvidenceHarmonyFit.conflicting;
+  }
+
+  EvidenceHarmonyFit fit(SourceResult source, String field, Object value) {
+    if (charts.isEmpty) return EvidenceHarmonyFit.neutral;
+    // A declaration may fit one of several available arrangements. Judge it
+    // against all of them; pair compatibility binds it to the chosen chart.
+    final fits = charts.map((chart) => chartFit(chart, value)).toSet();
+    if (fits.contains(EvidenceHarmonyFit.fitting)) {
+      return EvidenceHarmonyFit.fitting;
+    }
+    return fits.length == 1 && fits.contains(EvidenceHarmonyFit.conflicting)
+        ? EvidenceHarmonyFit.conflicting
+        : EvidenceHarmonyFit.neutral;
+  }
+
+  final raw = collectSourceEvidence(
+    selected,
+    sources,
+    compatible: compatible,
+    sameRecording: (source) => recordingCompatible(selected, source),
+    sourceOrigin: (source, field) =>
+        field == 'metadata.capo' && source.extra['recordingArrangement'] is Map
+        ? EvidenceOrigin.inferred
+        : EvidenceOrigin.provider,
+    qualitySignals: quality,
+    keyFit: fit,
+    preferredSourceId: preferredSourceId,
+  );
+  final claims = <EvidenceClaim>[
+    for (final claim in raw)
+      _rebuildClaim(
+        claim,
+        matchQuality: byId[claim.sourceId]?.hasPendingMatchCheck == true
+            ? EvidenceMatchQuality.unverified
+            : claim.field.startsWith('metadata.') &&
+                  byId[claim.sourceId]?.extra['searchEvidenceOnly'] == true &&
+                  factSourceIds.contains(claim.sourceId) &&
+                  (_sameSong(selected, byId[claim.sourceId]!.candidate) ||
+                      byId[claim.sourceId]?.extra['searchArrangementMatch'] ==
+                          true)
+            ? EvidenceMatchQuality.sameSong
+            : byId[claim.sourceId]?.matchReason ==
+                      'incomplete_or_different_lyrics' &&
+                  claim.contextCompatible
+            ? EvidenceMatchQuality.sameSong
+            : null,
+        contextId: const {'lyrics', 'chords'}.contains(claim.field)
+            ? claim.sourceId
+            : null,
+        sourceScope:
+            claim.field == 'metadata.key' &&
+                claim.sourceScope == EvidenceSourceScope.unknown
+            ? EvidenceSourceScope.arrangement
+            : null,
+        equivalenceKey: claim.field == 'metadata.key'
+            ? _keyIdentity(claim.value)
+            : null,
+        contextCompatible:
+            claim.value is num && !(claim.value as num).isFinite ||
+                const {
+                      'metadata.duration',
+                      'metadata.durationSeconds',
+                    }.contains(claim.field) &&
+                    _validDuration(claim.value) == null
+            ? false
+            : null,
+        incompatibilityReason:
+            claim.value is num && !(claim.value as num).isFinite
+            ? 'non_finite_numeric_claim'
+            : const {
+                    'metadata.duration',
+                    'metadata.durationSeconds',
+                  }.contains(claim.field) &&
+                  _validDuration(claim.value) == null
+            ? 'invalid_duration_claim'
+            : null,
+      ),
+  ];
+  // Keep the published declaration alongside its equivalent in the corrected
+  // chart's context. Moving a chart must not leave its old key label active.
+  for (var i = 0, count = claims.length; i < count; i++) {
+    final claim = claims[i];
+    if (claim.field != 'metadata.key' || claim.value is! String) continue;
+    final source = byId[claim.sourceId];
+    final shift = source?.extra['keyShift'];
+    if (source == null || shift is! int || shift % 12 == 0) continue;
+    final corrected = declaredKeyAfterShift(
+      source.body,
+      claim.value as String,
+      _setupValue(source, selected, 'capo'),
+      shift,
+    );
+    if (corrected == null || _keyIdentity(corrected) == claim.normalizedValue) {
+      continue;
+    }
+    claims[i] = _rebuildClaim(
+      claim,
+      contextCompatible: false,
+      incompatibilityReason: 'published_key_before_chart_transposition',
+    );
+    claims.add(
+      _rebuildClaim(
+        claim,
+        value: corrected,
+        equivalenceKey: _keyIdentity(corrected),
+        harmonyFit: fit(source, claim.field, corrected),
+      ),
+    );
+  }
+  // Publishers use both shape-key and sounding-key labels on capo charts.
+  // Retain the literal declaration and rank its arithmetic sounding reading
+  // as another interpretation of that same source, never as another vote.
+  for (var i = 0, count = claims.length; i < count; i++) {
+    final claim = claims[i];
+    if (claim.field != 'metadata.key' ||
+        claim.value is! String ||
+        !claim.contextCompatible) {
+      continue;
+    }
+    final source = byId[claim.sourceId];
+    if (source == null || !source.hasChords) continue;
+    final capo = _capoOf(_setupValue(source, selected, 'capo'));
+    if (capo == 0 || _keyIdentity(claim.value) == null) continue;
+    final sounding = transposeChord(claim.value as String, capo);
+    final lead = rankChordKeyCandidates(_keyCorrectedBody(source)).firstOrNull;
+    final shapeSupport =
+        lead != null && _keyIdentity(lead.key) == _keyIdentity(claim.value);
+    claims.add(
+      _rebuildClaim(
+        claim,
+        value: sounding,
+        equivalenceKey: _keyIdentity(sounding),
+        contextId: source.id,
+        harmonyFit: fit(source, claim.field, sounding),
+        qualitySignals: {
+          ...claim.qualitySignals,
+          'capoShapeInterpretation': shapeSupport ? 4 : -4,
+        },
+      ),
+    );
+  }
+  // Inferred alternatives are kept separately from every provider declaration.
+  // Ambiguity and section changes affect their rank, not their availability.
+  for (final source in charts) {
+    final measuredHint = jsonMap(source.extra['keyRecording'])['key'];
+    final shapeHint =
+        measuredHint is String && _keyIdentity(measuredHint) != null
+        ? transposeChord(
+            measuredHint,
+            (12 - _capoOf(_setupValue(source, selected, 'capo'))) % 12,
+          )
+        : null;
+    final hypotheses = rankChordKeyCandidates(
+      _keyCorrectedBody(source),
+      hint: shapeHint,
+    );
+    for (final hypothesis in hypotheses) {
+      final key = transposeChord(
+        hypothesis.key,
+        _capoOf(_setupValue(source, selected, 'capo')),
+      );
+      claims.add(
+        EvidenceClaim(
+          field: 'metadata.key',
+          value: key,
+          sourceId: source.id,
+          providerId: source.candidate.providerId,
+          contextId: source.id,
+          equivalenceKey: _keyIdentity(key),
+          matchQuality: source.hasPendingMatchCheck
+              ? EvidenceMatchQuality.unverified
+              : switch (source.matchKind) {
+                  MatchKind.sameRecording => EvidenceMatchQuality.sameRecording,
+                  MatchKind.sameSong => EvidenceMatchQuality.sameSong,
+                  MatchKind.rejected
+                      when source.matchReason ==
+                          'incomplete_or_different_lyrics' =>
+                    EvidenceMatchQuality.sameSong,
+                  _ => EvidenceMatchQuality.unverified,
+                },
+          sourceScope: EvidenceSourceScope.arrangement,
+          origin: EvidenceOrigin.inferred,
+          supportsCorroboration: hypothesis.rank == 1,
+          harmonyFit: fit(source, 'metadata.key', key),
+          contextCompatible:
+              preferredSourceId == null || source.id == preferredSourceId,
+          qualitySignals: {
+            'harmonicRank': (12 - hypothesis.rank * 3).clamp(-20, 9),
+          },
+        ),
+      );
+    }
+    final consensus = source.extra['keyEstimate'];
+    if (consensus is String && _keyIdentity(consensus) != null) {
+      claims.add(
+        EvidenceClaim(
+          field: 'metadata.key',
+          value: consensus,
+          sourceId: source.id,
+          providerId: 'chord-consensus',
+          lineageId: 'discovery-key-consensus',
+          contextId: source.id,
+          equivalenceKey: _keyIdentity(consensus),
+          matchQuality: EvidenceMatchQuality.sameSong,
+          sourceScope: EvidenceSourceScope.arrangement,
+          origin: EvidenceOrigin.inferred,
+          supportsCorroboration: false,
+          qualitySignals: const {'chartCrossCheck': 8},
+          contextCompatible:
+              preferredSourceId == null || source.id == preferredSourceId,
+          harmonyFit: fit(source, 'metadata.key', consensus),
+        ),
+      );
+    }
+  }
+  final analysed = <String>{};
+  for (final observation in recordingEvidence) {
+    final source = observation.source;
+    final measured = observation.key;
+    final ids =
+        (observation.data['ids'] as List? ?? const [])
+            .whereType<String>()
+            .toList()
+          ..sort();
+    final identifierWitness =
+        (observation.data['identifierSourceIds'] is List
+                ? observation.data['identifierSourceIds'] as List
+                : const [])
+            .whereType<String>()
+            .map((id) => byId[id])
+            .whereType<SourceResult>()
+            .where((witness) => witness.extra['searchEvidenceOnly'] != true)
+            .firstOrNull ??
+        source;
+    final witnessId = byId.containsKey(identifierWitness.candidate.identity)
+        ? identifierWitness.candidate.identity
+        : identifierWitness.id;
+    if (!analysed.add('$witnessId:$measured:${ids.join(',')}')) continue;
+    final supportingMode = <String>{}, opposingMode = <String>{};
+    for (final declaration in claims.where(
+      (claim) =>
+          claim.field == 'metadata.key' &&
+          claim.origin != EvidenceOrigin.inferred &&
+          claim.providerId != 'recording-key-analysis' &&
+          claim.contextCompatible &&
+          claim.matchQuality.index >= EvidenceMatchQuality.sameSong.index &&
+          claim.value is String &&
+          _keyDistance(claim.value as String, measured) == 0 &&
+          claim.harmonyFit == EvidenceHarmonyFit.fitting,
+    )) {
+      final identity =
+          byId[declaration.sourceId]?.candidate.identity ??
+          declaration.sourceId;
+      (_keyIdentity(declaration.value) == _keyIdentity(measured)
+              ? supportingMode
+              : opposingMode)
+          .add(identity);
+    }
+    final measuredFit = fit(source, 'metadata.key', measured);
+    final estimatedCharts = [
+      for (final chart in charts)
+        if (estimateChordKey(_keyCorrectedBody(chart)) case final estimate?)
+          (
+            source: chart,
+            key: transposeChord(
+              estimate.key,
+              _capoOf(_setupValue(chart, selected, 'capo')),
+            ),
+          ),
+    ];
+    final localTonicOnly =
+        measuredFit == EvidenceHarmonyFit.fitting &&
+        estimatedCharts.isNotEmpty &&
+        estimatedCharts.every((chart) {
+          final capo = _capoOf(_setupValue(chart.source, selected, 'capo'));
+          return _keyIdentity(chart.key) != _keyIdentity(measured) &&
+              !chartSupportsBoundaryTonic(
+                _keyCorrectedBody(chart.source),
+                transposeChord(measured, (12 - capo) % 12),
+              );
+        });
+    claims.add(
+      EvidenceClaim(
+        field: 'metadata.key',
+        value: measured,
+        sourceId: witnessId,
+        providerId: 'recording-key-analysis',
+        lineageId: 'recording-analysis:${ids.join(',')}',
+        equivalenceKey: _keyIdentity(measured),
+        matchQuality: observation.bound
+            ? EvidenceMatchQuality.sameRecording
+            : EvidenceMatchQuality.sameSong,
+        sourceScope: observation.bound
+            ? EvidenceSourceScope.recording
+            : EvidenceSourceScope.song,
+        origin: EvidenceOrigin.provider,
+        qualitySignals: {
+          'algorithmicModeUncertainty': -12,
+          if (localTonicOnly) 'algorithmicLocalTonicOnly': -12,
+          'recordingAgreement':
+              (((observation.data['ids'] as List? ?? const [])
+                              .whereType<String>()
+                              .map((id) => id.toUpperCase())
+                              .toSet()
+                              .length -
+                          1) *
+                      2)
+                  .clamp(0, 6),
+          if (opposingMode.length > supportingMode.length)
+            'relativeModeConflict': -20,
+        },
+        contextCompatible:
+            (observation.bound || factSourceIds.contains(source.id)) &&
+            (preferredSourceId == null || source.id == preferredSourceId),
+        harmonyFit: localTonicOnly ? EvidenceHarmonyFit.neutral : measuredFit,
+      ),
+    );
+  }
+  // A subdominant chord can support a local tonic without establishing the
+  // song's home key. When published assertions actually conflict, use the
+  // chosen charts' clear home-key estimates to separate those assertions.
+  // Inference alone never creates a counterclaim to an uncontested source.
+  final clearChartKeys = <String>[
+    for (final chart in charts)
+      if (estimateChordKey(_keyCorrectedBody(chart)) case final estimate?)
+        transposeChord(
+          estimate.key,
+          _capoOf(_setupValue(chart, selected, 'capo')),
+        ),
+  ];
+  final declarations = claims
+      .where(
+        (claim) =>
+            claim.field == 'metadata.key' &&
+            claim.origin != EvidenceOrigin.inferred &&
+            claim.contextCompatible &&
+            claim.value is String &&
+            _keyIdentity(claim.value) != null,
+      )
+      .toList();
+  if (clearChartKeys.isNotEmpty) {
+    for (var i = 0; i < claims.length; i++) {
+      final claim = claims[i];
+      if (!declarations.contains(claim) ||
+          !declarations.any(
+            (other) =>
+                other.sourceId != claim.sourceId &&
+                _keyDistance(other.value as String, claim.value as String) != 0,
+          )) {
+        continue;
+      }
+      claims[i] = _rebuildClaim(
+        claim,
+        qualitySignals: {
+          ...claim.qualitySignals,
+          'contestedHomeKeyFit':
+              clearChartKeys.any(
+                (key) => _keyDistance(key, claim.value as String) == 0,
+              )
+              ? 8
+              : -8,
+        },
+      );
+    }
+  }
+  bool pairCompatible(EvidenceClaim a, EvidenceClaim b) {
+    if (a.field.startsWith('${b.field}.') ||
+        b.field.startsWith('${a.field}.')) {
+      return false;
+    }
+    EvidenceClaim? chart;
+    EvidenceClaim? lyric;
+    if (a.field == 'chords') chart = a;
+    if (b.field == 'chords') chart = b;
+    if (a.field == 'lyrics') lyric = a;
+    if (b.field == 'lyrics') lyric = b;
+    if (chart != null && lyric != null) {
+      final c = byId[chart.sourceId], l = byId[lyric.sourceId];
+      return c != null &&
+          l != null &&
+          _lyricVocabularyCoverage(l.body, c.body) > 0;
+    }
+    if (chart == null) return true;
+    final other = identical(chart, a) ? b : a;
+    final source = byId[chart.sourceId];
+    if (source == null) return false;
+    if (other.field == 'metadata.key') {
+      if (other.origin == EvidenceOrigin.inferred && other.contextId != null) {
+        return other.contextId == chart.sourceId;
+      }
+      final published = _setupValue(source, selected, 'key');
+      final shift = source.extra['keyShift'];
+      final declared = published is String && shift is int && shift % 12 != 0
+          ? declaredKeyAfterShift(
+              source.body,
+              published,
+              _setupValue(source, selected, 'capo'),
+              shift,
+            )
+          : published;
+      if (other.value is String) {
+        final body = _keyCorrectedBody(source);
+        final hypotheses = rankChordKeyCandidates(body);
+        if (hypotheses.isEmpty) return true;
+        final capo = _capoOf(_setupValue(source, selected, 'capo'));
+        final shapeKey = transposeChord(
+          other.value as String,
+          (12 - capo) % 12,
+        );
+        final harmonicallyCompatible =
+            chartSupportsDeclaredTonic(body, shapeKey) ||
+            hypotheses
+                .take(3)
+                .any(
+                  (hypothesis) => _keyDistance(hypothesis.key, shapeKey) == 0,
+                );
+        if (!harmonicallyCompatible) return false;
+      }
+      if (declared is String &&
+          !declaredKeyFitsChords(
+            _keyCorrectedBody(source),
+            declared,
+            _setupValue(source, selected, 'capo'),
+          )) {
+        return true;
+      }
+      return declared is! String ||
+          other.value is! String ||
+          _keyDistance(declared, other.value as String) == 0 ||
+          _keyDistance(
+                transposeChord(
+                  declared,
+                  _capoOf(_setupValue(source, selected, 'capo')),
+                ),
+                other.value as String,
+              ) ==
+              0;
+    }
+    if (other.field == 'metadata.capo') {
+      return _capoOf(other.value) ==
+          _capoOf(_setupValue(source, selected, 'capo'));
+    }
+    if (other.field == 'metadata.tuning') {
+      return _compatibleChartTuning(
+        other.value,
+        _setupValue(source, selected, 'tuning'),
+      );
+    }
+    if (other.field == 'metadata.timeSignature') {
+      final known = _setupValue(source, selected, 'timeSignature');
+      return !_hasMetadata(known) ||
+          known.toString().trim() == other.value.toString().trim();
+    }
+    return true;
+  }
+
+  return rankEvidenceClaims(
+    claims,
+    compatibleWithChosen: (candidate, chosen) =>
+        chosen.every((other) => pairCompatible(candidate, other)),
+    fieldWeights: const {'lyrics': 4, 'chords': 4, 'metadata.key': 2},
+    // This compatibility model depends on a claim's value, arrangement context
+    // and whether a key is inferred. Equivalent metadata provenance can share
+    // one search state without pruning a distinct arrangement option.
+    combinationStateKey: (claim) => jsonEncode([
+      claim.normalizedValue,
+      claim.contextId,
+      claim.field == 'metadata.key' && claim.origin == EvidenceOrigin.inferred,
+    ]),
+  );
+}
+
+void _applyRankedMetadata(SongDocument song, EvidenceRanking ranking) {
+  final origins = jsonMap(song.extra['fieldOrigins']);
+  final contributors = jsonMap(song.extra['fieldContributors']);
+  final decisions = <String, dynamic>{};
+  final writtenFields = <String>{};
+  final conflicts = jsonMap(song.extra['conflicts']);
+  final fieldOptions = <String, List<RankedEvidenceClaim>>{};
+  for (final option in ranking.claims) {
+    if (option.claim.field.startsWith('metadata.') &&
+        option.claim.matchQuality != EvidenceMatchQuality.rejected &&
+        option.claim.origin != EvidenceOrigin.inferred) {
+      fieldOptions.putIfAbsent(option.claim.field, () => []).add(option);
+    }
+  }
+  for (final field in fieldOptions.entries) {
+    if (field.value
+            .map((option) => option.claim.normalizedValue)
+            .toSet()
+            .length <
+        2) {
+      continue;
+    }
+    final seen = <String>{};
+    conflicts[field.key.substring(9)] = [
+      for (final option in field.value)
+        if (seen.add(
+          '${option.claim.sourceId}:${option.claim.normalizedValue}',
+        ))
+          {
+            'sourceId': option.claim.sourceId,
+            'value': evidenceDiagnosticValue(option.claim.value),
+          },
+    ];
+  }
+  final entries = ranking.chosenByField.entries.toList()
+    ..sort((a, b) {
+      final keyLast = (a.key == 'metadata.key' ? 1 : 0).compareTo(
+        b.key == 'metadata.key' ? 1 : 0,
+      );
+      return keyLast != 0 ? keyLast : a.key.compareTo(b.key);
+    });
+  for (final entry in entries) {
+    if (!entry.key.startsWith('metadata.')) continue;
+    final path = entry.key.substring(9).split('.');
+    var claim = entry.value;
+    if (entry.key == 'metadata.key' &&
+        claim.origin == EvidenceOrigin.inferred) {
+      final declaration = ranking.claims
+          .where(
+            (option) =>
+                option.claim.field == entry.key &&
+                option.claim.contextCompatible &&
+                option.claim.origin != EvidenceOrigin.inferred &&
+                option.claim.matchQuality.index >=
+                    EvidenceMatchQuality.sameSong.index &&
+                option.claim.normalizedValue == claim.normalizedValue,
+          )
+          .firstOrNull;
+      if (declaration != null) claim = declaration.claim;
+    }
+    if (writtenFields.add(path.first)) contributors.remove(path.first);
+    if (path.first == 'key' && claim.origin == EvidenceOrigin.inferred) {
+      final shapeKey = transposeChord(
+        claim.value.toString(),
+        (12 - _capoOf(song.metadata['capo'])) % 12,
+      );
+      song.extra['chordKeyEstimate'] = {
+        'key': shapeKey,
+        'bodyHash': _bodyHash(song.body),
+        'ranked': true,
+      };
+      song.metadata.remove('key');
+      origins.remove('key');
+      contributors.remove('key');
+      decisions[entry.key] = {
+        'value': claim.value,
+        'sourceId': claim.sourceId,
+        'inferred': true,
+      };
+      continue;
+    }
+    Object value = claim.value;
+    final sameValueSources = ranking.claims
+        .where(
+          (other) =>
+              other.claim.field == entry.key &&
+              other.claim.contextCompatible &&
+              (entry.key != 'metadata.key' ||
+                  other.claim.origin != EvidenceOrigin.inferred) &&
+              other.claim.normalizedValue == claim.normalizedValue,
+        )
+        .map((other) => other.claim.sourceId)
+        .toSet();
+    if (value is List && !_rankedArrangementFields.contains(path.first)) {
+      final seen = <String>{};
+      value = [
+        for (final option in ranking.claims.where(
+          (other) =>
+              other.claim.field == entry.key && other.claim.contextCompatible,
+        ))
+          if (option.claim.value is List)
+            for (final item in option.claim.value as List)
+              if (seen.add(jsonEncode(item))) item,
+      ];
+      sameValueSources.addAll(
+        ranking.claims
+            .where(
+              (other) =>
+                  other.claim.field == entry.key &&
+                  other.claim.contextCompatible &&
+                  other.claim.value is List,
+            )
+            .map((other) => other.claim.sourceId),
+      );
+    }
+    Map<String, dynamic> target = song.metadata;
+    for (final part in path.take(path.length - 1)) {
+      final child = jsonMap(target[part]);
+      target[part] = child;
+      target = child;
+    }
+    target[path.last] = value;
+    origins[path.first] = claim.sourceId;
+    contributors[path.first] = {
+      ...?((contributors[path.first] as List?)?.whereType<String>()),
+      ...sameValueSources,
+    }.toList()..sort();
+    if (path.first == 'key') {
+      song.extra['keySourceIds'] = sameValueSources.toList()..sort();
+    }
+    decisions[entry.key] = {
+      'value': value,
+      'sourceId': claim.sourceId,
+      'providerId': claim.providerId,
+      'origin': claim.origin.name,
+      'matchQuality': claim.matchQuality.name,
+      'provisional':
+          claim.matchQuality == EvidenceMatchQuality.unverified ||
+          ranking.ambiguousFields.contains(entry.key),
+    };
+  }
+  song.extra['fieldOrigins'] = origins;
+  song.extra['fieldContributors'] = contributors;
+  if (conflicts.isNotEmpty) song.extra['conflicts'] = conflicts;
+  song.extra['evidenceRanking'] = {
+    'version': 1,
+    ...ranking.toJson(),
+    'appliedFields': decisions,
+    'retainedSourceCount': song.sources.length,
+  };
+}

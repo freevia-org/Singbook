@@ -8,13 +8,14 @@ import 'package:singbook/providers/core/core_providers.dart';
 import 'package:singbook/providers/extra/extra_providers.dart';
 import 'package:singbook/providers/provider.dart';
 import 'package:singbook/providers/source_catalog.dart';
+import 'package:singbook/providers/source_catalog_client.dart';
 import 'package:singbook/providers/source_maintenance.dart';
 
 import 'src/maintenance_credentials.dart';
 import 'src/maintenance_http_diagnostics.dart';
 
 Future<void> main(List<String> args) async {
-  String catalogPath = 'config/source-catalog-v2.json';
+  String catalogPath = SourceCatalogClient.bundledAsset;
   String? reportPath;
   var offline = false;
   String? onlySource;
@@ -174,6 +175,9 @@ class DesktopMaintenanceClient extends http.BaseClient {
     String responseHeaders,
   ) async {
     final process = await _processStarter(curlExecutable, [
+      // Keep anonymous probes and measured retries independent of curlrc.
+      // curl requires this to be its first argument.
+      '--disable',
       '--silent',
       '--show-error',
       '--max-time',

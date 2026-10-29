@@ -888,5 +888,26 @@
   },
   "@settingsStartupLastView": {
     "description": "Option that opens the last view used before the app was closed."
-  }
+  },
+  "sourceAnalysisHeading": "Analisi dell’audio inviato (non verificata)",
+  "sourceAnalysisCoverage": "Visualizzati {shown} invii su {total}",
+  "@sourceAnalysisCoverage": {
+    "placeholders": {
+      "shown": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "sourceAnalysisSample": "Campione {number}",
+  "@sourceAnalysisSample": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "sourceAnalysisEstimatedTempo": "Tempo stimato (BPM)"
 }

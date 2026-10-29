@@ -253,6 +253,69 @@ void main() {
     },
   );
 
+  test('discovery envelope keeps all identity-rejected payloads on total failure', () async {
+    final provider = _Provider([_candidate('a-first'), _candidate('b-second')]);
+    final lookup = findMatchingSource(provider, _selection());
+    (await provider.resolveAt(0)).response.complete(
+      _payload(_candidate('a-first', title: 'Different composition')),
+    );
+    (await provider.resolveAt(1)).response.complete(
+      _payload(_candidate('b-second', title: 'Another composition')),
+    );
+    final result = await lookup;
+    expect(result.matchKind, MatchKind.rejected);
+    final evidence = result.extra['discoveryEvidence'] as JsonMap;
+    final rejected = evidence['rejectedPayloads'] as List;
+    expect(rejected, hasLength(2));
+    expect(
+      rejected.map((item) => (item as JsonMap)['payload']['body']),
+      everyElement(_short),
+    );
+    expect(evidence['acceptedPayloads'], isEmpty);
+  });
+
+  test('search envelope keeps filtered rows and useful accept-rejected payloads', () async {
+    final filtered = _candidate('0-unrelated', title: 'Different Work');
+    final rejected = _candidate('a-partial');
+    final accepted = _candidate('b-complete');
+    final provider = _Provider([filtered, rejected, accepted]);
+    final lookup = findMatchingSource(
+      provider,
+      _selection(),
+      accept: (source) => source.body == _full,
+    );
+    (await provider.resolveAt(0)).response.complete(_payload(rejected));
+    (await provider.resolveAt(1)).response.complete(
+      _payload(accepted, body: _full),
+    );
+    final result = await lookup;
+    expect(result.candidate.id, accepted.id);
+    expect(result.body, _full);
+    final evidence = result.extra['discoveryEvidence'] as JsonMap;
+    final search = evidence['searchCandidates'] as List;
+    final filteredEvidence = search.cast<JsonMap>().firstWhere(
+      (item) => jsonMap(item['candidate'])['id'] == filtered.id,
+    );
+    expect(filteredEvidence['reason'], 'identity_mismatch');
+    expect(jsonMap(filteredEvidence['candidate'])['title'], 'Different Work');
+    final rejectedPayloads = evidence['rejectedPayloads'] as List;
+    expect(rejectedPayloads, hasLength(1));
+    expect(
+      jsonMap(jsonMap(rejectedPayloads.single)['payload'])['body'],
+      _short,
+    );
+    expect(evidence['acceptedPayloads'], hasLength(1));
+    expect(
+      jsonMap((evidence['acceptedPayloads'] as List).single)['body'],
+      _full,
+    );
+    expect(
+      jsonEncode(evidence).contains('discoveryEvidence'),
+      isFalse,
+      reason: 'payload snapshots must not recursively include their envelope',
+    );
+  });
+
   test(
     'explicit bounded corroboration may exclude the pinned row and validate another ID',
     () async {
@@ -784,13 +847,14 @@ SongCandidate _selection({String? album, double? duration}) => SongCandidate(
 
 SongCandidate _candidate(
   String id, {
+  String? title,
   String? album,
   double? duration,
   JsonMap metadata = const {},
 }) => SongCandidate(
   providerId: 'secondary',
   id: id,
-  title: _title,
+  title: title ?? _title,
   artist: _artist,
   album: album,
   durationSeconds: duration,

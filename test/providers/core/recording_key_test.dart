@@ -94,6 +94,116 @@ void main() {
     );
   });
 
+  test('retains tied groups with stable key ordering and raw rows', () async {
+    final found =
+        await RecordingKeyService(
+          _transport({
+            'content': [
+              _feature('USRE19100001', 7, 1, 90),
+              _feature('USRE19100002', 4, 0, 90),
+            ],
+          }, []),
+        ).lookup(
+          isrcs: const ['USRE19100001', 'USRE19100002'],
+          retainAlternatives: true,
+        );
+
+    expect(found?.key, 'Em'); // Lexical tie break, independent of row order.
+    expect(found?.alternatives.map((key) => key.key), ['G']);
+    expect(found?.ids, ['USRE19100002']);
+    expect(found?.observations.single['key'], 4);
+    expect(found?.alternatives.single.observations.single['key'], 7);
+    expect(found?.toJson()['alternatives'], isA<List>());
+  });
+
+  test(
+    'plurality ranks groups and contradictory duplicate ISRCs vote once',
+    () async {
+      final rows = [
+        _feature('USRE19100001', 9, 1, 77),
+        _feature('USRE19100001', 0, 1, 100),
+        _feature('USRE19100002', 0, 1, 101),
+        _feature('USRE19100003', 4, 0, 90),
+        // Not requested, despite being a well-formed audio feature.
+        _feature('USRE19100004', 9, 1, 77),
+      ];
+      Future<RecordingKey?> lookup(List<Object?> content) =>
+          RecordingKeyService(_transport({'content': content}, [])).lookup(
+            isrcs: const ['USRE19100001', 'USRE19100002', 'USRE19100003'],
+            retainAlternatives: true,
+          );
+
+      final found = await lookup(rows);
+      // ISRC 1 supports both A and C, so it votes once in each group. C has
+      // two distinct recordings; A and Em each have one.
+      expect(found?.key, 'C');
+      expect(found?.ids, ['USRE19100001', 'USRE19100002']);
+      expect(found?.tempo, isNull); // Retained C observations disagree.
+      expect(found?.alternatives.map((key) => key.key), ['A', 'Em']);
+      expect(found?.alternatives.first.ids, ['USRE19100001']);
+      expect(found?.alternatives.last.ids, ['USRE19100003']);
+      expect(found?.observations, hasLength(2));
+
+      final reversed = await lookup(rows.reversed.toList());
+      expect(reversed?.key, found?.key);
+      expect(reversed?.ids.toSet(), found?.ids.toSet());
+      expect(
+        reversed?.alternatives.map((key) => key.key),
+        found?.alternatives.map((key) => key.key),
+      );
+    },
+  );
+
+  test(
+    'default tie remains null while opt-in returns all key groups',
+    () async {
+      final content = [
+        _feature('USRE19100001', 4, 0, 90),
+        _feature('USRE19100002', 7, 1, 90),
+      ];
+      Future<RecordingKey?> lookup({required bool retainAlternatives}) =>
+          RecordingKeyService(_transport({'content': content}, [])).lookup(
+            isrcs: const ['USRE19100001', 'USRE19100002'],
+            retainAlternatives: retainAlternatives,
+          );
+
+      expect(await lookup(retainAlternatives: false), isNull);
+      final retained = await lookup(retainAlternatives: true);
+      expect(retained?.key, 'Em');
+      expect(retained?.alternatives.map((key) => key.key), ['G']);
+    },
+  );
+
+  test(
+    'opt-in uses Spotify IDs when an API row has no valid ISRC or row ID',
+    () async {
+      const first = '1kgdslQYmeTR4thk9whoRw';
+      const second = '2kgdslQYmeTR4thk9whoRw';
+      final found = await RecordingKeyService(
+        _transport({
+          'content': [
+            {
+              'href': 'https://open.spotify.com/track/$first',
+              'key': 9,
+              'mode': 1,
+            },
+            {
+              'id': 'not-an-isrc',
+              'isrc': 'not-an-isrc',
+              'href': 'https://open.spotify.com/track/$second',
+              'key': 9,
+              'mode': 1,
+            },
+          ],
+        }, []),
+      ).lookup(spotifyIds: const [first, second], retainAlternatives: true);
+
+      expect(found?.key, 'A');
+      expect(found?.ids, [first, second]);
+      expect(found?.observations, hasLength(2));
+    },
+  );
+
   test('no identifiers means no request', () async {
     final requests = <Uri>[];
     final found = await RecordingKeyService(

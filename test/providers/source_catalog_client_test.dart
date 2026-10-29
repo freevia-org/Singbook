@@ -155,6 +155,24 @@ void main() {
     expect(client.lastCheckedAt, isNotNull);
   });
 
+  test('uses a separate channel10 cache while retaining prior cache names', () {
+    expect(SourceCatalogClient.bundledAsset, 'config/source-catalog-v10.json');
+    expect(SourceCatalogClient.cacheKey, 'sourceCatalog:v10');
+    expect(SourceCatalogClient.channel9CacheKey, 'sourceCatalog:v9');
+    expect(SourceCatalogClient.channel8CacheKey, 'sourceCatalog:v8');
+    expect(SourceCatalogClient.channel7CacheKey, 'sourceCatalog:v7');
+    expect(SourceCatalogClient.channel6CacheKey, 'sourceCatalog:v6');
+    expect(SourceCatalogClient.channel5CacheKey, 'sourceCatalog:v5');
+    expect(SourceCatalogClient.channel4CacheKey, 'sourceCatalog:v4');
+    expect(SourceCatalogClient.channel3CacheKey, 'sourceCatalog:v3');
+    expect(SourceCatalogClient.channel2CacheKey, 'sourceCatalog:v2');
+    expect(SourceCatalogClient.legacyCacheKey, 'sourceCatalog');
+    expect(
+      SourceCatalogClient.defaultEndpoint,
+      'https://raw.githubusercontent.com/freevia-org/Singbook/main/config/source-catalog-v10.json',
+    );
+  });
+
   test(
     'malformed and unsupported schema downloads keep the last good catalog',
     () async {

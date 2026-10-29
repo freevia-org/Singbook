@@ -399,6 +399,7 @@ SourceResult mergeSourceResult(SourceResult previous, SourceResult incoming) {
   }
   final result = SourceResult(
     candidate: chosen.candidate,
+    arrangementId: chosen.arrangementId,
     body: chosen.body,
     metadata: facts,
     timingTracks: chosen.timingTracks,

@@ -11,12 +11,99 @@ class ChordKeyEstimate {
     required this.separation,
     required this.chordCount,
     required this.distinctRoots,
+    this.rawScore = 0,
+    this.rank = 1,
   });
 
   final String key;
   final double separation;
   final int chordCount;
   final int distinctRoots;
+
+  /// Unnormalized score from the harmony model; useful for ranking only.
+  final double rawScore;
+  final int rank;
+}
+
+/// Returns all supported major/minor key hypotheses, strongest first.
+///
+/// Unlike [estimateChordKey], this diagnostic API does not abstain because the
+/// chart is ambiguous or changes key between sections. It uses the whole chart
+/// as one sequence and requires at least three chords across two roots. The
+/// optional measured [hint] can move a same-signature hypothesis ahead of a
+/// near-tied top candidate (within 0.65 score per chord), but never overrides
+/// a clear harmonic lead.
+List<ChordKeyEstimate> rankChordKeyCandidates(String body, {String? hint}) {
+  final chords = <_Chord>[];
+  var flats = 0, sharps = 0;
+  for (final line in parseArrangement(body)) {
+    if (line.directive) continue;
+    for (final anchor in line.chords) {
+      final chord = _Chord.parse(anchor.chord);
+      if (chord == null) continue;
+      chords.add(chord);
+      if (chord.rootText.contains('b') || chord.rootText.contains('♭')) {
+        flats++;
+      } else if (chord.rootText.contains('#') || chord.rootText.contains('♯')) {
+        sharps++;
+      }
+    }
+  }
+  final roots = chords.map((chord) => chord.root).toSet();
+  if (chords.length < 3 || roots.length < 2) return const [];
+  final scored = <_ScoredKey>[
+    for (var tonic = 0; tonic < 12; tonic++)
+      _scoreKey(chords, tonic, _Mode.major),
+    for (var tonic = 0; tonic < 12; tonic++)
+      _scoreKey(chords, tonic, _Mode.minor),
+  ]..sort(_compareScoredKeys);
+
+  final top = scored.first;
+  final measured = hint == null ? null : _keyIdentity(hint);
+  if (measured != null) {
+    final parts = measured.split(':');
+    final hintedTonic = int.tryParse(parts.first);
+    final hintedMode = parts.length > 1 && parts[1] == 'minor'
+        ? _Mode.minor
+        : _Mode.major;
+    if (hintedTonic != null) {
+      final hintedIndex = scored.indexWhere(
+        (item) => item.tonic == hintedTonic && item.mode == hintedMode,
+      );
+      final hinted = hintedIndex < 0 ? null : scored[hintedIndex];
+      int signature(int tonic, _Mode mode) =>
+          mode == _Mode.major ? tonic : (tonic + 3) % 12;
+      if (hinted != null &&
+          signature(hinted.tonic, hinted.mode) ==
+              signature(top.tonic, top.mode) &&
+          top.score - hinted.score <= chords.length * 0.65) {
+        scored.removeAt(hintedIndex);
+        scored.insert(0, hinted);
+      }
+    }
+  }
+
+  return List.unmodifiable([
+    for (var i = 0; i < scored.length; i++)
+      ChordKeyEstimate(
+        key: _keyName(scored[i].tonic, scored[i].mode, flats, sharps),
+        separation: i + 1 < scored.length
+            ? (scored[i].score - scored[i + 1].score) / chords.length
+            : 0,
+        chordCount: chords.length,
+        distinctRoots: roots.length,
+        rawScore: scored[i].score,
+        rank: i + 1,
+      ),
+  ]);
+}
+
+int _compareScoredKeys(_ScoredKey a, _ScoredKey b) {
+  final score = b.score.compareTo(a.score);
+  if (score != 0) return score;
+  final tonic = a.tonic.compareTo(b.tonic);
+  if (tonic != 0) return tonic;
+  return a.mode.index.compareTo(b.mode.index);
 }
 
 /// Estimates a key from chord roots, qualities, bass notes and cadences.
@@ -141,10 +228,75 @@ ChordKeyEstimate? _estimateChords(
     separation: separation,
     chordCount: chords.length,
     distinctRoots: roots.length,
+    rawScore: best.score,
+    rank: 1,
   );
 }
 
 enum _Mode { major, minor }
+
+/// Positive tonic evidence also supports modal songs whose borrowed chords
+/// make a simple major/minor scale model prefer another tonal centre.
+bool chartSupportsDeclaredTonic(String body, String shapeKey) {
+  final identity = _keyIdentity(shapeKey);
+  final parts = identity.split(':');
+  final tonic = int.tryParse(parts.first);
+  if (tonic == null) return false;
+  final minor = parts.last == 'minor';
+  final chords = [
+    for (final line in parseArrangement(body))
+      if (!line.directive)
+        for (final anchor in line.chords) ?_Chord.parse(anchor.chord),
+  ];
+  if (chords.isEmpty) return false;
+  final tonicChords = chords
+      .where(
+        (chord) =>
+            chord.root == tonic &&
+            (chord.quality == _Quality.power ||
+                chord.quality == (minor ? _Quality.minor : _Quality.major)),
+      )
+      .length;
+  // A bridge, instrumental passage, or alternate arrangement may dominate
+  // the chord count. Repeated compatible tonic chords still support an
+  // explicit declaration; their percentage is not a reason to discard it.
+  return tonicChords >= 2 || tonicChords == chords.length;
+}
+
+/// Whether a compatible tonic chord begins or ends the chart's chord sequence.
+///
+/// This is narrow positive evidence for a chart's boundary tonic, including
+/// modal charts whose interior chords may favor another major/minor estimate.
+/// It does not reject a key merely because the boundary does not support it.
+bool chartSupportsBoundaryTonic(String body, String shapeKey) {
+  final parts = _keyIdentity(shapeKey).split(':');
+  if (parts.length != 2) return false;
+  final tonic = int.tryParse(parts.first);
+  if (tonic == null || tonic < 0 || tonic > 11) return false;
+  final expectedQuality = parts.last == 'minor'
+      ? _Quality.minor
+      : parts.last == 'major'
+      ? _Quality.major
+      : null;
+  if (expectedQuality == null) return false;
+
+  _Chord? first;
+  _Chord? last;
+  for (final line in parseArrangement(body)) {
+    if (line.directive) continue;
+    for (final anchor in line.chords) {
+      final chord = _Chord.parse(anchor.chord);
+      if (chord == null) continue;
+      first ??= chord;
+      last = chord;
+    }
+  }
+  bool supports(_Chord? chord) =>
+      chord != null &&
+      chord.root == tonic &&
+      (chord.quality == _Quality.power || chord.quality == expectedQuality);
+  return supports(first) || supports(last);
+}
 
 class _ScoredKey {
   const _ScoredKey(this.tonic, this.mode, this.score);
@@ -188,6 +340,8 @@ class _Chord {
         ? _Quality.other
         : lowerSuffix.startsWith('aug') || suffix.startsWith('+')
         ? _Quality.other
+        : lowerSuffix == '5'
+        ? _Quality.power
         : lowerSuffix.startsWith('sus')
         ? _Quality.other
         : (suffix.startsWith('m') && !suffix.startsWith('maj')) ||
@@ -214,7 +368,7 @@ class _Chord {
   }
 }
 
-enum _Quality { major, minor, other }
+enum _Quality { major, minor, power, other }
 
 _ScoredKey _scoreKey(List<_Chord> chords, int tonic, _Mode mode) {
   final scale = mode == _Mode.major
@@ -249,7 +403,7 @@ _ScoredKey _scoreKey(List<_Chord> chords, int tonic, _Mode mode) {
     final index = scale.indexOf(degree);
     if (index >= 0) {
       final expected = qualities[index];
-      score += expected == chord.quality
+      score += expected == chord.quality || chord.quality == _Quality.power
           ? 1.1 + degreeWeights[index]
           : _borrowedChordScore(mode, degree, chord.quality);
     } else if (chord.quality == _Quality.major &&

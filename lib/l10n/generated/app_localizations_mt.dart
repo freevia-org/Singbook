@@ -2105,4 +2105,21 @@ class AppLocalizationsMt extends AppLocalizations {
   @override
   String get settingsShowPlayerControlsHint =>
       'Tista’ wkoll tmiss jew tiskrollja l-pannell tal-plejer biex turih jew taħbih.';
+
+  @override
+  String get sourceAnalysisHeading =>
+      'Analiżi tal-awdjo sottomess (mhux ivverifikata)';
+
+  @override
+  String sourceAnalysisCoverage(int shown, int total) {
+    return 'Intwerew $shown minn $total sottomissjonijiet';
+  }
+
+  @override
+  String sourceAnalysisSample(int number) {
+    return 'Kampjun $number';
+  }
+
+  @override
+  String get sourceAnalysisEstimatedTempo => 'Tempo stmat (BPM)';
 }

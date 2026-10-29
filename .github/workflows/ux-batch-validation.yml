@@ -1,12 +1,6 @@
 name: UX batch validation
 
 on:
-  pull_request:
-    paths-ignore:
-      - 'docs/**'
-      - '**/*.md'
-      - 'LICENSE'
-      - 'NOTICE'
   workflow_dispatch:
 
 permissions:
@@ -25,7 +19,6 @@ env:
 
 jobs:
   focused-regressions:
-    # The complete CI suite already discovers all six files on every PR.
     # Keep this serial diagnostic lane available for targeted manual runs.
     if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest

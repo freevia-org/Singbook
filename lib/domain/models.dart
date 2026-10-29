@@ -273,6 +273,7 @@ class SourceResult {
   final List<TimingTrack> timingTracks;
   final MatchKind matchKind;
   final String? attribution, matchReason;
+  final String? arrangementId;
   final DateTime? retrievedAt;
   final JsonMap extra;
   const SourceResult({
@@ -283,10 +284,13 @@ class SourceResult {
     this.matchKind = MatchKind.unverified,
     this.attribution,
     this.matchReason,
+    this.arrangementId,
     this.retrievedAt,
     this.extra = const {},
   });
-  String get id => candidate.identity;
+  String get id => arrangementId == null
+      ? candidate.identity
+      : '${candidate.identity}#arrangement=$arrangementId';
   bool get hasChords => containsChords(body);
   bool get hasPendingMatchCheck =>
       candidate.hasPendingMatchCheck ||
@@ -301,6 +305,7 @@ class SourceResult {
         matchKind: matchKind,
         attribution: attribution,
         matchReason: matchReason,
+        arrangementId: arrangementId,
         retrievedAt: retrievedAt,
         extra: extra ?? this.extra,
       );
@@ -311,6 +316,7 @@ class SourceResult {
     'metadata': metadata,
     'timingTracks': timingTracks.map((t) => t.toJson()).toList(),
     'matchKind': matchKind.name,
+    if (arrangementId != null) 'arrangementId': arrangementId,
     if (attribution != null) 'attribution': attribution,
     if (matchReason != null) 'matchReason': matchReason,
     if (retrievedAt != null)
@@ -328,6 +334,7 @@ class SourceResult {
     ),
     attribution: j['attribution'] as String?,
     matchReason: j['matchReason'] as String?,
+    arrangementId: j['arrangementId'] as String?,
     retrievedAt: j['retrievedAt'] == null
         ? null
         : DateTime.parse(j['retrievedAt'] as String),
@@ -341,6 +348,7 @@ class SourceResult {
           'matchKind',
           'attribution',
           'matchReason',
+          'arrangementId',
           'retrievedAt',
         }.contains(k),
       ),

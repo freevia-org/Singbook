@@ -626,5 +626,26 @@
   "settingsShowSections": "Show section headings",
   "settingsShowSectionsHint": "Show verse, chorus and other section headings in the lyrics.",
   "settingsShowPlayerControls": "Show playback controls",
-  "settingsShowPlayerControlsHint": "You can also tap or swipe the player panel to show or hide it."
+  "settingsShowPlayerControlsHint": "You can also tap or swipe the player panel to show or hide it.",
+  "sourceAnalysisHeading": "Submitted audio analysis (unverified)",
+  "sourceAnalysisCoverage": "{shown} of {total} submissions shown",
+  "@sourceAnalysisCoverage": {
+    "placeholders": {
+      "shown": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "sourceAnalysisSample": "Sample {number}",
+  "@sourceAnalysisSample": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "sourceAnalysisEstimatedTempo": "Estimated tempo (BPM)"
 }

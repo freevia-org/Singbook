@@ -179,6 +179,51 @@ void main() {
       );
     });
 
+    test('artistless chord probes require a pinned searchable arrangement', () {
+      Map<String, dynamic> chart() => {
+        'id': 'pinned-chart',
+        'query': 'Instrumental chart',
+        'expectedTitle': 'Instrumental chart',
+        'candidate': {
+          'providerId': 'charts',
+          'id': 'chart-1',
+          'title': 'Instrumental chart',
+          'artist': '',
+          'url': 'https://charts.example.org/song/chart-1',
+          'metadata': {'identityScope': 'arrangement'},
+        },
+      };
+      SourceCatalog parse(Map<String, dynamic> probe) => parseCatalog(1, [
+        source(
+          id: 'charts',
+          capabilities: ['catalog', 'lyrics', 'chords'],
+          hosts: ['charts.example.org'],
+          probes: [probe],
+        ),
+      ]);
+      final good = chart();
+      expect(
+        parse(good).sources.single.probes.single['candidate']['artist'],
+        '',
+      );
+      for (final alter in <void Function(Map<String, dynamic>)>[
+        (p) => p.remove('query'),
+        (p) => p['query'] = '',
+        (p) => p['query'] = '   ',
+        (p) => p['expectedTitle'] = 'Different chart',
+        (p) => p['candidate']['id'] = '',
+        (p) => p['candidate']['url'] = 'http://charts.example.org/song/chart-1',
+        (p) =>
+            p['candidate']['url'] = 'https://foreign.example.org/song/chart-1',
+        (p) => p['candidate']['metadata'] = {'identityScope': 'recording'},
+        (p) => p['candidate']['recordingIds'] = {'isrc': 'GBAYE9200070'},
+      ]) {
+        final bad = chart();
+        alter(bad);
+        expect(() => parse(bad), throwsFormatException);
+      }
+    });
+
     test('rejects unsupported schemas, duplicate ids, and unsafe hosts', () {
       expect(
         () => SourceCatalog.fromJson({...catalog(1, []), 'schemaVersion': 2}),

@@ -5,6 +5,14 @@ import 'open_catalogs.dart';
 import 'lrc_red.dart';
 import 'roswell.dart';
 import 'kara_moe.dart';
+import 'amll.dart';
+import 'startjamming.dart';
+import 'lyricsplus.dart';
+import 'vocadb.dart';
+import 'chords_and_tabs.dart';
+import 'pisni.dart';
+import 'openscore_lieder.dart';
+import 'acousticbrainz.dart';
 
 export 'import_sources.dart';
 export 'metadata.dart';
@@ -12,6 +20,14 @@ export 'open_catalogs.dart';
 export 'lrc_red.dart';
 export 'roswell.dart';
 export 'kara_moe.dart';
+export 'amll.dart';
+export 'startjamming.dart';
+export 'lyricsplus.dart';
+export 'vocadb.dart';
+export 'chords_and_tabs.dart';
+export 'pisni.dart';
+export 'openscore_lieder.dart';
+export 'acousticbrainz.dart';
 
 /// All sources in the architecture, including truthful file-import-only routes.
 List<LyricsProvider> createExtraProviders({ProviderTransport? transport}) {
@@ -30,5 +46,15 @@ List<LyricsProvider> createExtraProviders({ProviderTransport? transport}) {
     LrcRedProvider(http),
     RoswellMusicJamProvider(http),
     KaraMoeProvider(http),
+    AmllProvider(http),
+    StartJammingProvider(http),
+    LyricsPlusProvider(http),
+    VocaDbProvider(http),
+    TouhouDbProvider(http),
+    UtaiteDbProvider(http),
+    ChordsAndTabsProvider(http),
+    PisniProvider(http),
+    OpenScoreLiederProvider(http),
+    AcousticBrainzProvider(http),
   ];
 }

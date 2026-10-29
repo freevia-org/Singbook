@@ -7,6 +7,22 @@ import 'package:singbook/providers/source_maintenance.dart';
 
 void main() {
   group('SourceMaintenanceHarness', () {
+    test(
+      'a chord-only chart cannot establish lyric extraction coverage',
+      () async {
+        final report = await SourceMaintenanceHarness(
+          providers: [
+            _Provider(body: '{comment: Instrumental}\n[C] [G] [N.C.]'),
+          ],
+        ).run(_catalog(capabilities: ['lyrics', 'chords', 'metadata']));
+        final source = (report['sources'] as List).single as Map;
+        expect(_probe(report)['status'], 'healthy');
+        expect(_probe(report)['verifiedCapabilities'], ['chords', 'metadata']);
+        expect(source['status'], 'partial_coverage');
+        expect(source['coverage']['unverifiedCapabilities'], ['lyrics']);
+      },
+    );
+
     test('reports healthy extraction with only shape metadata', () async {
       final report = await _runWith(_Provider());
       final probe = _probe(report);

@@ -5,8 +5,10 @@ import 'common.dart';
 
 /// Public YouTube Music web responses. No logged-in cookies or player scraping.
 class YoutubeMusicProvider implements LyricsProvider {
-  YoutubeMusicProvider(this.http);
+  YoutubeMusicProvider(this.http, {DateTime Function()? clock})
+    : _clock = clock ?? DateTime.now;
   final ProviderTransport http;
+  final DateTime Function() _clock;
   // Fixed anonymous accept marker used by yt-dlp. It carries no
   // account/session data and is sent only to the exact Music endpoints below.
   static const _requestHeaders = {'Cookie': 'SOCS=CAI'};
@@ -23,7 +25,7 @@ class YoutubeMusicProvider implements LyricsProvider {
   Future<JsonMap>? _pending;
 
   bool get _hasFreshConfig {
-    return _configuration != null && _expires!.isAfter(DateTime.now());
+    return _configuration != null && _expires!.isAfter(_clock());
   }
 
   /// Overlapping callers share one homepage download.
@@ -99,7 +101,8 @@ class YoutubeMusicProvider implements LyricsProvider {
     final upgrade =
         source.contains('/img/on_platform_logo_dark.svg') &&
         source.contains('google.com/chrome/index.html');
-    final date = DateTime.now()
+    final now = _clock();
+    final date = now
         .toUtc()
         .toIso8601String()
         .substring(0, 10)
@@ -116,7 +119,7 @@ class YoutubeMusicProvider implements LyricsProvider {
     // Anonymous requests need the client version, not Google's visitor token.
     // Do not retain or replay VISITOR_DATA / client.visitorData from the page.
     _configuration = {'version': version};
-    _expires = DateTime.now().add(const Duration(hours: 1));
+    _expires = now.add(const Duration(hours: 1));
     return _configuration!;
   }
 

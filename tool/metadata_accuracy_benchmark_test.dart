@@ -11,6 +11,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:singbook/domain/arrangement.dart';
 import 'package:singbook/domain/combine.dart';
 import 'package:singbook/domain/chord_key_estimate.dart';
+import 'package:singbook/domain/chordpro.dart';
 import 'package:singbook/domain/models.dart';
 import 'package:singbook/domain/source_contributions.dart';
 import 'package:singbook/domain/edition_identity.dart';
@@ -30,6 +31,8 @@ const _jitterSeed = int.fromEnvironment(
 );
 const _maxNetwork = int.fromEnvironment('METADATA_BENCHMARK_MAX_NETWORK');
 const _runAudit = bool.fromEnvironment('METADATA_BENCHMARK_RUN');
+const _songIds = String.fromEnvironment('METADATA_BENCHMARK_SONG_IDS');
+const _asOfUtcInput = String.fromEnvironment('METADATA_BENCHMARK_AS_OF_UTC');
 const _cachePath = String.fromEnvironment(
   'METADATA_BENCHMARK_CACHE',
   defaultValue: 'artifacts/metadata-accuracy/cache',
@@ -40,11 +43,160 @@ const _reportOutputPath = String.fromEnvironment(
 );
 const _fields = ['lyrics', 'key', 'chords'];
 
+DateTime? _benchmarkAsOfUtc() {
+  final value = _asOfUtcInput.trim();
+  if (value.isEmpty) return null;
+  if (!RegExp(
+    r'(?:Z|[+-]\d{2}:\d{2})$',
+    caseSensitive: false,
+  ).hasMatch(value)) {
+    throw ArgumentError.value(
+      value,
+      'METADATA_BENCHMARK_AS_OF_UTC',
+      'Use an ISO-8601 timestamp with an explicit UTC designator or offset.',
+    );
+  }
+  final parsed = DateTime.tryParse(value);
+  if (parsed == null) {
+    throw ArgumentError.value(
+      value,
+      'METADATA_BENCHMARK_AS_OF_UTC',
+      'Invalid ISO-8601 timestamp.',
+    );
+  }
+  return parsed.toUtc();
+}
+
+/// The requested song is a discovery query even when catalogs have no exact
+/// result. This fallback carries no catalog or recording evidence: providers
+/// must independently return and match their own candidates.
+({SongCandidate candidate, bool catalogMatched, List<SongCandidate> members})
+_corpusDiscoveryReference(
+  Map<String, dynamic> song,
+  Iterable<SearchRecordingGroup> groups,
+) {
+  final group = groups
+      .where((group) => matchesCorpusCandidate(song, group.representative))
+      .firstOrNull;
+  if (group != null) {
+    return (
+      candidate: group.representative,
+      catalogMatched: true,
+      members: group.members,
+    );
+  }
+  return (
+    candidate: corpusRequestCandidate(song),
+    catalogMatched: false,
+    members: const [],
+  );
+}
+
 String _normalize(String text) => text
     .toLowerCase()
     .replaceAll(RegExp(r"['‘’]"), '')
     .replaceAll(RegExp(r'[^\p{L}\p{N}]+', unicode: true), ' ')
     .trim();
+
+Object? _canonicalJsonValue(Object? value) {
+  if (value is Map) {
+    final entries = value.entries.toList()
+      ..sort((a, b) => a.key.toString().compareTo(b.key.toString()));
+    return {
+      for (final entry in entries)
+        entry.key.toString(): _canonicalJsonValue(entry.value),
+    };
+  }
+  if (value is Iterable) return value.map(_canonicalJsonValue).toList();
+  return value;
+}
+
+String _sourceSnapshotHash(SourceResult source) =>
+    _sha(jsonEncode(_canonicalJsonValue(source.toJson())));
+
+String _sourcePersistenceHash(SourceResult source) {
+  final data = source.toJson();
+  // The codec stores one current timing track per ID. Its binding/status and
+  // computed lyric hash are local annotations, not the provider's raw evidence.
+  data['timingTracks'] = [
+    for (final track in source.timingTracks)
+      {
+          ...track.toJson(),
+          'lyricHash': track.lyricHash ?? lyricOrderHash(track.sourceLyrics),
+        }
+        ..remove('status')
+        ..remove('binding'),
+  ];
+  return _sha(jsonEncode(_canonicalJsonValue(data)));
+}
+
+List<Map<String, Object?>> _sourcePersistenceDifferences(
+  List<SourceResult> before,
+  List<SourceResult> after,
+) {
+  final changes = <Map<String, Object?>>[];
+  void compare(Object? left, Object? right, String path) {
+    if (changes.length >= 24 ||
+        jsonEncode(_canonicalJsonValue(left)) ==
+            jsonEncode(_canonicalJsonValue(right))) {
+      return;
+    }
+    if (left is Map && right is Map) {
+      final keys = {...left.keys, ...right.keys}.map((key) => '$key').toList()
+        ..sort();
+      for (final key in keys) {
+        compare(left[key], right[key], '$path.$key');
+      }
+      return;
+    }
+    if (left is List && right is List && left.length == right.length) {
+      for (var i = 0; i < left.length; i++) {
+        compare(left[i], right[i], '$path[$i]');
+      }
+      return;
+    }
+    changes.add({
+      'path': path,
+      'beforeType': left.runtimeType.toString(),
+      'afterType': right.runtimeType.toString(),
+      'reason': left is num && right is num && left == right
+          ? 'numeric_representation'
+          : 'changed',
+    });
+  }
+
+  final byId = {for (final source in after) source.id: source};
+  for (final source in before) {
+    compare(source.toJson(), byId[source.id]?.toJson(), _sha(source.id));
+  }
+  return changes;
+}
+
+/// Per-song deltas expose missing cached responses without claiming that a
+/// cache miss alone explains an unavailable song.
+Map<String, Object?> _cacheCounterDelta(
+  Map<String, Object> before,
+  Map<String, Object> after,
+) {
+  int value(Map<String, Object> counters, String key) =>
+      counters[key] as int? ?? 0;
+  final beforeStatuses =
+      before['statusCounts'] as Map<String, int>? ?? const {};
+  final afterStatuses = after['statusCounts'] as Map<String, int>? ?? const {};
+  final statuses = <String, int>{};
+  for (final status in {...beforeStatuses.keys, ...afterStatuses.keys}) {
+    final delta = (afterStatuses[status] ?? 0) - (beforeStatuses[status] ?? 0);
+    if (delta != 0) statuses[status] = delta;
+  }
+  return {
+    'hits': value(after, 'hits') - value(before, 'hits'),
+    'offlineMisses': value(after, 'uncached') - value(before, 'uncached'),
+    'networkAttempts':
+        value(after, 'networkAttempts') - value(before, 'networkAttempts'),
+    'overBudget': value(after, 'overBudget') - value(before, 'overBudget'),
+    'statusCounts': statuses,
+  };
+}
 
 String _normalizedLyrics(String body) => _normalize(
   body
@@ -93,8 +245,9 @@ Map<String, Object?> _practicalLyricsTextAgreement(
     for (var i = 1; i < values.length; i++)
       '${values[i - 1]}\u0000${values[i]}',
   };
-  double coverage(Set<String> source, Set<String> reference) =>
-      source.isEmpty ? 0 : source.intersection(reference).length / source.length;
+  double coverage(Set<String> source, Set<String> reference) => source.isEmpty
+      ? 0
+      : source.intersection(reference).length / source.length;
 
   final candidateWords = _practicalLyricsUnits(candidateBody);
   final selectedWords = _practicalLyricsUnits(selectedBody);
@@ -105,14 +258,22 @@ Map<String, Object?> _practicalLyricsTextAgreement(
   return {
     'candidateWordCount': candidateWords.length,
     'selectedWordCount': selectedWords.length,
-    'candidateVocabularyCoverageBySelectedLyrics':
-        coverage(candidateVocabulary, selectedVocabulary),
-    'selectedLyricsVocabularyCoverageByCandidate':
-        coverage(selectedVocabulary, candidateVocabulary),
-    'candidateOrderedBigramCoverageBySelectedLyrics':
-        coverage(candidateBigrams, selectedBigrams),
-    'selectedLyricsOrderedBigramCoverageByCandidate':
-        coverage(selectedBigrams, candidateBigrams),
+    'candidateVocabularyCoverageBySelectedLyrics': coverage(
+      candidateVocabulary,
+      selectedVocabulary,
+    ),
+    'selectedLyricsVocabularyCoverageByCandidate': coverage(
+      selectedVocabulary,
+      candidateVocabulary,
+    ),
+    'candidateOrderedBigramCoverageBySelectedLyrics': coverage(
+      candidateBigrams,
+      selectedBigrams,
+    ),
+    'selectedLyricsOrderedBigramCoverageByCandidate': coverage(
+      selectedBigrams,
+      candidateBigrams,
+    ),
     'interpretation':
         'Candidate-to-selected overlap indicates whether the candidate text belongs to the selected lyrics while tolerating repeats and formatting changes. Reverse overlap describes how much of the selected text the candidate covers; neither direction independently proves recording identity.',
   };
@@ -123,8 +284,8 @@ Map<String, Object?> _practicalLyricsCandidateAgreementSummary(
 ) {
   final candidates = <({Map row, Map source, Map agreement})>[];
   for (final row in rows) {
-    for (final source in (row['sourceSummary'] as List? ?? const [])
-        .whereType<Map>()) {
+    for (final source
+        in (row['sourceSummary'] as List? ?? const []).whereType<Map>()) {
       final contribution = source['combinedContribution'];
       final agreement = source['practicalLyricsTextAgreement'];
       if ((contribution is Map && contribution['selectedBaseLyrics'] == true) ||
@@ -140,12 +301,13 @@ Map<String, Object?> _practicalLyricsCandidateAgreementSummary(
     Iterable<({Map row, Map source, Map agreement})> values,
     String field,
   ) {
-    final scores = values
-        .map((entry) => entry.agreement[field])
-        .whereType<num>()
-        .map((score) => score.toDouble())
-        .toList()
-      ..sort();
+    final scores =
+        values
+            .map((entry) => entry.agreement[field])
+            .whereType<num>()
+            .map((score) => score.toDouble())
+            .toList()
+          ..sort();
     if (scores.isEmpty) return null;
     final middle = scores.length ~/ 2;
     return scores.length.isOdd
@@ -164,8 +326,9 @@ Map<String, Object?> _practicalLyricsCandidateAgreementSummary(
               as num? ??
           0) >=
       .80;
-  int withCandidateTextMatch(Iterable<({Map row, Map source, Map agreement})> values) =>
-      values.where(aligned).length;
+  int withCandidateTextMatch(
+    Iterable<({Map row, Map source, Map agreement})> values,
+  ) => values.where(aligned).length;
   final alignedIdentityProvidersBySong = <String, Set<String>>{};
   for (final entry in identityCompatible.where(aligned)) {
     final songId = entry.row['id'];
@@ -251,23 +414,39 @@ Map<String, Object?> _practicalLyricCorrespondence(
   return {
     'chartWordCount': chartLines.expand((line) => line).length,
     'selectedLyricsWordCount': selectedLines.expand((line) => line).length,
-    'chartVocabularyCoverageBySelectedLyrics':
-        coverage(chartWords, selectedWords),
-    'selectedLyricsVocabularyCoverageByChart':
-        coverage(selectedWords, chartWords),
-    'chartOrderedBigramCoverageBySelectedLyrics':
-        coverage(chartPairs, selectedPairs),
-    'selectedLyricsOrderedBigramCoverageByChart':
-        coverage(selectedPairs, chartPairs),
+    'chartVocabularyCoverageBySelectedLyrics': coverage(
+      chartWords,
+      selectedWords,
+    ),
+    'selectedLyricsVocabularyCoverageByChart': coverage(
+      selectedWords,
+      chartWords,
+    ),
+    'chartOrderedBigramCoverageBySelectedLyrics': coverage(
+      chartPairs,
+      selectedPairs,
+    ),
+    'selectedLyricsOrderedBigramCoverageByChart': coverage(
+      selectedPairs,
+      chartPairs,
+    ),
     'chartChordedLineCount': chordedLines.length,
-    'chartChordedLineVocabularyCoverageBySelectedLyrics':
-        coverage(chordedWords, selectedWords),
-    'selectedLyricsVocabularyCoverageByChordedLines':
-        coverage(selectedWords, chordedWords),
-    'chartChordedLineOrderedBigramCoverageBySelectedLyrics':
-        coverage(chordedPairs, selectedPairs),
-    'selectedLyricsOrderedBigramCoverageByChordedLines':
-        coverage(selectedPairs, chordedPairs),
+    'chartChordedLineVocabularyCoverageBySelectedLyrics': coverage(
+      chordedWords,
+      selectedWords,
+    ),
+    'selectedLyricsVocabularyCoverageByChordedLines': coverage(
+      selectedWords,
+      chordedWords,
+    ),
+    'chartChordedLineOrderedBigramCoverageBySelectedLyrics': coverage(
+      chordedPairs,
+      selectedPairs,
+    ),
+    'selectedLyricsOrderedBigramCoverageByChordedLines': coverage(
+      selectedPairs,
+      chordedPairs,
+    ),
     'interpretation':
         'Coverage tolerates repeated or omitted sections and indicates whether chord-bearing chart lines use the selected song text. It is diagnostic support, not proof of recording identity or chord correctness.',
   };
@@ -281,11 +460,12 @@ Map<String, Object?> _practicalChordLyricSummary(
   for (final row in rows) {
     final selected = row['practicalChordLyricCorrespondence'] as Map? ?? {};
     if (selected['selectedLyricsAvailable'] == true &&
-        (selected['selectedChordContributors'] as List? ?? const []).isNotEmpty) {
+        (selected['selectedChordContributors'] as List? ?? const [])
+            .isNotEmpty) {
       songsWithSelectedLyricsAndChords++;
     }
-    for (final source in (row['sourceSummary'] as List? ?? const [])
-        .whereType<Map>()) {
+    for (final source
+        in (row['sourceSummary'] as List? ?? const []).whereType<Map>()) {
       final contribution = source['combinedContribution'];
       final overlap = source['practicalChordLyricCorrespondence'];
       if (contribution is Map &&
@@ -297,20 +477,24 @@ Map<String, Object?> _practicalChordLyricSummary(
   }
 
   double? median(String field) {
-    final values = contributors
-        .map((row) => row[field])
-        .whereType<num>()
-        .map((value) => value.toDouble())
-        .toList()
-      ..sort();
+    final values =
+        contributors
+            .map((row) => row[field])
+            .whereType<num>()
+            .map((value) => value.toDouble())
+            .toList()
+          ..sort();
     if (values.isEmpty) return null;
     final middle = values.length ~/ 2;
     return values.length.isOdd
         ? values[middle]
         : (values[middle - 1] + values[middle]) / 2;
   }
+
   final chartedLineAlignment = contributors
-      .map((row) => row['chartChordedLineOrderedBigramCoverageBySelectedLyrics'])
+      .map(
+        (row) => row['chartChordedLineOrderedBigramCoverageBySelectedLyrics'],
+      )
       .whereType<num>()
       .map((value) => value.toDouble())
       .toList();
@@ -319,18 +503,24 @@ Map<String, Object?> _practicalChordLyricSummary(
     'songsWithSelectedLyricsAndChordContributors':
         songsWithSelectedLyricsAndChords,
     'selectedChordContributorsCompared': contributors.length,
-    'contributorsWithAtLeast80PercentChartedLineTextMatch':
-        chartedLineAlignment.where((value) => value >= .80).length,
-    'contributorsBelow80PercentChartedLineTextMatch':
-        chartedLineAlignment.where((value) => value < .80).length,
-    'medianChartOrderedBigramCoverageBySelectedLyrics':
-        median('chartOrderedBigramCoverageBySelectedLyrics'),
-    'medianSelectedLyricsOrderedBigramCoverageByChart':
-        median('selectedLyricsOrderedBigramCoverageByChart'),
-    'medianChartChordedLineOrderedBigramCoverageBySelectedLyrics':
-        median('chartChordedLineOrderedBigramCoverageBySelectedLyrics'),
-    'medianSelectedLyricsOrderedBigramCoverageByChordedLines':
-        median('selectedLyricsOrderedBigramCoverageByChordedLines'),
+    'contributorsWithAtLeast80PercentChartedLineTextMatch': chartedLineAlignment
+        .where((value) => value >= .80)
+        .length,
+    'contributorsBelow80PercentChartedLineTextMatch': chartedLineAlignment
+        .where((value) => value < .80)
+        .length,
+    'medianChartOrderedBigramCoverageBySelectedLyrics': median(
+      'chartOrderedBigramCoverageBySelectedLyrics',
+    ),
+    'medianSelectedLyricsOrderedBigramCoverageByChart': median(
+      'selectedLyricsOrderedBigramCoverageByChart',
+    ),
+    'medianChartChordedLineOrderedBigramCoverageBySelectedLyrics': median(
+      'chartChordedLineOrderedBigramCoverageBySelectedLyrics',
+    ),
+    'medianSelectedLyricsOrderedBigramCoverageByChordedLines': median(
+      'selectedLyricsOrderedBigramCoverageByChordedLines',
+    ),
     'interpretation':
         'Charted-line text match is the chart-to-selected-lyrics direction and is the useful alignment screen: a high value means chord-bearing lyric fragments appear in the selected lyrics. The reverse direction measures how much of the selected lyrics has chorded coverage; low values can simply mean a partial chart, not an incorrect chart. Neither measure verifies chord symbols musically.',
   };
@@ -366,10 +556,14 @@ Map<String, Object?> _practicalChordKeyConsistency({
     'separation': estimate?.separation,
     'chordCount': estimate?.chordCount ?? 0,
     'distinctRoots': estimate?.distinctRoots ?? 0,
-    'declaredKeyVsShapeEstimate':
-        _practicalKeyRelation(declaredKey, estimate?.key),
-    'selectedKeyVsCorrectedSoundingEstimate':
-        _practicalKeyRelation(selectedKey, correctedSoundingEstimate),
+    'declaredKeyVsShapeEstimate': _practicalKeyRelation(
+      declaredKey,
+      estimate?.key,
+    ),
+    'selectedKeyVsCorrectedSoundingEstimate': _practicalKeyRelation(
+      selectedKey,
+      correctedSoundingEstimate,
+    ),
     'interpretation':
         'Self-consistency diagnostic applies the recorded majority-key transposition and capo. A chart-derived estimate can flag conflicts but cannot independently establish the recording key or chord correctness.',
   };
@@ -380,8 +574,8 @@ Map<String, Object?> _practicalChordKeySummary(
 ) {
   final contributors = <Map>[];
   for (final row in rows) {
-    for (final source in (row['sourceSummary'] as List? ?? const [])
-        .whereType<Map>()) {
+    for (final source
+        in (row['sourceSummary'] as List? ?? const []).whereType<Map>()) {
       final contribution = source['combinedContribution'];
       final keyCheck = source['practicalChordKeyConsistency'];
       if (contribution is Map &&
@@ -400,7 +594,9 @@ Map<String, Object?> _practicalChordKeySummary(
       'tonic_difference',
       'unavailable',
     ])
-      relation: contributors.where((source) => source[field] == relation).length,
+      relation: contributors
+          .where((source) => source[field] == relation)
+          .length,
   };
 
   return {
@@ -408,10 +604,10 @@ Map<String, Object?> _practicalChordKeySummary(
     'contributorsWithChordKeyEstimate': contributors
         .where((source) => source['shapeKeyEstimate'] is String)
         .length,
-    'declaredKeyVsShapeEstimate':
-        countRelations('declaredKeyVsShapeEstimate'),
-    'selectedKeyVsCorrectedSoundingEstimate':
-        countRelations('selectedKeyVsCorrectedSoundingEstimate'),
+    'declaredKeyVsShapeEstimate': countRelations('declaredKeyVsShapeEstimate'),
+    'selectedKeyVsCorrectedSoundingEstimate': countRelations(
+      'selectedKeyVsCorrectedSoundingEstimate',
+    ),
     'interpretation':
         'Counts compare key labels with a chord-derived chart estimate as a self-consistency screen. They are not independent recording-key or chord-correctness validation.',
   };
@@ -546,55 +742,61 @@ List<Map<String, Object?>> _sharedRawHashRowsDifferingFromOutput(
       (groups[source[hashField] as String] ??= <Map>[]).add(source);
     }
     final selectedHash = row[selectedHashField];
-    final selectedHashProviders = (groups[selectedHash] ?? const <Map>[])
-        .map((source) => source['provider'])
-        .whereType<String>()
-        .toSet()
-        .toList()
-      ..sort();
+    final selectedHashProviders =
+        (groups[selectedHash] ?? const <Map>[])
+            .map((source) => source['provider'])
+            .whereType<String>()
+            .toSet()
+            .toList()
+          ..sort();
     for (final entry in groups.entries) {
       if (entry.key == selectedHash) continue;
-      final providers = entry.value
-          .map((source) => source['provider'])
-          .whereType<String>()
-          .toSet()
-          .toList()
-        ..sort();
+      final providers =
+          entry.value
+              .map((source) => source['provider'])
+              .whereType<String>()
+              .toSet()
+              .toList()
+            ..sort();
       if (providers.length < 2) continue;
-      final recordingCompatibleProviders = entry.value
-          .where((source) => source['recordingCompatible'] == true)
-          .map((source) => source['provider'])
-          .whereType<String>()
-          .toSet()
-          .toList()
-        ..sort();
-      final contributedProviders = entry.value
-          .where((source) {
-            final contribution = source['combinedContribution'];
-            return contribution is Map && contribution['chords'] == true;
-          })
-          .map((source) => source['provider'])
-          .whereType<String>()
-          .toSet()
-          .toList()
-        ..sort();
-      final editionCompatibleProviders = entry.value
-          .where((source) => source['explicitEditionCompatible'] == true)
-          .map((source) => source['provider'])
-          .whereType<String>()
-          .toSet()
-          .toList()
-        ..sort();
-      final outputContributorProviders = sources
-          .where((source) {
-            final contribution = source['combinedContribution'];
-            return contribution is Map && contribution['chords'] == true;
-          })
-          .map((source) => source['provider'])
-          .whereType<String>()
-          .toSet()
-          .toList()
-        ..sort();
+      final recordingCompatibleProviders =
+          entry.value
+              .where((source) => source['recordingCompatible'] == true)
+              .map((source) => source['provider'])
+              .whereType<String>()
+              .toSet()
+              .toList()
+            ..sort();
+      final contributedProviders =
+          entry.value
+              .where((source) {
+                final contribution = source['combinedContribution'];
+                return contribution is Map && contribution['chords'] == true;
+              })
+              .map((source) => source['provider'])
+              .whereType<String>()
+              .toSet()
+              .toList()
+            ..sort();
+      final editionCompatibleProviders =
+          entry.value
+              .where((source) => source['explicitEditionCompatible'] == true)
+              .map((source) => source['provider'])
+              .whereType<String>()
+              .toSet()
+              .toList()
+            ..sort();
+      final outputContributorProviders =
+          sources
+              .where((source) {
+                final contribution = source['combinedContribution'];
+                return contribution is Map && contribution['chords'] == true;
+              })
+              .map((source) => source['provider'])
+              .whereType<String>()
+              .toSet()
+              .toList()
+            ..sort();
       alternatives.add({
         'songId': row['id'],
         'title': row['selectedTitle'] ?? row['title'],
@@ -606,17 +808,17 @@ List<Map<String, Object?>> _sharedRawHashRowsDifferingFromOutput(
         'alternativeHashSha256': entry.key,
         'alternativeProviderLabels': providers,
         'alternativeProviderCount': providers.length,
-        'recordingCompatibleAlternativeProviders':
-            recordingCompatibleProviders,
+        'recordingCompatibleAlternativeProviders': recordingCompatibleProviders,
         'editionCompatibleAlternativeProviders': editionCompatibleProviders,
         'contributedAlternativeProviders': contributedProviders,
         'independentLineageConfirmed': false,
-        'matchKinds': entry.value
-            .map((source) => source['match'])
-            .whereType<String>()
-            .toSet()
-            .toList()
-          ..sort(),
+        'matchKinds':
+            entry.value
+                .map((source) => source['match'])
+                .whereType<String>()
+                .toSet()
+                .toList()
+              ..sort(),
         'pendingAlternativeSourceCount': entry.value
             .where((source) => source['pendingMatchCheck'] == true)
             .length,
@@ -642,12 +844,13 @@ bool _eligibleAgreementSource(Map source, String hashField) =>
 int _capoOf(Object? raw) =>
     raw is num ? raw.toInt() : int.tryParse('$raw') ?? 0;
 
-/// Captures the key shown by the lyric reader without retaining song content.
+/// Captures the player's key fallback without retaining song content.
 ///
-/// This mirrors `AppControllerAdapter._songKey` and `_buildState`: explicit
-/// metadata is preferred, then a compatible sourced arrangement key, then the
-/// reader can show a clearly labeled chord-shape estimate. The capo remains a
-/// separate setup value in the player; this records the literal key label.
+/// This mirrors the replay's no-user-override path in
+/// `AppControllerAdapter._songKey`. `combineSources` may recover a sourced
+/// arrangement key into metadata, so it follows the explicit-key path. After
+/// that, the player tries the current body estimate before the checked estimate
+/// bound to that body's hash.
 Map<String, Object?> _playerKeyResolution(SongDocument doc) {
   final checked = jsonMap(doc.extra['chordKeyEstimate']);
   final checkedHash = checked['bodyHash'];
@@ -672,21 +875,16 @@ Map<String, Object?> _playerKeyResolution(SongDocument doc) {
     };
   }
 
-  final rawEstimate = estimateChordKey(doc.body)?.key;
-  if (rawEstimate != null) {
+  final shapeEstimate = _estimatedShapeKey(doc);
+  if (shapeEstimate.key != null) {
     return {
-      'key': rawEstimate,
-      'source': 'rawChordEstimate',
+      'key': shapeEstimate.key,
+      'source': switch (shapeEstimate.evidence) {
+        'chartEstimate' => 'rawChordEstimate',
+        'rankedChartEstimate' => 'rankedChartEstimate',
+        _ => 'checkedBodyHashEstimate',
+      },
       'checkedEstimateBodyHashMatches': checkedBodyHashMatches,
-    };
-  }
-
-  final checkedEstimate = checkedChordKeyEstimate(doc);
-  if (checkedEstimate != null) {
-    return {
-      'key': checkedEstimate,
-      'source': 'checkedBodyHashEstimate',
-      'checkedEstimateBodyHashMatches': true,
     };
   }
 
@@ -697,13 +895,26 @@ Map<String, Object?> _playerKeyResolution(SongDocument doc) {
   };
 }
 
+({String? key, String? evidence}) _estimatedShapeKey(SongDocument doc) {
+  final ranked = rankedChordKeyEstimate(doc);
+  if (ranked != null) return (key: ranked, evidence: 'rankedChartEstimate');
+  final estimate = estimateChordKey(doc.body);
+  if (estimate != null) {
+    return (key: estimate.key, evidence: 'chartEstimate');
+  }
+  final checked = checkedChordKeyEstimate(doc);
+  return (
+    key: checked,
+    evidence: checked == null ? null : 'checkedChartEstimate',
+  );
+}
+
 String? _soundingKey(SongDocument doc) {
   final m = doc.metadata;
   final declared = m['key'] as String?;
   // Declared metadata is already a sounding key, matching player display.
   if (declared != null) return declared;
-  final shapeKey =
-      checkedChordKeyEstimate(doc) ?? estimateChordKey(doc.body)?.key;
+  final shapeKey = _estimatedShapeKey(doc).key;
   if (shapeKey == null) return null;
   final capo = _capoOf(m['capo']);
   return capo == 0 ? shapeKey : transposeChord(shapeKey, capo);
@@ -753,7 +964,13 @@ Map<String, Object?> _practicalChordAnchorAudit(
       ? (
           scale: const [0, 2, 4, 5, 7, 9, 11],
           qualities: const [
-            'major', 'minor', 'minor', 'major', 'major', 'minor', 'other',
+            'major',
+            'minor',
+            'minor',
+            'major',
+            'major',
+            'minor',
+            'other',
           ],
         )
       : null;
@@ -761,7 +978,13 @@ Map<String, Object?> _practicalChordAnchorAudit(
       ? (
           scale: const [0, 2, 3, 5, 7, 8, 10],
           qualities: const [
-            'minor', 'other', 'major', 'minor', 'major', 'major', 'major',
+            'minor',
+            'other',
+            'major',
+            'minor',
+            'major',
+            'major',
+            'major',
           ],
         )
       : null;
@@ -778,9 +1001,10 @@ Map<String, Object?> _practicalChordAnchorAudit(
     if (line.directive || line.text.trim().isEmpty || line.chords.isEmpty) {
       continue;
     }
-    final words = RegExp(r'[\p{L}\p{N}]+', unicode: true)
-        .allMatches(line.text)
-        .toList();
+    final words = RegExp(
+      r'[\p{L}\p{N}]+',
+      unicode: true,
+    ).allMatches(line.text).toList();
     final anchors = <Map<String, Object?>>[];
     for (final chord in line.chords) {
       chordCount++;
@@ -853,6 +1077,56 @@ Map<String, Object?> _practicalChordAnchorAudit(
 String _keyClaimScope(SongDocument doc) {
   final estimate = jsonMap(doc.extra['chordKeyEstimate']);
   if (_hasMeaningfulMetadata(doc.metadata['key'])) {
+    final applied = jsonMap(
+      jsonMap(doc.extra['evidenceRanking'])['appliedFields'],
+    )['metadata.key'];
+    if (applied is Map) {
+      final decision = Map<String, Object?>.from(applied);
+      final appliedSourceId = decision['sourceId'];
+      final appliedProviderId = decision['providerId'];
+      final appliedOrigin = decision['origin'];
+      final appliedValue = decision['value'] ?? doc.metadata['key'];
+      final matchingClaim =
+          (jsonMap(doc.extra['evidenceRanking'])['claims'] as List? ?? const [])
+              .whereType<Map>()
+              .map((claim) => Map<String, Object?>.from(claim))
+              .where((claim) {
+                if (claim['field'] != 'metadata.key' ||
+                    claim['contextCompatible'] == false ||
+                    claim['sourceScope'] is! String ||
+                    claim['sourceScope'] == 'unknown') {
+                  return false;
+                }
+                if (appliedSourceId is String &&
+                    claim['sourceId'] != appliedSourceId) {
+                  return false;
+                }
+                if (appliedProviderId is String &&
+                    claim['providerId'] != appliedProviderId) {
+                  return false;
+                }
+                if (appliedOrigin is String &&
+                    claim['origin'] != appliedOrigin) {
+                  return false;
+                }
+                return claim['value']?.toString().trim().toLowerCase() ==
+                    appliedValue?.toString().trim().toLowerCase();
+              })
+              .firstOrNull;
+      final scope = matchingClaim?['sourceScope'];
+      if (scope is String &&
+          const {
+            'recording',
+            'song',
+            'composition',
+            'arrangement',
+          }.contains(scope)) {
+        return scope;
+      }
+      // When an applied ledger exists, an unmatched claim cannot safely be
+      // replaced by another claim attached to the same source snapshot.
+      return 'unknown';
+    }
     final origin = jsonMap(doc.extra['fieldOrigins'])['key'];
     if (origin is String) {
       for (final source in doc.sources) {
@@ -1043,14 +1317,18 @@ Map<String, dynamic> _readCorpus() {
 
 Map<String, Object?> _practicalLicensedChartReview(
   List<Map<String, Object?>> benchmarkRows,
-  Map<String, dynamic> observations,
-) {
+  Map<String, dynamic> observations, {
+  bool skipUnknownSongs = false,
+}) {
   final rowsById = {for (final row in benchmarkRows) row['id']: row};
   final reviewed = <Map<String, Object?>>[];
   for (final raw in (observations['sources'] as List).cast<Map>()) {
     final songId = raw['songId'] as String;
     final row = rowsById[songId];
-    if (row == null) throw StateError('unknown chart observation $songId');
+    if (row == null) {
+      if (skipUnknownSongs) continue;
+      throw StateError('unknown chart observation $songId');
+    }
     final chartKey = raw['publisherClaimedKey'] as String;
     final selectedKey = row['key'] as String?;
     final selectedScope = row['keyClaimScope'] as String?;
@@ -1074,6 +1352,8 @@ Map<String, Object?> _practicalLicensedChartReview(
   return {
     'source': 'licensed chart product listings',
     'isStrictRecordingGold': false,
+    'skippedNonSelectedObservations':
+        (observations['sources'] as List).length - reviewed.length,
     'interpretation':
         'Arrangement-scope chart comparisons are useful practical evidence. Matches do not establish exact-recording correctness; differences need review for edition, capo, transposition, and claim scope.',
     'counts': {
@@ -1126,6 +1406,105 @@ Map<String, dynamic> _readLicensedChartObservations() {
 }
 
 void main() {
+  test(
+    'persistence audit permits derived timing state and detects raw evidence changes',
+    () {
+      const candidate = SongCandidate(
+        providerId: 'test',
+        id: 'one',
+        title: 'Song',
+        artist: 'Artist',
+      );
+      const track = TimingTrack(
+        id: 'track',
+        sourceDocumentId: 'test:one',
+        sourceLyrics: 'Invented lyric',
+        format: 'lrc',
+        raw: '[00:01.00]Invented lyric',
+        cues: [
+          TimingCue(
+            id: 'cue',
+            occurrenceId: 'line-0',
+            text: 'Invented lyric',
+            startUs: 1000000,
+          ),
+        ],
+      );
+      const source = SourceResult(
+        candidate: candidate,
+        body: 'Invented lyric',
+        timingTracks: [track],
+      );
+      final rebound = source.copyWith(
+        timingTracks: [
+          track.copyWith(
+            status: TimingStatus.usable,
+            lyricHash: lyricOrderHash(track.sourceLyrics),
+            extra: {
+              'binding': {'arrangementLyricHash': 'current-body'},
+            },
+          ),
+        ],
+      );
+      expect(_sourcePersistenceHash(source), _sourcePersistenceHash(rebound));
+      for (final changed in [
+        SourceResult.fromJson({
+          ...source.toJson(),
+          'metadata': {'key': 'D'},
+        }),
+        SourceResult.fromJson({
+          ...source.toJson(),
+          'timingTracks': [
+            {...track.toJson(), 'raw': '[00:02.00]Invented lyric'},
+          ],
+        }),
+        SourceResult.fromJson({
+          ...source.toJson(),
+          'timingTracks': [
+            {
+              ...track.toJson(),
+              'cues': [
+                {...track.cues.single.toJson(), 'startUs': 2000000},
+              ],
+            },
+          ],
+        }),
+      ]) {
+        expect(
+          _sourcePersistenceHash(source),
+          isNot(_sourcePersistenceHash(changed)),
+        );
+      }
+    },
+  );
+
+  test('per-song cache deltas exclude counters from earlier songs', () {
+    expect(
+      _cacheCounterDelta(
+        {
+          'hits': 12,
+          'uncached': 3,
+          'networkAttempts': 0,
+          'overBudget': 0,
+          'statusCounts': <String, int>{'200': 2},
+        },
+        {
+          'hits': 17,
+          'uncached': 5,
+          'networkAttempts': 0,
+          'overBudget': 0,
+          'statusCounts': <String, int>{'200': 2},
+        },
+      ),
+      {
+        'hits': 5,
+        'offlineMisses': 2,
+        'networkAttempts': 0,
+        'overBudget': 0,
+        'statusCounts': <String, int>{},
+      },
+    );
+  });
   test(
     'reviewed references reject stale value, recording, field and scope',
     () {
@@ -1499,7 +1878,7 @@ void main() {
           'ambiguous base contributors must not be attributed to one source',
     );
   });
-  test('player reader key report follows metadata then estimate fallbacks', () {
+  test('player key report follows metadata then chord estimate fallbacks', () {
     const clearChart = '''
 [E] [A/E] [C#m] [F#]
 [G#m] [F#] [B] [B/A]
@@ -1568,7 +1947,6 @@ void main() {
       ],
       selectedRecording: selected,
     );
-
     expect(_playerKeyResolution(song), {
       'key': 'E',
       'source': 'sourcedArrangementKey',
@@ -1731,6 +2109,134 @@ void main() {
     );
     expect(_keyClaimScope(explicitlyScopedRecordingKey), 'recording');
   });
+
+  test('key scope follows the applied retained claim and legacy fallback', () {
+    const candidate = SongCandidate(
+      providerId: 'genius',
+      id: '821238',
+      title: 'The Girl from Ipanema',
+      artist: 'Stan Getz & João Gilberto',
+    );
+
+    SongDocument withAppliedClaim({
+      required String scope,
+      MatchKind matchKind = MatchKind.sameRecording,
+      String claimOrigin = 'provider',
+      List<Map<String, Object?>>? claims,
+    }) {
+      final source = SourceResult(
+        candidate: candidate,
+        body: '[Db]Example lyric line',
+        metadata: {'key': 'Db', 'keyScope': scope},
+        matchKind: matchKind,
+      );
+      return SongDocument(
+        id: 'ipanema-$scope',
+        title: candidate.title,
+        artist: candidate.artist,
+        body: source.body,
+        metadata: const {'key': 'Db'},
+        sources: [source],
+        selectedRecording: candidate,
+        extra: {
+          'fieldOrigins': {'key': source.id},
+          'evidenceRanking': {
+            'appliedFields': {
+              'metadata.key': {
+                'value': 'Db',
+                'sourceId': source.id,
+                'providerId': candidate.providerId,
+                'origin': claimOrigin,
+              },
+            },
+            'claims':
+                claims ??
+                [
+                  {
+                    'field': 'metadata.key',
+                    'value': 'Db',
+                    'sourceId': source.id,
+                    'providerId': candidate.providerId,
+                    'sourceScope': scope,
+                    'origin': claimOrigin,
+                    'contextCompatible': true,
+                  },
+                ],
+          },
+        },
+      );
+    }
+
+    // Audio-derived evidence retains its explicit recording scope.
+    expect(
+      _keyClaimScope(
+        withAppliedClaim(scope: 'recording', claimOrigin: 'primarySource'),
+      ),
+      'recording',
+    );
+    expect(
+      _keyClaimScope(
+        withAppliedClaim(scope: 'song', matchKind: MatchKind.sameSong),
+      ),
+      'song',
+    );
+    expect(
+      _keyClaimScope(withAppliedClaim(scope: 'composition')),
+      'composition',
+    );
+    expect(
+      _keyClaimScope(withAppliedClaim(scope: 'arrangement')),
+      'arrangement',
+    );
+
+    final legacySource = SourceResult(
+      candidate: candidate,
+      body: '[Db]Example lyric line',
+      metadata: const {'key': 'Db', 'keyScope': 'recording'},
+      matchKind: MatchKind.sameRecording,
+    );
+    final legacy = SongDocument(
+      id: 'ipanema-legacy',
+      title: candidate.title,
+      artist: candidate.artist,
+      body: legacySource.body,
+      metadata: const {'key': 'Db'},
+      sources: [legacySource],
+      extra: {
+        'fieldOrigins': {'key': legacySource.id},
+      },
+    );
+    expect(_keyClaimScope(legacy), 'recording');
+
+    final conflicting = withAppliedClaim(
+      scope: 'song',
+      claims: [
+        {
+          'field': 'metadata.key',
+          'value': 'F',
+          'sourceId': 'genius:821238',
+          'providerId': 'genius',
+          'sourceScope': 'recording',
+          'origin': 'provider',
+          'contextCompatible': true,
+        },
+        {
+          'field': 'metadata.key',
+          'value': 'Db',
+          'sourceId': 'genius:821238',
+          'providerId': 'genius',
+          'sourceScope': 'song',
+          'origin': 'provider',
+          'contextCompatible': true,
+        },
+      ],
+    );
+    expect(
+      _keyClaimScope(conflicting),
+      'song',
+      reason: 'a nonchosen conflicting value must not hijack the applied scope',
+    );
+  });
   test(
     'reviewed edition proof requires the bound recording and target scope',
     () {
@@ -1853,6 +2359,94 @@ void main() {
     );
   });
   test(
+    'discovery reference prefers an exact catalog match over request fallback',
+    () {
+      final song = <String, dynamic>{
+        'id': 'fixture-song',
+        'title': 'Harbor Song',
+        'artist': 'Lantern Coast',
+      };
+      const exact = SongCandidate(
+        providerId: 'catalog',
+        id: 'real-record',
+        title: 'Harbor Song',
+        artist: 'Lantern Coast',
+        recordingIds: {'isrc': 'ACTUAL-RECORDING'},
+      );
+      final selection = _corpusDiscoveryReference(
+        song,
+        groupSearchRecordings([exact]),
+      );
+      expect(selection.catalogMatched, isTrue);
+      expect(selection.candidate, same(exact));
+      expect(selection.members, [same(exact)]);
+      expect(selection.candidate.extra['requestOnly'], isNull);
+    },
+  );
+  test(
+    'discovery request never borrows a title-only match or recording facts',
+    () {
+      final song = <String, dynamic>{
+        'id': 'fixture-song',
+        'title': 'Harbor Song',
+        'artist': 'Lantern Coast',
+        'recordingEdition': 'Original recording',
+      };
+      const otherArtist = SongCandidate(
+        providerId: 'catalog',
+        id: 'wrong-artist',
+        title: 'Harbor Song',
+        artist: 'Other Performer',
+        album: 'Other Album',
+        durationSeconds: 200,
+        recordingIds: {'isrc': 'OTHER-RECORDING'},
+        metadata: {'key': 'G', 'artworkUrl': 'https://example.test/cover.jpg'},
+      );
+      final selection = _corpusDiscoveryReference(
+        song,
+        groupSearchRecordings([otherArtist]),
+      );
+      expect(selection.catalogMatched, isFalse);
+      expect(selection.members, isEmpty);
+      final request = selection.candidate;
+      expect(request.identity, 'corpus-request:fixture-song');
+      expect(request.title, song['title']);
+      expect(request.artist, song['artist']);
+      expect(request.recordingIds, isEmpty);
+      expect(request.album, isNull);
+      expect(request.durationSeconds, isNull);
+      expect(request.url, isNull);
+      expect(request.metadata, {'identityScope': 'composition'});
+      expect(request.extra, {'requestOnly': true});
+      expect(
+        recordingCompatible(
+          request,
+          SourceResult(
+            candidate: request,
+            body: '',
+            matchKind: MatchKind.sameRecording,
+          ),
+        ),
+        isFalse,
+      );
+      expect(
+        _corpusDiscoveryReference(song, const []).candidate.toJson(),
+        request.toJson(),
+      );
+      expect(corpusRequestCandidate(song).toJson(), request.toJson());
+      // Even a mistaken reference fixture cannot certify a request identity.
+      song['expected'] = {
+        'recordingReference': {
+          'status': 'verified',
+          'providerId': request.providerId,
+          'candidateId': request.id,
+          'evidence': ['https://example.test/catalog-record'],
+        },
+      };
+      expect(corpusRecordingReferenceMatches(song, request), isFalse);
+    },
+  );
+  test(
     'accuracy distinguishes tonic and mode, retaining enharmonic equivalence',
     () {
       expect(_exactKeyIdentity('Am'), isNot(_exactKeyIdentity('C')));
@@ -1908,83 +2502,77 @@ void main() {
     expect(counts['selectedKeyUnavailable'], 7);
     expect(result['isStrictRecordingGold'], isFalse);
   });
-  test(
-    'shared chart hashes are visible without becoming output support',
-    () {
-      final sources = [
-        {
-          'provider': 'ultimateguitar',
-          'chordSequenceSha256': 'selected-chart',
-          'match': 'sameSong',
-          'recordingCompatible': false,
-          'explicitEditionCompatible': true,
-          'pendingMatchCheck': false,
-          'combinedContribution': {'chords': true},
-        },
-        {
-          'provider': 'chordie',
-          'chordSequenceSha256': 'shared-alternative',
-          'match': 'sameSong',
-          'recordingCompatible': false,
-          'explicitEditionCompatible': true,
-          'pendingMatchCheck': false,
-          'combinedContribution': {'chords': false},
-        },
-        {
-          'provider': 'songsterr',
-          'chordSequenceSha256': 'shared-alternative',
-          'match': 'sameSong',
-          'recordingCompatible': false,
-          'explicitEditionCompatible': true,
-          'pendingMatchCheck': false,
-          'combinedContribution': {'chords': false},
-        },
-      ];
-      final rows = [
-        {
-          'id': 'song-079',
-          'title': 'Hey, Soul Sister',
-          'artist': 'Train',
-          'recordingEditionStatus': 'unspecified',
-          'chordSequenceSha256': 'selected-chart',
-          'sourceSummary': sources,
-        },
-      ];
+  test('shared chart hashes are visible without becoming output support', () {
+    final sources = [
+      {
+        'provider': 'ultimateguitar',
+        'chordSequenceSha256': 'selected-chart',
+        'match': 'sameSong',
+        'recordingCompatible': false,
+        'explicitEditionCompatible': true,
+        'pendingMatchCheck': false,
+        'combinedContribution': {'chords': true},
+      },
+      {
+        'provider': 'chordie',
+        'chordSequenceSha256': 'shared-alternative',
+        'match': 'sameSong',
+        'recordingCompatible': false,
+        'explicitEditionCompatible': true,
+        'pendingMatchCheck': false,
+        'combinedContribution': {'chords': false},
+      },
+      {
+        'provider': 'songsterr',
+        'chordSequenceSha256': 'shared-alternative',
+        'match': 'sameSong',
+        'recordingCompatible': false,
+        'explicitEditionCompatible': true,
+        'pendingMatchCheck': false,
+        'combinedContribution': {'chords': false},
+      },
+    ];
+    final rows = [
+      {
+        'id': 'song-079',
+        'title': 'Hey, Soul Sister',
+        'artist': 'Train',
+        'recordingEditionStatus': 'unspecified',
+        'chordSequenceSha256': 'selected-chart',
+        'sourceSummary': sources,
+      },
+    ];
 
-      final alternatives = _sharedRawHashRowsDifferingFromOutput(
-        rows,
-        'chordSequenceSha256',
-        'chordSequenceSha256',
-      );
+    final alternatives = _sharedRawHashRowsDifferingFromOutput(
+      rows,
+      'chordSequenceSha256',
+      'chordSequenceSha256',
+    );
 
-      expect(alternatives, hasLength(1));
-      expect(alternatives.single['songId'], 'song-079');
-      expect(alternatives.single['selectedHashSupportingProviderLabels'], [
-        'ultimateguitar',
-      ]);
-      expect(alternatives.single['selectedChordContributorProviderLabels'], [
-        'ultimateguitar',
-      ]);
-      expect(alternatives.single['alternativeProviderLabels'], [
-        'chordie',
-        'songsterr',
-      ]);
-      expect(
-        alternatives.single['recordingCompatibleAlternativeProviders'],
-        isEmpty,
-      );
-      expect(alternatives.single['editionCompatibleAlternativeProviders'], [
-        'chordie',
-        'songsterr',
-      ]);
-      expect(
-        alternatives.single['contributedAlternativeProviders'],
-        isEmpty,
-      );
-      expect(_practicalChordSupportEligible(sources[1]), isFalse);
-      expect(_practicalChordSupportEligible(sources[2]), isFalse);
-    },
-  );
+    expect(alternatives, hasLength(1));
+    expect(alternatives.single['songId'], 'song-079');
+    expect(alternatives.single['selectedHashSupportingProviderLabels'], [
+      'ultimateguitar',
+    ]);
+    expect(alternatives.single['selectedChordContributorProviderLabels'], [
+      'ultimateguitar',
+    ]);
+    expect(alternatives.single['alternativeProviderLabels'], [
+      'chordie',
+      'songsterr',
+    ]);
+    expect(
+      alternatives.single['recordingCompatibleAlternativeProviders'],
+      isEmpty,
+    );
+    expect(alternatives.single['editionCompatibleAlternativeProviders'], [
+      'chordie',
+      'songsterr',
+    ]);
+    expect(alternatives.single['contributedAlternativeProviders'], isEmpty);
+    expect(_practicalChordSupportEligible(sources[1]), isFalse);
+    expect(_practicalChordSupportEligible(sources[2]), isFalse);
+  });
   test('chord accuracy includes word placement and sounding capo pitch', () {
     SongDocument song(String body, [int capo = 0]) => SongDocument(
       id: 'fixture',
@@ -2006,36 +2594,39 @@ void main() {
       _chordAlignmentHash(song('[Db]Amber windows')),
     );
   });
-  test('practical chord audit emits redacted anchors and key triad screens', () {
-    final body = '[C]Amber [Am]windows [F]sing\n[F#]quiet [G]water';
-    final audit = _practicalChordAnchorAudit(parseArrangement(body), 'C', 0);
-    expect(audit['triadChordOccurrences'], 5);
-    expect(audit['keyComparableTriadOccurrences'], 5);
-    expect(audit['diatonicTriadOccurrences'], 4);
-    expect(audit['diatonicTriadShare'], .8);
-    expect(audit['needsHarmonyReviewOccurrences'], hasLength(1));
-    final rows = audit['chordedLines'] as List;
-    expect(rows, hasLength(2));
-    expect((rows.first as Map)['normalizedTextSha256'], isA<String>());
-    expect(((rows.first as Map)['chords'] as List).first['wordIndex'], 1);
-    expect(jsonEncode(audit), isNot(contains('Amber')));
+  test(
+    'practical chord audit emits redacted anchors and key triad screens',
+    () {
+      final body = '[C]Amber [Am]windows [F]sing\n[F#]quiet [G]water';
+      final audit = _practicalChordAnchorAudit(parseArrangement(body), 'C', 0);
+      expect(audit['triadChordOccurrences'], 5);
+      expect(audit['keyComparableTriadOccurrences'], 5);
+      expect(audit['diatonicTriadOccurrences'], 4);
+      expect(audit['diatonicTriadShare'], .8);
+      expect(audit['needsHarmonyReviewOccurrences'], hasLength(1));
+      final rows = audit['chordedLines'] as List;
+      expect(rows, hasLength(2));
+      expect((rows.first as Map)['normalizedTextSha256'], isA<String>());
+      expect(((rows.first as Map)['chords'] as List).first['wordIndex'], 1);
+      expect(jsonEncode(audit), isNot(contains('Amber')));
 
-    final unknownKey = _practicalChordAnchorAudit(
-      parseArrangement('[C]Words here'),
-      null,
-      0,
-    );
-    expect(unknownKey['diatonicTriadShare'], isNull);
-    expect(unknownKey['unparsedOccurrences'], hasLength(1));
+      final unknownKey = _practicalChordAnchorAudit(
+        parseArrangement('[C]Words here'),
+        null,
+        0,
+      );
+      expect(unknownKey['diatonicTriadShare'], isNull);
+      expect(unknownKey['unparsedOccurrences'], hasLength(1));
 
-    final capoArrangement = _practicalChordAnchorAudit(
-      parseArrangement('[G]Amber [D]windows [Em]sing'),
-      'Ab',
-      1,
-    );
-    expect(capoArrangement['diatonicTriadOccurrences'], 3);
-    expect(capoArrangement['diatonicTriadShare'], 1);
-  });
+      final capoArrangement = _practicalChordAnchorAudit(
+        parseArrangement('[G]Amber [D]windows [Em]sing'),
+        'Ab',
+        1,
+      );
+      expect(capoArrangement['diatonicTriadOccurrences'], 3);
+      expect(capoArrangement['diatonicTriadShare'], 1);
+    },
+  );
   test('chord progression corroboration ignores transposition only', () {
     expect(
       _transpositionInvariantChordProgressionHash(['C', 'G', 'Am', 'F']),
@@ -2057,9 +2648,9 @@ void main() {
   test('practical chart lyric correspondence tolerates repetitions', () {
     final chart = _practicalLyricCorrespondence(
       '[Verse]\n[C]Walk the road tonight\n[G]We find the light\n'
-      '[Chorus]\n[F]Sing out to the morning',
+          '[Chorus]\n[F]Sing out to the morning',
       '[Verse]\nWalk the road tonight\nWe find the light\n'
-      '[Chorus]\nSing out to the morning\nSing out to the morning',
+          '[Chorus]\nSing out to the morning\nSing out to the morning',
     );
     expect(chart['chartVocabularyCoverageBySelectedLyrics'], 1);
     expect(chart['selectedLyricsVocabularyCoverageByChart'], 1);
@@ -2113,8 +2704,10 @@ void main() {
     ]);
     expect(summary['contributorsWithAtLeast80PercentChartedLineTextMatch'], 1);
     expect(summary['contributorsBelow80PercentChartedLineTextMatch'], 0);
-    expect(summary['medianSelectedLyricsOrderedBigramCoverageByChordedLines'],
-        0.25);
+    expect(
+      summary['medianSelectedLyricsOrderedBigramCoverageByChordedLines'],
+      0.25,
+    );
     expect(summary['interpretation'], contains('partial chart'));
   });
   test('lyrics candidates compare for identity and excerpt coverage', () {
@@ -2137,7 +2730,9 @@ void main() {
     );
     expect(
       unrelated['candidateOrderedBigramCoverageBySelectedLyrics'],
-      lessThan(excerpt['candidateOrderedBigramCoverageBySelectedLyrics'] as num),
+      lessThan(
+        excerpt['candidateOrderedBigramCoverageBySelectedLyrics'] as num,
+      ),
     );
 
     final japanese = _practicalLyricsTextAgreement(
@@ -2200,8 +2795,10 @@ void main() {
     expect(matching['shapeKeyEstimate'], 'E');
     expect(matching['correctedSoundingKeyEstimate'], 'F#');
     expect(matching['declaredKeyVsShapeEstimate'], 'same_tonic_and_mode');
-    expect(matching['selectedKeyVsCorrectedSoundingEstimate'],
-        'same_tonic_and_mode');
+    expect(
+      matching['selectedKeyVsCorrectedSoundingEstimate'],
+      'same_tonic_and_mode',
+    );
     expect(matching.containsKey('body'), isFalse);
 
     final mismatch = _practicalChordKeyConsistency(
@@ -2211,8 +2808,10 @@ void main() {
       rawKeyShift: null,
       selectedKey: 'G',
     );
-    expect(mismatch['selectedKeyVsCorrectedSoundingEstimate'],
-        'tonic_difference');
+    expect(
+      mismatch['selectedKeyVsCorrectedSoundingEstimate'],
+      'tonic_difference',
+    );
 
     final moved = _practicalChordKeyConsistency(
       chartBody: chart,
@@ -2223,8 +2822,39 @@ void main() {
     );
     expect(moved['shapeKeyEstimate'], 'E');
     expect(moved['correctedShapeKeyEstimate'], 'A');
-    expect(moved['selectedKeyVsCorrectedSoundingEstimate'],
-        'same_tonic_and_mode');
+    expect(
+      moved['selectedKeyVsCorrectedSoundingEstimate'],
+      'same_tonic_and_mode',
+    );
+  });
+  test('checked home key survives labeled and unlabeled key changes', () {
+    const body = '''
+[B] [E] [F#] [B] [G#m] [E] [F#] [B]
+[B] [E] [F#] [B] [G#m] [E] [F#] [B]
+
+[A] [D] [E] [A] [F#m] [D] [E] [A]
+[A] [D] [E] [A] [F#m] [D] [E] [A]
+''';
+    for (final chart in [
+      body,
+      '[Verse]\n${body.replaceFirst('\n\n', '\n[Chorus]\n')}',
+    ]) {
+      final doc = SongDocument(
+        id: 'fixture',
+        title: 'Unlabeled group fixture',
+        artist: 'Fixture',
+        body: chart,
+        extra: {
+          'chordKeyEstimate': {'key': 'A', 'bodyHash': _sha(chart)},
+        },
+      );
+
+      expect(_estimatedShapeKey(doc), (
+        key: 'A',
+        evidence: 'checkedChartEstimate',
+      ));
+      expect(_soundingKey(doc), 'A');
+    }
   });
   test('source chord evidence uses the selected chart alignment hash', () {
     const candidate = SongCandidate(
@@ -2319,8 +2949,25 @@ void main() {
 }
 
 Future<void> _benchmark() async {
+  final asOfUtc = _benchmarkAsOfUtc();
+  final effectiveAsOfUtc = asOfUtc ?? DateTime.now().toUtc();
   final data = _readCorpus();
-  final songs = (data['songs'] as List).cast<Map<String, dynamic>>();
+  final allSongs = (data['songs'] as List).cast<Map<String, dynamic>>();
+  final requestedIds = _songIds
+      .split(',')
+      .map((id) => id.trim())
+      .where((id) => id.isNotEmpty)
+      .toSet();
+  final knownIds = allSongs.map((song) => song['id'] as String).toSet();
+  final unknownIds = requestedIds.difference(knownIds);
+  if (unknownIds.isNotEmpty) {
+    throw ArgumentError(
+      'Unknown METADATA_BENCHMARK_SONG_IDS: ${unknownIds.join(', ')}',
+    );
+  }
+  final songs = requestedIds.isEmpty
+      ? allSongs
+      : allSongs.where((song) => requestedIds.contains(song['id'])).toList();
   if (_maxNetwork != 0) {
     throw StateError(
       'This harness is offline-only; METADATA_BENCHMARK_MAX_NETWORK must be 0.',
@@ -2341,6 +2988,7 @@ Future<void> _benchmark() async {
     ...createCoreProviders(
       transport: transport,
       geniusToken: 'cached-benchmark-no-network',
+      clock: asOfUtc == null ? null : () => asOfUtc,
     ),
     ...createExtraProviders(transport: transport),
   ], recordingKeys: RecordingKeyService(transport));
@@ -2364,6 +3012,7 @@ Future<void> _benchmark() async {
   final rows = <Map<String, Object?>>[];
 
   for (final song in songs) {
+    final cacheBefore = Map<String, Object>.from(client.counters);
     final title = song['title'] as String;
     final artist = song['artist'] as String;
     final edition = song['recordingEdition'] as String?;
@@ -2423,19 +3072,15 @@ Future<void> _benchmark() async {
         ranked.map((e) => e.$2),
         preferredProviderId: 'genius',
       );
-      bool matches(SongCandidate c) => matchesCorpusCandidate(song, c);
-      final group = groups.where((g) => matches(g.representative)).firstOrNull;
-      if (group == null) {
-        throw const ProviderException(
-          'unavailable',
-          'no exact title/artist match',
-        );
-      }
-      final selected = group.representative;
-      final recordingReferenceAnchored = corpusRecordingReferenceMatches(
-        song,
-        selected,
-      );
+      final discoveryReference = _corpusDiscoveryReference(song, groups);
+      final selected = discoveryReference.candidate;
+      row['selectionBasis'] = discoveryReference.catalogMatched
+          ? 'matched_catalog_candidate'
+          : 'requested_song_without_catalog_match';
+      row['catalogMatched'] = discoveryReference.catalogMatched;
+      final recordingReferenceAnchored =
+          discoveryReference.catalogMatched &&
+          corpusRecordingReferenceMatches(song, selected);
       row['recordingReferenceAnchored'] = recordingReferenceAnchored;
 
       if (edition != null) {
@@ -2458,10 +3103,12 @@ Future<void> _benchmark() async {
               ? selected.extra['edition'] as String
               : null,
         ].whereType<String>().map(_normalize);
-        final catalogEditionTextMatched = evidence.any(
-          (v) => v.contains(editionNorm),
-        );
-        final reviewedEdition = corpusReviewedEditionMatches(song, selected);
+        final catalogEditionTextMatched =
+            discoveryReference.catalogMatched &&
+            evidence.any((v) => v.contains(editionNorm));
+        final reviewedEdition =
+            discoveryReference.catalogMatched &&
+            corpusReviewedEditionMatches(song, selected);
         row['catalogEditionTextMatched'] = catalogEditionTextMatched;
         row['recordingEditionAnchored'] =
             reviewedEdition || catalogEditionTextMatched;
@@ -2477,19 +3124,19 @@ Future<void> _benchmark() async {
       }
       // Check every alternate member against the selected candidate's explicit
       // edition signals; conflicts make recording-specific fields unavailable.
-      final compatibleMembers = group.members
+      final compatibleMembers = discoveryReference.members
           .where((candidate) => explicitEditionsCompatible(selected, candidate))
           .toList();
       row['editionCompatibleMemberCount'] = compatibleMembers.length;
       final results = await discovery.discover(selected);
       final sourceSummaries = <Map<String, Object?>>[];
-      for (final source in results) {
+      Map<String, Object?> summarizeSource(SourceResult source) {
         final sourceLyrics = _normalizedLyrics(source.body);
         final sourceArrangement = parseArrangement(source.body);
         final sourceChordSequence = sourceArrangement
             .expand((line) => line.chords.map((annotation) => annotation.chord))
             .join(' ');
-        sourceSummaries.add({
+        return {
           'provider': source.candidate.providerId,
           // Stable join key for tying a discovered candidate to the source
           // contribution recorded by combineSources, without retaining its
@@ -2518,6 +3165,17 @@ Future<void> _benchmark() async {
             0,
             (count, line) => count + line.chords.length,
           ),
+          'chordSymbolCounts': sourceArrangement
+              .expand((line) => line.chords)
+              .fold<Map<String, int>>(
+                {},
+                (counts, chord) => counts
+                  ..update(
+                    chord.chord,
+                    (count) => count + 1,
+                    ifAbsent: () => 1,
+                  ),
+              ),
           'chordSequenceSha256': sourceChordSequence.isEmpty
               ? null
               : _sha(sourceChordSequence),
@@ -2539,8 +3197,10 @@ Future<void> _benchmark() async {
           'requiresLyricsAgreement': source.extra['requiresLyricsAgreement'],
           'requiresRecordingLyricsAgreement':
               source.extra['requiresRecordingLyricsAgreement'],
-        });
+        };
       }
+
+      sourceSummaries.addAll(results.map(summarizeSource));
       row['sourceSummary'] = sourceSummaries;
       final compatibleResults = results
           .where(
@@ -2553,6 +3213,79 @@ Future<void> _benchmark() async {
           )
           .toList();
       final doc = combineSources(selected, compatibleResults);
+      final summarizedIds = sourceSummaries
+          .map((summary) => summary['sourceIdentitySha256'])
+          .toSet();
+      sourceSummaries.addAll(
+        doc.sources
+            .where((source) => !summarizedIds.contains(_sha(source.id)))
+            .map(
+              (source) => {
+                ...summarizeSource(source),
+                'arrangementId': source.arrangementId,
+                'parentSourceIdentitySha256':
+                    source.extra['parentSourceId'] is String
+                    ? _sha(source.extra['parentSourceId'] as String)
+                    : null,
+              },
+            ),
+      );
+
+      try {
+        final codec = ChordProCodec();
+        final encoded = codec.encode(doc);
+        final decoded = codec.decode(encoded);
+        final originalSources = doc.sources.map(_sourcePersistenceHash).toList()
+          ..sort();
+        final decodedSources =
+            decoded.sources.map(_sourcePersistenceHash).toList()..sort();
+        final bodyPreserved = decoded.body == doc.body;
+        final sourcesPreserved =
+            jsonEncode(originalSources) == jsonEncode(decodedSources);
+        row['persistence'] = {
+          'passed': bodyPreserved && sourcesPreserved,
+          'bodyPreserved': bodyPreserved,
+          'sourceSnapshotsPreserved': sourcesPreserved,
+          'comparisonBasis':
+              'raw_source_evidence_excluding_derived_timing_annotations',
+          if (!sourcesPreserved)
+            'sourceDifferences': _sourcePersistenceDifferences(
+              doc.sources,
+              decoded.sources,
+            ),
+          'encodedBytes': utf8.encode(encoded).length,
+        };
+      } on Object catch (error) {
+        row['persistence'] = {
+          'passed': false,
+          'errorType': error.runtimeType.toString(),
+        };
+      }
+      final ranking = jsonMap(doc.extra['evidenceRanking']);
+      final rankingClaims = (ranking['claims'] as List? ?? const [])
+          .whereType<Map>()
+          .map((claim) => Map<String, Object?>.from(claim))
+          .toList();
+      final appliedFields = jsonMap(ranking['appliedFields']);
+      Map<String, int> snapshotCounts(Iterable<SourceResult> sources) {
+        final counts = <String, int>{};
+        for (final source in sources) {
+          final hash = _sourceSnapshotHash(source);
+          counts[hash] = (counts[hash] ?? 0) + 1;
+        }
+        return counts;
+      }
+
+      final inputSnapshotCounts = snapshotCounts(compatibleResults);
+      final retainedSnapshotCounts = snapshotCounts(doc.sources);
+      final missingSourceSnapshots = inputSnapshotCounts.entries.fold<int>(
+        0,
+        (missing, entry) =>
+            missing +
+            math.max(0, entry.value - (retainedSnapshotCounts[entry.key] ?? 0)),
+      );
+      final chosenFields = jsonMap(ranking['chosenByField']);
+      final plannedChord = jsonMap(chosenFields['chords']);
       final selectedSourceId = doc.extra['selectedSourceId'];
       final chordSourceIds = (doc.extra['chordSourceIds'] as List? ?? const [])
           .whereType<String>()
@@ -2578,7 +3311,7 @@ Future<void> _benchmark() async {
       );
       for (final summary in sourceSummaries) {
         final identityHash = summary['sourceIdentitySha256'];
-        final source = results
+        final source = doc.sources
             .where((candidate) => _sha(candidate.id) == identityHash)
             .firstOrNull;
         if (source == null) continue;
@@ -2595,29 +3328,29 @@ Future<void> _benchmark() async {
                 ..sort(),
         };
       }
-      final selectedLyricsSource = results
+      final selectedLyricsSource = doc.sources
           .where((source) => source.id == selectedSourceId)
           .firstOrNull;
       if (selectedLyricsSource != null) {
         for (final summary in sourceSummaries) {
           final identityHash = summary['sourceIdentitySha256'];
-          final source = results
+          final source = doc.sources
               .where((candidate) => _sha(candidate.id) == identityHash)
               .firstOrNull;
           if (source == null) continue;
           if ((summary['lyricWordCount'] as num? ?? 0) > 0) {
             summary['practicalLyricsTextAgreement'] =
                 _practicalLyricsTextAgreement(
-              source.body,
-              selectedLyricsSource.body,
-            );
+                  source.body,
+                  selectedLyricsSource.body,
+                );
           }
           if ((summary['chordCount'] as num? ?? 0) > 0) {
             summary['practicalChordLyricCorrespondence'] =
                 _practicalLyricCorrespondence(
-            source.body,
-            selectedLyricsSource.body,
-          );
+                  source.body,
+                  selectedLyricsSource.body,
+                );
           }
         }
       }
@@ -2631,35 +3364,31 @@ Future<void> _benchmark() async {
       final key = _soundingKey(doc);
       for (final summary in sourceSummaries) {
         final identityHash = summary['sourceIdentitySha256'];
-        final source = results
+        final source = doc.sources
             .where((candidate) => _sha(candidate.id) == identityHash)
             .firstOrNull;
         if (source == null) continue;
         final contribution = summary['combinedContribution'];
         if (contribution is Map && contribution['chords'] == true) {
-          final sourceKey = (source.metadata['key'] ??
-                  source.candidate.metadata['key'])
-              as String?;
-          final sourceCapo = source.metadata['capo'] ??
-              source.candidate.metadata['capo'];
-          summary['practicalChordAnchorAudit'] =
-              _practicalChordAnchorAudit(
+          final sourceKey =
+              (source.metadata['key'] ?? source.candidate.metadata['key'])
+                  as String?;
+          final sourceCapo =
+              source.metadata['capo'] ?? source.candidate.metadata['capo'];
+          summary['practicalChordAnchorAudit'] = _practicalChordAnchorAudit(
             parseArrangement(source.body),
             sourceKey,
             _capoOf(sourceCapo),
           );
           summary['practicalChordAnchorKeyShift'] =
-              source.extra['keyShift'] ??
-              source.candidate.extra['keyShift'];
+              source.extra['keyShift'] ?? source.candidate.extra['keyShift'];
         }
-        summary['practicalChordKeyConsistency'] =
-            _practicalChordKeyConsistency(
+        summary['practicalChordKeyConsistency'] = _practicalChordKeyConsistency(
           chartBody: source.body,
-          declaredKey: (source.metadata['key'] ??
-                  source.candidate.metadata['key'])
-              as String?,
-          rawCapo: source.metadata['capo'] ??
-              source.candidate.metadata['capo'],
+          declaredKey:
+              (source.metadata['key'] ?? source.candidate.metadata['key'])
+                  as String?,
+          rawCapo: source.metadata['capo'] ?? source.candidate.metadata['capo'],
           rawKeyShift: source.extra['keyShift'],
           selectedKey: key,
         );
@@ -2668,15 +3397,58 @@ Future<void> _benchmark() async {
       final playerKeyResolution = _playerKeyResolution(doc);
       final keyOrigin = jsonMap(doc.extra['fieldOrigins'])['key'];
       final keySourceIds = doc.extra['keySourceIds'] is List
-          ? ((doc.extra['keySourceIds'] as List)
-                .whereType<String>()
-                .toList()
+          ? ((doc.extra['keySourceIds'] as List).whereType<String>().toList()
               ..sort())
           : const <String>[];
       final identityReady =
           recordingReferenceAnchored &&
           (edition == null || row['recordingEditionAnchored'] == true);
+      final chartSummary = sourceSummaries.where((summary) {
+        final contribution = summary['combinedContribution'];
+        return contribution is Map && contribution['chords'] == true;
+      }).toList();
       row.addAll({
+        'evidenceRanking': {
+          'claims': rankingClaims,
+          'appliedFields': appliedFields,
+          'arrangementBinding': ranking['arrangementBinding'],
+          'initialSelection': ranking['initialSelection'],
+          'ambiguousFields': ranking['ambiguousFields'] ?? const [],
+          'retainedSourceCount': doc.sources.length,
+          'inputSourceCount': compatibleResults.length,
+          'missingInputSourceSnapshotCount': missingSourceSnapshots,
+          'sourceSnapshotsRetained': missingSourceSnapshots == 0,
+        },
+        'chosenChartSource': chartSummary.isEmpty
+            ? null
+            : chartSummary
+                  .map(
+                    (source) => {
+                      'provider': source['provider'],
+                      'sourceIdentitySha256': source['sourceIdentitySha256'],
+                      'chordSequenceSha256': source['chordSequenceSha256'],
+                      'chordAlignmentSha256': source['chordAlignmentSha256'],
+                      'capo': source['capo'],
+                      'keyShift': source['keyShift'],
+                      'declaredKey': source['declaredKey'],
+                    },
+                  )
+                  .toList(),
+        'chordSourcePlan': {
+          'finalPlanSourceId': plannedChord['sourceId'] is String
+              ? _sha(plannedChord['sourceId'] as String)
+              : null,
+          'appliedSources': chartSummary
+              .map(
+                (source) => {
+                  'sourceIdentitySha256': source['sourceIdentitySha256'],
+                  'capo': source['capo'],
+                  'keyShift': source['keyShift'],
+                },
+              )
+              .toList(),
+          'finalCapo': doc.metadata['capo'],
+        },
         'selectedProvider': selected.providerId,
         'selectedMetadataProvider': selected.providerId,
         'selectedLyricsProvider': _selectedLyricsProvider(sourceSummaries),
@@ -2688,18 +3460,15 @@ Future<void> _benchmark() async {
         'normalizedLyricsSha256': lyricsHash,
         'key': key,
         'playerKeyResolution': playerKeyResolution,
+        'arrangementKeySetupDiagnostics': arrangementKeySetupDiagnostics(doc),
         'keyOrigin': keyOrigin,
         'keySourceIds': keySourceIds,
-        'keyEvidence': doc.metadata['key'] != null
+        'keyEvidence':
+            doc.metadata['key'] != null ||
+                playerKeyResolution['source'] == 'sourcedArrangementKey'
             ? 'source'
-            : checkedChordKeyEstimate(doc) != null
-            ? 'checkedChartEstimate'
-            : key != null
-            ? 'chartEstimate'
-            : null,
+            : _estimatedShapeKey(doc).evidence,
         'keyClaimScope': key == null ? null : keyClaimScope,
-        'arrangementKeySetupDiagnostics':
-            arrangementKeySetupDiagnostics(doc),
         'capo': doc.metadata['capo'],
         'chordAlignmentSha256': _chordAlignmentHash(doc),
         'baseLyricsSourceId': doc.extra['selectedSourceId'],
@@ -2718,12 +3487,11 @@ Future<void> _benchmark() async {
         'chordedLineCount': arrangement
             .where((l) => l.chords.isNotEmpty)
             .length,
-        'practicalChordAnchorAudit':
-            _practicalChordAnchorAudit(
-              arrangement,
-              key,
-              _capoOf(doc.metadata['capo']),
-            ),
+        'practicalChordAnchorAudit': _practicalChordAnchorAudit(
+          arrangement,
+          key,
+          _capoOf(doc.metadata['capo']),
+        ),
         'practicalChordLyricCorrespondence': {
           'selectedLyricsAvailable': selectedLyricsSource != null,
           'selectedChordContributors': sourceSummaries
@@ -2736,13 +3504,10 @@ Future<void> _benchmark() async {
                   'provider': source['provider'],
                   'match': source['match'],
                   'recordingCompatible': source['recordingCompatible'],
-                  'lyricOverlap':
-                      source['practicalChordLyricCorrespondence'],
-                  'keyConsistency':
-                      source['practicalChordKeyConsistency'],
+                  'lyricOverlap': source['practicalChordLyricCorrespondence'],
+                  'keyConsistency': source['practicalChordKeyConsistency'],
                   'anchorAudit': source['practicalChordAnchorAudit'],
-                  'anchorKeyShift':
-                      source['practicalChordAnchorKeyShift'],
+                  'anchorKeyShift': source['practicalChordAnchorKeyShift'],
                 },
               )
               .toList(),
@@ -2769,9 +3534,7 @@ Future<void> _benchmark() async {
           'interpretation':
               'Compare each lyric candidate against the selected lyrics without storing text. Candidate-to-selected overlap measures whether the candidate text appears to belong to the selected song; reverse overlap measures coverage, not correctness.',
         },
-        'practicalChordKeyConsistency': _practicalChordKeySummary([
-          row,
-        ]),
+        'practicalChordKeyConsistency': _practicalChordKeySummary([row]),
       });
       final fieldResults = <String, String>{};
       for (final field in _fields) {
@@ -2780,7 +3543,8 @@ Future<void> _benchmark() async {
             reference['status'] == 'verified' &&
             reference['value'] != null &&
             (reference['evidence'] as List? ?? []).isNotEmpty;
-        if (!compatibleMembers.contains(selected)) {
+        if (discoveryReference.catalogMatched &&
+            !compatibleMembers.contains(selected)) {
           fieldResults[field] = 'unavailable';
           continue;
         }
@@ -2838,6 +3602,10 @@ Future<void> _benchmark() async {
     if (unavailable) {
       row['fieldResults'] = {for (final field in _fields) field: 'unavailable'};
     }
+    row['cache'] = _cacheCounterDelta(
+      cacheBefore,
+      Map<String, Object>.from(client.counters),
+    );
     for (final field in _fields) {
       final status = (row['fieldResults'] as Map)[field] as String;
       final counts = fieldCounts[field]!;
@@ -3285,6 +4053,7 @@ Future<void> _benchmark() async {
   });
   final report = {
     'mode': 'offline-cache-first',
+    'effectiveAsOfUtc': effectiveAsOfUtc.toIso8601String(),
     'jitterSeed': _jitterSeed,
     'maxNetworkRequests': 0,
     'corpusSize': songs.length,
@@ -3299,9 +4068,9 @@ Future<void> _benchmark() async {
     'practicalLicensedChartReview': _practicalLicensedChartReview(
       rows,
       _readLicensedChartObservations(),
+      skipUnknownSongs: requestedIds.isNotEmpty,
     ),
-    'practicalChordLyricCorrespondence':
-        _practicalChordLyricSummary(rows),
+    'practicalChordLyricCorrespondence': _practicalChordLyricSummary(rows),
     'practicalLyricsCandidateAgreement':
         _practicalLyricsCandidateAgreementSummary(rows),
     'practicalChordKeyConsistency': _practicalChordKeySummary(rows),
@@ -3321,4 +4090,16 @@ Future<void> _benchmark() async {
     'METADATA_ACCURACY ${jsonEncode({'coverage': report['coverage'], 'corpusSize': songs.length, 'unavailableCount': report['unavailableCount'], 'sourceCoverage': sourceCoverage, 'sourceAgreement': sourceAgreementSummary, 'crossProviderCandidateIdReuse': reusedCatalogIds, 'practicalLicensedChartReview': report['practicalLicensedChartReview'], 'practicalLyricsCandidateAgreement': report['practicalLyricsCandidateAgreement'], 'practicalChordLyricCorrespondence': report['practicalChordLyricCorrespondence'], 'practicalChordKeyConsistency': report['practicalChordKeyConsistency'], 'accuracy': accuracy, 'cacheHits': client.hits, 'uncachedOffline': client.uncached})}',
   );
   await transport.close();
+  expect(
+    rows
+        .where(
+          (row) =>
+              row['persistence'] is Map &&
+              (row['persistence'] as Map)['passed'] != true,
+        )
+        .map((row) => row['id']),
+    isEmpty,
+    reason:
+        'Combined songs must preserve their bodies and full source snapshots through ChordPro save/reload.',
+  );
 }

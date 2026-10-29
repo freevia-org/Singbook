@@ -2112,4 +2112,21 @@ class AppLocalizationsPl extends AppLocalizations {
   @override
   String get settingsShowPlayerControlsHint =>
       'Możesz też stuknąć panel odtwarzacza lub przesunąć po nim palcem, aby go pokazać lub ukryć.';
+
+  @override
+  String get sourceAnalysisHeading =>
+      'Analiza przesłanego dźwięku (niezweryfikowana)';
+
+  @override
+  String sourceAnalysisCoverage(int shown, int total) {
+    return 'Wyświetlono $shown z $total zgłoszeń';
+  }
+
+  @override
+  String sourceAnalysisSample(int number) {
+    return 'Próbka $number';
+  }
+
+  @override
+  String get sourceAnalysisEstimatedTempo => 'Szacowane tempo (BPM)';
 }

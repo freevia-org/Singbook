@@ -1,10 +1,39 @@
 # Source catalog and daily maintenance
 
-`config/source-catalog.json` remains the complete channel-1 source list used by
-released clients through build 38. Keep this file and its URL compatible with
-those clients. New code uses `config/source-catalog-v2.json` as its complete
-channel-2 bundle and refresh URL on public GitHub `main`. This is a distribution
-channel change; both files still use envelope/extraction schema version 1.
+Each catalog file is a complete snapshot for its distribution channel. Keep
+each served path and its channel-specific cache identity stable for compatible
+app builds; do not replace an older channel's roster with entries that require
+a newer compiled adapter. Compatible data corrections may advance a channel's
+`revision`; a new native provider capability requires a new channel snapshot.
+The catalog `revision` is independent of the distribution channel and schema
+versions. All ten files currently use `schemaVersion: 1` and
+`extractionSchemaVersion: 1`:
+
+| Channel | Catalog file | Revision | Sources | Roster changes from previous channel |
+| --- | --- | ---: | ---: | --- |
+| 1 | `config/source-catalog.json` | 7 | 19 | Initial catalog |
+| 2 | `config/source-catalog-v2.json` | 13 | 22 | Adds lrc.red, Roswell Music Jam and kara.moe; updates Synclrc and Sean McGrath Music |
+| 3 | `config/source-catalog-v3.json` | 14 | 23 | Adds AMLL |
+| 4 | `config/source-catalog-v4.json` | 15 | 24 | Adds VocaDB |
+| 5 | `config/source-catalog-v5.json` | 17 | 26 | Adds TouhouDB and UtaiteDB; updates MusicBrainz artwork metadata |
+| 6 | `config/source-catalog-v6.json` | 18 | 27 | Adds StartJamming |
+| 7 | `config/source-catalog-v7.json` | 19 | 28 | Adds LyricsPlus |
+| 8 | `config/source-catalog-v8.json` | 21 | 30 | Retains Chords & Tabs and Pisni; activates qualified Chords & Tabs |
+| 9 | `config/source-catalog-v9.json` | 22 | 31 | Adds OpenScore disabled/off; inherits all current channel 8 rows |
+| 10 | `config/source-catalog-v10.json` | 23 | 32 | Adds recording-ID AcousticBrainz analysis; inherits all channel 9 rows |
+
+Roster membership alone does not show that a provider is enabled, qualified or
+live.
+Channel 10 is the current bundle and matching compiled registry (31 native IDs
+plus declarative Unison). AcousticBrainz contributes metadata only, using a
+validated recording MBID and at most two publisher-submitted analysis samples.
+Its key/tempo estimates remain explicitly unverified and never become canonical
+musical fields or timing. The OpenScore entry remains disabled and off by default pending its separate
+activation review, including rights and remaining native/cloud qualification.
+Pisni remains disabled pending managed-cloud qualification and rights review.
+Chords & Tabs source revision 2 retains its qualified active/default-on state.
+This catalog integration does not establish a new app release, source
+activation, managed-cloud reachability or per-work rights clearance.
 `SINGBOOK_SOURCE_CATALOG_URL` can override
 the HTTPS publisher URL at build time. Settings → Sources → Refresh source list
 performs the same refresh manually. A new app build containing this implementation
@@ -16,19 +45,68 @@ unsupported schema, rollback, or failed cache write preserves the previous live
 and durable snapshot. Bundle and cache loading do not depend on a network call.
 No provider update changes saved songs, ChordPro provenance or user preferences.
 Catalog storage is separate from the user's synced application settings.
-Channel 2 reads/writes `sourceCatalog:v2` and never overwrites the old
-`sourceCatalog` cache or provider preferences. It starts from its own bundled
-snapshot when the new cache is absent; an independently higher legacy revision
-cannot lock out channel-2 updates. Unknown native providers
-cause a refresh to fail before any live/cache mutation. Thus a channel-2 entry,
-even when disabled, must never be added to channel 1 if released clients do not
-compile that adapter.
+Channel 3 reads/writes `sourceCatalog:v3` and never overwrites channel-2 or
+legacy cache streams, or provider preferences. Channels 4 through 10 each use
+their matching `sourceCatalog:vN` cache key. Every channel preserves older cache
+streams and provider preferences. Channel 10 checks previous caches from
+channels 9 through 1. Without a valid current-channel cache, offline startup validates the closest older cached channel against its own bundle and
+the current compiled adapters. It carries newer compatible source
+revisions, added declarative sources, disabled/retired entries and removals into
+an in-memory view of the new bundle. New compiled sources and newer bundled
+source revisions remain; a retired bundled source is never resurrected. The old
+envelope revision is not imported, and startup writes neither cache.
+
+This is an offline upgrade fallback, not a synthetic publisher snapshot. The
+first successfully validated and persisted current-channel refresh replaces it
+with that channel's complete authoritative snapshot, including omissions. Failed
+downloads, invalid responses and failed cache writes retain the fallback.
+Subsequent offline starts use the valid current-channel cache. Independently
+higher old envelope/source revisions cannot lock out the new channel. A pending
+search is cancelled if the transition changes effective configuration, even if
+the envelope revision is unchanged. Older channels retain their existing cache
+and URL. Unknown native providers cause a refresh to fail before any live/cache
+mutation. Never add an unknown native ID to an older channel, even disabled.
+AMLL is absent from channels 1/2; VocaDB is absent from channels 1/2/3;
+TouhouDB and UtaiteDB are absent from channels 1/2/3/4.
 
 Channel 2 enables lrc.red, Roswell Music Jam and kara.moe for compatible app
-builds. Existing channel-1 apps keep their original source list and URL. Native
+builds. Channel 3 inherits all 22 channel-2 entries without altering them and
+adds AMLL enabled by default for the new compiled runtime. Existing saved
+opt-outs win. Channel-1 and channel-2 apps keep their source lists, URLs and
+cache streams. Channel 4 preserves all 23 channel-3 entries and adds VocaDB
+enabled by default for its compiled runtime. Channel 5 preserves all 24
+channel-4 source entries and adds TouhouDB and UtaiteDB active/default-on for its
+new compiled runtime. Their fixed-host parsers retain every lyric variant,
+credit, alias, role, album and original-version relationship. They do not borrow
+a parent's lyrics for a cover/remaster with no original lyric of its own.
+Channel-5 revision 17 additionally revises MusicBrainz to source revision 3
+with optional exact-release Cover Art Archive front previews and two artwork
+canaries. Other 25 entries stay unchanged. The matching compiled extension is
+required; ambiguous editions omit art. See [artwork qualification](cover-art-qualification.md).
+Contextual title
+lookup, complete lyric-variant/artist-role facts and mutable detail caching use
+the ordinary provider service. Existing saved opt-outs still win. Release-40
+artifacts remain frozen and are not rebuilt by this source change. Native
 qualification covers real search/import, cached readers, artwork decoding and
 exact source-payload retention across SQLite reopening and ChordPro round trips;
 it does not establish independent lyric transcription or musical accuracy.
+
+Channel 8 revision 21 activates Chords & Tabs at source revision 2 and enables
+it by default for compatible clients. Its two catalog health probes use the
+previously qualified Hey Jude and Bohemian Rhapsody arrangements. The Hey Jude
+probe retains its unconfirmed search-version hint; provider regressions
+separately cover legacy pages whose descriptor omits a version. Probe search
+terms match the exact title-only searches observed in canaries, with expected
+artist checks retained. Native QA covered normal search, selection, source
+preview, save, fresh-process offline reopen, and exact source-payload and
+attribution preservation. These checks establish behavior for those two
+arrangements only. A retained-response replay was captured before the later
+unknown-version fix; the merged provider regression set covers that fix. Neither
+replay nor the canaries establish general chart accuracy. Chords & Tabs charts
+are user-submitted; per-work rights are unknown, and arrangement identity does
+not establish recording identity. The app retains provider attribution and the
+original source payload. Existing user opt-outs remain in force. Pisni stays
+disabled pending its separate qualification.
 The lrc.red native adapter uses the publisher's identifying User-Agent,
 exact ISRC search/detail identity, same-host TTML/artwork references and visible
 attribution. Its explicit timing profile handles the publisher's bare-second
@@ -137,8 +215,16 @@ dart run tool/source_maintenance.dart --report artifacts/sources-live.json
 dart run tool/source_maintenance.dart --source lrclib --report artifacts/lrclib-live.json
 ```
 
-Options also include `--catalog path` to validate a candidate catalog. Both
-offline and live CLI defaults follow the current channel-2 catalog. To qualify a pending
+Options also include `--catalog path` to validate a candidate catalog. By
+default, offline and live CLI runs use the asset named by
+`SourceCatalogClient.bundledAsset` in `lib/providers/source_catalog_client.dart`.
+That compiled source of truth currently points to
+`config/source-catalog-v10.json`; do not hard-code a channel number in scheduled
+commands or reports.
+An explicit older `--catalog` still parses/applies that snapshot, but the full
+current registry reports newer compiled providers intentionally absent from it
+as coverage gaps; this is not evidence that an older app's source list is broken.
+To qualify a pending
 native source before release, use an ignored temporary active copy with
 `--catalog` and `--source`; do not publish that copy or change the disabled
 rollout entry merely to make a probe run. Released channel-1 clients and their
@@ -178,9 +264,48 @@ coverage requires an explicit line cue; word coverage requires positioned word
 cues with valid grapheme bounds. A combined word track may contain both. A raw
 document alone proves retention, not working cues.
 Reports list `coverage.verifiedCapabilities` and `coverage.unverifiedCapabilities`;
+structured `artworkAssets` can verify image locations, binding and provenance
+with explicitly unknown rights. `artworkImageBytesValidated: false` separates
+this from actual image decoding or a license grant. Optional artwork failures
+are classified separately; unrelated missing required recording metadata still
+reports `changed_schema`, with the art failure alongside it.
 passing canaries with advertised but untested capabilities are `partial_coverage`,
 which also returns exit 1. Extend coverage when a representative real canary is
 available; incomplete coverage alone does not justify retiring a source.
+
+### Scheduled catalog selection and request budget
+
+For production daily runs, use an isolated checkout of current public `main`
+and the CLI's default catalog. Confirm that this default matches
+`SourceCatalogClient.bundledAsset` in `lib/providers/source_catalog_client.dart`.
+Derive the roster from that runtime's complete compiled registry and matching
+bundle. Do not pin a scheduled run to an older channel after a compatible runtime
+has advanced, or hardcode the number of providers. Keep every older served
+catalog compatible with its released app.
+
+Before live requests, run one offline structural check. A missing registered ID,
+unknown native ID or catalog/runtime mismatch is an explicit coverage problem;
+resolve the checkout/configuration mismatch without downgrading the roster.
+Record the source commit, runtime, catalog path/channel/revision and measurement
+time in each sanitized report. Pending feature branches use separate candidate
+qualification reports and never replace production `latest.json` for either
+runtime. Integrating a new channel does not prove that a released app consumes it.
+
+Run the complete live suite once per scheduled invocation. Each source can have
+multiple search/detail canaries, redirects and bounded transport retries, so one
+daily job does not mean one HTTP request per host. Retain those measured counts
+and timestamps, including any separate publisher file-import phase. A selected
+source recheck needs changed response evidence, an actual code/config repair or
+a specific new capability; state that reason and reuse fresh evidence for
+unchanged sources. Local and cloud jobs each retain their own daily run and
+provenance. A rate-limit response alone does not prove a daily scheduling problem
+or establish whether the limit is per client, shared IP or upstream global load.
+
+The saved local and cloud schedule prompts are account configuration. When
+changing their catalog selection, preserve both enabled jobs, cadence, target
+worker/environment, credentials and notification preferences. Verify each saved
+prompt separately; editing a repository guide or one runtime's prompt does not
+prove that the other runtime adopted the change.
 
 ### Publisher file-import checks
 
@@ -229,6 +354,21 @@ requests even in a once-daily job. Follow the publisher's
 [client identification policy](https://www.mediawiki.org/wiki/Wikimedia_APIs/Access_policy)
 and [current rate limits](https://www.mediawiki.org/wiki/Wikimedia_APIs/Rate_limits).
 A compliant User-Agent does not remove quotas or replace respecting Retry-After.
+
+SyncLRC's free-text search and its selected-song lookup have different contracts.
+App discovery supplies the separate track, artist, album and duration fields to
+the documented `/lyrics` route. It validates the returned title/artist and keeps
+returned album/duration for the existing recording and edition checks. It never
+copies requested context over a different upstream result. Canonical-ID resolve
+also rechecks the selected title, artist, album and duration: observed search
+rows can share a canonical ID despite differing recording context. Legacy
+carried selections remain readable. Channel-2 canaries cover two canonical
+retrievals and a separate title-only catalog search with exact expected fields;
+canonical-only retrieval does not count as search coverage. A failing search
+probe stays visible even when both direct extraction canaries pass. These native lookup
+changes require a compatible app build; frozen release artifacts are unchanged.
+All SyncLRC routes share a transport floor of 2.1 seconds between attempts,
+including retries, to respect the publisher's documented 30 requests/minute.
 
 Reports include timestamp, source/probe IDs, outcome, missing field names,
 lengths/counts and metadata field names. They contain no full lyrics, raw source
