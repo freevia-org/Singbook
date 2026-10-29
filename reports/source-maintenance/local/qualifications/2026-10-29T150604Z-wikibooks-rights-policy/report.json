@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "measuredAt": "2026-10-29T15:06:04.164860+00:00",
+  "runtime": "documentation_and_retained_response_review",
+  "productionSourceCommit": "1a4573eefc7f0f0e28c8ab7ab77cd4479c1d2a05",
+  "scope": "Publisher policy evidence, not a legal determination or source activation",
+  "primarySources": [
+    {
+      "url": "https://de.wikibooks.org/wiki/Liederbuch",
+      "revision": 962273,
+      "observedPolicy": "Publisher states pieces are public domain unless otherwise indicated. This is a general claim with an explicit exception, not a per-page license determination."
+    },
+    {
+      "url": "https://de.wikibooks.org/wiki/Liederbuch/_Projektseite",
+      "revision": 1074138,
+      "observedPolicy": "Project aims to collect public-domain songs with music/chords. Contributor rules ask for expired rights or an official documented permission source, and source references where possible. The same policy explicitly describes parodies with possible continuing melody rights and private/teaching scope, plus exercise examples based on protected songs."
+    },
+    {
+      "url": "https://de.wikibooks.org/wiki/Liederbuch/_Hilfe",
+      "observedPolicy": "Header guidance separates composer, text writer and arranger credits; per-song provenance remains important."
+    },
+    {
+      "url": "https://de.wikibooks.org/wiki/Hilfe:Urheberrechte_beachten",
+      "observedPolicy": "Older general help still names CC-BY-SA3.0/GFDL; it does not supersede captured runtime siteinfo/page-contribution4.0 provenance or clear underlying song rights."
+    }
+  ],
+  "retainedCanaries": [
+    {
+      "pageId": "118857",
+      "revision": 1036453,
+      "existingUnderlyingRights": "unknown",
+      "existingContributionLicense": "CC-BY-SA-4.0",
+      "rightsMarkersInRetainedRenderedSongHtml": {
+        "gemeinfrei": 0,
+        "public domain": 0,
+        "pd-old": 0,
+        "copyright": 0,
+        "urheber": 0,
+        "privaten gebrauch": 0,
+        "parodie": 0,
+        "übungsbeispiel": 0
+      },
+      "lyricTextRetainedInReport": false
+    },
+    {
+      "pageId": "115615",
+      "revision": 1083680,
+      "existingUnderlyingRights": "unknown",
+      "existingContributionLicense": "CC-BY-SA-4.0",
+      "rightsMarkersInRetainedRenderedSongHtml": {
+        "gemeinfrei": 0,
+        "public domain": 0,
+        "pd-old": 0,
+        "copyright": 0,
+        "urheber": 0,
+        "privaten gebrauch": 0,
+        "parodie": 0,
+        "übungsbeispiel": 0
+      },
+      "lyricTextRetainedInReport": false
+    }
+  ],
+  "decision": {
+    "newEvidence": "Specific publisher repertoire/exception policy is now available for Integration review.",
+    "underlyingLicenseChanged": false,
+    "generalPublicDomainClaimTreatedAsPerWorkProof": false,
+    "contributionLicenseChanged": false,
+    "registrationActivationOrCatalogChanged": false,
+    "nativeCloudOrNewSongCanariesRun": false,
+    "remaining": "Integration must assess per-work exception handling and attribution/rights preservation alongside the pending native/cloud/catalog gates. Preserve explicit unknown underlying rights unless specific work evidence supports a narrower claim."
+  },
+  "requestAccounting": {
+    "newSongApiCalls": 0,
+    "newLyricsCanaryCalls": 0,
+    "newMediaCalls": 0,
+    "credentialsUsed": false,
+    "method": "Web documentation reads plus already retained two-song HTML; no direct content re-probe"
+  },
+  "rawDocumentsOrLyricsInReport": false,
+  "frozenBranchesChanged": false,
+  "productionReportsChanged": false
+}
