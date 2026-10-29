@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "qualificationType": "independent_observation_of_completed_managed_cloud_canary",
+  "sourceCommit": "8c852e873f9c82c1fcf6fe336e22f7bc690de9c9",
+  "catalogPath": "config/source-catalog-v10.json",
+  "catalogRevision": 23,
+  "runtime": "managed-cloud; terminal evidence read from the existing SB Cloud Maintenance task",
+  "observationMethod": "Reviewed the completed runner and exact untruncated terminal output through read_thread; no new source request or runtime action",
+  "observedCommandId": "exec-9b629dd5-73c1-4389-b5cd-17c01482f4af",
+  "observedCommandExitCode": 0,
+  "observedCommandDurationMs": 7520,
+  "sourceThreadId": "01a144b7-0086-7424-90c9-a2001804d06e",
+  "requestedRecording": {
+    "musicbrainz": "b5d7d380-f43a-4c1f-a5de-694150b093ac",
+    "title": "Mysterons",
+    "artist": "Portishead"
+  },
+  "result": {
+    "receipt": "/workspace/scratch/pr223-receipts/20261029T001344Z-acousticbrainz-single.json",
+    "passed": true,
+    "safeError": null,
+    "requests": [
+      {
+        "endpoint": "https://acousticbrainz.org/api/v1/count?recording_ids=b5d7d380-f43a-4c1f-a5de-694150b093ac",
+        "startedAt": "2026-10-29T00:13:41.258208Z",
+        "httpStatus": 200,
+        "headersReceivedAt": "2026-10-29T00:13:42.474956Z"
+      },
+      {
+        "endpoint": "https://acousticbrainz.org/api/v1/low-level?recording_ids=b5d7d380-f43a-4c1f-a5de-694150b093ac%3A0%3Bb5d7d380-f43a-4c1f-a5de-694150b093ac%3A1&features=metadata.tags%3Brhythm.bpm%3Btonal.key_key%3Btonal.key_scale%3Btonal.key_strength",
+        "startedAt": "2026-10-29T00:13:42.785202Z",
+        "httpStatus": 200,
+        "headersReceivedAt": "2026-10-29T00:13:43.938398Z"
+      }
+    ]
+  },
+  "observedRequestCount": 2,
+  "configuredTransportRetries": 0,
+  "newLiveRequestsIssuedByObservation": 0,
+  "reviewedRunnerChecks": [
+    "Current source checkout HEAD was8c and tracked status clean before execution",
+    "Catalog file revision23 checked before calling the native AcousticBrainzProvider",
+    "ProviderTransport maxRetries0; only this one recording ID permitted",
+    "HTTPS GET host acousticbrainz.org only; count first, then at most two low-level offsets with fixed feature fields",
+    "One result with exact recording ID, Mysterons title and Portishead artist required",
+    "Resolve must retain same identity and required identityScope,recordingEvidence,acousticbrainz metadata fields",
+    "No raw source-response metadata saved by runner"
+  ],
+  "scopeLimitations": [
+    "Only one recording; not corpus-wide reachability or a second independent cloud canary",
+    "Not a native-device, title-search, musical-accuracy, audio-alignment or current production-release claim",
+    "terminal-stdout.json preserves observed command output; original full cloud receipt is a separate artifact",
+    "This observation does not copy or hash the original full cloud receipt; it must remain preserved separately",
+    "Not a production daily report; neither cloud latest nor local latest was updated"
+  ],
+  "originalSanitizedReceiptPath": "/workspace/scratch/pr223-receipts/20261029T001344Z-acousticbrainz-single.json",
+  "exactOriginalReceiptCopied": false,
+  "originalReceiptDurableArchive": "pending",
+  "originalReceiptSha256": null,
+  "sourceFilesChanged": false,
+  "productionStateChanged": false,
+  "sdkOrDeviceActionsByObservation": 0,
+  "capturedTerminalStdoutSha256": "ce04f96b5955e2b35c0fc1b494fc131344a5f54112869d6d1ff81dc5a124e702"
+}
