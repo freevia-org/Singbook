@@ -5561,21 +5561,22 @@ EvidenceRanking _rankSourceCombination(
           !declarations.any(
             (other) =>
                 other.sourceId != claim.sourceId &&
-                _keyDistance(other.value as String, claim.value as String) != 0,
+                _keyIdentity(other.value) != _keyIdentity(claim.value),
           )) {
         continue;
       }
+      // A relative major/minor dispute (C against Am) is a real contest, but
+      // a chart estimate of the relative key cannot settle its mode.
+      final value = claim.value as String;
+      final fit =
+          clearChartKeys.any((key) => _keyIdentity(key) == _keyIdentity(value))
+          ? 8
+          : clearChartKeys.any((key) => _keyDistance(key, value) == 0)
+          ? 0
+          : -8;
       claims[i] = _rebuildClaim(
         claim,
-        qualitySignals: {
-          ...claim.qualitySignals,
-          'contestedHomeKeyFit':
-              clearChartKeys.any(
-                (key) => _keyDistance(key, claim.value as String) == 0,
-              )
-              ? 8
-              : -8,
-        },
+        qualitySignals: {...claim.qualitySignals, 'contestedHomeKeyFit': fit},
       );
     }
   }

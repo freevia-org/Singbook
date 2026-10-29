@@ -120,6 +120,20 @@ const songs = <(String, String, String?)>[
   ('Vienna', 'Billy Joel', null),
   ('Tennessee Whiskey', 'Chris Stapleton', null),
   ('Before He Cheats', 'Carrie Underwood', null),
+  // A hundred songs: more rock, folk and a non-Latin title with a
+  // published Latin alias.
+  ('Bad Moon Rising', 'Creedence Clearwater Revival', 'D'),
+  ('Seven Nation Army', 'The White Stripes', null),
+  ('Mr. Brightside', 'The Killers', null),
+  ('Use Somebody', 'Kings of Leon', null),
+  ('Viva la Vida', 'Coldplay', null),
+  ('Wake Me Up', 'Avicii', null),
+  ('Leaving on a Jet Plane', 'John Denver', null),
+  ('Big Yellow Taxi', 'Joni Mitchell', null),
+  ('Folsom Prison Blues', 'Johnny Cash', null),
+  ('Let It Go', 'Idina Menzel', null),
+  ('Bésame Mucho', 'Luis Miguel', null),
+  ('紅蓮華', 'LiSA', null),
 ];
 
 /// Answers from the cache when it can; otherwise asks the network and keeps

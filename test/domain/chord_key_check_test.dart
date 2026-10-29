@@ -153,6 +153,25 @@ void main() {
     expect(doc.metadata['key'], 'E');
   });
 
+  test('a relative-key dispute is settled by a clear chart', () {
+    final inAm = _chart(['Am', 'Dm', 'E7', 'Am', 'F', 'Dm', 'E7', 'Am']);
+    final doc = combineSources(_selected, [
+      SourceResult(
+        candidate: const SongCandidate(
+          providerId: 'catalog',
+          id: 'catalog',
+          title: 'Harbor Song',
+          artist: 'Test Artist',
+        ),
+        body: _lyrics,
+        matchKind: MatchKind.sameSong,
+        metadata: const {'key': 'C'},
+      ),
+      labelled(inAm, 'Am'),
+    ]);
+    expect(doc.metadata['key'], 'Am');
+  });
+
   test('a contradicting label without a correction names no key', () {
     final inC = transposeBody(_clearE, 8);
     expect(declaredKeyFitsChords(inC, 'E', null), isFalse);

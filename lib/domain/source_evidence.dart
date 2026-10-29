@@ -117,6 +117,14 @@ List<EvidenceClaim> collectSourceEvidence(
     );
   }
 
+  // The selected catalog candidate is evidence too, even when no provider
+  // returned a corresponding SourceResult.
+  final selectedResult = SourceResult(
+    candidate: selected,
+    body: '',
+    matchKind: MatchKind.sameRecording,
+  );
+
   void metadataClaims({
     required SourceResult source,
     required JsonMap values,
@@ -143,6 +151,11 @@ List<EvidenceClaim> collectSourceEvidence(
       final signals = <String, int>{
         if (qualitySignals != null) ...qualitySignals(source, path),
         if (resolved) 'resolvedClaim': 2,
+        // The chosen record names its own release and length; another
+        // source's resolved page describes some release of the recording.
+        if (identical(source, selectedResult) &&
+            (path == '$prefix.album' || path == '$prefix.durationSeconds'))
+          'selectedRecord': 3,
       };
       if (path == '$prefix.key') {
         final statementRanks = <int>[];
@@ -192,13 +205,6 @@ List<EvidenceClaim> collectSourceEvidence(
     }
   }
 
-  // The selected catalog candidate is evidence too, even when no provider
-  // returned a corresponding SourceResult.
-  final selectedResult = SourceResult(
-    candidate: selected,
-    body: '',
-    matchKind: MatchKind.sameRecording,
-  );
   final selectedMaps = [selected.metadata, selected.extra];
   final selectedMetadata = <String, dynamic>{
     ...selected.metadata,
