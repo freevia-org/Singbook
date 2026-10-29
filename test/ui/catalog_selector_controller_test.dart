@@ -31,6 +31,24 @@ void main() {
     return harness;
   }
 
+  Future<void> waitForCombined(
+    _Harness harness,
+    bool Function() condition,
+  ) async {
+    if (condition()) return;
+    final changed = Completer<void>();
+    late void Function() listener;
+    listener = () {
+      if (condition() && !changed.isCompleted) changed.complete();
+    };
+    harness.app.addListener(listener);
+    try {
+      await changed.future.timeout(const Duration(seconds: 2));
+    } finally {
+      harness.app.removeListener(listener);
+    }
+  }
+
   test('catalogs come from capability, enablement and configuration', () async {
     final h = await open();
     // Wikisource deliberately precedes LRCLIB in the registry.
@@ -516,6 +534,254 @@ void main() {
       expect(h.app.selection?.identity, candidate.identity);
       expect(h.app.combined?.body, source.body);
       expect(h.ui.state.comparison, isNotNull);
+    },
+  );
+
+  test(
+    'clustered discovery recomputes settle on the latest source set',
+    () async {
+      final h = await open(
+        providers: [
+          _PendingProvider('alpha'),
+          _PendingProvider('beta'),
+          _PendingProvider('gamma'),
+        ],
+      );
+      h.discovery.holdDiscoveries = true;
+      final candidate = SongCandidate(
+        providerId: 'catalog',
+        id: 'lantern-song',
+        title: 'Lantern Song',
+        artist: 'Lanterns',
+      );
+      SourceResult result(
+        String provider,
+        String body, {
+        JsonMap metadata = const {},
+      }) => SourceResult(
+        candidate: SongCandidate(
+          providerId: provider,
+          id: 'lantern-song',
+          title: candidate.title,
+          artist: candidate.artist,
+        ),
+        body: body,
+        metadata: metadata,
+        matchKind: MatchKind.sameSong,
+        matchReason: 'same_song',
+      );
+      final alpha = result('alpha', 'Lanterns glow');
+      final beta = result('beta', 'Lanterns glow');
+      final gamma = result(
+        'gamma',
+        'Lanterns glow across the quiet harbor at night',
+        metadata: {'mood': 'reflective'},
+      );
+
+      final selection = h.app.selectCandidate(candidate);
+      final request = await h.discovery.discoveryAt(0);
+      request.publish(alpha);
+      request.publish(beta);
+      request.publish(gamma);
+
+      expect(h.app.results.map((source) => source.id), [
+        alpha.id,
+        beta.id,
+        gamma.id,
+      ]);
+      expect(h.app.combined?.body, alpha.body);
+      await waitForCombined(h, () => h.app.combined?.body == gamma.body);
+      expect(h.app.combined?.body, gamma.body);
+      expect(h.app.combined?.extra['fieldOrigins']['mood'], gamma.id);
+
+      request.response.complete([alpha, beta, gamma]);
+      await selection;
+      expect(h.app.combined?.body, gamma.body);
+      expect(h.app.combined?.extra['fieldOrigins']['mood'], gamma.id);
+    },
+  );
+
+  test(
+    'same-source progress bursts coalesce after two immediate recomputes',
+    () async {
+      final h = await open(providers: [_PendingProvider('alpha')]);
+      h.discovery.holdDiscoveries = true;
+      final candidate = SongCandidate(
+        providerId: 'catalog',
+        id: 'lantern-song',
+        title: 'Lantern Song',
+        artist: 'Lanterns',
+      );
+      SourceResult result(String body, {JsonMap metadata = const {}}) =>
+          SourceResult(
+            candidate: SongCandidate(
+              providerId: 'alpha',
+              id: 'lantern-song',
+              title: candidate.title,
+              artist: candidate.artist,
+            ),
+            body: body,
+            metadata: metadata,
+            matchKind: MatchKind.sameSong,
+            matchReason: 'same_song',
+          );
+      final first = result('Lanterns glow');
+      final second = result('Lanterns glow', metadata: {'mood': 'reflective'});
+      final third = result(
+        'Lanterns glow',
+        metadata: {
+          'mood': 'reflective',
+          'genres': ['folk'],
+        },
+      );
+      final latest = result(
+        'Lanterns glow',
+        metadata: {
+          'mood': 'reflective',
+          'genres': ['folk'],
+          'year': 1970,
+        },
+      );
+
+      final selection = h.app.selectCandidate(candidate);
+      final request = await h.discovery.discoveryAt(0);
+      request.publish(first);
+      expect(h.app.combined?.body, first.body);
+      request.publish(second);
+      expect(h.app.combined?.body, second.body);
+      expect(h.app.combined?.extra['fieldOrigins']['mood'], second.id);
+      request.publish(third);
+      request.publish(latest);
+
+      expect(h.app.results, hasLength(1));
+      expect(h.app.results.single.body, latest.body);
+      expect(h.app.results.single.metadata['year'], 1970);
+      expect(
+        h.app.combined?.sources.single.metadata.containsKey('year'),
+        isFalse,
+        reason: 'updates after the two immediate recomputes are coalesced',
+      );
+      await waitForCombined(
+        h,
+        () =>
+            h.app.combined?.sources.single.metadata.containsKey('year') == true,
+      );
+      expect(h.app.combined?.body, latest.body);
+      expect(h.app.combined?.extra['fieldOrigins']['mood'], latest.id);
+      expect(h.app.combined?.sources.single.metadata['year'], 1970);
+
+      request.response.complete([latest]);
+      await selection;
+      expect(h.app.combined?.body, latest.body);
+      expect(h.app.combined?.extra['fieldOrigins']['mood'], latest.id);
+    },
+  );
+
+  test('cancelled discovery cannot run its queued recombination', () async {
+    final h = await open(
+      providers: [
+        _PendingProvider('alpha'),
+        _PendingProvider('beta'),
+        _PendingProvider('gamma'),
+      ],
+    );
+    h.discovery.holdDiscoveries = true;
+    final candidate = SongCandidate(
+      providerId: 'catalog',
+      id: 'lantern-song',
+      title: 'Lantern Song',
+      artist: 'Lanterns',
+    );
+    SourceResult result(String provider, String body) => SourceResult(
+      candidate: SongCandidate(
+        providerId: provider,
+        id: 'lantern-song',
+        title: candidate.title,
+        artist: candidate.artist,
+      ),
+      body: body,
+      matchKind: MatchKind.sameSong,
+      matchReason: 'same_song',
+    );
+    final first = result('alpha', 'Lanterns glow');
+    final second = result('beta', 'Lanterns glow');
+    final queued = result(
+      'gamma',
+      'Lanterns glow across the quiet harbor at night',
+    );
+
+    final selection = h.app.selectCandidate(candidate);
+    final request = await h.discovery.discoveryAt(0);
+    request.publish(first);
+    request.publish(second);
+    request.publish(queued);
+    expect(h.app.results, hasLength(3));
+
+    h.app.cancelSearch();
+    expect(h.app.selection, isNull);
+    expect(h.app.results, isEmpty);
+    expect(h.app.combined, isNull);
+    await Future<void>.delayed(const Duration(milliseconds: 150));
+    expect(h.app.combined, isNull);
+
+    request.response.complete([first, second, queued]);
+    await selection;
+    expect(h.app.results, isEmpty);
+    expect(h.app.combined, isNull);
+  });
+
+  test(
+    'disabling a provider cancels queued recombination of its result',
+    () async {
+      final h = await open(
+        providers: [
+          _PendingProvider('alpha'),
+          _PendingProvider('beta'),
+          _PendingProvider('gamma'),
+        ],
+      );
+      h.discovery.holdDiscoveries = true;
+      final candidate = SongCandidate(
+        providerId: 'catalog',
+        id: 'lantern-song',
+        title: 'Lantern Song',
+        artist: 'Lanterns',
+      );
+      SourceResult result(String provider, String body) => SourceResult(
+        candidate: SongCandidate(
+          providerId: provider,
+          id: 'lantern-song',
+          title: candidate.title,
+          artist: candidate.artist,
+        ),
+        body: body,
+        matchKind: MatchKind.sameSong,
+        matchReason: 'same_song',
+      );
+      final first = result('alpha', 'Lanterns glow');
+      final second = result('beta', 'Lanterns glow');
+      final disabled = result(
+        'gamma',
+        'Lanterns glow across the quiet harbor at night',
+      );
+
+      final selection = h.app.selectCandidate(candidate);
+      final request = await h.discovery.discoveryAt(0);
+      request.publish(first);
+      request.publish(second);
+      request.publish(disabled);
+      expect(h.app.results, hasLength(3));
+
+      await h.app.setProviderEnabled('gamma', false);
+      expect(h.app.results.map((source) => source.id), [first.id, second.id]);
+      await Future<void>.delayed(const Duration(milliseconds: 150));
+      expect(h.app.results.map((source) => source.id), [first.id, second.id]);
+      expect(h.app.combined?.body, first.body);
+
+      request.response.complete([first, second, disabled]);
+      await selection;
+      expect(h.app.results.map((source) => source.id), [first.id, second.id]);
+      expect(h.app.combined?.body, first.body);
     },
   );
 

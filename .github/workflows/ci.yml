@@ -29,7 +29,7 @@ env:
 
 jobs:
   analyze:
-    runs-on: singbook-i5-linux
+    runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
@@ -64,7 +64,7 @@ jobs:
         run: flutter analyze
 
   test:
-    runs-on: singbook-i5-linux
+    runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v7
@@ -81,7 +81,12 @@ jobs:
         run: flutter pub get --enforce-lockfile --no-example
 
       - name: Test
-        run: flutter test --no-pub
+        run: flutter test --no-pub --exclude-tags=performance
+
+      - name: Verify isolated performance bounds
+        run: >-
+          flutter test --no-pub --concurrency=1 --reporter=expanded
+          --tags=performance test/domain/combined_enrichment_test.dart
 
       - name: Validate metadata accuracy corpus and offline cache
         run: flutter test --no-pub tool/metadata_accuracy_benchmark_test.dart tool/metadata_response_cache_test.dart
@@ -185,10 +190,10 @@ jobs:
         shell: pwsh
         run: ./scripts/build-windows.ps1 -AllowMissingDefines
 
-      - name: Inspect hosted Windows PDF printer capability
+      - name: Inspect Windows PDF printer capability
         shell: pwsh
         run: |
-          $evidencePath = 'artifacts/windows-parity/print-acceptance-host-capabilities.json'
+          $evidencePath = 'artifacts/windows-parity/print-acceptance-runner-capabilities.json'
           New-Item -ItemType Directory -Path (Split-Path $evidencePath) -Force | Out-Null
           $printers = @()
           $printerQueryError = $null
@@ -260,7 +265,7 @@ jobs:
   windows-test:
     name: windows-test (${{ matrix.shard }}/2)
     needs: analyze
-    runs-on: singbook-i5-windows
+    runs-on: windows-latest
     timeout-minutes: 25
     strategy:
       fail-fast: false
@@ -285,7 +290,7 @@ jobs:
           SHARD_INDEX: ${{ matrix.shard }}
         shell: bash
         run: >-
-          flutter test --no-pub --concurrency=2 --reporter=expanded
+          flutter test --no-pub --exclude-tags=performance --concurrency=2 --reporter=expanded
           --total-shards=2 --shard-index=$((SHARD_INDEX - 1))
 
       - name: Preserve Windows test evidence
