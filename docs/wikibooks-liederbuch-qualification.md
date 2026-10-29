@@ -102,10 +102,15 @@ work or the frozen OpenScore proposals.
 
 ## Follow-up qualification on 29 October 2026
 
-The adapter was integrated unchanged and remains unregistered. Current public
-main `1a4573eefc7f0f0e28c8ab7ab77cd4479c1d2a05` has module SHA-256
+The adapter was integrated unchanged and remains unregistered. The historical
+public-main snapshot used for the 29 October host qualification,
+`1a4573eefc7f0f0e28c8ab7ab77cd4479c1d2a05`, had module SHA-256
 `d1e7c9361d587c4bd5fb98ff52467be732c651661c4d21827d14aad60f14963a`,
-matching the final live-qualified PR208 adapter. Its two exact-request canaries
+matching the final live-qualified PR208 adapter. On 29 October, canonical Git
+bytes at the updated public-main base
+`dc59d732b1aa6623b56aaecf0e5653959fee7cad` were verified to have that same
+digest. This verifies unchanged adapter bytes, not a new runtime qualification.
+Its two exact-request canaries
 passed on 28 October at 07:05 UTC: four HTTP 200 responses, no retries, both
 independent lyric references and all 67 chord positions matched. The final
 PR208 checks also passed. These later results supersede the earlier preparation
