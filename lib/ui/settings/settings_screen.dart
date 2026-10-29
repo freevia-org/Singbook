@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../l10n/generated/app_localizations.dart';
@@ -284,10 +285,12 @@ class _AboutScreen extends StatefulWidget {
 
 class _AboutScreenState extends State<_AboutScreen> {
   bool _leaving = false;
+  late final Future<PackageInfo> _packageInfoFuture;
 
   @override
   void initState() {
     super.initState();
+    _packageInfoFuture = PackageInfo.fromPlatform();
     widget.controller.addListener(_followShellNavigation);
   }
 
@@ -419,11 +422,27 @@ class _AboutScreenState extends State<_AboutScreen> {
                     ],
                   ),
                   const SizedBox(height: 12),
-                  Text(
-                    l10n.appVersion(singbookVersion),
-                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
+                  FutureBuilder<PackageInfo>(
+                    future: _packageInfoFuture,
+                    builder: (context, snapshot) {
+                      final packageInfo = snapshot.data;
+                      final version = packageInfo?.version.trim();
+                      final buildNumber = packageInfo?.buildNumber.trim();
+                      var versionAndBuild = singbookVersion;
+                      if (version != null && version.isNotEmpty) {
+                        versionAndBuild = version;
+                        if (buildNumber != null && buildNumber.isNotEmpty) {
+                          versionAndBuild = '$version+$buildNumber';
+                        }
+                      }
+                      return Text(
+                        l10n.appVersion(versionAndBuild),
+                        key: const ValueKey('about-installed-version'),
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),
