@@ -576,3 +576,43 @@ All temporary build/device reservations were released after verification.
 The account UI exposes visible Drive folder selection and ChordPro import on iOS using the existing account-bound system-browser Picker. Its OAuth flow uses the documented [desktop/mobile Google Picker](https://developers.google.com/workspace/drive/picker/guides/desktop-mobile-picker) with `drive.file`, PKCE and state validation. Live sign-in and folder migration require a dedicated QA account and are separate from deterministic fixture coverage.
 
 For headless native runs, `SINGBOOK_NATIVE_SESSION` enables an app-support JSON receipt containing the integration binding's actual outcomes, failures, platform and physical dimensions. Session names must use letters, digits, underscores or hyphens. A receipt must contain the expected tests and `allTestsPassed: true`; missing, skipped or failed tests are not a successful native run. Normal `flutter test` execution remains supported.
+
+## Release 45 parity candidate — 2026-10-29
+
+The combined native suite built from `d2befd7c63fb440260466ee84b53b59b54fe33d0`
+(`0.2.31+45`) passed 15/15 cases on iPhone and 13/15 on iPad, using the same
+compiled test app and isolated libraries. The runs produced 96 and 58 fresh
+captures respectively. Ignored evidence is under
+`artifacts/ios42-parity/combined45-native-phone01/` and
+`artifacts/ios42-parity/combined45-native-tablet01/`; each includes the actual
+binding results and a native receipt. The two iPad failures are the fullscreen
+orientation and native layout rotation cases: the physical window stayed
+portrait after programmatic orientation requests. These failures remain open;
+the documented host-controlled rotation route must be exercised without
+disabling iPad multitasking or substituting a logical viewport resize.
+
+The new channel-9 coverage exercises Chords & Tabs through search, comparison,
+Save and reader UI, then closes and reopens SQLite to verify persistence and
+ChordPro provenance. OpenScore is explicitly checked as disabled by default;
+its direct provider fixture verifies persistence and rights metadata, without
+claiming ordinary UI availability. These use synthetic responses and original
+fictional lyrics, not live-provider or authenticated account checks.
+
+Head `948847a74ca208e0e1800dc41c679a32e2cdb8a1` changes only the macOS
+architecture verifier relative to that native source. Product and native-test
+blob equivalence is recorded in
+`artifacts/ios42-parity/macos-verifier-repair01/source-equivalence.json`.
+Its macOS compilation run `40787342230` and UX validation run `40787339058`
+passed. CI run `40787336232` failed: the Linux bounded-phrase test took
+3.395 seconds against its unchanged 3-second bound, and Windows test shards
+stopped before tests because `jq` was missing. Passing UX does not supersede
+those failures.
+
+An additional unsigned iOS Release compile at that head passed; its static
+qualification found 18 privacy manifests and excluded the debug clipboard
+reader. Evidence is under `artifacts/ios42-parity/release-config-compile01/`.
+This is compile qualification, not a new signed distribution artifact or runtime
+result. Native OS picker/share/backup interaction and authenticated Google Drive
+and iCloud scenarios remain unverified for this candidate. The changes are not
+included in the preserved signed release-45 artifact, and no store action is
+implied by these results.
