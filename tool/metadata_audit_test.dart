@@ -163,6 +163,8 @@ class CachingClient extends http.BaseClient {
   final uncachedHosts = <String, int>{};
   final storedStatuses = <int, int>{};
 
+  final _nextAllowed = <String, DateTime>{};
+
   /// Hosts that answered 429 or 503, with the requests skipped since.
   final busyHosts = <String, int>{};
 
@@ -201,6 +203,14 @@ class CachingClient extends http.BaseClient {
       throw const ProviderException('provider_busy', 'audit host backed off');
     }
     misses++;
+    // At most one network request per host every 1.2 s, the pace public
+    // catalogs such as MusicBrainz ask of clients.
+    final host = request.url.host;
+    final previous = _nextAllowed[host];
+    final now = DateTime.now();
+    final start = previous != null && previous.isAfter(now) ? previous : now;
+    _nextAllowed[host] = start.add(const Duration(milliseconds: 1200));
+    if (start.isAfter(now)) await Future<void>.delayed(start.difference(now));
     final response = await _inner.send(request);
     final bytes = await response.stream.toBytes();
     storedStatuses.update(response.statusCode, (n) => n + 1, ifAbsent: () => 1);
