@@ -5,6 +5,7 @@ import 'app_device_test.dart' as app;
 import 'android_parity_features_device_test.dart' as parity;
 import 'ios_platform_device_test.dart' as platform;
 import 'ios_provider_parity_device_test.dart' as provider_parity;
+import 'ios_recording_context_device_test.dart' as recording_context;
 import 'player_fullscreen_device_test.dart' as fullscreen;
 import 'ios_native_layout_device_test.dart' as layouts;
 import 'ios_release23_device_test.dart' as release23;
@@ -21,6 +22,7 @@ void main() {
   transpose.main();
   platform.main();
   provider_parity.main();
+  recording_context.main();
   channel9_providers.main();
   fullscreen.main();
   catalog.main();

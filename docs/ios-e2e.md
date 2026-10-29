@@ -33,17 +33,19 @@ runner. A suite that emits no screenshot markers is not screenshot-verified. Rev
 | `ios_android_parity_device_test.dart` | Deterministic native parity target: the complete fixture journey, settings/setlists/player tests, native platform contracts, real fullscreen/orientation checks, and native layout captures. No live source or cloud account is used. |
 | `ios_provider_parity_device_test.dart` | Actual LyricsPlus parsing/word timing, channel-7 cache migration with retained library data, and Start Jamming chord-only comparison/save/SQLite round trip, using synthetic HTTP responses on native iOS. This does not establish live network availability. |
 | `ios_channel9_provider_device_test.dart` | Chords and Tabs channel-9 UI search/comparison/save with native SQLite close/reopen and ChordPro provenance retention; explicitly invoked, default-disabled OpenScore composition/rights/text retention. Synthetic HTTP only; no live source availability claim. |
+| `ios_recording_context_device_test.dart` | Channel-10 recording-context routing to AcousticBrainz, labelled comparison details, safe displayed metadata, save and native SQLite close/reopen with ChordPro provenance. Synthetic HTTP only; added for release 46 and not yet executed on iOS. |
 | `android_parity_features_device_test.dart` | Unified Recent/Library/Favorites/Online modes, persisted startup selection, Settings section routes and text size/chord controls, inferred key and estimated duration, collapsed player controls, speed/section seeking, inline setlist rename, accessibility reorder actions, and song deletion confirmation. |
 | `transpose_popup_device_test.dart` | Chord transposition, restored preferences, keyless/known-key songs, large RTL text, logical landscape and actual native portrait/landscape. |
 | `ios_native_layout_device_test.dart` | Actual native window sizes without surface overrides, portrait/landscape, English/light, Ukrainian/dark at 150%, Arabic/dark at 160%, reader scrolling and editor metadata reachability. |
-| `ios_platform_device_test.dart` | Real iOS plain-text clipboard path and native PDF rasterization through the printing plugin; native temporary file access. |
+| `ios_platform_device_test.dart` | Real iOS plain-text and HTML clipboard storage, invalid clipboard arguments, native PDF rasterization through the printing plugin and native temporary file access. Clipboard readback diagnostics are Debug-only. |
 | `source_catalog_device_test.dart` | Live Unison TTML through the platform HTTP client; fixture catalog refresh atomicity and offline cache behavior. |
 | `provider_device_test.dart` | Live attributed open-song canary; broader provider comparison requires the Genius build token and may skip on upstream outage/catalog change. Skips are not passes. |
 
-Android rich HTML clipboard methods are not implemented on iOS. Its existing
-Android-only native channel test is excluded; the iOS plain-text fallback has
-its own native test. Do not call a fixture-provider success a live-provider
-verification.
+The iOS rich clipboard channel stores plain text and HTML together in one
+pasteboard item. Its native test checks both representations through Debug-only
+readback; Release builds exclude that diagnostic method. The Android channel
+test remains platform-specific. Do not call a fixture-provider success a
+live-provider verification.
 
 ## Interactive native dialogs
 
