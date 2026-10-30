@@ -26,6 +26,11 @@ constexpr const wchar_t kGetPreferredBrightnessRegKey[] =
   L"Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize";
 constexpr const wchar_t kGetPreferredBrightnessRegValue[] = L"AppsUseLightTheme";
 
+// Minimum client size in logical pixels; keep in sync with macOS
+// MainFlutterWindow.swift (minSize).
+constexpr int kMinClientWidth = 360;
+constexpr int kMinClientHeight = 480;
+
 // The number of Win32Window objects that currently exist.
 static int g_active_window_count = 0;
 
@@ -186,6 +191,23 @@ Win32Window::MessageHandler(HWND hwnd,
         PostQuitMessage(0);
       }
       return 0;
+
+    case WM_GETMINMAXINFO: {
+      // Match the macOS runner's 360x480 logical minimum client size.
+      const UINT dpi = FlutterDesktopGetDpiForHWND(hwnd);
+      const double scale_factor = dpi / 96.0;
+      RECT frame = {0, 0, Scale(kMinClientWidth, scale_factor),
+                    Scale(kMinClientHeight, scale_factor)};
+      const DWORD style = static_cast<DWORD>(GetWindowLongPtr(hwnd, GWL_STYLE));
+      const DWORD ex_style =
+          static_cast<DWORD>(GetWindowLongPtr(hwnd, GWL_EXSTYLE));
+      if (AdjustWindowRectExForDpi(&frame, style, FALSE, ex_style, dpi)) {
+        auto info = reinterpret_cast<MINMAXINFO*>(lparam);
+        info->ptMinTrackSize.x = frame.right - frame.left;
+        info->ptMinTrackSize.y = frame.bottom - frame.top;
+      }
+      return 0;
+    }
 
     case WM_DPICHANGED: {
       auto newRectSize = reinterpret_cast<RECT*>(lparam);
