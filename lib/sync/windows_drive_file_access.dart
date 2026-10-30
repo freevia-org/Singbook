@@ -237,8 +237,10 @@ class WindowsDriveFileAccess implements DriveFileAccessCapability {
       );
       _check(account);
       final ids = grant.fileIds.toSet().toList();
-      if (ids.isEmpty ||
-          (folders && ids.length != 1) ||
+      // Closing the Picker without choosing returns a valid callback and no
+      // IDs; that is a dismissal, not a failed selection.
+      if (ids.isEmpty) throw const SyncException('cancelled');
+      if ((folders && ids.length != 1) ||
           ids.any((id) => !RegExp(r'^[A-Za-z0-9_-]{1,256}$').hasMatch(id))) {
         throw SyncException(folders ? 'folder_not_selected' : 'cancelled');
       }

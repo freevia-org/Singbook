@@ -3,8 +3,10 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:singbook/application/app_controller.dart';
 import 'package:singbook/data/library_repository.dart';
 import 'package:singbook/domain/models.dart';
+import 'package:singbook/sync/google_drive_sync.dart';
 import 'package:singbook/ui/app_controller_adapter.dart';
 import 'package:singbook/ui/verse_ui_state.dart';
+import '../sync/support.dart';
 
 void main() {
   sqfliteFfiInit();
@@ -392,6 +394,48 @@ void main() {
       }
     });
 
+    test(
+      'dismissing the Drive picker is neither a banner nor a notice',
+      () async {
+        final sync = _DismissedPickerSync(repository);
+        final cancelling = AppController(repository: repository, sync: sync);
+        await cancelling.initialize();
+        final adapter = AppControllerAdapter(cancelling);
+        final notices = <UiNotice>[];
+        final sub = adapter.notices.listen(notices.add);
+
+        await adapter.chooseSyncDriveFolder();
+        await adapter.importChordProFromDrive();
+        await Future<void>.delayed(Duration.zero);
+        await sub.cancel();
+
+        expect(sync.calls, 2);
+        expect(notices, isEmpty);
+        expect(adapter.state.accountError, isNull);
+        expect(adapter.state.lastSyncErrorCode, isNull);
+        adapter.dispose();
+        cancelling.dispose();
+      },
+    );
+
+    test('a failed Drive action still reports its error', () async {
+      final sync = _DismissedPickerSync(repository, code: 'network');
+      final failing = AppController(repository: repository, sync: sync);
+      await failing.initialize();
+      final adapter = AppControllerAdapter(failing);
+      final notices = <UiNotice>[];
+      final sub = adapter.notices.listen(notices.add);
+
+      await adapter.chooseSyncDriveFolder();
+      await Future<void>.delayed(Duration.zero);
+      await sub.cancel();
+
+      expect(notices, [UiNotice.syncFailed]);
+      expect(adapter.state.accountError, 'network');
+      adapter.dispose();
+      failing.dispose();
+    });
+
     test('deleting a song and a setlist is reported', () async {
       await saveTwoSongs();
       await ui.createSetlist(name: 'Set', songId: 'a');
@@ -476,3 +520,35 @@ SongDocument _song(
   body: body,
   metadata: metadata,
 );
+
+/// A sync service whose Drive actions end the way the system picker does
+/// when it is dismissed: by throwing a sync error code.
+class _DismissedPickerSync extends GoogleDriveSyncService {
+  _DismissedPickerSync(LibraryRepository repository, {this.code = 'cancelled'})
+    : super(
+        repository: repository,
+        auth: FakeAuth()..connected = true,
+        store: MemoryCloud(),
+      );
+
+  final String code;
+  int calls = 0;
+
+  @override
+  DriveFolderInfo? get selectedDriveFolder =>
+      const DriveFolderInfo(id: 'folder', name: 'Folder');
+  @override
+  set selectedDriveFolder(DriveFolderInfo? value) {}
+
+  @override
+  Future<DriveFolderInfo> chooseVisibleDriveFolder() async {
+    calls++;
+    throw SyncException(code);
+  }
+
+  @override
+  Future<int> importChordProFilesFromDrive() async {
+    calls++;
+    throw SyncException(code);
+  }
+}
