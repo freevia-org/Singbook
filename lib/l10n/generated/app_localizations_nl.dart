@@ -1483,10 +1483,6 @@ class AppLocalizationsNl extends AppLocalizations {
   String get accountImportChordPro => 'Importeer ChordPro vanuit Drive';
 
   @override
-  String get accountImportChordProHint =>
-      'Kies .cho-bestanden om aan deze bibliotheek toe te voegen. Bestanden die al in de map staan, worden overgenomen; bestanden elders worden hierheen gekopieerd.';
-
-  @override
   String get syncErrorFolderPickerUnavailable =>
       'Selectie van Drive-mappen is niet beschikbaar';
 
@@ -1532,9 +1528,6 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String get accountSignOutBody =>
       'Je nummers en setlijsten blijven op dit apparaat. Ze worden pas weer geback-upt of gesynchroniseerd nadat je je opnieuw hebt aangemeld.';
-
-  @override
-  String get accountUseDifferent => 'Ander account gebruiken';
 
   @override
   String get accountSignInAgain => 'Opnieuw aanmelden';

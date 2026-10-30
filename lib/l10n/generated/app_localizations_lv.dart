@@ -1490,10 +1490,6 @@ class AppLocalizationsLv extends AppLocalizations {
   String get accountImportChordPro => 'Importējiet ChordPro no diska';
 
   @override
-  String get accountImportChordProHint =>
-      'Izvēlieties .cho failus, ko pievienot šai bibliotēkai. Mapē jau esošie faili tiek pieņemti; šeit tiek kopēti faili citur.';
-
-  @override
   String get syncErrorFolderPickerUnavailable =>
       'Diska mapes atlase nav pieejama';
 
@@ -1537,9 +1533,6 @@ class AppLocalizationsLv extends AppLocalizations {
   @override
   String get accountSignOutBody =>
       'Dziesmas un koncertprogrammas paliks šajā ierīcē. To dublēšana un sinhronizēšana nenotiks, līdz pierakstīsieties vēlreiz.';
-
-  @override
-  String get accountUseDifferent => 'Izmantot citu kontu';
 
   @override
   String get accountSignInAgain => 'Pierakstīties vēlreiz';

@@ -1463,10 +1463,6 @@ class AppLocalizationsHi extends AppLocalizations {
   String get accountImportChordPro => 'ड्राइव से कॉर्डप्रो आयात करें';
 
   @override
-  String get accountImportChordProHint =>
-      'इस लाइब्रेरी में जोड़ने के लिए .cho फ़ाइलें चुनें। फ़ोल्डर में पहले से मौजूद फ़ाइलें अपनाई जाती हैं; अन्यत्र फ़ाइलें यहां कॉपी की गई हैं।';
-
-  @override
   String get syncErrorFolderPickerUnavailable =>
       'ड्राइव फ़ोल्डर चयन अनुपलब्ध है';
 
@@ -1512,9 +1508,6 @@ class AppLocalizationsHi extends AppLocalizations {
   @override
   String get accountSignOutBody =>
       'आपके गीत और गीत-सूचियाँ इस डिवाइस पर रहेंगे। दोबारा साइन इन करने तक उनका बैकअप या सिंक नहीं होगा।';
-
-  @override
-  String get accountUseDifferent => 'दूसरा खाता इस्तेमाल करें';
 
   @override
   String get accountSignInAgain => 'फिर से साइन इन करें';

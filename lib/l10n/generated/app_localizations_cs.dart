@@ -1477,10 +1477,6 @@ class AppLocalizationsCs extends AppLocalizations {
   String get accountImportChordPro => 'Importujte ChordPro z Disku';
 
   @override
-  String get accountImportChordProHint =>
-      'Vyberte soubory .cho, které chcete přidat do této knihovny. Soubory již ve složce jsou převzaty; soubory jinde jsou zkopírovány sem.';
-
-  @override
   String get syncErrorFolderPickerUnavailable =>
       'Výběr složky na Disku není k dispozici';
 
@@ -1526,9 +1522,6 @@ class AppLocalizationsCs extends AppLocalizations {
   @override
   String get accountSignOutBody =>
       'Vaše písně a koncertní programy zůstanou v tomto zařízení. Nebudou se zálohovat ani synchronizovat, dokud se znovu nepřihlásíte.';
-
-  @override
-  String get accountUseDifferent => 'Použít jiný účet';
 
   @override
   String get accountSignInAgain => 'Znovu se přihlásit';

@@ -1492,10 +1492,6 @@ class AppLocalizationsLt extends AppLocalizations {
   String get accountImportChordPro => 'Importuokite „ChordPro“ iš Disko';
 
   @override
-  String get accountImportChordProHint =>
-      'Pasirinkite .cho failus, kuriuos norite pridėti prie šios bibliotekos. Aplanke jau esantys failai priimami; čia kopijuojami failai kitur.';
-
-  @override
   String get syncErrorFolderPickerUnavailable =>
       'Disko aplanko pasirinkimas negalimas';
 
@@ -1541,9 +1537,6 @@ class AppLocalizationsLt extends AppLocalizations {
   @override
   String get accountSignOutBody =>
       'Dainos ir koncertinės programos liks šiame įrenginyje. Jų atsarginės kopijos nebus kuriamos ir jos nebus sinchronizuojamos, kol vėl neprisijungsite.';
-
-  @override
-  String get accountUseDifferent => 'Naudoti kitą paskyrą';
 
   @override
   String get accountSignInAgain => 'Prisijungti dar kartą';

@@ -1485,10 +1485,6 @@ class AppLocalizationsEl extends AppLocalizations {
   String get accountImportChordPro => 'Εισαγωγή ChordPro από το Drive';
 
   @override
-  String get accountImportChordProHint =>
-      'Επιλέξτε αρχεία .cho για προσθήκη σε αυτήν τη βιβλιοθήκη. Τα αρχεία που βρίσκονται ήδη στον φάκελο έχουν εγκριθεί. αρχεία αλλού αντιγράφονται εδώ.';
-
-  @override
   String get syncErrorFolderPickerUnavailable =>
       'Η επιλογή φακέλου μονάδας δίσκου δεν είναι διαθέσιμη';
 
@@ -1534,9 +1530,6 @@ class AppLocalizationsEl extends AppLocalizations {
   @override
   String get accountSignOutBody =>
       'Τα τραγούδια και οι λίστες σου παραμένουν σε αυτήν τη συσκευή. Δεν θα δημιουργούνται αντίγραφα ασφαλείας ούτε θα συγχρονίζονται μέχρι να συνδεθείς ξανά.';
-
-  @override
-  String get accountUseDifferent => 'Χρήση άλλου λογαριασμού';
 
   @override
   String get accountSignInAgain => 'Σύνδεση ξανά';

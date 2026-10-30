@@ -1440,10 +1440,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get accountImportChordPro => '드라이브에서 ChordPro 가져오기';
 
   @override
-  String get accountImportChordProHint =>
-      '이 라이브러리에 추가할 .cho 파일을 선택하세요. 폴더에 이미 있는 파일이 채택됩니다. 다른 곳에 있는 파일은 여기에 복사됩니다.';
-
-  @override
   String get syncErrorFolderPickerUnavailable => '드라이브 폴더를 선택할 수 없습니다.';
 
   @override
@@ -1485,9 +1481,6 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String get accountSignOutBody =>
       '노래와 세트리스트는 이 기기에 남습니다. 다시 로그인할 때까지 백업되거나 동기화되지 않습니다.';
-
-  @override
-  String get accountUseDifferent => '다른 계정 사용';
 
   @override
   String get accountSignInAgain => '다시 로그인';

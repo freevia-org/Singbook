@@ -1478,10 +1478,6 @@ class AppLocalizationsGa extends AppLocalizations {
   String get accountImportChordPro => 'Iompórtáil ChordPro ó Drive';
 
   @override
-  String get accountImportChordProHint =>
-      'Roghnaigh comhaid .cho le cur leis an leabharlann seo. Glactar le comhaid atá san fhillteán cheana; déantar comhaid in áiteanna eile a chóipeáil anseo.';
-
-  @override
   String get syncErrorFolderPickerUnavailable =>
       'Níl an rogha fillteán tiomántán ar fáil';
 
@@ -1527,9 +1523,6 @@ class AppLocalizationsGa extends AppLocalizations {
   @override
   String get accountSignOutBody =>
       'Fanann d’amhráin agus do liostaí amhrán ar an ngléas seo. Ní dhéanfar cúltaca ná sioncronú díobh go dtí go síneoidh tú isteach arís.';
-
-  @override
-  String get accountUseDifferent => 'Úsáid cuntas eile';
 
   @override
   String get accountSignInAgain => 'Sínigh isteach arís';

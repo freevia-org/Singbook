@@ -1486,10 +1486,6 @@ class AppLocalizationsMt extends AppLocalizations {
   String get accountImportChordPro => 'Importa ChordPro minn Drive';
 
   @override
-  String get accountImportChordProHint =>
-      'Agħżel fajls .cho biex iżżid ma\' din il-librerija. Fajls diġà fil-folder huma adottati; fajls x\'imkien ieħor huma kkupjati hawn.';
-
-  @override
   String get syncErrorFolderPickerUnavailable =>
       'L-għażla tal-folder tas-sewqan mhix disponibbli';
 
@@ -1535,9 +1531,6 @@ class AppLocalizationsMt extends AppLocalizations {
   @override
   String get accountSignOutBody =>
       'Il-kanzunetti u l-listi tiegħek jibqgħu fuq dan l-apparat. Mhux se jsir backup jew sinkronizzazzjoni sakemm terġa’ tidħol.';
-
-  @override
-  String get accountUseDifferent => 'Uża kont ieħor';
 
   @override
   String get accountSignInAgain => 'Idħol mill-ġdid';

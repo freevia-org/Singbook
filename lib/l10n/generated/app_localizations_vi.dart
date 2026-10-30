@@ -1470,10 +1470,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String get accountImportChordPro => 'Nhập ChordPro từ Drive';
 
   @override
-  String get accountImportChordProHint =>
-      'Chọn tệp .cho để thêm vào thư viện này. Các tập tin đã có trong thư mục sẽ được chấp nhận; các tập tin ở nơi khác được sao chép ở đây.';
-
-  @override
   String get syncErrorFolderPickerUnavailable =>
       'Lựa chọn thư mục Drive không khả dụng';
 
@@ -1518,9 +1514,6 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get accountSignOutBody =>
       'Bài hát và danh sách vẫn trên thiết bị này. Chúng sẽ không được sao lưu hoặc đồng bộ hóa cho đến khi bạn đăng nhập lại.';
-
-  @override
-  String get accountUseDifferent => 'Dùng tài khoản khác';
 
   @override
   String get accountSignInAgain => 'Đăng nhập lại';

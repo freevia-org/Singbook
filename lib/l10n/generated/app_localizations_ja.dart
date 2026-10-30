@@ -1437,10 +1437,6 @@ class AppLocalizationsJa extends AppLocalizations {
   String get accountImportChordPro => 'ChordPro をドライブからインポート';
 
   @override
-  String get accountImportChordProHint =>
-      'このライブラリに追加する .cho ファイルを選択します。フォルダー内に既にあるファイルが採用されます。他の場所にあるファイルはここにコピーされます。';
-
-  @override
   String get syncErrorFolderPickerUnavailable => 'ドライブフォルダーの選択は使用できません';
 
   @override
@@ -1482,9 +1478,6 @@ class AppLocalizationsJa extends AppLocalizations {
   @override
   String get accountSignOutBody =>
       '曲とセットリストはこの端末に残ります。再度ログインするまでバックアップと同期は行われません。';
-
-  @override
-  String get accountUseDifferent => '別のアカウントを使用';
 
   @override
   String get accountSignInAgain => '再度ログイン';

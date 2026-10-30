@@ -1471,10 +1471,6 @@ class AppLocalizationsEt extends AppLocalizations {
   String get accountImportChordPro => 'Importige ChordPro Drive\'ist';
 
   @override
-  String get accountImportChordProHint =>
-      'Valige sellesse teeki lisamiseks .cho-failid. Kaustas juba olevad failid võetakse vastu; mujal olevad failid kopeeritakse siia.';
-
-  @override
   String get syncErrorFolderPickerUnavailable =>
       'Drive\'i kausta valik pole saadaval';
 
@@ -1520,9 +1516,6 @@ class AppLocalizationsEt extends AppLocalizations {
   @override
   String get accountSignOutBody =>
       'Sinu laulud ja laulunimekirjad jäävad sellesse seadmesse. Neid ei varundata ega sünkroonita enne, kui uuesti sisse logid.';
-
-  @override
-  String get accountUseDifferent => 'Kasuta teist kontot';
 
   @override
   String get accountSignInAgain => 'Logi uuesti sisse';
