@@ -120,7 +120,11 @@ class IOSPickerOAuthFlow extends DesktopOAuthFlow {
         throw const SyncException('drive_file_authorization_required');
       }
       final ids =
-          query['picked_file_ids']?.single.split(',') ?? const <String>[];
+          query['picked_file_ids']?.single
+              .split(',')
+              .where((id) => id.isNotEmpty)
+              .toList() ??
+          const <String>[];
       return (
         code: code,
         verifier: verifier,
