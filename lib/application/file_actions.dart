@@ -786,6 +786,16 @@ String _songBodyPlainText(SongDocument song) {
 
 String _htmlEscape(String value) => const HtmlEscape().convert(value);
 
+/// Receiving apps (Excel, Word, Outlook) collapse runs of spaces in HTML, which
+/// destroys chord alignment. Non-breaking spaces survive in all of them; keep
+/// the first space of a run breakable unless [all] is set.
+String _htmlPreserveSpaces(String escaped, {bool all = false}) => all
+    ? escaped.replaceAll(' ', '&nbsp;')
+    : escaped.replaceAllMapped(
+        RegExp(' {2,}'),
+        (m) => ' ${'&nbsp;' * (m.group(0)!.length - 1)}',
+      );
+
 String _songBodyRichHtml(SongDocument song) {
   final out = StringBuffer();
   for (final line in parseArrangement(song.body)) {
@@ -800,10 +810,14 @@ String _songBodyRichHtml(SongDocument song) {
     }
     if (line.chords.isNotEmpty) {
       out.write(
-        '<div class="chords"><code>${_htmlEscape(_chordRow(line))}</code></div>',
+        '<div class="chords"><code style="white-space:pre">'
+        '${_htmlPreserveSpaces(_htmlEscape(_chordRow(line)), all: true)}'
+        '</code></div>',
       );
     }
-    out.write('<p>${_htmlEscape(line.text.isEmpty ? ' ' : line.text)}</p>');
+    out.write(
+      '<p>${_htmlPreserveSpaces(_htmlEscape(line.text.isEmpty ? ' ' : line.text))}</p>',
+    );
   }
   return out.toString();
 }
