@@ -34,6 +34,40 @@ void main() {
   });
 
   test(
+    'rich HTML keeps chord and lyric spacing without touching plain text',
+    () {
+      const body = '[Em]Morning light across the [C]stage,   [G]turn';
+      final song = SongDocument(
+        id: 'spacing-song',
+        title: 'Spacing',
+        artist: 'Sample Artist',
+        body: body,
+      );
+
+      final html = songRichHtml(song);
+      final chordRow = RegExp(
+        r'<div class="chords"><code[^>]*>(.*?)</code></div>',
+      ).firstMatch(html)!.group(1)!;
+      final lyric = RegExp(
+        r'<p>(Morning[^<]*)</p>',
+      ).firstMatch(html)!.group(1)!;
+
+      expect(chordRow, contains('&nbsp;'));
+      expect(chordRow, isNot(contains(' ')), reason: 'no collapsible spaces');
+      expect(chordRow, contains('Em'));
+      expect(lyric, isNot(contains('  ')), reason: 'no collapsible runs');
+      expect(lyric, contains('stage, &nbsp;&nbsp;turn'));
+      expect(html, contains('white-space:pre'));
+
+      final text = songPlainText(song);
+      expect(text, isNot(contains('&nbsp;')));
+      expect(text, isNot(contains('\u00a0')));
+      expect(text, matches(RegExp(r'Em +C +G\n')));
+      expect(song.body, body);
+    },
+  );
+
+  test(
     'setlist copy hides notes but includes repeated songs and overrides',
     () {
       final song = SongDocument(
