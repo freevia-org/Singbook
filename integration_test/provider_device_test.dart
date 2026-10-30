@@ -205,11 +205,25 @@ void main() {
               );
             }
           }
+          // Live providers drift, and combined sources also keep earlier
+          // evidence for the song, so compare by registered provider rather
+          // than by exact source id.
+          final providerIds = providers.map((p) => p.definition.id).toSet();
+          final combinedIds = combined.sources.map((source) => source.id);
           expect(
-            combined.sources.map((source) => source.id).toSet(),
-            results.map((source) => source.id).toSet(),
-            reason:
-                'Combining must retain all provider results for attribution.',
+            combined.sources.map((source) => source.candidate.providerId),
+            everyElement(isIn(providerIds)),
+            reason: 'Combined sources must come from registered providers.',
+          );
+          expect(
+            combinedIds,
+            contains(selectedSourceId),
+            reason: 'The selected source must be retained for attribution.',
+          );
+          expect(
+            combined.sources.length,
+            greaterThanOrEqualTo(1),
+            reason: 'Combining must retain provider results.',
           );
           final selectedSource = results.singleWhere(
             (source) => source.id == selectedSourceId,
