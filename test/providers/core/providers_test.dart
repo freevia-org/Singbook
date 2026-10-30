@@ -690,6 +690,32 @@ void main() {
         expect(body.endsWith('[C]'), true);
       },
     );
+    test('Ultimate Guitar keeps a footnoted chord row over its lyrics', () {
+      const raw =
+          '[tab][ch]G[/ch]                  [ch]Am[/ch]  *\n'
+          'A paper satellite sails tonight[/tab]\n'
+          '[tab][ch]D[/ch]\nAbove an empty desk at night[/tab]';
+      final body = UltimateGuitarProvider.parseText(raw);
+      expect(body, startsWith('[G]A paper satellite s'));
+      expect(body, contains('[Am]'));
+      expect(body, isNot(contains('*')));
+      final separated = UltimateGuitarProvider.parseText(
+        '[tab][ch]F[/ch]     [ch]Em[/ch]   [ch]G[/ch] , [ch]Gsus4[/ch] , [ch]G[/ch]\n'
+        'A paper satellite sails tonight again[/tab]\n'
+        '[tab][ch]D[/ch]\nAbove an empty desk at night[/tab]',
+      );
+      expect(separated, startsWith('[F]A pap'));
+      expect(separated.split('\n').first, contains('[Gsus4]'));
+      // A repeat count still marks a row of its own.
+      final repeated = UltimateGuitarProvider.parseText(
+        '[tab][ch]C[/ch]  [ch]G[/ch] x2\n'
+        'A paper satellite sails tonight again[/tab]\n'
+        '[tab][ch]D[/ch]\nAbove an empty desk at night[/tab]\n'
+        '[tab][ch]G[/ch]\nBeneath a quiet window light[/tab]',
+      );
+      expect(repeated, startsWith('[C]'));
+      expect(repeated.split('\n')[1], 'A paper satellite sails tonight again');
+    });
     test('Ultimate Guitar reads "o" as a diminished chord', () {
       const raw =
           '[tab][ch]C#o[/ch]      [ch]Bo7[/ch]\nA paper satellite sails[/tab]\n'

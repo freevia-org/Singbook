@@ -48,6 +48,10 @@ void main() {
       'Translated',
       'feat. Kyu Sakamoto',
       'Remix',
+      'TV Size',
+      'TV Ver.',
+      'Short Ver.',
+      'Romanized',
     ]) {
       final name = '上を向いて歩こう ($qualifier)';
       expect(publishedNameVariants(name), [name], reason: qualifier);
@@ -59,6 +63,11 @@ void main() {
     ]) {
       expect(publishedNameVariants(name), [name], reason: name);
     }
+  });
+
+  test('a shared broadcast qualifier does not make titles match', () {
+    expect(publishedNamesMatch('紅蓮華 (TV Size)', '炎 (TV Size)'), isFalse);
+    expect(publishedNamesMatch('エド・シーラン (Ed Sheeran)', 'Ed Sheeran'), isTrue);
   });
 
   test('accepts a matching Latin-script lyric representation', () {

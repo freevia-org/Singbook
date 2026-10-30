@@ -557,6 +557,12 @@ class UltimateGuitarProvider implements LyricsProvider {
     return accidentals(i + 2) == s.length;
   }
 
+  /// Whether a chord row holds nothing besides its chords but footnote
+  /// marks ("*") or comma and dash separators, so its chords still belong
+  /// over the lyric row below. Bar lines and repeat counts keep it apart.
+  static bool _chordRowResidue(String residual) =>
+      RegExp(r'^[\s*,\-]*$').hasMatch(residual);
+
   static String _expand(String value, int start) {
     final result = StringBuffer();
     var length = 0;
@@ -683,7 +689,7 @@ class UltimateGuitarProvider implements LyricsProvider {
         lines.add(_anchor(row.inline, row.inlinePositions));
         lyricRows++;
         lyricCharacters += row.inline.trim().length;
-      } else if (row.residual.trim().isEmpty &&
+      } else if (_chordRowResidue(row.residual) &&
           next != null &&
           next.positions.isEmpty &&
           (_hasWords(next.text) ||

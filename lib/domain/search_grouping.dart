@@ -266,6 +266,73 @@ class SearchRecordingGroup {
       _duration(representative) ?? members.map(_duration).nonNulls.firstOrNull;
   String? get artworkUrl =>
       _artwork(representative) ?? members.map(_artwork).nonNulls.firstOrNull;
+
+  /// The row a tap opens: the representative with the album and length the
+  /// row shows.
+  SongCandidate get selection => withRowFacts(
+    representative,
+    album: album,
+    durationSeconds: durationSeconds,
+  );
+}
+
+/// Metadata keys holding a search row's displayed album and length, read
+/// only when the combined song states none of its own.
+const rowAlbumKey = 'searchRowAlbum', rowDurationKey = 'searchRowDuration';
+
+/// [candidate] with a search row's displayed [album] and [durationSeconds]
+/// where it has none of its own, so the opened song keeps the facts shown in
+/// search. A group's members never disagree on a known album. They are
+/// display facts only: discovery and matching never read them, as another
+/// member's album or length is not this row's identity.
+SongCandidate withRowFacts(
+  SongCandidate candidate, {
+  String? album,
+  double? durationSeconds,
+}) {
+  final addAlbum = _album(candidate) == null && album != null;
+  final addDuration =
+      _duration(candidate) == null && _seconds(durationSeconds) != null;
+  if (!addAlbum && !addDuration) return candidate;
+  return SongCandidate(
+    providerId: candidate.providerId,
+    id: candidate.id,
+    title: candidate.title,
+    artist: candidate.artist,
+    album: candidate.album,
+    durationSeconds: candidate.durationSeconds,
+    url: candidate.url,
+    metadata: {
+      ...candidate.metadata,
+      rowAlbumKey: ?(addAlbum ? album : null),
+      rowDurationKey: ?(addDuration ? durationSeconds : null),
+    },
+    recordingIds: candidate.recordingIds,
+    extra: candidate.extra,
+  );
+}
+
+/// [candidate] without the keys [withRowFacts] adds, so they are never
+/// stored or ranked as evidence.
+SongCandidate withoutRowFacts(SongCandidate candidate) {
+  if (!candidate.metadata.containsKey(rowAlbumKey) &&
+      !candidate.metadata.containsKey(rowDurationKey)) {
+    return candidate;
+  }
+  return SongCandidate(
+    providerId: candidate.providerId,
+    id: candidate.id,
+    title: candidate.title,
+    artist: candidate.artist,
+    album: candidate.album,
+    durationSeconds: candidate.durationSeconds,
+    url: candidate.url,
+    metadata: {...candidate.metadata}
+      ..remove(rowAlbumKey)
+      ..remove(rowDurationKey),
+    recordingIds: candidate.recordingIds,
+    extra: candidate.extra,
+  );
 }
 
 class _Group {

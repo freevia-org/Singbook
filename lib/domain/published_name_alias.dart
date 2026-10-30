@@ -32,7 +32,9 @@ List<String> publishedNameVariants(String value) {
     ' ',
   );
   if (RegExp(
-    r'\b(?:version|live|acoustic|unplugged|translation|translated|translate|feat|featuring|ft|remix|remaster(?:ed)?|edit|cover|karaoke|instrumental|demo)\b',
+    // Broadcast lengths, edits and script labels describe a release, not a
+    // name, and would otherwise make unrelated titles share an alias.
+    r'\b(?:version|ver|live|acoustic|unplugged|translation|translated|translate|feat|featuring|ft|remix|remaster(?:ed)?|edit|cover|karaoke|instrumental|demo|tv|size|extended|ost|soundtrack|radio|mono|stereo|bonus|reprise|romanized|romaji)\b',
   ).hasMatch(words)) {
     return variants;
   }

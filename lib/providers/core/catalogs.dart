@@ -240,6 +240,22 @@ class GeniusProvider implements LyricsProvider {
   }
 }
 
+/// Uploaders sometimes file "Title - Artist" (or "Artist - Title") as the
+/// track name; the part naming the row's own artist is dropped.
+String _withoutArtistPart(String title, String artist) {
+  String key(String text) => text.toLowerCase().replaceAll(
+    RegExp(r'[^\p{L}\p{N}]+', unicode: true),
+    '',
+  );
+  final artistKey = key(artist);
+  final parts = title.split(RegExp(r'\s+[-–—]\s+'));
+  if (artistKey.isEmpty || parts.length != 2) return title;
+  final (first, second) = (parts[0].trim(), parts[1].trim());
+  if (key(second) == artistKey && key(first).isNotEmpty) return first;
+  if (key(first) == artistKey && key(second).isNotEmpty) return second;
+  return title;
+}
+
 class LrclibProvider implements LyricsProvider {
   LrclibProvider(this.http);
   final ProviderTransport http;
@@ -252,11 +268,12 @@ class LrclibProvider implements LyricsProvider {
   );
   static SongCandidate parseSong(dynamic raw) {
     final data = object(raw), id = numericId(object(raw)['id']);
+    final artist = requiredText(data['artistName']);
     return SongCandidate(
       providerId: 'lrclib',
       id: id,
-      title: requiredText(data['trackName']),
-      artist: requiredText(data['artistName']),
+      title: _withoutArtistPart(requiredText(data['trackName']), artist),
+      artist: artist,
       album: clean(data['albumName']),
       durationSeconds: durationValue(data['duration']),
       url: 'https://lrclib.net/api/get/$id',

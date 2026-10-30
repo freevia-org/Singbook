@@ -239,6 +239,28 @@ void main() {
     );
   });
 
+  test('the selected record outweighs another resolved album', () {
+    final other = _source(
+      candidate: _candidate(provider: 'lyrics', id: 'other'),
+      metadata: {'album': 'Compilation', 'durationSeconds': 275},
+    );
+    final claims = collectSourceEvidence(
+      _candidate(album: 'Original Album', duration: 266),
+      [other],
+      compatible: (_, _) => true,
+    );
+    for (final field in ['metadata.album', 'metadata.durationSeconds']) {
+      final signals = {
+        for (final claim in claims.where((claim) => claim.field == field))
+          claim.value: claim.qualitySignals,
+      };
+      expect(signals.values, [
+        {'selectedRecord': 3},
+        {'resolvedClaim': 2},
+      ], reason: field);
+    }
+  });
+
   test('rejected or context-incompatible metadata stays as a claim', () {
     final source = _source(
       candidate: _candidate(provider: 'catalog', metadata: {'key': 'F#'}),
