@@ -365,6 +365,15 @@ void main() {
   );
 
   test(
+    'closing the picker without choosing a folder is a cancellation',
+    () async {
+      selectedIds = [];
+      await expectLater(access.pickFolder(), throwsA(_error('cancelled')));
+      expect(vault.values, isEmpty);
+    },
+  );
+
+  test(
     'ordinary files and trashed folders cannot replace a usable folder grant',
     () async {
       await access.pickFolder();

@@ -537,10 +537,12 @@ class AppControllerAdapter extends VerseUiController {
       accountName: app.syncAccountEmail,
       syncDriveFolderName: app.syncDriveFolderName,
       accountPhotoUrl: app.syncAccountPhotoUrl,
-      accountError: _syncWarningOnly ? null : app.syncError,
+      accountError: _syncWarningOnly || _syncCancelled ? null : app.syncError,
       lastSyncAt: _lastSyncAt,
       lastSyncConflicts: _lastSyncConflicts,
-      lastSyncErrorCode: _syncWarningOnly ? null : _lastSyncErrorCode,
+      lastSyncErrorCode: _syncWarningOnly || _syncCancelled
+          ? null
+          : _lastSyncErrorCode,
       syncWarningCode: _syncWarningOnly ? app.syncWarning : null,
       syncSuspiciousDeletionCount: app.syncSuspiciousDeletionCount,
       autoSyncEnabled: _autoSyncEnabled,
@@ -3103,6 +3105,10 @@ class AppControllerAdapter extends VerseUiController {
   /// not a failure.
   bool get _syncWarningOnly =>
       app.syncWarning != null && app.syncError == app.syncWarning;
+
+  /// The person dismissed a system or Google dialog; nothing went wrong, so it
+  /// is neither an error banner nor a failed-sync notice.
+  bool get _syncCancelled => app.syncError == 'cancelled';
   bool get _autoSyncEnabled => app.autoSyncEnabled;
 
   @override
@@ -3181,6 +3187,7 @@ class AppControllerAdapter extends VerseUiController {
     if (!app.syncConnected) return;
     try {
       await app.chooseSyncDriveFolder();
+      if (_syncCancelled) return;
       if (app.syncError != null) {
         postNotice(UiNotice.syncFailed);
       } else {
@@ -3196,6 +3203,7 @@ class AppControllerAdapter extends VerseUiController {
     if (!app.syncConnected || app.syncDriveFolderName == null) return;
     try {
       await app.importChordProFromDrive();
+      if (_syncCancelled) return;
       if (app.syncError != null) {
         postNotice(UiNotice.syncFailed);
       } else {
@@ -3209,6 +3217,8 @@ class AppControllerAdapter extends VerseUiController {
   void _postSyncOutcome(int conflictsBefore) {
     if (_syncWarningOnly) {
       postNotice(UiNotice.syncSkipped);
+    } else if (_syncCancelled) {
+      return;
     } else if (app.syncError != null) {
       // A refused deletion waits for the person's decision (the dialog); it is
       // not announced as a failed sync as well.
