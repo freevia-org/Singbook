@@ -767,6 +767,7 @@
   "setlistEntryRemoved": "{song} को सूची से हटाया गया",
   "backupTitle": "बैकअप और पुनर्स्थापना",
   "backupExport": "बैकअप निर्यात करें",
+  "backupSaveToDevice": "बैकअप डिवाइस में सहेजें",
   "backupRestore": "बैकअप पुनर्स्थापित करें",
   "backupIncludePreferences": "ऐप की प्राथमिकताएँ शामिल करें",
   "backupRestorePreferences": "ऐप की प्राथमिकताएँ पुनर्स्थापित करें",

@@ -1923,6 +1923,9 @@ class AppLocalizationsRo extends AppLocalizations {
   String get backupExport => 'Exportă copia de rezervă';
 
   @override
+  String get backupSaveToDevice => 'Salvează copia de rezervă pe dispozitiv';
+
+  @override
   String get backupRestore => 'Restaurează copia de rezervă';
 
   @override

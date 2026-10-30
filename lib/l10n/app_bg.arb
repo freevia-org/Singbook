@@ -221,6 +221,7 @@
   "setlistEntryRemoved": "Песента „{song}“ е премахната от списъка",
   "backupTitle": "Архивиране и възстановяване",
   "backupExport": "Експортиране на архив",
+  "backupSaveToDevice": "Запази резервно копие на устройството",
   "backupRestore": "Възстановяване на архив",
   "backupIncludePreferences": "Включване на настройките на приложението",
   "backupRestorePreferences": "Възстановяване на настройките на приложението",

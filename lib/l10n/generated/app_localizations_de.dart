@@ -1915,6 +1915,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get backupExport => 'Sicherung exportieren';
 
   @override
+  String get backupSaveToDevice => 'Sicherung auf dem Gerät speichern';
+
+  @override
   String get backupRestore => 'Sicherung wiederherstellen';
 
   @override

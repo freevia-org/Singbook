@@ -1837,6 +1837,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get backupExport => '백업 내보내기';
 
   @override
+  String get backupSaveToDevice => '백업을 기기에 저장';
+
+  @override
   String get backupRestore => '백업 복원';
 
   @override

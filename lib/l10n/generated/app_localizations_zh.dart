@@ -1804,6 +1804,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get backupExport => '导出备份';
 
   @override
+  String get backupSaveToDevice => '将备份保存到设备';
+
+  @override
   String get backupRestore => '恢复备份';
 
   @override

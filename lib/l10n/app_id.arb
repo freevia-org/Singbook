@@ -767,6 +767,7 @@
   "setlistEntryRemoved": "{song} dihapus dari daftar lagu",
   "backupTitle": "Cadangkan dan pulihkan",
   "backupExport": "Ekspor cadangan",
+  "backupSaveToDevice": "Simpan cadangan ke perangkat",
   "backupRestore": "Pulihkan cadangan",
   "backupIncludePreferences": "Sertakan preferensi aplikasi",
   "backupRestorePreferences": "Pulihkan preferensi aplikasi",

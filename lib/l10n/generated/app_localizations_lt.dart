@@ -1927,6 +1927,9 @@ class AppLocalizationsLt extends AppLocalizations {
   String get backupExport => 'Eksportuoti atsarginę kopiją';
 
   @override
+  String get backupSaveToDevice => 'Įrašyti atsarginę kopiją į įrenginį';
+
+  @override
   String get backupRestore => 'Atkurti atsarginę kopiją';
 
   @override

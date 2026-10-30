@@ -767,6 +767,7 @@
   "setlistEntryRemoved": "{song} poistettiin kappalelistasta",
   "backupTitle": "Varmuuskopiointi ja palautus",
   "backupExport": "Vie varmuuskopio",
+  "backupSaveToDevice": "Tallenna varmuuskopio laitteelle",
   "backupRestore": "Palauta varmuuskopio",
   "backupIncludePreferences": "Sisällytä sovelluksen asetukset",
   "backupRestorePreferences": "Palauta sovelluksen asetukset",

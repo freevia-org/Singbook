@@ -1933,6 +1933,9 @@ class AppLocalizationsSl extends AppLocalizations {
   String get backupExport => 'Izvozi varnostno kopijo';
 
   @override
+  String get backupSaveToDevice => 'Shrani varnostno kopijo v napravo';
+
+  @override
   String get backupRestore => 'Obnovi varnostno kopijo';
 
   @override

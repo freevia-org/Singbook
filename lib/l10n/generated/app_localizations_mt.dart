@@ -1920,6 +1920,9 @@ class AppLocalizationsMt extends AppLocalizations {
   String get backupExport => 'Esporta backup';
 
   @override
+  String get backupSaveToDevice => 'Issejvja l-backup fuq l-apparat';
+
+  @override
   String get backupRestore => 'Irrestawra backup';
 
   @override

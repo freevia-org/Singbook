@@ -765,6 +765,7 @@
   "setlistEntryRemoved": "Piesa „{song}” a fost eliminată din listă",
   "backupTitle": "Copie de rezervă și restaurare",
   "backupExport": "Exportă copia de rezervă",
+  "backupSaveToDevice": "Salvează copia de rezervă pe dispozitiv",
   "backupRestore": "Restaurează copia de rezervă",
   "backupIncludePreferences": "Include preferințele aplicației",
   "backupRestorePreferences": "Restaurează preferințele aplicației",

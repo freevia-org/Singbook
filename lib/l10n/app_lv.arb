@@ -765,6 +765,7 @@
   "setlistEntryRemoved": "Dziesma „{song}” noņemta no dziesmu saraksta",
   "backupTitle": "Dublēšana un atjaunošana",
   "backupExport": "Eksportēt dublējumu",
+  "backupSaveToDevice": "Saglabāt dublējumu ierīcē",
   "backupRestore": "Atjaunot dublējumu",
   "backupIncludePreferences": "Iekļaut lietotnes preferences",
   "backupRestorePreferences": "Atjaunot lietotnes preferences",

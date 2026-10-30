@@ -773,6 +773,7 @@
   "setlistEntryRemoved": "تمت إزالة {song} من قائمة الأغاني",
   "backupTitle": "النسخ الاحتياطي والاستعادة",
   "backupExport": "تصدير نسخة احتياطية",
+  "backupSaveToDevice": "حفظ النسخة الاحتياطية على الجهاز",
   "backupRestore": "استعادة نسخة احتياطية",
   "backupIncludePreferences": "تضمين تفضيلات التطبيق",
   "backupRestorePreferences": "استعادة تفضيلات التطبيق",

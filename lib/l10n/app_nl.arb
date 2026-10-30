@@ -765,6 +765,7 @@
   "setlistEntryRemoved": "{song} is uit de setlist verwijderd",
   "backupTitle": "Back-up en herstel",
   "backupExport": "Back-up exporteren",
+  "backupSaveToDevice": "Back-up opslaan op apparaat",
   "backupRestore": "Back-up herstellen",
   "backupIncludePreferences": "App-voorkeuren opnemen",
   "backupRestorePreferences": "App-voorkeuren herstellen",

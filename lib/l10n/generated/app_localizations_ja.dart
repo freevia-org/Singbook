@@ -1831,6 +1831,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get backupExport => 'バックアップをエクスポート';
 
   @override
+  String get backupSaveToDevice => 'バックアップをデバイスに保存';
+
+  @override
   String get backupRestore => 'バックアップを復元';
 
   @override

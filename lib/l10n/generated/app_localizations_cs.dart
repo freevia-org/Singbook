@@ -1910,6 +1910,9 @@ class AppLocalizationsCs extends AppLocalizations {
   String get backupExport => 'Exportovat zálohu';
 
   @override
+  String get backupSaveToDevice => 'Uložit zálohu do zařízení';
+
+  @override
   String get backupRestore => 'Obnovit zálohu';
 
   @override

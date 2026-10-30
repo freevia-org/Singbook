@@ -1909,6 +1909,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get backupExport => 'Exportar copia de seguridad';
 
   @override
+  String get backupSaveToDevice =>
+      'Guardar copia de seguridad en el dispositivo';
+
+  @override
   String get backupRestore => 'Restaurar copia de seguridad';
 
   @override

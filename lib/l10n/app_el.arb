@@ -767,6 +767,7 @@
   "setlistEntryRemoved": "Το τραγούδι «{song}» αφαιρέθηκε από τη λίστα",
   "backupTitle": "Δημιουργία αντιγράφου και επαναφορά",
   "backupExport": "Εξαγωγή αντιγράφου ασφαλείας",
+  "backupSaveToDevice": "Αποθήκευση αντιγράφου στη συσκευή",
   "backupRestore": "Επαναφορά αντιγράφου ασφαλείας",
   "backupIncludePreferences": "Συμπερίληψη προτιμήσεων εφαρμογής",
   "backupRestorePreferences": "Επαναφορά προτιμήσεων εφαρμογής",
