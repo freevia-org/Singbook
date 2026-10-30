@@ -1,0 +1,168 @@
+{
+  "generatedAt": "2026-10-30T01:08:53.098111Z",
+  "runtime": "android-36-x86_64-16kb",
+  "sourceCommit": "b17b2d862a303ef1a0b9ce8b9e0b219f08df40c2",
+  "checks": [
+    {
+      "pageId": "115615",
+      "title": "Die Gedanken sind frei",
+      "artist": "",
+      "exportSha256": "fb0b884d656374316bb4c20ad2fb804d923731e718ee59a1e086c5458c7b8955",
+      "exportBytes": 200546,
+      "songBodyCharacters": 738,
+      "sourceBodyCharacters": 678,
+      "songHasChords": true,
+      "sourceHasChords": true,
+      "sourceBodySha256": "b34554b119309a349a80c0d1ae4f717f1a625dbc205d688932bded489a792934",
+      "sourceMetadata": {
+        "identityScope": "arrangement",
+        "wikibooksPageId": 115615,
+        "wikibooksRevisionId": 1083680,
+        "sourceChordNotation": "german",
+        "language": "de"
+      },
+      "sourceRights": {
+        "license": "unknown",
+        "revision": 1083680,
+        "permissions": {
+          "status": "field_specific",
+          "pageContributions": "CC-BY-SA-4.0",
+          "pageContributionsLicenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "underlyingLyricsAndMusic": "unknown"
+        }
+      },
+      "attributionRetained": true,
+      "rawPayloadSha256": "5ba40ed537e8219c741e7f514fad8ef1987b8bba2379f3a6ea8ec23c22745f4d",
+      "rawPayloadHashVerified": true,
+      "timingTrackCount": 0,
+      "selectedRecording": "wikibooksliederbuch:115615",
+      "extensionError": null
+    },
+    {
+      "pageId": "118857",
+      "title": "Kein schöner Land",
+      "artist": "",
+      "exportSha256": "16e8840bb0790d6e6c03431ca281792e0ee91d778cd50116d12832a929051373",
+      "exportBytes": 169898,
+      "songBodyCharacters": 667,
+      "sourceBodyCharacters": 587,
+      "songHasChords": true,
+      "sourceHasChords": true,
+      "sourceBodySha256": "56aeefa41362e4e4b001efd82fd07958b25c0c2f10c408290bcdaeef0b0db66c",
+      "sourceMetadata": {
+        "identityScope": "arrangement",
+        "wikibooksPageId": 118857,
+        "wikibooksRevisionId": 1036453,
+        "sourceChordNotation": "german",
+        "language": "de"
+      },
+      "sourceRights": {
+        "license": "unknown",
+        "revision": 1036453,
+        "permissions": {
+          "status": "field_specific",
+          "pageContributions": "CC-BY-SA-4.0",
+          "pageContributionsLicenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "underlyingLyricsAndMusic": "unknown"
+        }
+      },
+      "attributionRetained": true,
+      "rawPayloadSha256": "9d9f991c707bf3435aa6551f9ebe25d1ea4ced101d8bfb2599e719298cb0e197",
+      "rawPayloadHashVerified": true,
+      "timingTrackCount": 0,
+      "selectedRecording": "wikibooksliederbuch:118857",
+      "extensionError": null
+    }
+  ],
+  "schemaVersion": 1,
+  "qualification": "candidate-only-native-app-baseline",
+  "catalog": {
+    "path": "config/source-catalog-v11.json",
+    "onlyEnabledSource": "wikibooksliederbuch",
+    "privateOverlay": true,
+    "productionDefaultEnabled": false,
+    "sha256": "13c25118570de1d62ddfaad91266bad99d4666ae38b15950d4c3dbfd28cb243f",
+    "channel": 11,
+    "productionStatus": "disabled",
+    "revision": 25
+  },
+  "application": {
+    "apkSha256": "82f17c7c732373a2285a3c3fe1a5d59e4bc418c0907f4cf9ac525784c92cd5ec",
+    "buildScript": "scripts/build-android.ps1 -Debug -AllowMissingDefines",
+    "releaseProof": false,
+    "version": "0.2.32+46",
+    "package": "org.freevia.singbook",
+    "mode": "debug",
+    "credentialsUsed": false,
+    "entryPoint": "lib/main.dart"
+  },
+  "device": {
+    "physicalDevicesTouched": false,
+    "sharedEmulatorTouched": false,
+    "initialFreeDataGB": 4.9,
+    "api": 36,
+    "abi": "x86_64",
+    "pageSizeBytes": 16384,
+    "freshIsolatedData": true,
+    "avd": "SingbookDatasourceWiki_20261030"
+  },
+  "ui": {
+    "reopenBothAfterProcessRestart": true,
+    "chordProExportGeneratedBoth": true,
+    "shareChooserCancelledWithoutSending": true,
+    "exportsByteIdenticalToDatabaseDocuments": true,
+    "savePass": true,
+    "nativeResolvePass": true,
+    "searchPass": true,
+    "databaseContentAndLyricHashesStableAfterRestart": true,
+    "chordControlsRendered": true,
+    "validQueries": [
+      "Gedanken",
+      "Kein"
+    ]
+  },
+  "network": {
+    "note": "UI actions do not measure HTTP requests or retries; one malformed keyboard-altered online query occurred before verified short queries. Subsequent input correction was done in local library view.",
+    "httpRequestCount": null,
+    "scope": "Only Wikibooks enabled in stock app; candidate-only additional capability validation",
+    "requestCountMeasured": false
+  },
+  "roadblocks": [
+    {
+      "userAction": null,
+      "reason": "System UI not responding prompt",
+      "tried": "Wait",
+      "step": "Fresh emulator startup",
+      "resolved": true
+    },
+    {
+      "userAction": null,
+      "reason": "English input method changed full German text",
+      "tried": "Enter short title fragments in local view and verify exact field text before online search",
+      "step": "Query entry",
+      "resolved": true
+    },
+    {
+      "userAction": null,
+      "reason": "Null accessibility root during route/startup transition",
+      "tried": "Discard failed capture and retry with a new unique filename",
+      "step": "UI capture",
+      "resolved": true
+    },
+    {
+      "userAction": null,
+      "reason": "Technical pages surfaced as songs: Inhalt, Hilfe, Lieder nach Akkorden, Vorlage:Liedheader",
+      "tried": "Retain disabled production state; prepare bounded exclusion with regression tests",
+      "step": "Catalog search quality",
+      "resolved": false
+    }
+  ],
+  "activationQualified": false,
+  "remainingGates": [
+    "Exclude observed technical pages and revalidate searches",
+    "Current-head CI",
+    "Managed cloud qualification",
+    "Rights and activation review",
+    "Compatible app release"
+  ]
+}
