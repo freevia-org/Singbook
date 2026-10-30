@@ -14,6 +14,7 @@ import '../l10n/generated/app_localizations.dart';
 import 'app_version.dart';
 import 'account_avatar.dart';
 import 'app_controller_adapter.dart';
+import 'desktop_shortcuts.dart';
 import 'home/home_screen.dart';
 import 'library/editor_screen.dart';
 import 'library/setlists_screen.dart';
@@ -580,8 +581,17 @@ class _VerseAppShellState extends State<VerseAppShell>
   }
 
   @override
-  Widget build(BuildContext context) =>
-      ListenableBuilder(listenable: widget.controller, builder: _buildShell);
+  Widget build(BuildContext context) => ListenableBuilder(
+    listenable: widget.controller,
+    builder: (context, child) => DesktopShortcuts(
+      commands: DesktopCommands.forState(
+        widget.controller.state,
+        widget.controller,
+        newSetlistName: AppLocalizations.of(context).setlistCreate,
+      ),
+      child: _buildShell(context, child),
+    ),
+  );
 
   void _promptAccountChange(VerseUiState state) {
     final changed = state.syncErrorCode == 'account_changed';
