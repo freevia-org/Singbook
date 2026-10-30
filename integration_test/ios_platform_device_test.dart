@@ -76,7 +76,19 @@ void main() {
       body: '[C]A lantern lights the road\n[G]We sing a new refrain',
     );
     final files = VerseFileActions();
+    const clipboardChannel = MethodChannel(
+      'org.freevia.singbook/rich_clipboard',
+    );
     await files.copySong(song);
+    final songReceipt = await clipboardChannel.invokeMapMethod<String, dynamic>(
+      'debugClipboardReceipt',
+    );
+    expect(
+      songReceipt?['storedTypes'],
+      containsAll(['public.plain-text', 'public.html']),
+    );
+    expect(songReceipt?['plainText'], songPlainText(song));
+    expect(songReceipt?['html'], songRichHtml(song));
     final copiedSong = await Clipboard.getData('text/plain');
     expect(copiedSong?.text, contains('A lantern lights the road'));
     expect(copiedSong?.text, isNot(contains('{title:')));
@@ -89,11 +101,31 @@ void main() {
       ],
     );
     await files.copySetlist(setlist, [song]);
+    final setlistReceipt = await clipboardChannel
+        .invokeMapMethod<String, dynamic>('debugClipboardReceipt');
+    expect(
+      setlistReceipt?['storedTypes'],
+      containsAll(['public.plain-text', 'public.html']),
+    );
+    expect(setlistReceipt?['plainText'], setlistPlainText(setlist, [song]));
+    expect(setlistReceipt?['html'], setlistRichHtml(setlist, [song]));
     final copiedSetlist = await Clipboard.getData('text/plain');
     expect(copiedSetlist?.text, startsWith(setlist.name));
     expect(
       RegExp('A lantern lights the road').allMatches(copiedSetlist!.text!),
       hasLength(2),
+    );
+    await expectLater(
+      clipboardChannel.invokeMethod<void>('setHtmlText', {
+        'text': 'missing html',
+      }),
+      throwsA(
+        isA<PlatformException>().having(
+          (error) => error.code,
+          'code',
+          'invalid_arguments',
+        ),
+      ),
     );
   }, skip: !Platform.isIOS);
 

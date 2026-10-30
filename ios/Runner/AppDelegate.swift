@@ -2,12 +2,14 @@ import Flutter
 import UIKit
 import AuthenticationServices
 import Security
+import UniformTypeIdentifiers
 
 @main
 @objc class AppDelegate: FlutterAppDelegate, FlutterImplicitEngineDelegate {
   private var iCloudSyncChannel: ICloudSyncChannel?
   private var oauthBrowserChannel: FlutterMethodChannel?
   private var secureCredentialsChannel: FlutterMethodChannel?
+  private var richClipboardChannel: FlutterMethodChannel?
   private var authorizationSession: ASWebAuthenticationSession?
   private var authorizationResult: FlutterResult?
   private var authorizationGeneration: UUID?
@@ -28,6 +30,28 @@ import Security
     }
     let messenger = registrar.messenger()
     iCloudSyncChannel = ICloudSyncChannel(messenger: messenger)
+    let clipboardChannel = FlutterMethodChannel(
+      name: "org.freevia.singbook/rich_clipboard",
+      binaryMessenger: messenger
+    )
+    richClipboardChannel = clipboardChannel
+    clipboardChannel.setMethodCallHandler { [weak self] call, result in
+      guard let self else {
+        result(FlutterError(code: "clipboard_unavailable", message: "Clipboard is unavailable", details: nil))
+        return
+      }
+      switch call.method {
+      case "setHtmlText":
+        self.setHtmlText(call.arguments, result: result)
+#if DEBUG
+      case "debugClipboardReceipt":
+        result(self.debugClipboardReceipt())
+#endif
+      default:
+        result(FlutterMethodNotImplemented)
+      }
+    }
+
     let oauthChannel = FlutterMethodChannel(
       name: "org.freevia.singbook/oauth_browser",
       binaryMessenger: messenger
@@ -62,6 +86,43 @@ import Security
       self?.handleCredentialCall(call, result: result)
     }
   }
+
+  private func setHtmlText(_ arguments: Any?, result: @escaping FlutterResult) {
+    guard
+      let values = arguments as? [String: Any],
+      let text = values["text"] as? String,
+      let html = values["html"] as? String
+    else {
+      result(FlutterError(code: "invalid_arguments", message: "Text and HTML are required", details: nil))
+      return
+    }
+
+    UIPasteboard.general.items = [[
+      UTType.plainText.identifier: text,
+      UTType.html.identifier: Data(html.utf8),
+    ]]
+    result(nil)
+  }
+
+#if DEBUG
+  private func debugClipboardReceipt() -> [String: Any] {
+    guard let item = UIPasteboard.general.items.first else {
+      return ["storedTypes": [String](), "plainText": NSNull(), "html": NSNull()]
+    }
+    let plainText = item[UTType.plainText.identifier] as? String
+    let html: String?
+    if let htmlData = item[UTType.html.identifier] as? Data {
+      html = String(data: htmlData, encoding: .utf8)
+    } else {
+      html = item[UTType.html.identifier] as? String
+    }
+    return [
+      "storedTypes": Array(item.keys).sorted(),
+      "plainText": plainText as Any? ?? NSNull(),
+      "html": html as Any? ?? NSNull(),
+    ]
+  }
+#endif
 
   private func authorize(_ arguments: Any?, result: @escaping FlutterResult) {
     guard authorizationSession == nil else {

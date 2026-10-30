@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart' hide TextDirection;
 import '../../l10n/generated/app_localizations.dart';
 import '../format.dart';
@@ -283,6 +284,23 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Desktop convention: Ctrl+F (Cmd+F on macOS) jumps to the search field.
+    return CallbackShortcuts(
+      bindings: {
+        const SingleActivator(LogicalKeyboardKey.keyF, control: true):
+            _queryFocus.requestFocus,
+        const SingleActivator(LogicalKeyboardKey.keyF, meta: true):
+            _queryFocus.requestFocus,
+      },
+      child: Focus(
+        autofocus: true,
+        skipTraversal: true,
+        child: _content(context),
+      ),
+    );
+  }
+
+  Widget _content(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final state = widget.state;
     if (state.homeListMode == HomeListMode.online && state.comparison != null) {

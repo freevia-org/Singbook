@@ -199,6 +199,7 @@ class AccountSection extends StatelessWidget {
       ),
       if (state.syncProvider == SyncProvider.googleDrive &&
           (defaultTargetPlatform == TargetPlatform.android ||
+              defaultTargetPlatform == TargetPlatform.iOS ||
               defaultTargetPlatform == TargetPlatform.macOS)) ...[
         ListTile(
           key: const ValueKey('account-drive-folder'),
