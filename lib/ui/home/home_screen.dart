@@ -860,6 +860,20 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
                         ),
                     ],
                   ),
+                  if (item.sourceVariantLabel case final variant?)
+                    Semantics(
+                      label:
+                          '${l10n.searchVersionDetails}: ${formatSourceVariantLabel(variant)}',
+                      child: ExcludeSemantics(
+                        child: Text(
+                          formatSourceVariantLabel(variant),
+                          key: ValueKey('online-variant-${item.id}'),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ),
+                    ),
                   if (item.isHistoricalText)
                     Text(
                       l10n.providerDescHistoricalTextPerWorkLicense,

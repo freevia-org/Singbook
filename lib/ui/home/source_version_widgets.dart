@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../l10n/generated/app_localizations.dart';
+import '../format.dart';
 import '../verse_ui_state.dart';
 
 /// The same choices are used by the comparison list and the full preview.
@@ -12,12 +13,18 @@ List<SourceVersionData> comparisonVersions(SearchComparisonData comparison) {
   ];
 }
 
-String versionName(AppLocalizations l10n, SourceVersionData version) =>
-    version.id == 'combined'
-    ? l10n.searchCombinedLabel
-    : version.providerName.isNotEmpty
-    ? version.providerName
-    : l10n.searchSuggested;
+String versionName(AppLocalizations l10n, SourceVersionData version) {
+  if (version.id == 'combined') return l10n.searchCombinedLabel;
+  final name = version.providerName.isNotEmpty
+      ? version.providerName
+      : l10n.searchSuggested;
+  final label = version.metadata['sourceVariantLabel'];
+  return version.providerId == 'mutopia' &&
+          label is String &&
+          RegExp(r'^[A-Za-z][A-Za-z0-9_-]{0,63}$').hasMatch(label)
+      ? '$name · ${formatSourceVariantLabel(label)}'
+      : name;
+}
 
 /// The combined recommendation is a distinct choice even when only one source
 /// currently contributes; choosing a provider tab pins that source directly.

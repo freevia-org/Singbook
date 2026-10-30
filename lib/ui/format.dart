@@ -1,5 +1,15 @@
 import 'package:intl/intl.dart';
 
+/// Spaces a publisher's identifier for display without treating it as a
+/// verified language, changing its persisted value, or changing a song title.
+String formatSourceVariantLabel(String value) {
+  if (value.isEmpty) return value;
+  return value.replaceAllMapped(
+    RegExp(r'([a-z0-9])([A-Z])'),
+    (match) => '${match[1]} ${match[2]}',
+  );
+}
+
 /// Formats [seconds] as `m:ss`, rounding to the nearest second.
 String formatDuration(double seconds) {
   final total = seconds.round();
