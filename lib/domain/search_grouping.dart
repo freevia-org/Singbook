@@ -312,6 +312,29 @@ SongCandidate withRowFacts(
   );
 }
 
+/// [candidate] without the keys [withRowFacts] adds, so they are never
+/// stored or ranked as evidence.
+SongCandidate withoutRowFacts(SongCandidate candidate) {
+  if (!candidate.metadata.containsKey(rowAlbumKey) &&
+      !candidate.metadata.containsKey(rowDurationKey)) {
+    return candidate;
+  }
+  return SongCandidate(
+    providerId: candidate.providerId,
+    id: candidate.id,
+    title: candidate.title,
+    artist: candidate.artist,
+    album: candidate.album,
+    durationSeconds: candidate.durationSeconds,
+    url: candidate.url,
+    metadata: {...candidate.metadata}
+      ..remove(rowAlbumKey)
+      ..remove(rowDurationKey),
+    recordingIds: candidate.recordingIds,
+    extra: candidate.extra,
+  );
+}
+
 class _Group {
   _Group(this.key, SongCandidate row, int index) {
     add(row, index);

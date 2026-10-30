@@ -10,7 +10,7 @@ import 'artist_credit.dart';
 import 'reviewed_chart_artist.dart';
 import 'metadata_artist_credit.dart';
 import 'published_name_alias.dart';
-import 'search_grouping.dart' show rowAlbumKey, rowDurationKey;
+import 'search_grouping.dart' show rowAlbumKey, rowDurationKey, withoutRowFacts;
 import 'arrangement_context.dart';
 import 'contextual_chart_lyrics.dart';
 import 'compact_chord_alignment.dart';
@@ -3229,6 +3229,27 @@ SongDocument combineSources(
   String? preferredSourceId,
   bool allowRejectedPreferredSource = false,
   List<HistoricalCacheUse> historicalCacheUses = const [],
+}) =>
+    // The search row's displayed facts fill only what no source stated, and
+    // never enter the selection that is ranked and stored.
+    _combineSources(
+      withoutRowFacts(selected),
+      results,
+      rowAlbum: selected.metadata[rowAlbumKey],
+      rowDuration: selected.metadata[rowDurationKey],
+      preferredSourceId: preferredSourceId,
+      allowRejectedPreferredSource: allowRejectedPreferredSource,
+      historicalCacheUses: historicalCacheUses,
+    );
+
+SongDocument _combineSources(
+  SongCandidate selected,
+  List<SourceResult> results, {
+  required Object? rowAlbum,
+  required Object? rowDuration,
+  String? preferredSourceId,
+  bool allowRejectedPreferredSource = false,
+  List<HistoricalCacheUse> historicalCacheUses = const [],
 }) {
   final inputSources = List<SourceResult>.of(results);
   results = _retainedSourceEvidence(selected, results);
@@ -3718,7 +3739,7 @@ SongDocument combineSources(
   final metadata = <String, dynamic>{
     ...selected.metadata,
     if (selected.album != null) 'album': selected.album,
-  }..removeWhere((key, _) => key == rowAlbumKey || key == rowDurationKey);
+  };
   metadata.removeWhere((_, value) => !_hasMetadata(value));
   final selectedDuration =
       _validDuration(selected.durationSeconds) ??
@@ -4226,10 +4247,9 @@ SongDocument combineSources(
       : (body: sectioned, lines: 0);
   final finalBody = filled.body;
   // The search row's album and length fill only what no source stated.
-  metadata.removeWhere((key, _) => key == rowAlbumKey || key == rowDurationKey);
   for (final (field, value) in [
-    ('album', selected.metadata[rowAlbumKey]),
-    ('durationSeconds', _validDuration(selected.metadata[rowDurationKey])),
+    ('album', rowAlbum),
+    ('durationSeconds', _validDuration(rowDuration)),
   ]) {
     if (_hasMetadata(metadata[field]) || value is! Object) continue;
     if (value is String && value.trim().isEmpty) continue;
