@@ -1,0 +1,546 @@
+{
+  "schemaVersion": 1,
+  "passed": 89,
+  "cases": [
+    {
+      "file": "test/application/source_catalog_cache_migration_test.dart",
+      "name": "authoritative refresh cancels pending search when migration changes content at the same envelope revision",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/application/source_catalog_cache_migration_test.dart",
+      "name": "offline upgrade retains compatible cached repairs, removals and additions until current-channel refresh commits",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/application/source_catalog_cache_migration_test.dart",
+      "name": "unknown previous native entries cannot poison an offline upgrade",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/application/source_channel_upgrade_test.dart",
+      "name": "offline current channel enables qualified Chords and Tabs and keeps OpenScore off",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/application/source_channel_upgrade_test.dart",
+      "name": "bootstrap upgrades saved libraries to channel10 without changing old data",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/application/source_channel_upgrade_test.dart",
+      "name": "saved OpenScore opt-out survives a later catalog activation",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/application/wikibooks_channel11_upgrade_test.dart",
+      "name": "oldest cache, saved data and opt-outs survive a gated channel11 upgrade",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/acousticbrainz_channel10_test.dart",
+      "name": "channel10 inherits every channel9 row without reactivating gated sources",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/acousticbrainz_channel10_test.dart",
+      "name": "full current compiled roster and default catalog match offline without HTTP",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/acousticbrainz_channel10_test.dart",
+      "name": "channel9 binary rejects the new native ID atomically",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/acousticbrainz_channel10_test.dart",
+      "name": "closest channel9 cached repairs survive upgrade without mutating old cache",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/chords_and_tabs_channel8_test.dart",
+      "name": "channel8 activates qualified Chords and Tabs without editing v7",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/chords_and_tabs_channel8_test.dart",
+      "name": "new roster accepts v8 but an old v7 roster rejects it atomically",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/chords_and_tabs_channel8_test.dart",
+      "name": "channel8 offline maintenance covers every compiled provider",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/extra/extra_providers_test.dart",
+      "name": "extra roster distinguishes imports, catalogs, and identity-bound artwork",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/extra/extra_providers_test.dart",
+      "name": "user-selected file import preserves attribution, raw document and unknown rights",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/extra/extra_providers_test.dart",
+      "name": "import-only adapter never presents empty success as online lookup",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/extra/extra_providers_test.dart",
+      "name": "WorshipCommons excludes custom restricted licenses and uses actual sheet metadata",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/extra/extra_providers_test.dart",
+      "name": "WorshipCommons does not attribute composer sheet to an unrelated performer",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/extra/extra_providers_test.dart",
+      "name": "Worship timing retains word ends, original JSON and unverified recording",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/extra/extra_providers_test.dart",
+      "name": "invalid timing stays retained without partially activating cues",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/application/wikibooks_liederbuch_flow_test.dart",
+      "name": "Wikibooks controller saves exact revision and rights across reopen and export",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/extra/extra_providers_test.dart",
+      "name": "Sean catalog includes only original song paths and resolves explicit ChordPro",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/extra/extra_providers_test.dart",
+      "name": "Sean resolves saved legacy URLs without changing identity or metadata",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/extra/extra_providers_test.dart",
+      "name": "Sean never resolves covers through an injected same-host URL",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/extra/extra_providers_test.dart",
+      "name": "Open Filk retains exact license line and source recording link",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/extra/wikibooks_liederbuch_test.dart",
+      "name": "search stays in the Liederbuch mainspace boundary",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/extra/extra_providers_test.dart",
+      "name": "Chordie extracts selected chart and preserves original host attribution",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/extra/extra_providers_test.dart",
+      "name": "Chordie rejects wrong title in returned chart",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/extra/wikibooks_liederbuch_test.dart",
+      "name": "search excludes book utility pages without dropping song arrangements",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/extra/extra_providers_test.dart",
+      "name": "MusicBrainz retains releases separately instead of choosing arbitrary album",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/extra/wikibooks_liederbuch_test.dart",
+      "name": "utility page cannot resolve as a song even with song-like markup",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/extra/extra_providers_test.dart",
+      "name": "Wikidata keeps composition dates distinct from recording dates",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/extra/extra_providers_test.dart",
+      "name": "Commons never searches arbitrary song text for an image",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/extra/extra_providers_test.dart",
+      "name": "Commons retains author and license only for approved exact-file assets",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/extra/extra_providers_test.dart",
+      "name": "Wikisource requires selected work and never substitutes a text by title alone",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/extra/extra_providers_test.dart",
+      "name": "Wikisource excludes prose chrome and retains selected text revision/license",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/extra/wikibooks_liederbuch_test.dart",
+      "name": "parse extracts every poem, inline chords, credits, and literal lyric syntax",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/extra/wikibooks_liederbuch_test.dart",
+      "name": "chord letters follow Liederbuch/_Lieder_auf_Deutsch",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/extra/wikibooks_liederbuch_test.dart",
+      "name": "chord letters follow Liederbuch/_Lieder_auf_Englisch",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/extra/wikibooks_liederbuch_test.dart",
+      "name": "ambiguous B/H chord notation is rejected rather than guessed",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/extra/wikibooks_liederbuch_test.dart",
+      "name": "unrecognized chord annotations stay literal and are recorded",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/extra/wikibooks_liederbuch_test.dart",
+      "name": "pages without poem blocks are unavailable",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/extra/wikibooks_liederbuch_test.dart",
+      "name": "resolve rejects invalid page identity or missing page: {parse: {pageid: 7124, title: Liederbuch/ Morgenwind am Silberhang, revid: 1}}",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/extra/wikibooks_liederbuch_test.dart",
+      "name": "resolve rejects invalid page identity or missing page: {parse: {pageid: 7123, title: Liederbuch/ Another Song, revid: 1}}",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/extra/wikibooks_liederbuch_test.dart",
+      "name": "resolve rejects invalid page identity or missing page: {parse: {pageid: 7123, title: Liederbuch/ Morgenwind am Silberhang, revid: 0}}",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/extra/wikibooks_liederbuch_test.dart",
+      "name": "resolve rejects invalid page identity or missing page: {error: {code: missingtitle, info: missing page}}",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/extra/wikibooks_liederbuch_test.dart",
+      "name": "maxlag becomes provider_busy and pre-cancelled search makes no request",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/extra/wikibooks_liederbuch_test.dart",
+      "name": "portable ChordPro keeps source license scope and exact source evidence",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/extra/wikibooks_liederbuch_test.dart",
+      "name": "successful search response is cached for fifteen minutes",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/openscore_channel9_test.dart",
+      "name": "all eight historical catalog files retain their original LF bytes",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/openscore_channel9_test.dart",
+      "name": "v9 preserves v8 rows and adds one disabled, off-default source",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/openscore_channel9_test.dart",
+      "name": "known disabled source loads without becoming an active provider",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/openscore_channel9_test.dart",
+      "name": "v8 runtime rejects disabled OpenScore without cache mutation",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/openscore_channel9_test.dart",
+      "name": "v8 runtime rejects active OpenScore without cache mutation",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/openscore_channel9_test.dart",
+      "name": "unknown disabled builtin still rejects atomically in v9",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/openscore_channel9_test.dart",
+      "name": "offline maintenance derives the complete v9 registry without HTTP",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/source_catalog_cache_migration_test.dart",
+      "name": "valid current cache recovers when bundled adapters cannot be validated",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/source_catalog_cache_migration_test.dart",
+      "name": "initial compatibility loading does no HTTP or writes; failed durable target write retains fallback",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/source_catalog_cache_migration_test.dart",
+      "name": "valid current cache is authoritative and previous callback is never read",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/source_catalog_cache_migration_test.dart",
+      "name": "invalid current and closest previous cache fall back to next compatible channel",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/source_catalog_cache_migration_test.dart",
+      "name": "a valid tenth older snapshot preserves repairs and removals after invalid history",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/source_catalog_cache_migration_test.dart",
+      "name": "newer bundled source revisions override previous edits and omissions",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/source_catalog_cache_migration_test.dart",
+      "name": "new bundle retirement cannot be resurrected by an older channel",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/source_catalog_cache_migration_test.dart",
+      "name": "target rollback or unknown native response preserves offline compatibility view",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/source_catalog_client_test.dart",
+      "name": "downloads, validates, persists, then applies the catalog",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/source_catalog_client_test.dart",
+      "name": "uses a separate channel11 cache while retaining prior cache names",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/source_catalog_client_test.dart",
+      "name": "malformed and unsupported schema downloads keep the last good catalog",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/source_catalog_client_test.dart",
+      "name": "same-revision mutation and revision rollback are rejected before persistence",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/source_catalog_client_test.dart",
+      "name": "adapter validation failure preserves durable and live last-good state",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/source_catalog_client_test.dart",
+      "name": "corrupt cache cannot displace a valid bundled snapshot",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/source_catalog_client_test.dart",
+      "name": "cache write failure leaves the runtime unchanged",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/source_catalog_client_test.dart",
+      "name": "concurrent refresh calls share one network request",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/source_catalog_client_test.dart",
+      "name": "offline refresh retains cached configuration and omission removes providers",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/wikibooks_channel11_test.dart",
+      "name": "channel11 preserves channel10 and gates the new compiled source offline",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/wikibooks_channel11_test.dart",
+      "name": "channel10 binary rejects the new disabled ID before cache mutation",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/wikibooks_channel11_test.dart",
+      "name": "channel11 inherits cached channel10 repairs and removals while staying gated",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/source_catalog_channel_test.dart",
+      "name": "channel5 preserves channel4 entries and routes normal vocadb context",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/source_catalog_channel_test.dart",
+      "name": "channel5 preserves channel4 entries and routes normal touhoudb context",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/source_catalog_channel_test.dart",
+      "name": "channel5 preserves channel4 entries and routes normal utaitedb context",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/source_catalog_channel_test.dart",
+      "name": "channel1/2/3 runtimes reject even disabled VocaDB before changing a snapshot",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/source_catalog_channel_test.dart",
+      "name": "older runtimes reject even disabled touhoudb before changing a snapshot",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/source_catalog_channel_test.dart",
+      "name": "older runtimes reject even disabled utaitedb before changing a snapshot",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/source_catalog_channel_test.dart",
+      "name": "released roster keeps v1 and rejects channel2 without poisoning last good",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/source_catalog_channel_test.dart",
+      "name": "channel2 bundle/cache ignore legacy revision stream and preserve old data",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/source_catalog_channel_test.dart",
+      "name": "unknown native in a newer snapshot leaves channel2 live/cache unchanged",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/source_catalog_channel_test.dart",
+      "name": "channel3 bundle has the AMLL native source enabled by default",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/source_catalog_channel_test.dart",
+      "name": "old channel1 and channel2 reject AMLL before live/cache mutation",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "file": "test/providers/source_catalog_channel_test.dart",
+      "name": "explicit publisher override remains in effect on channel3",
+      "result": "success",
+      "skipped": false
+    }
+  ],
+  "failed": 0,
+  "skipped": 0,
+  "hiddenLoadersExcluded": 13,
+  "rawPrivateMachineLogSha256": "f54da8e5c67a4e81b4ef988c322b8075ded3231b2c1dd5f16cffb7a6cb1267e3",
+  "suiteSuccess": true,
+  "sourceCommit": "4c1f0434356947938eaace63595088a24c1c89bf"
+}

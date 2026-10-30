@@ -1,0 +1,255 @@
+{
+  "remainingGates": [
+    "Current-head CI",
+    "Actual managed-cloud qualification",
+    "Rights/activation review",
+    "Compatible app release"
+  ],
+  "rawSourceDocumentsIncluded": false,
+  "credentialsIncluded": false,
+  "checks": {
+    "changedDartFilesAnalyzed": 14,
+    "testFiles": 13,
+    "testsSkipped": 0,
+    "regressionRedConfirmedBeforeRepair": true,
+    "discoveryUniqueIds": 55,
+    "testsFailed": 0,
+    "analysis": "No issues found",
+    "testsPassed": 89,
+    "all54PriorDiscoveryEntriesPreserved": true
+  },
+  "sourceTree": "7d5cb2af124148450b6dfa40b00fc0d9ac0f78c5",
+  "runtime": "Windows host Flutter3.44.8/Dart3.12.2; native Android API36 x86_64 16KB",
+  "baseCommit": "66978393717e0327c46e4aa6fad811273ac53330",
+  "schemaVersion": 1,
+  "kind": "candidate-only-post-repair-qualification",
+  "native": {
+    "schemaVersion": 1,
+    "version": "0.2.32+46",
+    "sourceTree": "7d5cb2af124148450b6dfa40b00fc0d9ac0f78c5",
+    "productionActivated": false,
+    "requestBudgetReason": "Selected native post-repair search/classification and resolution capability checks only; no complete production suite rerun.",
+    "sourceCommit": "4c1f0434356947938eaace63595088a24c1c89bf",
+    "measuredAt": "2026-10-30T01:39:40.0192672Z",
+    "savedData": {
+      "documentsByteIdenticalToBaseline": true,
+      "verificationRuntime": "Windows Dart using current-head ChordProCodec; native saved readers also reopened",
+      "readerReopened": [
+        "115615",
+        "118857"
+      ],
+      "requiredMetadataRightsAttributionAndRawPayloadHashesVerified": true,
+      "baselineExportEvidence": "https://github.com/freevia-org/Singbook/blob/29175134d8c095be02a3779f6e3ebcf7c69c0196/reports/source-maintenance/local/qualifications/2026-10-30T010853Z-wikibooks-native-baseline/report.json"
+    },
+    "package": "org.freevia.singbook",
+    "installation": {
+      "baselineHashesVerifiedBeforeInstall": true,
+      "baselineDocuments": 2,
+      "baselineProducerCommit": "b17b2d862a303ef1a0b9ce8b9e0b219f08df40c2",
+      "operation": "in-place update of own isolated baseline debug installation",
+      "dataCleared": false
+    },
+    "apkSha256": "c3016365caa00c3717f392d16b7b762d0cecfa0d6b31d06ffd84afc8d584d364",
+    "httpRequestCountMeasured": false,
+    "cloudProof": false,
+    "httpRequestCount": null,
+    "releaseProof": false,
+    "roadblocks": [
+      {
+        "tried": "Wait, then relaunch app once after OS settled",
+        "step": "Fresh emulator OS startup",
+        "userAction": null,
+        "appFatalCrashLogEntries": 0,
+        "reason": "System UI not responding prompt, then launcher foreground",
+        "resolved": true
+      },
+      {
+        "tried": "Discard failed capture and retry under a new filename without repeating selection",
+        "resolved": true,
+        "reason": "Null root",
+        "userAction": null,
+        "step": "Accessibility capture during route transition"
+      }
+    ],
+    "entryPoint": "lib/main.dart",
+    "catalog": {
+      "onlyEnabledSource": "wikibooksliederbuch",
+      "sha256": "6842f0097443efbc279a6d56a4c686e40785ce8063714a756af41c7e073cb853",
+      "path": "config/source-catalog-v11.json",
+      "revision": 26,
+      "privateQualificationOverlay": true
+    },
+    "runtime": "Android16/API36/x86_64/16384-byte-pages",
+    "searches": [
+      {
+        "expectedPageId": "115615",
+        "realResolveReachedSaveState": true,
+        "query": "Gedanken",
+        "visibleResults": 3,
+        "utilityPagesAbsent": true
+      },
+      {
+        "expectedPageId": "118857",
+        "realResolveReachedSaveState": true,
+        "query": "Kein",
+        "visibleResults": 7,
+        "utilityPagesAbsent": true
+      }
+    ],
+    "buildMode": "debug"
+  },
+  "sourceCommit": "4c1f0434356947938eaace63595088a24c1c89bf",
+  "live": {
+    "measuredAt": "2026-10-30T01:23:51.42637Z",
+    "reason": "Selected post-repair real canaries; no complete production suite rerun",
+    "catalogRevision": 26,
+    "privateActiveDefaultOffOverlay": true,
+    "sources": [
+      {
+        "id": "wikibooksliederbuch",
+        "name": "Wikibooks Liederbuch",
+        "status": "healthy",
+        "coverage": {
+          "status": "complete",
+          "verifiedCapabilities": [
+            "catalog",
+            "chords",
+            "lyrics",
+            "metadata"
+          ],
+          "unverifiedCapabilities": []
+        },
+        "probes": [
+          {
+            "id": "118857",
+            "status": "healthy",
+            "candidateId": "sha256:fc94bda78a5c6087",
+            "providerId": "wikibooksliederbuch",
+            "bodyCharacters": 587,
+            "metadataFields": [
+              "identityScope",
+              "language",
+              "sourceAlternativeTitles",
+              "sourceArrangerCredits",
+              "sourceChordNotation",
+              "sourceCreditLinks",
+              "sourceHeaderBlocks",
+              "sourceMelodyCredit",
+              "sourceTextCredit",
+              "wikibooksCategories",
+              "wikibooksPageId",
+              "wikibooksPageTitle",
+              "wikibooksRevisionId"
+            ],
+            "verifiedCapabilities": [
+              "catalog",
+              "chords",
+              "lyrics",
+              "metadata"
+            ],
+            "timingTrackCount": 0,
+            "timingGranularities": [],
+            "timingRawRetained": false,
+            "hasChords": true
+          },
+          {
+            "id": "115615",
+            "status": "healthy",
+            "candidateId": "sha256:f50869b31d4cc7d9",
+            "providerId": "wikibooksliederbuch",
+            "bodyCharacters": 678,
+            "metadataFields": [
+              "identityScope",
+              "language",
+              "sourceArrangerCredits",
+              "sourceChordNotation",
+              "sourceCreditLinks",
+              "sourceHeaderBlocks",
+              "sourceMelodyCredit",
+              "sourceTextCredit",
+              "wikibooksCategories",
+              "wikibooksPageId",
+              "wikibooksPageTitle",
+              "wikibooksRevisionId"
+            ],
+            "verifiedCapabilities": [
+              "catalog",
+              "chords",
+              "lyrics",
+              "metadata"
+            ],
+            "timingTrackCount": 0,
+            "timingGranularities": [],
+            "timingRawRetained": false,
+            "hasChords": true
+          }
+        ]
+      }
+    ],
+    "summary": {
+      "healthy": 1
+    },
+    "httpDiagnostics": {
+      "networkFailures": 0,
+      "hosts": {
+        "de.wikibooks.org": {
+          "requests": 4,
+          "statuses": {
+            "200": 4
+          },
+          "retryAfterSeconds": {},
+          "databaseLag": {}
+        }
+      }
+    }
+  },
+  "offline": {
+    "summary": {
+      "offline_unverified": 28,
+      "import_only": 1,
+      "retired": 1,
+      "disabled": 3
+    },
+    "httpDiagnostics": {
+      "networkFailures": 0,
+      "hosts": {}
+    },
+    "sourceCount": 33,
+    "registryCatalogMismatchCount": 0,
+    "catalogRevision": 25
+  },
+  "pullRequest": "https://github.com/freevia-org/Singbook/pull/259",
+  "activationQualified": false,
+  "catalog": {
+    "olderChannelsUnchanged": true,
+    "revision": 25,
+    "sourceId": "wikibooksliederbuch",
+    "sourceRevision": 2,
+    "enabledByDefault": false,
+    "sha256": "6aeefb2a1ee4f3d353b9bfe03f335746bb6bfcefc79cf48aa2ebd3d48ae5fc2e",
+    "path": "config/source-catalog-v11.json",
+    "status": "disabled",
+    "channel": 11
+  },
+  "generatedAt": "2026-10-30T01:41:07.4464617Z",
+  "productionLatestOverwritten": false,
+  "verificationTooling": [
+    {
+      "step": "Post-restart saved-document verification",
+      "reason": "Ephemeral share cache no longer contained export files after restart",
+      "resolved": true,
+      "userAction": null,
+      "tried": "Read saved ChordPro documents from own app SQLite database, require exact hashes previously measured on generated exports, decode with current ChordProCodec"
+    },
+    {
+      "sourceApiStillHealthy": true,
+      "actualManagedCloudReachabilityProven": false,
+      "tried": "One ordinary web open per URL; used retained publisher/API evidence and actual native search responses to bound the classification change",
+      "userAction": null,
+      "source": "wikibooksliederbuch",
+      "resolved": false,
+      "reason": "Web tool returned Internal Error / inaccessible for Inhalt, Hilfe and Lieder_nach_Akkorden page URLs",
+      "step": "Primary website documentation opens"
+    }
+  ]
+}
