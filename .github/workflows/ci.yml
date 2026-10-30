@@ -5,7 +5,7 @@ name: CI
 # ID as a GitHub Actions variable and its optional registration field as a
 # masked Actions secret. This workflow never signs.
 #
-# Layout (fail fast, then fan out):
+# Layout (fail fast, then fan out; pick-runners first decides local vs hosted):
 #   analyze ──┬─> windows-build    (release bundle, packaging + native smoke)
 #             ├─> windows-test     (complete Flutter suite on Windows, sharded)
 #             └─> windows-journey  (deterministic desktop integration journey)
@@ -28,8 +28,52 @@ env:
   FLUTTER_VERSION: "3.44.8"
 
 jobs:
+  # Chooses where each job runs. Each pool (Linux, Windows) has one local
+  # runner, which runs one job at a time behind the shared I5 capacity gate. It
+  # takes its heaviest job (Flutter tests on Linux, the release bundle on
+  # Windows) when no other run is using it; every other job, and all of them
+  # when another run holds the runner, goes to a GitHub-hosted runner (free:
+  # this repository is public). Jobs still queued locally ahead of this run
+  # count as using it, and a failed lookup falls back to hosted.
+  pick-runners:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      actions: read
+    outputs:
+      linux-test: ${{ steps.pick.outputs.linux-test }}
+      windows-build: ${{ steps.pick.outputs.windows-build }}
+    steps:
+      - id: pick
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          in_use() {
+            local label=$1 id n total=0
+            for status in in_progress queued; do
+              for id in $(gh api "repos/$REPO/actions/runs?status=$status&per_page=50" --jq '.workflow_runs[].id' 2>/dev/null); do
+                [ "$id" = "$RUN_ID" ] && continue
+                n=$(gh api "repos/$REPO/actions/runs/$id/jobs?filter=latest&per_page=100" \
+                  --jq "[.jobs[] | select((.status == \"in_progress\" or .status == \"queued\") and (.labels | index(\"$label\")))] | length" 2>/dev/null || echo 1)
+                total=$((total + n))
+              done
+            done
+            echo "$total"
+          }
+          pick() { # label hosted -> local label when its runner is free
+            local used; used=$(in_use "$1")
+            echo "$1: $used job(s) from other runs" >&2
+            [ "$used" = 0 ] && echo "$1" || echo "$2"
+          }
+          {
+            echo "linux-test=$(pick singbook-i5-linux ubuntu-24.04)"
+            echo "windows-build=$(pick singbook-i5-windows windows-2025)"
+          } | tee -a "$GITHUB_OUTPUT"
+
   analyze:
-    runs-on: singbook-i5-linux
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
@@ -64,7 +108,8 @@ jobs:
         run: flutter analyze
 
   test:
-    runs-on: singbook-i5-linux
+    needs: pick-runners
+    runs-on: ${{ needs.pick-runners.outputs.linux-test }}
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v7
@@ -119,8 +164,8 @@ jobs:
           retention-days: 7
 
   windows-build:
-    needs: analyze
-    runs-on: singbook-i5-windows
+    needs: [analyze, pick-runners]
+    runs-on: ${{ needs.pick-runners.outputs.windows-build }}
     timeout-minutes: 30
     env:
       SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID: ${{ vars.SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID }}
@@ -269,7 +314,7 @@ jobs:
   windows-test:
     name: windows-test (${{ matrix.shard }}/2)
     needs: analyze
-    runs-on: singbook-i5-windows
+    runs-on: windows-2025
     timeout-minutes: 25
     strategy:
       fail-fast: false
@@ -315,7 +360,7 @@ jobs:
 
   windows-journey:
     needs: analyze
-    runs-on: singbook-i5-windows
+    runs-on: windows-2025
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v7
