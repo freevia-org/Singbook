@@ -610,6 +610,76 @@ class AppControllerAdapter extends VerseUiController {
         _hasUsableBody(result);
   }
 
+  AcousticBrainzAnalysis? _checkRecordingAnalysis(
+    String providerId,
+    String state,
+    SourceResult? checked,
+    List<SourceVersionData> versions,
+  ) {
+    if (providerId != 'acousticbrainz' ||
+        state != 'found' ||
+        !app.providerEnabled(providerId) ||
+        checked == null ||
+        checked.candidate.providerId != providerId ||
+        checked.matchKind != MatchKind.sameRecording ||
+        checked.hasPendingMatchCheck) {
+      return null;
+    }
+    final sources = app.results
+        .where(
+          (source) =>
+              source.id == checked.id &&
+              source.candidate.providerId == providerId,
+        )
+        .toList();
+    final current = versions
+        .where(
+          (version) =>
+              version.id == checked.id &&
+              version.providerId == providerId &&
+              version.sameRecording &&
+              !version.isChecking,
+        )
+        .toList();
+    if (sources.length != 1 || current.length != 1) return null;
+    final source = sources.single;
+    if (source.matchKind != MatchKind.sameRecording ||
+        source.hasPendingMatchCheck) {
+      return null;
+    }
+    // _version revalidates the selected recording and any live, enabled
+    // MusicBrainz witnesses; do not treat an archived payload as that proof.
+    final analysis = AcousticBrainzAnalysis.fromMetadata(
+      providerId,
+      current.single.metadata,
+    );
+    if (analysis == null) return null;
+    final candidate = source.candidate;
+    final id = analysis.recordingId.toLowerCase();
+    if (candidate.id.toLowerCase() != id ||
+        candidate.recordingIds['musicbrainz']?.toLowerCase() != id) {
+      return null;
+    }
+    final selection = app.selection;
+    if (selection == null) return null;
+    final selectedId =
+        selection.recordingIds['musicbrainz'] ??
+        (selection.providerId == 'musicbrainz' ? selection.id : null);
+    if (selectedId != null) {
+      if (selectedId.toLowerCase() != id) return null;
+    } else if (!recordingContextCompatible(
+      selection,
+      source,
+      app.results,
+      eligible: (provider) =>
+          app.providerEnabled(provider) &&
+          const {'found', 'completed'}.contains(app.checks[provider]?.state),
+    )) {
+      return null;
+    }
+    return analysis;
+  }
+
   bool _hasLyrics(SourceResult result) =>
       arrangement.plainLyrics(result.body).trim().isNotEmpty;
 
@@ -1043,6 +1113,12 @@ class AppControllerAdapter extends VerseUiController {
             state: check.result?.matchKind == MatchKind.rejected
                 ? 'rejected'
                 : check.state,
+            recordingAnalysis: _checkRecordingAnalysis(
+              check.providerId,
+              check.state,
+              check.result,
+              knownResults,
+            ),
             operations: List.unmodifiable([
               for (final operation in check.operations)
                 SearchProviderOperationData(
