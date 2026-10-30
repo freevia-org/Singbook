@@ -3,7 +3,7 @@
   "appTitle": "Singbook",
   "aboutDescription": "Lirik, akor, dan daftar lagu Anda tersusun bersama, siap untuk latihan, panggung, dan di mana pun Anda bermain.",
   "aboutMadeForSinging": "Setiap lagu, siap.",
-  "menuTypeNewSong": "Ketik lagu baru", "aboutDetails": "Cari di sumber yang diaktifkan dan bandingkan lirik, akor, penanda waktu, serta detail rekaman sebelum menyimpan versi yang ingin Anda mainkan. Ketersediaan bergantung pada lagu dan layanan.", "aboutSupport": "Dukungan dan masukan", "appVersion": "Versi {version}",
+  "menuTypeNewSong": "Ketik lagu baru", "menuFile": "Berkas", "menuNewSong": "Lagu baru", "aboutDetails": "Cari di sumber yang diaktifkan dan bandingkan lirik, akor, penanda waktu, serta detail rekaman sebelum menyimpan versi yang ingin Anda mainkan. Ketersediaan bergantung pada lagu dan layanan.", "aboutSupport": "Dukungan dan masukan", "appVersion": "Versi {version}",
   "@appVersion": {
     "placeholders": {
       "version": {

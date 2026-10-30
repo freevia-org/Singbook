@@ -3,7 +3,7 @@
   "appTitle": "Singbook",
   "aboutDescription": "Paroles, accords et listes de chansons réunis, prêts pour les répétitions, la scène et partout où vous jouez.",
   "aboutMadeForSinging": "Chaque chanson, prête à chanter.",
-  "menuTypeNewSong": "Saisir une nouvelle chanson", "aboutDetails": "Recherchez dans les sources activées et comparez les paroles, les accords, le minutage et les détails d’enregistrement avant d’enregistrer la version que vous souhaitez jouer. La disponibilité varie selon la chanson et le service.", "aboutSupport": "Aide et commentaires", "appVersion": "Version {version}",
+  "menuTypeNewSong": "Saisir une nouvelle chanson", "menuFile": "Fichier", "menuNewSong": "Nouvelle chanson", "aboutDetails": "Recherchez dans les sources activées et comparez les paroles, les accords, le minutage et les détails d’enregistrement avant d’enregistrer la version que vous souhaitez jouer. La disponibilité varie selon la chanson et le service.", "aboutSupport": "Aide et commentaires", "appVersion": "Version {version}",
   "@appVersion": {
     "placeholders": {
       "version": {

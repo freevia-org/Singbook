@@ -3,7 +3,7 @@
   "appTitle": "Singbook",
   "aboutDescription": "Dalszövegek, akkordok és dallisták együtt, készen a próbára, a színpadra és bárhová, ahol zenélsz.",
   "aboutMadeForSinging": "Minden dal készen áll.",
-  "menuTypeNewSong": "Új dal beírása", "aboutDetails": "Keress az engedélyezett forrásokban, és hasonlítsd össze a dalszövegeket, akkordokat, időzítést és felvételi adatokat, mielőtt elmented a lejátszani kívánt változatot. Az elérhetőség dalonként és szolgáltatásonként eltér.", "aboutSupport": "Támogatás és visszajelzés", "appVersion": "Verzió: {version}",
+  "menuTypeNewSong": "Új dal beírása", "menuFile": "Fájl", "menuNewSong": "Új dal", "aboutDetails": "Keress az engedélyezett forrásokban, és hasonlítsd össze a dalszövegeket, akkordokat, időzítést és felvételi adatokat, mielőtt elmented a lejátszani kívánt változatot. Az elérhetőség dalonként és szolgáltatásonként eltér.", "aboutSupport": "Támogatás és visszajelzés", "appVersion": "Verzió: {version}",
   "@appVersion": {
     "placeholders": {
       "version": {

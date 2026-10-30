@@ -67,6 +67,12 @@ class AppLocalizationsHr extends AppLocalizations {
   String get menuTypeNewSong => 'Unesi novu pjesmu';
 
   @override
+  String get menuFile => 'Datoteka';
+
+  @override
+  String get menuNewSong => 'Nova pjesma';
+
+  @override
   String appVersion(String version) {
     return 'Verzija $version';
   }

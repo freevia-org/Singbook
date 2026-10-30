@@ -67,6 +67,12 @@ class AppLocalizationsFr extends AppLocalizations {
   String get menuTypeNewSong => 'Saisir une nouvelle chanson';
 
   @override
+  String get menuFile => 'Fichier';
+
+  @override
+  String get menuNewSong => 'Nouvelle chanson';
+
+  @override
   String appVersion(String version) {
     return 'Version $version';
   }

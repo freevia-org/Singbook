@@ -17,7 +17,7 @@
   "aboutLanguages": "App languages: {count}",
   "@aboutLanguages": {"placeholders": {"count": {"type": "int"}}},
   "aboutSupport": "Support and feedback",
-  "menuTypeNewSong": "Type in a new song",
+  "menuTypeNewSong": "Type in a new song", "menuFile": "File", "menuNewSong": "New Song",
   "appVersion": "Version {version}",
   "@appVersion": {"placeholders": {"version": {"type": "String"}}},
   "navHome": "Home",

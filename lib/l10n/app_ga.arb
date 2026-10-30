@@ -3,7 +3,7 @@
   "appTitle": "Singbook",
   "aboutDescription": "Do chuid liricí, cordaí agus liostaí amhrán le chéile, réidh don chleachtadh, don stáitse agus do cibé áit a seinneann tú.",
   "aboutMadeForSinging": "Gach amhrán réidh.",
-  "menuTypeNewSong": "Clóscríobh amhrán nua", "aboutDetails": "Déan cuardach ar na foinsí atá cumasaithe agus cuir liricí, cordaí, amanna agus sonraí taifeadta i gcomparáid sula sábhálann tú an leagan is mian leat a sheinm. Braitheann infhaighteacht ar an amhrán agus ar an tseirbhís.", "aboutSupport": "Tacaíocht agus aiseolas", "appVersion": "Leagan {version}",
+  "menuTypeNewSong": "Clóscríobh amhrán nua", "menuFile": "Comhad", "menuNewSong": "Amhrán nua", "aboutDetails": "Déan cuardach ar na foinsí atá cumasaithe agus cuir liricí, cordaí, amanna agus sonraí taifeadta i gcomparáid sula sábhálann tú an leagan is mian leat a sheinm. Braitheann infhaighteacht ar an amhrán agus ar an tseirbhís.", "aboutSupport": "Tacaíocht agus aiseolas", "appVersion": "Leagan {version}",
   "@appVersion": {
     "placeholders": {
       "version": {

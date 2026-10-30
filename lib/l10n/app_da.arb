@@ -3,7 +3,7 @@
   "appTitle": "Singbook",
   "aboutDescription": "Dine sangtekster, akkorder og sætlister samlet, klar til øvning, scenen og alle steder, du spiller.",
   "aboutMadeForSinging": "Hver sang er klar.",
-  "menuTypeNewSong": "Skriv en ny sang", "aboutDetails": "Søg i aktiverede kilder, og sammenlign sangtekster, akkorder, timing og optagelsesoplysninger, før du gemmer den version, du vil spille. Tilgængeligheden varierer efter sang og tjeneste.", "aboutSupport": "Support og feedback", "appVersion": "Version {version}",
+  "menuTypeNewSong": "Skriv en ny sang", "menuFile": "Arkiv", "menuNewSong": "Ny sang", "aboutDetails": "Søg i aktiverede kilder, og sammenlign sangtekster, akkorder, timing og optagelsesoplysninger, før du gemmer den version, du vil spille. Tilgængeligheden varierer efter sang og tjeneste.", "aboutSupport": "Support og feedback", "appVersion": "Version {version}",
   "@appVersion": {
     "placeholders": {
       "version": {

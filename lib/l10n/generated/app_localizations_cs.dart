@@ -67,6 +67,12 @@ class AppLocalizationsCs extends AppLocalizations {
   String get menuTypeNewSong => 'Zadat novou píseň';
 
   @override
+  String get menuFile => 'Soubor';
+
+  @override
+  String get menuNewSong => 'Nová píseň';
+
+  @override
   String appVersion(String version) {
     return 'Verze $version';
   }

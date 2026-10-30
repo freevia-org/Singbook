@@ -1,7 +1,7 @@
 {
   "@@locale": "ja",
   "appTitle": "Singbook",
-  "menuTypeNewSong": "新しい曲を入力", "aboutDetails": "有効にしたソースを検索し、曲のバージョンを比較して、歌詞とコードをまとめ、曲をセットリストに整理できます。ライブラリはこの端末に保存されます。任意の Google Drive 同期では Google アカウントを使用します。検索は有効なソースへ直接送信されます。", "aboutSupport": "サポートとフィードバック", "appVersion": "バージョン {version}",
+  "menuTypeNewSong": "新しい曲を入力", "menuFile": "ファイル", "menuNewSong": "新規曲", "aboutDetails": "有効にしたソースを検索し、曲のバージョンを比較して、歌詞とコードをまとめ、曲をセットリストに整理できます。ライブラリはこの端末に保存されます。任意の Google Drive 同期では Google アカウントを使用します。検索は有効なソースへ直接送信されます。", "aboutSupport": "サポートとフィードバック", "appVersion": "バージョン {version}",
   "@appVersion": {
     "placeholders": {
       "version": {

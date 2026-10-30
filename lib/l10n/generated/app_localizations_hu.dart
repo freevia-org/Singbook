@@ -67,6 +67,12 @@ class AppLocalizationsHu extends AppLocalizations {
   String get menuTypeNewSong => 'Új dal beírása';
 
   @override
+  String get menuFile => 'Fájl';
+
+  @override
+  String get menuNewSong => 'Új dal';
+
+  @override
   String appVersion(String version) {
     return 'Verzió: $version';
   }

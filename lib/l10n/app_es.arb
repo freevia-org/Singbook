@@ -3,7 +3,7 @@
   "appTitle": "Singbook",
   "aboutDescription": "Tus letras, acordes y listas de canciones, juntos y listos para ensayar, subir al escenario y tocar donde quieras.",
   "aboutMadeForSinging": "Cada canción, lista.",
-  "menuTypeNewSong": "Escribir una canción nueva", "aboutDetails": "Busca en las fuentes habilitadas y compara letras, acordes, tiempos y detalles de grabación antes de guardar la versión que quieres tocar. La disponibilidad depende de la canción y del servicio.", "aboutSupport": "Ayuda y comentarios", "appVersion": "Versión {version}",
+  "menuTypeNewSong": "Escribir una canción nueva", "menuFile": "Archivo", "menuNewSong": "Nueva canción", "aboutDetails": "Busca en las fuentes habilitadas y compara letras, acordes, tiempos y detalles de grabación antes de guardar la versión que quieres tocar. La disponibilidad depende de la canción y del servicio.", "aboutSupport": "Ayuda y comentarios", "appVersion": "Versión {version}",
   "@appVersion": {
     "placeholders": {
       "version": {

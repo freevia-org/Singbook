@@ -66,6 +66,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get menuTypeNewSong => '输入新歌曲';
 
   @override
+  String get menuFile => '文件';
+
+  @override
+  String get menuNewSong => '新歌曲';
+
+  @override
   String appVersion(String version) {
     return '版本 $version';
   }

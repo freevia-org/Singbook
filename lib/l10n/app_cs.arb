@@ -3,7 +3,7 @@
   "appTitle": "Singbook",
   "aboutDescription": "Texty, akordy a seznamy písní pohromadě, připravené na zkoušku, na pódium i kamkoli, kde hrajete.",
   "aboutMadeForSinging": "Každá píseň připravená.",
-  "menuTypeNewSong": "Zadat novou píseň", "aboutDetails": "Prohledávejte povolené zdroje a porovnávejte texty, akordy, časování a podrobnosti o nahrávkách, než uložíte verzi, kterou chcete hrát. Dostupnost se liší podle písně a služby.", "aboutSupport": "Podpora a zpětná vazba", "appVersion": "Verze {version}",
+  "menuTypeNewSong": "Zadat novou píseň", "menuFile": "Soubor", "menuNewSong": "Nová píseň", "aboutDetails": "Prohledávejte povolené zdroje a porovnávejte texty, akordy, časování a podrobnosti o nahrávkách, než uložíte verzi, kterou chcete hrát. Dostupnost se liší podle písně a služby.", "aboutSupport": "Podpora a zpětná vazba", "appVersion": "Verze {version}",
   "@appVersion": {
     "placeholders": {
       "version": {

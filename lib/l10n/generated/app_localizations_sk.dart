@@ -67,6 +67,12 @@ class AppLocalizationsSk extends AppLocalizations {
   String get menuTypeNewSong => 'Zadať novú pieseň';
 
   @override
+  String get menuFile => 'Súbor';
+
+  @override
+  String get menuNewSong => 'Nová pieseň';
+
+  @override
   String appVersion(String version) {
     return 'Verzia $version';
   }

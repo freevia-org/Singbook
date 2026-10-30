@@ -67,6 +67,12 @@ class AppLocalizationsVi extends AppLocalizations {
   String get menuTypeNewSong => 'Nhập bài hát mới';
 
   @override
+  String get menuFile => 'Tệp';
+
+  @override
+  String get menuNewSong => 'Bài hát mới';
+
+  @override
   String appVersion(String version) {
     return 'Phiên bản $version';
   }

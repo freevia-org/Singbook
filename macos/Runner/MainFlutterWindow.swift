@@ -5,6 +5,9 @@ class MainFlutterWindow: NSWindow, NSWindowDelegate {
   private var clipboardChannel: FlutterMethodChannel?
   private var editorChannel: FlutterMethodChannel?
   private var closeChannel: FlutterMethodChannel?
+  private var fileMenuChannel: FlutterMethodChannel?
+  private var fileMenu: NSMenu?
+  private var fileMenuRoot: NSMenuItem?
   private var closeRequestPending = false
   private var fullScreenChannel: FlutterMethodChannel?
   private var playerFullScreenActive = false
@@ -55,6 +58,7 @@ class MainFlutterWindow: NSWindow, NSWindowDelegate {
       name: "org.freevia.singbook/window_close",
       binaryMessenger: controller.engine.binaryMessenger
     )
+    installFileMenu(messenger: controller.engine.binaryMessenger)
     let channel = FlutterMethodChannel(
       name: "org.freevia.singbook/rich_clipboard",
       binaryMessenger: controller.engine.binaryMessenger
@@ -80,6 +84,87 @@ class MainFlutterWindow: NSWindow, NSWindowDelegate {
       ))
     }
     super.awakeFromNib()
+  }
+
+
+  // MARK: File menu
+
+  // Dart owns the localized titles and which items apply to the current
+  // screen; it pushes them with "update". Items call back into Dart so the
+  // menu runs the same actions as the in-app menus. Save reuses the editor's
+  // shortcut channel, which also serves Cmd-S (see performKeyEquivalent).
+  private static let fileMenuItems: [(tag: Int, key: String, equivalent: String, modifiers: NSEvent.ModifierFlags)] = [
+    (1, "newSong", "n", .command),
+    (2, "import", "o", .command),
+    (3, "save", "s", .command),
+    (4, "exportChordPro", "e", .command),
+    (5, "exportPdf", "e", [.command, .shift]),
+    (6, "print", "p", .command),
+  ]
+
+  private func installFileMenu(messenger: FlutterBinaryMessenger) {
+    let channel = FlutterMethodChannel(name: "org.freevia.singbook/file_menu", binaryMessenger: messenger)
+    fileMenuChannel = channel
+    channel.setMethodCallHandler { [weak self] call, result in
+      guard call.method == "update", let values = call.arguments as? [String: Any], let self else {
+        result(FlutterMethodNotImplemented)
+        return
+      }
+      self.buildFileMenuIfNeeded()
+      self.applyFileMenu(values)
+      result(nil)
+    }
+  }
+
+  // The main menu is only guaranteed to exist once the app is running, so the
+  // File menu is added when Dart first reports its state.
+  private func buildFileMenuIfNeeded() {
+    guard let mainMenu = NSApp.mainMenu, fileMenu == nil else { return }
+    let menu = NSMenu(title: "File")
+    menu.autoenablesItems = false
+    for (index, entry) in Self.fileMenuItems.enumerated() {
+      if index == 3 || index == 5 { menu.addItem(.separator()) }
+      let item = NSMenuItem(title: entry.key, action: #selector(fileMenuItemSelected(_:)), keyEquivalent: entry.equivalent)
+      item.keyEquivalentModifierMask = entry.modifiers
+      item.tag = entry.tag
+      item.target = self
+      item.isEnabled = false
+      menu.addItem(item)
+    }
+    let root = NSMenuItem(title: "File", action: nil, keyEquivalent: "")
+    root.submenu = menu
+    mainMenu.insertItem(root, at: min(1, mainMenu.items.count))
+    fileMenu = menu
+    fileMenuRoot = root
+  }
+
+  private func applyFileMenu(_ values: [String: Any]) {
+    guard let menu = fileMenu else { return }
+    let canCreate = values["canCreate"] as? Bool ?? false
+    let canSave = values["canSave"] as? Bool ?? false
+    let canExport = values["canExport"] as? Bool ?? false
+    if let title = values["title"] as? String {
+      menu.title = title
+      fileMenuRoot?.title = title
+    }
+    for entry in Self.fileMenuItems {
+      guard let item = menu.item(withTag: entry.tag) else { continue }
+      if let title = values[entry.key] as? String { item.title = title }
+      switch entry.key {
+      case "newSong", "import": item.isEnabled = canCreate
+      case "save": item.isEnabled = canSave
+      default: item.isEnabled = canExport
+      }
+    }
+  }
+
+  @objc private func fileMenuItemSelected(_ sender: NSMenuItem) {
+    guard let entry = Self.fileMenuItems.first(where: { $0.tag == sender.tag }) else { return }
+    if entry.key == "save" {
+      editorChannel?.invokeMethod("save", arguments: nil)
+    } else {
+      fileMenuChannel?.invokeMethod(entry.key, arguments: nil)
+    }
   }
 
   // Requests specify a desired state. Cocoa transitions asynchronously, so

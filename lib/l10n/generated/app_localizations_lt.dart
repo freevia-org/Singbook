@@ -67,6 +67,12 @@ class AppLocalizationsLt extends AppLocalizations {
   String get menuTypeNewSong => 'Įvesti naują dainą';
 
   @override
+  String get menuFile => 'Failas';
+
+  @override
+  String get menuNewSong => 'Nauja daina';
+
+  @override
   String appVersion(String version) {
     return 'Versija $version';
   }

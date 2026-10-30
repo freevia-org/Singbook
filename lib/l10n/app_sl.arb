@@ -1,7 +1,7 @@
 {
   "@@locale": "sl",
   "appTitle": "Singbook",
-  "menuTypeNewSong": "Vnesi novo pesem", "aboutDetails": "Išči po omogočenih virih, primerjaj različice, hrani besedila in akorde skupaj ter razvrščaj pesmi v sezname. Knjižnica je shranjena v tej napravi; izbirna sinhronizacija z Google Drive uporablja tvoj Google račun. Iskanja se pošljejo neposredno omogočenim virom.", "aboutSupport": "Podpora in povratne informacije", "appVersion": "Različica {version}",
+  "menuTypeNewSong": "Vnesi novo pesem", "menuFile": "Datoteka", "menuNewSong": "Nova pesem", "aboutDetails": "Išči po omogočenih virih, primerjaj različice, hrani besedila in akorde skupaj ter razvrščaj pesmi v sezname. Knjižnica je shranjena v tej napravi; izbirna sinhronizacija z Google Drive uporablja tvoj Google račun. Iskanja se pošljejo neposredno omogočenim virom.", "aboutSupport": "Podpora in povratne informacije", "appVersion": "Različica {version}",
   "@appVersion": {
     "placeholders": {
       "version": {

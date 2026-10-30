@@ -67,6 +67,12 @@ class AppLocalizationsId extends AppLocalizations {
   String get menuTypeNewSong => 'Ketik lagu baru';
 
   @override
+  String get menuFile => 'Berkas';
+
+  @override
+  String get menuNewSong => 'Lagu baru';
+
+  @override
   String appVersion(String version) {
     return 'Versi $version';
   }

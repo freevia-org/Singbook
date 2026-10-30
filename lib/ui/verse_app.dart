@@ -18,6 +18,7 @@ import 'home/home_screen.dart';
 import 'library/editor_screen.dart';
 import 'library/setlists_screen.dart';
 import 'library_actions.dart';
+import 'macos_file_menu.dart';
 import 'localized_labels.dart';
 import 'player/player_full_screen.dart';
 import 'player/player_screen.dart';
@@ -580,8 +581,13 @@ class _VerseAppShellState extends State<VerseAppShell>
   }
 
   @override
-  Widget build(BuildContext context) =>
-      ListenableBuilder(listenable: widget.controller, builder: _buildShell);
+  Widget build(BuildContext context) => MacosFileMenuScope(
+    controller: widget.controller,
+    child: ListenableBuilder(
+      listenable: widget.controller,
+      builder: _buildShell,
+    ),
+  );
 
   void _promptAccountChange(VerseUiState state) {
     final changed = state.syncErrorCode == 'account_changed';

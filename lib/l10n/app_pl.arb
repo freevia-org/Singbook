@@ -1,7 +1,7 @@
 {
   "@@locale": "pl",
   "appTitle": "Singbook",
-  "menuTypeNewSong": "Wpisz nową piosenkę", "aboutDetails": "Szukaj w włączonych źródłach, porównuj wersje, przechowuj teksty i akordy razem oraz organizuj utwory w setlisty. Twoja biblioteka jest zapisana na tym urządzeniu; opcjonalna synchronizacja z Google Drive korzysta z Twojego konta Google. Wyszukiwania trafiają bezpośrednio do włączonych źródeł.", "aboutSupport": "Pomoc i opinie", "appVersion": "Wersja {version}",
+  "menuTypeNewSong": "Wpisz nową piosenkę", "menuFile": "Plik", "menuNewSong": "Nowa piosenka", "aboutDetails": "Szukaj w włączonych źródłach, porównuj wersje, przechowuj teksty i akordy razem oraz organizuj utwory w setlisty. Twoja biblioteka jest zapisana na tym urządzeniu; opcjonalna synchronizacja z Google Drive korzysta z Twojego konta Google. Wyszukiwania trafiają bezpośrednio do włączonych źródeł.", "aboutSupport": "Pomoc i opinie", "appVersion": "Wersja {version}",
   "@appVersion": {
     "placeholders": {
       "version": {

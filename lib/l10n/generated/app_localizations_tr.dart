@@ -67,6 +67,12 @@ class AppLocalizationsTr extends AppLocalizations {
   String get menuTypeNewSong => 'Yeni bir şarkı yazın';
 
   @override
+  String get menuFile => 'Dosya';
+
+  @override
+  String get menuNewSong => 'Yeni şarkı';
+
+  @override
   String appVersion(String version) {
     return 'Sürüm $version';
   }

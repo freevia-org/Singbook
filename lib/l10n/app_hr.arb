@@ -3,7 +3,7 @@
   "appTitle": "Singbook",
   "aboutDescription": "Tekstovi, akordi i popisi pjesama zajedno, spremni za probu, pozornicu i svako mjesto na kojem sviraš.",
   "aboutMadeForSinging": "Svaka pjesma spremna.",
-  "menuTypeNewSong": "Unesi novu pjesmu", "aboutDetails": "Pretraži omogućene izvore i usporedi tekstove, akorde, vremenske oznake i pojedinosti o snimci prije nego što spremiš verziju koju želiš svirati. Dostupnost ovisi o pjesmi i usluzi.", "aboutSupport": "Podrška i povratne informacije", "appVersion": "Verzija {version}",
+  "menuTypeNewSong": "Unesi novu pjesmu", "menuFile": "Datoteka", "menuNewSong": "Nova pjesma", "aboutDetails": "Pretraži omogućene izvore i usporedi tekstove, akorde, vremenske oznake i pojedinosti o snimci prije nego što spremiš verziju koju želiš svirati. Dostupnost ovisi o pjesmi i usluzi.", "aboutSupport": "Podrška i povratne informacije", "appVersion": "Verzija {version}",
   "@appVersion": {
     "placeholders": {
       "version": {

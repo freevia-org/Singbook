@@ -67,6 +67,12 @@ class AppLocalizationsSl extends AppLocalizations {
   String get menuTypeNewSong => 'Vnesi novo pesem';
 
   @override
+  String get menuFile => 'Datoteka';
+
+  @override
+  String get menuNewSong => 'Nova pesem';
+
+  @override
   String appVersion(String version) {
     return 'Različica $version';
   }

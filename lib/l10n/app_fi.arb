@@ -3,7 +3,7 @@
   "appTitle": "Singbook",
   "aboutDescription": "Sanoitukset, soinnut ja kappalelistat yhdessä, valmiina harjoituksiin, lavalle ja kaikkialle, missä soitat.",
   "aboutMadeForSinging": "Jokainen kappale valmiina.",
-  "menuTypeNewSong": "Kirjoita uusi kappale", "aboutDetails": "Hae käytössä olevista lähteistä ja vertaile sanoituksia, sointuja, ajoitusta ja tallenteen tietoja ennen kuin tallennat haluamasi version. Saatavuus vaihtelee kappaleen ja palvelun mukaan.", "aboutSupport": "Tuki ja palaute", "appVersion": "Versio {version}",
+  "menuTypeNewSong": "Kirjoita uusi kappale", "menuFile": "Arkisto", "menuNewSong": "Uusi kappale", "aboutDetails": "Hae käytössä olevista lähteistä ja vertaile sanoituksia, sointuja, ajoitusta ja tallenteen tietoja ennen kuin tallennat haluamasi version. Saatavuus vaihtelee kappaleen ja palvelun mukaan.", "aboutSupport": "Tuki ja palaute", "appVersion": "Versio {version}",
   "@appVersion": {
     "placeholders": {
       "version": {

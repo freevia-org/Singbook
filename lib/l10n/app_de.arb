@@ -3,7 +3,7 @@
   "appTitle": "Singbook",
   "aboutDescription": "Texte, Akkorde und Setlists an einem Ort, bereit für die Probe, die Bühne und überall, wo du spielst.",
   "aboutMadeForSinging": "Jeder Song ist bereit.",
-  "menuTypeNewSong": "Neues Lied eingeben", "aboutDetails": "Durchsuche aktivierte Quellen und vergleiche Texte, Akkorde, Timing und Aufnahmedetails, bevor du die Version speicherst, die du spielen möchtest. Die Verfügbarkeit hängt vom Song und Dienst ab.", "aboutSupport": "Hilfe und Feedback", "appVersion": "Version {version}",
+  "menuTypeNewSong": "Neues Lied eingeben", "menuFile": "Datei", "menuNewSong": "Neues Lied", "aboutDetails": "Durchsuche aktivierte Quellen und vergleiche Texte, Akkorde, Timing und Aufnahmedetails, bevor du die Version speicherst, die du spielen möchtest. Die Verfügbarkeit hängt vom Song und Dienst ab.", "aboutSupport": "Hilfe und Feedback", "appVersion": "Version {version}",
   "@appVersion": {
     "placeholders": {
       "version": {

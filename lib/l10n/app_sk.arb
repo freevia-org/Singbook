@@ -1,7 +1,7 @@
 {
   "@@locale": "sk",
   "appTitle": "Singbook",
-  "menuTypeNewSong": "Zadať novú pieseň", "aboutDetails": "Vyhľadávajte v povolených zdrojoch, porovnávajte verzie, uchovávajte texty a akordy spolu a zoraďujte skladby do zoznamov. Vaša knižnica je uložená v tomto zariadení; voliteľná synchronizácia cez Google Drive používa váš účet Google. Vyhľadávania sa odosielajú priamo povoleným zdrojom.", "aboutSupport": "Podpora a spätná väzba", "appVersion": "Verzia {version}",
+  "menuTypeNewSong": "Zadať novú pieseň", "menuFile": "Súbor", "menuNewSong": "Nová pieseň", "aboutDetails": "Vyhľadávajte v povolených zdrojoch, porovnávajte verzie, uchovávajte texty a akordy spolu a zoraďujte skladby do zoznamov. Vaša knižnica je uložená v tomto zariadení; voliteľná synchronizácia cez Google Drive používa váš účet Google. Vyhľadávania sa odosielajú priamo povoleným zdrojom.", "aboutSupport": "Podpora a spätná väzba", "appVersion": "Verzia {version}",
   "@appVersion": {
     "placeholders": {
       "version": {

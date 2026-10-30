@@ -264,6 +264,18 @@ abstract class AppLocalizations {
   /// **'Type in a new song'**
   String get menuTypeNewSong;
 
+  /// No description provided for @menuFile.
+  ///
+  /// In en, this message translates to:
+  /// **'File'**
+  String get menuFile;
+
+  /// No description provided for @menuNewSong.
+  ///
+  /// In en, this message translates to:
+  /// **'New Song'**
+  String get menuNewSong;
+
   /// No description provided for @appVersion.
   ///
   /// In en, this message translates to:

@@ -67,6 +67,12 @@ class AppLocalizationsEt extends AppLocalizations {
   String get menuTypeNewSong => 'Sisesta uus laul';
 
   @override
+  String get menuFile => 'Fail';
+
+  @override
+  String get menuNewSong => 'Uus laul';
+
+  @override
   String appVersion(String version) {
     return 'Versioon $version';
   }

@@ -67,6 +67,12 @@ class AppLocalizationsFi extends AppLocalizations {
   String get menuTypeNewSong => 'Kirjoita uusi kappale';
 
   @override
+  String get menuFile => 'Arkisto';
+
+  @override
+  String get menuNewSong => 'Uusi kappale';
+
+  @override
   String appVersion(String version) {
     return 'Versio $version';
   }

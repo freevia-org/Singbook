@@ -1,7 +1,7 @@
 {
   "@@locale": "mt",
   "appTitle": "Singbook",
-  "menuTypeNewSong": "Ikteb kanzunetta ġdida", "aboutDetails": "Fittex fis-sorsi attivati, qabbel verżjonijiet, żomm il-lirika u l-kordi flimkien, u organizza l-kanzunetti f’listi. Il-librerija tiegħek tinżamm fuq dan it-tagħmir; is-sinkronizzazzjoni fakultattiva ma’ Google Drive tuża l-kont Google tiegħek. It-tfittxijiet jintbagħtu direttament lis-sorsi attivati.", "aboutSupport": "Għajnuna u feedback", "appVersion": "Verżjoni {version}",
+  "menuTypeNewSong": "Ikteb kanzunetta ġdida", "menuFile": "Fajl", "menuNewSong": "Kanzunetta ġdida", "aboutDetails": "Fittex fis-sorsi attivati, qabbel verżjonijiet, żomm il-lirika u l-kordi flimkien, u organizza l-kanzunetti f’listi. Il-librerija tiegħek tinżamm fuq dan it-tagħmir; is-sinkronizzazzjoni fakultattiva ma’ Google Drive tuża l-kont Google tiegħek. It-tfittxijiet jintbagħtu direttament lis-sorsi attivati.", "aboutSupport": "Għajnuna u feedback", "appVersion": "Verżjoni {version}",
   "@appVersion": {
     "placeholders": {
       "version": {

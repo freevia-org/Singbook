@@ -67,6 +67,12 @@ class AppLocalizationsSv extends AppLocalizations {
   String get menuTypeNewSong => 'Skriv in en ny låt';
 
   @override
+  String get menuFile => 'Arkiv';
+
+  @override
+  String get menuNewSong => 'Ny låt';
+
+  @override
   String appVersion(String version) {
     return 'Version $version';
   }

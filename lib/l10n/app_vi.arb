@@ -1,7 +1,7 @@
 {
   "@@locale": "vi",
   "appTitle": "Singbook",
-  "menuTypeNewSong": "Nhập bài hát mới", "aboutDetails": "Tìm kiếm trong các nguồn đã bật, so sánh phiên bản, lưu lời và hợp âm cùng nhau, rồi sắp xếp bài hát thành danh sách. Thư viện được lưu trên thiết bị này; tính năng đồng bộ Google Drive tùy chọn sử dụng tài khoản Google của bạn. Tìm kiếm được gửi trực tiếp đến các nguồn đã bật.", "aboutSupport": "Hỗ trợ và góp ý", "appVersion": "Phiên bản {version}",
+  "menuTypeNewSong": "Nhập bài hát mới", "menuFile": "Tệp", "menuNewSong": "Bài hát mới", "aboutDetails": "Tìm kiếm trong các nguồn đã bật, so sánh phiên bản, lưu lời và hợp âm cùng nhau, rồi sắp xếp bài hát thành danh sách. Thư viện được lưu trên thiết bị này; tính năng đồng bộ Google Drive tùy chọn sử dụng tài khoản Google của bạn. Tìm kiếm được gửi trực tiếp đến các nguồn đã bật.", "aboutSupport": "Hỗ trợ và góp ý", "appVersion": "Phiên bản {version}",
   "@appVersion": {
     "placeholders": {
       "version": {

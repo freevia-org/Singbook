@@ -67,6 +67,12 @@ class AppLocalizationsGa extends AppLocalizations {
   String get menuTypeNewSong => 'Clóscríobh amhrán nua';
 
   @override
+  String get menuFile => 'Comhad';
+
+  @override
+  String get menuNewSong => 'Amhrán nua';
+
+  @override
   String appVersion(String version) {
     return 'Leagan $version';
   }

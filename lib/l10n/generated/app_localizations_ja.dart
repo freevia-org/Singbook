@@ -67,6 +67,12 @@ class AppLocalizationsJa extends AppLocalizations {
   String get menuTypeNewSong => '新しい曲を入力';
 
   @override
+  String get menuFile => 'ファイル';
+
+  @override
+  String get menuNewSong => '新規曲';
+
+  @override
   String appVersion(String version) {
     return 'バージョン $version';
   }

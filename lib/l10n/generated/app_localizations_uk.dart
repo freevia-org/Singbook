@@ -68,6 +68,12 @@ class AppLocalizationsUk extends AppLocalizations {
   String get menuTypeNewSong => 'Ввести нову пісню';
 
   @override
+  String get menuFile => 'Файл';
+
+  @override
+  String get menuNewSong => 'Нова пісня';
+
+  @override
   String appVersion(String version) {
     return 'Версія $version';
   }

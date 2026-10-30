@@ -3,7 +3,7 @@
   "appTitle": "Singbook",
   "aboutDescription": "Testi, accordi e scalette insieme, pronti per le prove, il palco e ovunque tu suoni.",
   "aboutMadeForSinging": "Ogni brano, pronto.",
-  "menuTypeNewSong": "Inserisci una nuova canzone", "aboutDetails": "Cerca nelle fonti abilitate e confronta testi, accordi, tempi e dettagli delle registrazioni prima di salvare la versione che vuoi suonare. La disponibilità varia in base al brano e al servizio.", "aboutSupport": "Assistenza e feedback", "appVersion": "Versione {version}",
+  "menuTypeNewSong": "Inserisci una nuova canzone", "menuFile": "File", "menuNewSong": "Nuova canzone", "aboutDetails": "Cerca nelle fonti abilitate e confronta testi, accordi, tempi e dettagli delle registrazioni prima di salvare la versione che vuoi suonare. La disponibilità varia in base al brano e al servizio.", "aboutSupport": "Assistenza e feedback", "appVersion": "Versione {version}",
   "@appVersion": {
     "placeholders": {
       "version": {

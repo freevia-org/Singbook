@@ -68,6 +68,12 @@ class AppLocalizationsEl extends AppLocalizations {
   String get menuTypeNewSong => 'Πληκτρολογήστε ένα νέο τραγούδι';
 
   @override
+  String get menuFile => 'Αρχείο';
+
+  @override
+  String get menuNewSong => 'Νέο τραγούδι';
+
+  @override
   String appVersion(String version) {
     return 'Έκδοση $version';
   }

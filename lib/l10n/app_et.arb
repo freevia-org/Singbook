@@ -3,7 +3,7 @@
   "appTitle": "Singbook",
   "aboutDescription": "Sinu laulusõnad, akordid ja lugude nimekirjad koos, valmis prooviks, lavale ja kõikjale, kus mängid.",
   "aboutMadeForSinging": "Iga laul on valmis.",
-  "menuTypeNewSong": "Sisesta uus laul", "aboutDetails": "Otsi lubatud allikatest ning võrdle laulusõnu, akorde, ajastust ja salvestuse üksikasju enne, kui salvestad esitamiseks sobiva versiooni. Saadavus oleneb laulust ja teenusest.", "aboutSupport": "Tugi ja tagasiside", "appVersion": "Versioon {version}",
+  "menuTypeNewSong": "Sisesta uus laul", "menuFile": "Fail", "menuNewSong": "Uus laul", "aboutDetails": "Otsi lubatud allikatest ning võrdle laulusõnu, akorde, ajastust ja salvestuse üksikasju enne, kui salvestad esitamiseks sobiva versiooni. Saadavus oleneb laulust ja teenusest.", "aboutSupport": "Tugi ja tagasiside", "appVersion": "Versioon {version}",
   "@appVersion": {
     "placeholders": {
       "version": {

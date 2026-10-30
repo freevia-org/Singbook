@@ -67,6 +67,12 @@ class AppLocalizationsKo extends AppLocalizations {
   String get menuTypeNewSong => '새 노래 입력';
 
   @override
+  String get menuFile => '파일';
+
+  @override
+  String get menuNewSong => '새 곡';
+
+  @override
   String appVersion(String version) {
     return '버전 $version';
   }

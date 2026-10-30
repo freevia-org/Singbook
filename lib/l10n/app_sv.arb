@@ -1,7 +1,7 @@
 {
   "@@locale": "sv",
   "appTitle": "Singbook",
-  "menuTypeNewSong": "Skriv in en ny låt", "aboutDetails": "Sök i aktiverade källor, jämför versioner, samla låttexter och ackord och ordna låtar i setlistor. Ditt bibliotek sparas på den här enheten; valfri synkronisering med Google Drive använder ditt Google-konto. Sökningar skickas direkt till aktiverade källor.", "aboutSupport": "Support och feedback", "appVersion": "Version {version}",
+  "menuTypeNewSong": "Skriv in en ny låt", "menuFile": "Arkiv", "menuNewSong": "Ny låt", "aboutDetails": "Sök i aktiverade källor, jämför versioner, samla låttexter och ackord och ordna låtar i setlistor. Ditt bibliotek sparas på den här enheten; valfri synkronisering med Google Drive använder ditt Google-konto. Sökningar skickas direkt till aktiverade källor.", "aboutSupport": "Support och feedback", "appVersion": "Version {version}",
   "@appVersion": {
     "placeholders": {
       "version": {

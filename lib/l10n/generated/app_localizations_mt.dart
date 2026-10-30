@@ -67,6 +67,12 @@ class AppLocalizationsMt extends AppLocalizations {
   String get menuTypeNewSong => 'Ikteb kanzunetta ġdida';
 
   @override
+  String get menuFile => 'Fajl';
+
+  @override
+  String get menuNewSong => 'Kanzunetta ġdida';
+
+  @override
   String appVersion(String version) {
     return 'Verżjoni $version';
   }

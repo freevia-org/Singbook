@@ -67,6 +67,12 @@ class AppLocalizationsRo extends AppLocalizations {
   String get menuTypeNewSong => 'Introdu o melodie nouă';
 
   @override
+  String get menuFile => 'Fișier';
+
+  @override
+  String get menuNewSong => 'Melodie nouă';
+
+  @override
   String appVersion(String version) {
     return 'Versiunea $version';
   }

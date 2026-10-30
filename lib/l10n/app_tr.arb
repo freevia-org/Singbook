@@ -1,7 +1,7 @@
 {
   "@@locale": "tr",
   "appTitle": "Singbook",
-  "menuTypeNewSong": "Yeni bir şarkı yazın", "aboutDetails": "Etkin kaynaklarda arama yapın, sürümleri karşılaştırın, şarkı sözlerini ve akorları birlikte tutun, şarkıları setlistelerde düzenleyin. Kitaplığınız bu cihazda saklanır; isteğe bağlı Google Drive eşitlemesi Google hesabınızı kullanır. Aramalar doğrudan etkin kaynaklara gönderilir.", "aboutSupport": "Destek ve geri bildirim", "appVersion": "Sürüm {version}",
+  "menuTypeNewSong": "Yeni bir şarkı yazın", "menuFile": "Dosya", "menuNewSong": "Yeni şarkı", "aboutDetails": "Etkin kaynaklarda arama yapın, sürümleri karşılaştırın, şarkı sözlerini ve akorları birlikte tutun, şarkıları setlistelerde düzenleyin. Kitaplığınız bu cihazda saklanır; isteğe bağlı Google Drive eşitlemesi Google hesabınızı kullanır. Aramalar doğrudan etkin kaynaklara gönderilir.", "aboutSupport": "Destek ve geri bildirim", "appVersion": "Sürüm {version}",
   "@appVersion": {
     "placeholders": {
       "version": {

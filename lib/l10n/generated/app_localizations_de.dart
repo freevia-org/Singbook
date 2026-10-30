@@ -67,6 +67,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get menuTypeNewSong => 'Neues Lied eingeben';
 
   @override
+  String get menuFile => 'Datei';
+
+  @override
+  String get menuNewSong => 'Neues Lied';
+
+  @override
   String appVersion(String version) {
     return 'Version $version';
   }

@@ -67,6 +67,12 @@ class AppLocalizationsHi extends AppLocalizations {
   String get menuTypeNewSong => 'नया गीत लिखें';
 
   @override
+  String get menuFile => 'फ़ाइल';
+
+  @override
+  String get menuNewSong => 'नया गीत';
+
+  @override
   String appVersion(String version) {
     return 'संस्करण $version';
   }

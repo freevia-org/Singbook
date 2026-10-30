@@ -1,7 +1,7 @@
 {
   "@@locale": "lt",
   "appTitle": "Singbook",
-  "menuTypeNewSong": "Įvesti naują dainą", "aboutDetails": "Ieškokite įjungtuose šaltiniuose, lyginkite versijas, laikykite žodžius ir akordus kartu, o dainas tvarkykite grojaraščiuose. Jūsų biblioteka saugoma šiame įrenginyje; pasirenkamas sinchronizavimas su Google Drive naudoja jūsų Google paskyrą. Paieškos siunčiamos tiesiai į įjungtus šaltinius.", "aboutSupport": "Pagalba ir atsiliepimai", "appVersion": "Versija {version}",
+  "menuTypeNewSong": "Įvesti naują dainą", "menuFile": "Failas", "menuNewSong": "Nauja daina", "aboutDetails": "Ieškokite įjungtuose šaltiniuose, lyginkite versijas, laikykite žodžius ir akordus kartu, o dainas tvarkykite grojaraščiuose. Jūsų biblioteka saugoma šiame įrenginyje; pasirenkamas sinchronizavimas su Google Drive naudoja jūsų Google paskyrą. Paieškos siunčiamos tiesiai į įjungtus šaltinius.", "aboutSupport": "Pagalba ir atsiliepimai", "appVersion": "Versija {version}",
   "@appVersion": {
     "placeholders": {
       "version": {
