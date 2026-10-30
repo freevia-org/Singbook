@@ -28,13 +28,13 @@ env:
   FLUTTER_VERSION: "3.44.8"
 
 jobs:
-  # Chooses where each job runs. Each pool (Linux, Windows) has one local
-  # runner, which runs one job at a time behind the shared I5 capacity gate. It
-  # takes its heaviest job (Flutter tests on Linux, the release bundle on
-  # Windows) when no other run is using it; every other job, and all of them
-  # when another run holds the runner, goes to a GitHub-hosted runner (free:
-  # this repository is public). Jobs still queued locally ahead of this run
-  # count as using it, and a failed lookup falls back to hosted.
+  # Chooses where the Flutter tests run. The local Linux runner runs one job at
+  # a time behind the shared I5 capacity gate; it takes the tests when no other
+  # run is using it, and the job goes to a GitHub-hosted runner (free: this
+  # repository is public) otherwise. Jobs still queued locally ahead of this
+  # run count as using it, and a failed lookup falls back to hosted. Windows
+  # jobs are always hosted: the gate is shared with other repositories, which
+  # this lookup cannot see, and a Windows job once waited 35 minutes at it.
   pick-runners:
     runs-on: ubuntu-24.04
     timeout-minutes: 5
@@ -42,7 +42,6 @@ jobs:
       actions: read
     outputs:
       linux-test: ${{ steps.pick.outputs.linux-test }}
-      windows-build: ${{ steps.pick.outputs.windows-build }}
     steps:
       - id: pick
         env:
@@ -67,10 +66,7 @@ jobs:
             echo "$1: $used job(s) from other runs" >&2
             [ "$used" = 0 ] && echo "$1" || echo "$2"
           }
-          {
-            echo "linux-test=$(pick singbook-i5-linux ubuntu-24.04)"
-            echo "windows-build=$(pick singbook-i5-windows windows-2025)"
-          } | tee -a "$GITHUB_OUTPUT"
+          echo "linux-test=$(pick singbook-i5-linux ubuntu-24.04)" | tee -a "$GITHUB_OUTPUT"
 
   analyze:
     runs-on: ubuntu-24.04
@@ -164,8 +160,8 @@ jobs:
           retention-days: 7
 
   windows-build:
-    needs: [analyze, pick-runners]
-    runs-on: ${{ needs.pick-runners.outputs.windows-build }}
+    needs: analyze
+    runs-on: windows-2025
     timeout-minutes: 30
     env:
       SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID: ${{ vars.SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID }}
