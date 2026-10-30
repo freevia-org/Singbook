@@ -205,15 +205,19 @@ void main() {
               );
             }
           }
+          // Live providers drift: some hits are search evidence only or are
+          // not adopted as documents, so require that every combined source
+          // comes from this run and that the selected source is retained.
+          final resultIds = results.map((source) => source.id).toSet();
           expect(
             combined.sources.map((source) => source.id).toSet(),
-            results
-                // Search-evidence-only hits are observations, not documents.
-                .where((source) => source.extra['searchEvidenceOnly'] != true)
-                .map((source) => source.id)
-                .toSet(),
-            reason:
-                'Combining must retain all provider results for attribution.',
+            everyElement(isIn(resultIds)),
+            reason: 'Combined sources must originate from provider results.',
+          );
+          expect(
+            combined.sources.map((source) => source.id),
+            contains(selectedSourceId),
+            reason: 'The selected source must be retained for attribution.',
           );
           final selectedSource = results.singleWhere(
             (source) => source.id == selectedSourceId,

@@ -8,6 +8,7 @@ import 'package:singbook/data/library_repository.dart';
 import 'package:singbook/domain/models.dart';
 import 'package:singbook/domain/timing.dart';
 import 'package:singbook/providers/core/service.dart';
+import 'package:singbook/ui/player/player_screen.dart';
 import 'package:singbook/ui/verse_app.dart';
 import 'support/ios_screenshots.dart';
 
@@ -174,7 +175,20 @@ void main() {
         expect(tester.takeException(), isNull, reason: 'Reader at $size');
         await _capture('populated_reader_$viewport');
 
-        await tester.tap(find.byIcon(Icons.edit_outlined));
+        // Edit lives in the player's song-actions menu.
+        await tester.tap(
+          find.descendant(
+            of: find.byType(PlayerScreen),
+            matching: find.byIcon(Icons.more_horiz_rounded),
+          ),
+        );
+        await tester.pumpAndSettle();
+        await tester.tap(
+          find.byWidgetPredicate(
+            (widget) =>
+                widget is PopupMenuItem<String> && widget.value == 'edit',
+          ),
+        );
         await tester.pumpAndSettle();
         if (size.width >= 700) {
           final titleField = find.byWidgetPredicate(

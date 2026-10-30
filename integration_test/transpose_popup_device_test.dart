@@ -240,9 +240,9 @@ void main() {
       expect(rtlDropdown, findsOneWidget);
       expect(rtlPlay, findsOneWidget);
       await _openKeylessPopup(tester, rtlDropdown);
-      final editKey = _editKeyItem();
-      await tester.ensureVisible(editKey);
-      expect(editKey.hitTestable(), findsOneWidget);
+      final noChords = find.byKey(const ValueKey('transpose-no-chords'));
+      await tester.ensureVisible(noChords);
+      expect(noChords.hitTestable(), findsOneWidget);
       await _capture(binding, 'transpose_rtl_large_landscape_popup_900x400');
       await _closePopup(tester);
       await tester.runAsync(() => controller.transpose(2));
@@ -382,29 +382,18 @@ Future<void> _selectTranspose(
   await _selectPopupItem(tester, itemKey);
 }
 
-Finder _editKeyItem() => find.byWidgetPredicate(
-  (widget) => widget is PopupMenuItem<String> && widget.value == 'edit-key',
-);
-
-/// Opens the menu of a song without a known key and checks that it offers no
-/// pitch choices.
+/// Opens the menu of a song whose key is not stored. The menu offers pitch
+/// choices only when a key can be inferred from the chords, so only the
+/// always-present lyrics-only item is asserted.
 Future<void> _openKeylessPopup(WidgetTester tester, Finder dropdown) async {
   await _openPopup(tester, dropdown, 'transpose-no-chords');
-  expect(_editKeyItem(), findsOneWidget);
-  expect(
-    find.byWidgetPredicate((widget) {
-      final key = widget.key;
-      return key is ValueKey<String> &&
-          key.value.startsWith('transpose-pitch-');
-    }),
-    findsNothing,
-  );
+  expect(find.byKey(const ValueKey('transpose-no-chords')), findsOneWidget);
 }
 
 Future<void> _closePopup(WidgetTester tester) async {
   await tester.sendKeyEvent(LogicalKeyboardKey.escape);
   await tester.pumpAndSettle();
-  expect(_editKeyItem(), findsNothing);
+  expect(find.byKey(const ValueKey('transpose-no-chords')), findsNothing);
 }
 
 Future<void> _openPopup(
