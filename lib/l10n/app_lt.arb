@@ -765,6 +765,7 @@
   "setlistEntryRemoved": "Daina „{song}“ pašalinta iš grojaraščio",
   "backupTitle": "Atsarginė kopija ir atkūrimas",
   "backupExport": "Eksportuoti atsarginę kopiją",
+  "backupSaveToDevice": "Įrašyti atsarginę kopiją į įrenginį",
   "backupRestore": "Atkurti atsarginę kopiją",
   "backupIncludePreferences": "Įtraukti programos nuostatas",
   "backupRestorePreferences": "Atkurti programos nuostatas",

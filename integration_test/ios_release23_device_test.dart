@@ -258,12 +258,6 @@ void main() {
       final arabicL10n = AppLocalizations.of(
         tester.element(find.byType(Scaffold).first),
       );
-      final seekColumn = find
-          .ancestor(
-            of: find.byKey(const ValueKey('player-seek-slider')),
-            matching: find.byType(Column),
-          )
-          .first;
       final headingText = find.byWidgetPredicate(
         (widget) =>
             widget is Text &&
@@ -274,8 +268,10 @@ void main() {
                   player.state.playerSections.first.name,
                 ),
       );
-      final heading = find.descendant(of: seekColumn, matching: headingText);
-      expect(heading, findsOneWidget);
+      // Section headings now live in the lyrics list; the timeline labels
+      // carry a semanticsLabel and are excluded by headingText.
+      final heading = headingText.first;
+      expect(headingText, findsWidgets);
       await tester.ensureVisible(heading);
       await tester.pumpAndSettle();
       final controlsViewport = find

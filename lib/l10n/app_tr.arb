@@ -765,6 +765,7 @@
   "setlistEntryRemoved": "{song} şarkısı set listesinden kaldırıldı",
   "backupTitle": "Yedekleme ve geri yükleme",
   "backupExport": "Yedeği dışa aktar",
+  "backupSaveToDevice": "Yedeği cihaza kaydet",
   "backupRestore": "Yedeği geri yükle",
   "backupIncludePreferences": "Uygulama tercihlerini dahil et",
   "backupRestorePreferences": "Uygulama tercihlerini geri yükle",

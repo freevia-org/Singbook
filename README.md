@@ -29,9 +29,7 @@ The release application ID is `org.freevia.singbook`. Earlier test builds used
 `org.freevia.verse`, so the release installs as a separate app and cannot read
 that app's private library automatically. Share songs from the old app as
 ChordPro files, or use its setlist sharing action, then import those files in
-the new app through Settings > Import songs. A complete-library backup ZIP
-action exists in code (`FileActions.shareBackup`) but has no UI entry point yet,
-so neither the app nor the store listing offers it. Keep the old app and its data until the imported
+the new app through Settings > Import songs. Settings > Backup and restore also exports a complete-library backup, either through the share sheet or saved to the device, and restores it. Keep the old app and its data until the imported
 songs, timing, provenance, and setlists have been verified.
 
 Copy `config/defines.example.json` to `config/local.defines.json` and supply a Genius **client access token**. Do not supply a client secret. The local file is ignored by Git. A token bundled in a mobile binary is public configuration and can be extracted.

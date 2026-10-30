@@ -765,6 +765,7 @@
   "setlistEntryRemoved": "{song} har tagits bort från spellistan",
   "backupTitle": "Säkerhetskopiering och återställning",
   "backupExport": "Exportera säkerhetskopia",
+  "backupSaveToDevice": "Spara säkerhetskopia på enheten",
   "backupRestore": "Återställ säkerhetskopia",
   "backupIncludePreferences": "Inkludera appinställningar",
   "backupRestorePreferences": "Återställ appinställningar",

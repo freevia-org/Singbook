@@ -1923,6 +1923,9 @@ class AppLocalizationsNl extends AppLocalizations {
   String get backupExport => 'Back-up exporteren';
 
   @override
+  String get backupSaveToDevice => 'Back-up opslaan op apparaat';
+
+  @override
   String get backupRestore => 'Back-up herstellen';
 
   @override

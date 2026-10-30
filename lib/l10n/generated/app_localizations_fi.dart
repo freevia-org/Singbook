@@ -1900,6 +1900,9 @@ class AppLocalizationsFi extends AppLocalizations {
   String get backupExport => 'Vie varmuuskopio';
 
   @override
+  String get backupSaveToDevice => 'Tallenna varmuuskopio laitteelle';
+
+  @override
   String get backupRestore => 'Palauta varmuuskopio';
 
   @override

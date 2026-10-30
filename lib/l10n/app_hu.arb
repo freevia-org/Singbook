@@ -767,6 +767,7 @@
   "setlistEntryRemoved": "A(z) {song} kikerült a dallistából",
   "backupTitle": "Biztonsági mentés és visszaállítás",
   "backupExport": "Biztonsági mentés exportálása",
+  "backupSaveToDevice": "Biztonsági mentés mentése az eszközre",
   "backupRestore": "Biztonsági mentés visszaállítása",
   "backupIncludePreferences": "Alkalmazásbeállítások belefoglalása",
   "backupRestorePreferences": "Alkalmazásbeállítások visszaállítása",

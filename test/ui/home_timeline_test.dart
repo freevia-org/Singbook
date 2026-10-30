@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:singbook/l10n/generated/app_localizations.dart';
 import 'package:singbook/ui/verse_ui_state.dart';
@@ -38,6 +39,30 @@ void main() {
 
     expect(controller.addedSongs, [('recent-song', 'set')]);
   });
+
+  for (final modifier in [
+    LogicalKeyboardKey.controlLeft,
+    LogicalKeyboardKey.metaLeft,
+  ]) {
+    testWidgets('${modifier.keyLabel}+F focuses the search field', (
+      tester,
+    ) async {
+      final controller = _HomeController(const VerseUiState());
+      addTearDown(controller.dispose);
+      await _pumpHome(tester, controller);
+      bool searchFocused() =>
+          FocusManager.instance.primaryFocus?.context
+              ?.findAncestorWidgetOfExactType<EditableText>() !=
+          null;
+      expect(searchFocused(), isFalse);
+
+      await tester.sendKeyDownEvent(modifier);
+      await tester.sendKeyEvent(LogicalKeyboardKey.keyF);
+      await tester.sendKeyUpEvent(modifier);
+      await tester.pump();
+      expect(searchFocused(), isTrue);
+    });
+  }
 
   testWidgets('recent timeline only overlays the list while scrolling', (
     tester,

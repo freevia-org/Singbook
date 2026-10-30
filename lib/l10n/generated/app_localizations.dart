@@ -3330,6 +3330,12 @@ abstract class AppLocalizations {
   /// **'Export backup'**
   String get backupExport;
 
+  /// No description provided for @backupSaveToDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Save backup to device'**
+  String get backupSaveToDevice;
+
   /// No description provided for @backupRestore.
   ///
   /// In en, this message translates to:

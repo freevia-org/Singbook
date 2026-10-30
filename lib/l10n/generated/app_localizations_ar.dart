@@ -1927,6 +1927,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get backupExport => 'تصدير نسخة احتياطية';
 
   @override
+  String get backupSaveToDevice => 'حفظ النسخة الاحتياطية على الجهاز';
+
+  @override
   String get backupRestore => 'استعادة نسخة احتياطية';
 
   @override

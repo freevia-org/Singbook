@@ -767,6 +767,7 @@
   "setlistEntryRemoved": "{song} er fjernet fra sætliste",
   "backupTitle": "Sikkerhedskopiering og gendannelse",
   "backupExport": "Eksportér sikkerhedskopi",
+  "backupSaveToDevice": "Gem sikkerhedskopi på enheden",
   "backupRestore": "Gendan sikkerhedskopi",
   "backupIncludePreferences": "Medtag appindstillinger",
   "backupRestorePreferences": "Gendan appindstillinger",

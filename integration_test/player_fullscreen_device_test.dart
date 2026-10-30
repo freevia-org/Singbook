@@ -76,6 +76,7 @@ void main() {
       if (mobile) addTearDown(() => SystemChrome.setPreferredOrientations([]));
       await tester.pumpWidget(
         MaterialApp(
+          debugShowCheckedModeBanner: false,
           locale: const Locale('en'),
           localizationsDelegates: singbookLocalizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,

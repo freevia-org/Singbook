@@ -1901,6 +1901,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get backupExport => 'Yedeği dışa aktar';
 
   @override
+  String get backupSaveToDevice => 'Yedeği cihaza kaydet';
+
+  @override
   String get backupRestore => 'Yedeği geri yükle';
 
   @override

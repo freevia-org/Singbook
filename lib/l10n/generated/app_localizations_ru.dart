@@ -1933,6 +1933,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get backupExport => 'Экспортировать резервную копию';
 
   @override
+  String get backupSaveToDevice => 'Сохранить резервную копию на устройстве';
+
+  @override
   String get backupRestore => 'Восстановить резервную копию';
 
   @override

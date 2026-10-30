@@ -765,6 +765,7 @@
   "setlistEntryRemoved": "Skladba „{song}“ bola odstránená zo setlistu",
   "backupTitle": "Zálohovanie a obnovenie",
   "backupExport": "Exportovať zálohu",
+  "backupSaveToDevice": "Uložiť zálohu do zariadenia",
   "backupRestore": "Obnoviť zálohu",
   "backupIncludePreferences": "Zahrnúť nastavenia aplikácie",
   "backupRestorePreferences": "Obnoviť nastavenia aplikácie",

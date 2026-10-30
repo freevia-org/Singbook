@@ -1902,6 +1902,9 @@ class AppLocalizationsSv extends AppLocalizations {
   String get backupExport => 'Exportera säkerhetskopia';
 
   @override
+  String get backupSaveToDevice => 'Spara säkerhetskopia på enheten';
+
+  @override
   String get backupRestore => 'Återställ säkerhetskopia';
 
   @override

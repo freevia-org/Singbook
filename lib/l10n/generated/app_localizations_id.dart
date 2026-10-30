@@ -1904,6 +1904,9 @@ class AppLocalizationsId extends AppLocalizations {
   String get backupExport => 'Ekspor cadangan';
 
   @override
+  String get backupSaveToDevice => 'Simpan cadangan ke perangkat';
+
+  @override
   String get backupRestore => 'Pulihkan cadangan';
 
   @override

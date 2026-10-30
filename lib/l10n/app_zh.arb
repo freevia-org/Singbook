@@ -765,6 +765,7 @@
   "setlistEntryRemoved": "已从演出列表中移除 {song}",
   "backupTitle": "备份与恢复",
   "backupExport": "导出备份",
+  "backupSaveToDevice": "将备份保存到设备",
   "backupRestore": "恢复备份",
   "backupIncludePreferences": "包含应用偏好设置",
   "backupRestorePreferences": "恢复应用偏好设置",

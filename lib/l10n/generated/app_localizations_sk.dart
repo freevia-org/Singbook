@@ -1918,6 +1918,9 @@ class AppLocalizationsSk extends AppLocalizations {
   String get backupExport => 'Exportovať zálohu';
 
   @override
+  String get backupSaveToDevice => 'Uložiť zálohu do zariadenia';
+
+  @override
   String get backupRestore => 'Obnoviť zálohu';
 
   @override

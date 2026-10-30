@@ -14,6 +14,7 @@ import '../l10n/generated/app_localizations.dart';
 import 'app_version.dart';
 import 'account_avatar.dart';
 import 'app_controller_adapter.dart';
+import 'desktop_shortcuts.dart';
 import 'home/home_screen.dart';
 import 'library/editor_screen.dart';
 import 'library/setlists_screen.dart';
@@ -585,7 +586,14 @@ class _VerseAppShellState extends State<VerseAppShell>
     controller: widget.controller,
     child: ListenableBuilder(
       listenable: widget.controller,
-      builder: _buildShell,
+      builder: (context, child) => DesktopShortcuts(
+        commands: DesktopCommands.forState(
+          widget.controller.state,
+          widget.controller,
+          newSetlistName: AppLocalizations.of(context).setlistCreate,
+        ),
+        child: _buildShell(context, child),
+      ),
     ),
   );
 

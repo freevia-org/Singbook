@@ -1901,6 +1901,9 @@ class AppLocalizationsEt extends AppLocalizations {
   String get backupExport => 'Ekspordi varukoopia';
 
   @override
+  String get backupSaveToDevice => 'Salvesta varukoopia seadmesse';
+
+  @override
   String get backupRestore => 'Taasta varukoopia';
 
   @override

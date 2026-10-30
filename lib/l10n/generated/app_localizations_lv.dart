@@ -1925,6 +1925,9 @@ class AppLocalizationsLv extends AppLocalizations {
   String get backupExport => 'Eksportēt dublējumu';
 
   @override
+  String get backupSaveToDevice => 'Saglabāt dublējumu ierīcē';
+
+  @override
   String get backupRestore => 'Atjaunot dublējumu';
 
   @override

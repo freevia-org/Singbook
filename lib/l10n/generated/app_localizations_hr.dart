@@ -1918,6 +1918,9 @@ class AppLocalizationsHr extends AppLocalizations {
   String get backupExport => 'Izvezi sigurnosnu kopiju';
 
   @override
+  String get backupSaveToDevice => 'Spremi sigurnosnu kopiju na uređaj';
+
+  @override
   String get backupRestore => 'Vrati sigurnosnu kopiju';
 
   @override

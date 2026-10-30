@@ -765,6 +765,7 @@
   "setlistEntryRemoved": "Đã xóa {song} khỏi danh sách bài hát",
   "backupTitle": "Sao lưu và khôi phục",
   "backupExport": "Xuất bản sao lưu",
+  "backupSaveToDevice": "Lưu bản sao lưu vào thiết bị",
   "backupRestore": "Khôi phục bản sao lưu",
   "backupIncludePreferences": "Bao gồm tùy chọn ứng dụng",
   "backupRestorePreferences": "Khôi phục tùy chọn ứng dụng",

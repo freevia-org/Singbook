@@ -1896,6 +1896,9 @@ class AppLocalizationsVi extends AppLocalizations {
   String get backupExport => 'Xuất bản sao lưu';
 
   @override
+  String get backupSaveToDevice => 'Lưu bản sao lưu vào thiết bị';
+
+  @override
   String get backupRestore => 'Khôi phục bản sao lưu';
 
   @override

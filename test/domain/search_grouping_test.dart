@@ -49,6 +49,22 @@ void main() {
     expect(group.artworkUrl, _art);
   });
 
+  test('the opened row keeps the album and length its row shows', () {
+    final group = groupSearchRecordings([
+      _row('betterlyrics', album: 'Demo Album', duration: 269),
+      _row('genius'),
+    ], preferredProviderId: 'genius').single;
+    expect(group.selection.identity, 'genius:1');
+    expect(group.selection.metadata[rowAlbumKey], 'Demo Album');
+    expect(group.selection.metadata[rowDurationKey], 269);
+    // Borrowed facts do not become the row's identity.
+    expect(group.selection.album, isNull);
+    expect(group.selection.durationSeconds, isNull);
+    // Facts of the row's own are never replaced.
+    final own = _row('genius', album: 'Own Album', duration: 250);
+    expect(withRowFacts(own, album: 'Demo Album', durationSeconds: 269), own);
+  });
+
   test('without the preferred catalog the best ranked row is opened', () {
     final groups = groupSearchRecordings([
       _row('lrclib'),

@@ -1901,6 +1901,9 @@ class AppLocalizationsBg extends AppLocalizations {
   String get backupExport => 'Експортиране на архив';
 
   @override
+  String get backupSaveToDevice => 'Запази резервно копие на устройството';
+
+  @override
   String get backupRestore => 'Възстановяване на архив';
 
   @override

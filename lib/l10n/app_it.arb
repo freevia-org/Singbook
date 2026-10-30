@@ -767,6 +767,7 @@
   "setlistEntryRemoved": "{song} è stata rimossa dalla scaletta",
   "backupTitle": "Backup e ripristino",
   "backupExport": "Esporta backup",
+  "backupSaveToDevice": "Salva il backup sul dispositivo",
   "backupRestore": "Ripristina backup",
   "backupIncludePreferences": "Includi le preferenze dell’app",
   "backupRestorePreferences": "Ripristina le preferenze dell’app",
