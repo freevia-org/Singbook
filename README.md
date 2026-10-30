@@ -2,13 +2,13 @@
 
 **Website:** [freevia.org/singbook](https://freevia.org/singbook/) · **Privacy policy:** [freevia.org/singbook/privacy](https://freevia.org/singbook/privacy/) · **Support and feedback:** [freevia.org/singbook/support](https://freevia.org/singbook/support/)
 
-**Stores:** [Google Play for Android](https://play.google.com/store/apps/details?id=org.freevia.singbook) (0.2.23 is the last verified public version; 0.2.26+40 is active internally and submitted to production, awaiting Google review) · [Microsoft Store for Windows](https://apps.microsoft.com/detail/9P2J824JLQGZ) (last recorded status: 0.2.24 in certification; public version not exposed).
+**Stores:** [Google Play for Android](https://play.google.com/store/apps/details?id=org.freevia.singbook) (0.2.26, build 40, live in Production; 0.2.32, build 46, available to Internal testers) · [Microsoft Store for Windows](https://apps.microsoft.com/detail/9P2J824JLQGZ) (package 1.0.46.0 live through Submission 17). Five Google Play listing-only changes, including the revised description and phone gallery, were published on 29 October 2026; the Microsoft submission updated one search keyword without changing the package.
 
 **GitHub Android 0.2.26 (build 40):** [Signed APK](https://github.com/freevia-org/Singbook/releases/download/v0.2.26/singbook-0.2.26%2B40-release.apk) · [Release notes and checksums](https://github.com/freevia-org/Singbook/releases/tag/v0.2.26).
 
 **GitHub desktop 0.2.24 (build 38):** [Portable Windows x64 ZIP](https://github.com/freevia-org/Singbook/releases/download/v0.2.24/singbook-0.2.24%2B38-windows-x64-release-f11a5341-20261025T071344096Z.zip) · [macOS universal ZIP](https://github.com/freevia-org/Singbook/releases/download/v0.2.24/Singbook-0.2.24-macos-universal.zip) · [Release notes](https://github.com/freevia-org/Singbook/releases/tag/v0.2.24).
 
-The [website](https://freevia.org/singbook/) shows real Android and Windows app screenshots using fictional sample-song content. iOS and macOS 0.2.24 are submitted and waiting for Apple review; App Store availability is not confirmed.
+The [website](https://freevia.org/singbook/) shows real Android and Windows app screenshots using fictional sample-song content. Apple is still reviewing iOS and macOS 0.2.25 (build 39); neither is publicly available on the App Store as of 29 October 2026.
 
 A local-first Flutter songbook for Android, Windows and macOS, with an iOS release in review. Search Genius, compare lyrics and chord arrangements from free sources, and keep each song in one portable ChordPro file. No Singbook backend is required. SQLite stores the local library; source HTTP requests run on the device.
 
@@ -19,7 +19,7 @@ Windows desktop setup and current platform gaps are documented in the
 
 For macOS setup, simulator builds, and signing steps, see [iOS build preparation](docs/ios-build.md). Production listing copy, screenshot inventory, offline validation and the remaining publishing decisions are covered in the [App Store handoff](docs/ios-testflight.md#app-store-publishing-handoff--2026-10-19).
 
-Use Flutter 3.44.8 / Dart 3.12, JDK 21 and Android SDK 36. The app ID is `org.freevia.singbook`. Android 24+ is supported. iOS builds require macOS/Xcode and target iOS 15+. Simulator debug and unsigned device release builds have been compiled with Flutter 3.44.8 and Xcode 27.1; iOS sign-in, sync, and localization still need device validation. See the [iOS build guide](docs/ios-build.md) for setup and validation details. The iOS project is prepared for Google sign-in (URL scheme and `GIDClientID` from `ios/Flutter/Secrets.xcconfig`, see [Google Cloud / OAuth setup](docs/google-oauth-setup.md)) and lists the 34 languages in `CFBundleLocalizations`; Runner now bundles a required-reason privacy manifest; a signing team and owner confirmation of the final release privacy answers are still needed. See [TestFlight preparation](docs/ios-testflight.md), the [App Privacy assessment](docs/ios-app-privacy.md), [submission details](docs/testflight-submission.md), and [iOS E2E evidence](docs/ios-e2e.md).
+Use Flutter 3.44.8 / Dart 3.12, JDK 21 and Android SDK 36. The app ID is `org.freevia.singbook`. Android 24+ is supported. iOS builds require macOS/Xcode and target iOS 15+. See the [iOS build guide](docs/ios-build.md) for setup and validation details. The iOS project configures Google sign-in through the URL scheme and `GIDClientID` in `ios/Flutter/Secrets.xcconfig` (see [Google Cloud / OAuth setup](docs/google-oauth-setup.md)), lists 34 languages in `CFBundleLocalizations`, and bundles a required-reason privacy manifest. See [TestFlight preparation](docs/ios-testflight.md), the [App Privacy assessment](docs/ios-app-privacy.md), [submission details](docs/testflight-submission.md), and [iOS E2E evidence](docs/ios-e2e.md) for the current platform checks.
 
 Singbook uses its open-book and floating-note artwork, navy/parchment
 light theme and navy/amber dark theme. The database name and `x_verse` file
@@ -109,13 +109,15 @@ distribute run `.\scripts\build-android.ps1 -Production` (also sets
 `-PrequireReleaseSigning=true`, which overrides `allowDebugSigning`). Release builds enable
 R8 code and resource shrinking (`android/app/proguard-rules.pro`); if shrinking
 breaks a plugin, build with `-PminifyRelease=false` and report the missing keep
-rule. The rules were written without a device-verified release build, so check
-networking (Cronet) and Google sign-in on a release APK before publishing.
+rule. After changing these rules, check networking (Cronet) and Google sign-in
+on a signed release APK before publishing.
 
 ### Google Play release
 
-Current source candidate: `0.2.32+46` (based on main `d58f8d5`; platform packages are not yet
-built or submitted). Every new release increments both the visible patch version and the
+Current source version: `0.2.32+46` (see `pubspec.yaml`). As of 29 October 2026,
+Android code 46 is active on Internal testing, while Production remains
+`0.2.26+40`. These build commands do not imply publication on other platforms.
+Every new release increments both the visible patch version and the
 build number: `0.2.28+42`, `0.2.29+43`, `0.2.30+44`, `0.2.31+45`, `0.2.32+46`, and so on. The number after
 `+` is the Play versionCode and must always increase; never reset it when the
 visible version changes. Rebuilds of the same release and promotion between

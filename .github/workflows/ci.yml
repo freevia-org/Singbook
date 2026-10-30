@@ -81,7 +81,7 @@ jobs:
         run: flutter pub get --enforce-lockfile --no-example
 
       - name: Test
-        run: flutter test --no-pub --exclude-tags=performance
+        run: flutter test --no-pub --exclude-tags=performance --concurrency=2
 
       - name: Verify isolated performance bounds
         run: >-
@@ -120,7 +120,7 @@ jobs:
 
   windows-build:
     needs: analyze
-    runs-on: windows-latest
+    runs-on: singbook-i5-windows
     timeout-minutes: 30
     env:
       SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID: ${{ vars.SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID }}
@@ -129,6 +129,10 @@ jobs:
       - uses: actions/checkout@v7
         with:
           persist-credentials: false
+
+      - name: Bootstrap pinned jq for Flutter setup
+        shell: pwsh
+        run: ./scripts/bootstrap-ci-jq.ps1
 
       - uses: subosito/flutter-action@v2
         with:
@@ -265,7 +269,7 @@ jobs:
   windows-test:
     name: windows-test (${{ matrix.shard }}/2)
     needs: analyze
-    runs-on: windows-latest
+    runs-on: singbook-i5-windows
     timeout-minutes: 25
     strategy:
       fail-fast: false
@@ -275,6 +279,10 @@ jobs:
       - uses: actions/checkout@v7
         with:
           persist-credentials: false
+
+      - name: Bootstrap pinned jq for Flutter setup
+        shell: pwsh
+        run: ./scripts/bootstrap-ci-jq.ps1
 
       - uses: subosito/flutter-action@v2
         with:
@@ -307,12 +315,16 @@ jobs:
 
   windows-journey:
     needs: analyze
-    runs-on: windows-latest
+    runs-on: singbook-i5-windows
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v7
         with:
           persist-credentials: false
+
+      - name: Bootstrap pinned jq for Flutter setup
+        shell: pwsh
+        run: ./scripts/bootstrap-ci-jq.ps1
 
       - uses: subosito/flutter-action@v2
         with:

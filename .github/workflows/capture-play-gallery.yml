@@ -1,0 +1,67 @@
+name: Capture Singbook Play gallery (0.2.26)
+
+# Manual evidence only. The release source is pinned; no store, release, or
+# production app is modified. The workflow must be merged before dispatch.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  capture:
+    if: github.ref == 'refs/heads/main'
+    runs-on: singbook-macmini
+    timeout-minutes: 45
+    steps:
+      - name: Check out capture harness
+        uses: actions/checkout@v7
+        with:
+          path: capture
+          persist-credentials: false
+
+      - name: Check out exact public release source
+        uses: actions/checkout@v7
+        with:
+          ref: v0.2.26
+          path: release
+          persist-credentials: false
+
+      - name: Verify pinned source and prepare capture test
+        shell: bash
+        run: |
+          test "$(git -C release rev-parse HEAD)" = '1120fc1e0faf3d0e59435390d9fb1fdaa13174ac'
+          grep -qx 'version: 0.2.26+40' release/pubspec.yaml
+          cp capture/integration_test/play_public_domain_gallery_device_test.dart release/integration_test/
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.8'
+          channel: stable
+          cache: true
+
+      - name: Resolve locked release dependencies
+        working-directory: release
+        run: flutter pub get --enforce-lockfile --no-example
+
+      - name: Capture genuine release-source UI
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 36
+          target: google_apis
+          arch: arm64-v8a
+          profile: pixel_6
+          ram-size: 4096M
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back none
+          working-directory: release
+          script: bash ../capture/scripts/run-play-public-domain-gallery.sh
+
+      - name: Preserve raw captures and provenance
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: singbook-play-026-public-domain-raw
+          path: release/artifacts/play-gallery-026/
+          if-no-files-found: warn
+          retention-days: 14
