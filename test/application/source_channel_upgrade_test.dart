@@ -8,13 +8,18 @@ import 'package:singbook/application/app_controller.dart';
 import 'package:singbook/data/library_repository.dart';
 import 'package:singbook/domain/models.dart';
 import 'package:singbook/providers/source_catalog_client.dart';
+import 'package:singbook/providers/source_catalog.dart';
 import 'package:singbook/providers/transport.dart';
+
+SourceCatalog _currentCatalog() => SourceCatalog.parse(
+  File(SourceCatalogClient.bundledAsset).readAsStringSync(),
+);
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   sqfliteFfiInit();
   test(
-    'offline channel10 enables qualified Chords and Tabs and keeps OpenScore off',
+    'offline current channel enables qualified Chords and Tabs and keeps OpenScore off',
     () async {
       final repo = await LibraryRepository.open(
         path: inMemoryDatabasePath,
@@ -63,9 +68,12 @@ void main() {
         );
         expect(
           app.discovery.catalogClient!.runtime.catalog!.sources,
-          hasLength(32),
+          hasLength(_currentCatalog().sources.length),
         );
-        expect(app.discovery.catalogClient!.runtime.catalog!.revision, 23);
+        expect(
+          app.discovery.catalogClient!.runtime.catalog!.revision,
+          _currentCatalog().revision,
+        );
         expect(requests, 0);
         await app.setProviderEnabled('amll', false);
         await app.setProviderEnabled('vocadb', false);
@@ -271,10 +279,13 @@ void main() {
       try {
         await app.initialize();
         expect(await repo.getSetting(SourceCatalogClient.cacheKey), isNull);
-        expect(app.discovery.catalogClient!.runtime.catalog!.revision, 23);
+        expect(
+          app.discovery.catalogClient!.runtime.catalog!.revision,
+          _currentCatalog().revision,
+        );
         expect(
           app.discovery.catalogClient!.runtime.catalog!.sources,
-          hasLength(32),
+          hasLength(_currentCatalog().sources.length),
         );
         expect(
           app.providers
@@ -300,7 +311,7 @@ void main() {
         );
         await app.refreshSources();
         expect(app.discovery.catalogClient!.lastErrorCode, isNull);
-        expect(seen.single.path, endsWith('/source-catalog-v10.json'));
+        expect(seen.single.path, endsWith('/source-catalog-v11.json'));
         expect(
           app.discovery.catalogClient!.runtime.catalog!.revision,
           nextRevision,
@@ -423,7 +434,7 @@ void main() {
         );
         expect(
           app.discovery.catalogClient!.runtime.catalog!.sources,
-          hasLength(32),
+          hasLength(_currentCatalog().sources.length),
         );
         expect(app.providerEnabled('amll'), false);
         expect(app.providerEnabled('vocadb'), false);
@@ -483,7 +494,7 @@ void main() {
     final transport = ProviderTransport(
       client: MockClient((request) async {
         calls++;
-        expect(request.url.path, endsWith('/source-catalog-v10.json'));
+        expect(request.url.path, endsWith('/source-catalog-v11.json'));
         return http.Response(
           jsonEncode(next),
           200,

@@ -26,12 +26,13 @@ class SourceCatalogClient {
   static const defaultEndpoint = String.fromEnvironment(
     'SINGBOOK_SOURCE_CATALOG_URL',
     defaultValue:
-        'https://raw.githubusercontent.com/freevia-org/Singbook/main/config/source-catalog-v10.json',
+        'https://raw.githubusercontent.com/freevia-org/Singbook/main/config/source-catalog-v11.json',
   );
-  // Channel 10 adds recording analysis without changing catalogs consumed
+  // Channel 11 adds a gated song-sheet adapter without changing catalogs consumed
   // by earlier binaries. Keep each compatible channel in its own cache.
-  static const bundledAsset = 'config/source-catalog-v10.json';
-  static const cacheKey = 'sourceCatalog:v10';
+  static const bundledAsset = 'config/source-catalog-v11.json';
+  static const cacheKey = 'sourceCatalog:v11';
+  static const channel10CacheKey = 'sourceCatalog:v10';
   static const channel9CacheKey = 'sourceCatalog:v9';
   static const channel8CacheKey = 'sourceCatalog:v8';
   static const channel7CacheKey = 'sourceCatalog:v7';
@@ -52,6 +53,8 @@ class SourceCatalogClient {
 
   /// Closest older channel first. Used only without a valid current cache.
   /// Bundled baselines distinguish a publisher removal from a new native ID.
+  /// Supply only known local channels; the controller bounds this finite list
+  /// using the compiled cache channel and its bundled predecessor assets.
   final Future<List<PreviousSourceCatalogCache>> Function()? readPreviousCaches;
   final Uri endpoint;
   String? lastErrorCode;
@@ -104,9 +107,10 @@ class SourceCatalogClient {
     }
     if (!currentCacheValid && bundled != null) {
       try {
-        // The controller supplies only known local channel keys/assets. Bound
-        // this optional callback too; invalid older state cannot block startup.
-        for (final previous in (await readPreviousCaches!()).take(9)) {
+        // The controller bounds this history to known local channel keys/assets.
+        // Visit every supplied snapshot so a new channel cannot silently drop
+        // the oldest supported cache. Invalid entries still fall through.
+        for (final previous in await readPreviousCaches!()) {
           try {
             final baseline = SourceCatalog.parse(previous.bundled);
             final cached = SourceCatalog.parse(previous.cached);
