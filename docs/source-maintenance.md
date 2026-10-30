@@ -21,11 +21,11 @@ versions. All catalog files use `schemaVersion: 1` and
 | 8 | `config/source-catalog-v8.json` | 21 | 30 | Retains Chords & Tabs and Pisni; activates qualified Chords & Tabs |
 | 9 | `config/source-catalog-v9.json` | 22 | 31 | Adds OpenScore disabled/off; inherits all current channel 8 rows |
 | 10 | `config/source-catalog-v10.json` | 23 | 32 | Adds recording-ID AcousticBrainz analysis; inherits all channel 9 rows |
-| 11 (unpublished candidate) | `config/source-catalog-v11.json` | 24 | 33 | Adds disabled/off Wikibooks Liederbuch; every channel 10 row is unchanged |
+| 11 (unreleased candidate) | `config/source-catalog-v11.json` | 24 | 33 | Adds disabled/off Wikibooks Liederbuch; every channel 10 row is unchanged |
 
 Roster membership alone does not show that a provider is enabled, qualified or
 live.
-This unpublished rollout candidate selects channel 11 and its matching registry
+This unreleased rollout candidate selects channel 11 and its matching registry
 (32 native IDs plus declarative Unison). Wikibooks remains disabled/off pending
 live/native/cloud qualification and integration/release review. Channel 10 is
 the prior production channel and stays intact. Candidate preparation is not
@@ -225,7 +225,7 @@ dart run tool/source_maintenance.dart --source lrclib --report artifacts/lrclib-
 Options also include `--catalog path` to validate a candidate catalog. By
 default, offline and live CLI runs use the asset named by
 `SourceCatalogClient.bundledAsset` in `lib/providers/source_catalog_client.dart`.
-On this unpublished candidate that compiled source of truth points to
+On this unreleased candidate that compiled source of truth points to
 `config/source-catalog-v11.json`; production schedules must continue deriving it
 from current public main. Do not hard-code a channel number in scheduled
 commands or reports.

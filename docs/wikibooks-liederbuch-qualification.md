@@ -1,6 +1,6 @@
 # Wikibooks Liederbuch qualification and rollout candidate
 
-The unpublished local rollout candidate is based on public main
+The unreleased rollout candidate is based on public main
 `66978393717e0327c46e4aa6fad811273ac53330` and reuses the separately reviewed
 cache-history repair. It compiles the unchanged adapter in the normal registry
 and selects an independent channel 11 endpoint, bundle and cache. The new row
