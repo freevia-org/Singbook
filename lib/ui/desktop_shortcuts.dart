@@ -88,7 +88,7 @@ class DesktopCommands {
   }
 }
 
-/// Binds Ctrl+N/O/P/S/E (Cmd on macOS) to [commands] for everything below it.
+/// Binds Ctrl+N/O/P/S/E (Cmd on macOS when [handleMacOS]) to [commands] for everything below it.
 ///
 /// Uses a hardware-keyboard handler instead of the focus tree so the commands
 /// work wherever focus is, including on screens that hold no focus. A command
@@ -101,11 +101,16 @@ class DesktopShortcuts extends StatefulWidget {
     required this.commands,
     required this.child,
     this.platform,
+    this.handleMacOS = false,
   });
 
   final DesktopCommands commands;
   final Widget child;
   final TargetPlatform? platform;
+
+  /// macOS binds Cmd+N/O/P/E as native menu key equivalents, so by default
+  /// the Cmd path is ignored there to avoid firing every command twice.
+  final bool handleMacOS;
 
   @override
   State<DesktopShortcuts> createState() => _DesktopShortcutsState();
@@ -139,6 +144,7 @@ class _DesktopShortcutsState extends State<DesktopShortcuts> {
 
   bool _onKey(KeyEvent event) {
     if (event is! KeyDownEvent) return false;
+    if (_mac && !widget.handleMacOS) return false;
     final keyboard = HardwareKeyboard.instance;
     final primary = _mac ? keyboard.isMetaPressed : keyboard.isControlPressed;
     final other = _mac ? keyboard.isControlPressed : keyboard.isMetaPressed;

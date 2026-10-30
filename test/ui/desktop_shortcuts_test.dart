@@ -81,12 +81,46 @@ void main() {
     expect(hits, ['new', 'import', 'print', 'save', 'export']);
   });
 
-  testWidgets('macOS uses Cmd and ignores Ctrl', (tester) async {
+  testWidgets('macOS leaves Cmd+N/O/P/S/E to the native menu by default', (
+    tester,
+  ) async {
     final hits = <String>[];
     await _pump(
       tester,
-      DesktopCommands(onNew: () => hits.add('new')),
+      DesktopCommands(
+        onNew: () => hits.add('new'),
+        onImport: () => hits.add('import'),
+        onPrint: () => hits.add('print'),
+        onSave: () => hits.add('save'),
+        onExport: () => hits.add('export'),
+      ),
       platform: TargetPlatform.macOS,
+    );
+    for (final key in [
+      LogicalKeyboardKey.keyN,
+      LogicalKeyboardKey.keyO,
+      LogicalKeyboardKey.keyP,
+      LogicalKeyboardKey.keyS,
+      LogicalKeyboardKey.keyE,
+    ]) {
+      await _chord(tester, LogicalKeyboardKey.metaLeft, key);
+    }
+    expect(hits, isEmpty);
+  });
+
+  testWidgets('macOS handles Cmd, not Ctrl, when handleMacOS is set', (
+    tester,
+  ) async {
+    final hits = <String>[];
+    await tester.pumpWidget(
+      MaterialApp(
+        home: DesktopShortcuts(
+          commands: DesktopCommands(onNew: () => hits.add('new')),
+          platform: TargetPlatform.macOS,
+          handleMacOS: true,
+          child: const Scaffold(body: SizedBox.expand()),
+        ),
+      ),
     );
     await _chord(
       tester,
