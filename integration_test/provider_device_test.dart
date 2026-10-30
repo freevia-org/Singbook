@@ -207,7 +207,11 @@ void main() {
           }
           expect(
             combined.sources.map((source) => source.id).toSet(),
-            results.map((source) => source.id).toSet(),
+            results
+                // Search-evidence-only hits are observations, not documents.
+                .where((source) => source.extra['searchEvidenceOnly'] != true)
+                .map((source) => source.id)
+                .toSet(),
             reason:
                 'Combining must retain all provider results for attribution.',
           );

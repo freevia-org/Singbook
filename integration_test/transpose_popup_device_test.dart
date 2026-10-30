@@ -105,9 +105,10 @@ void main() {
         if (index == 0) {
           _expectDropdownBeforePlay(tester, dropdown, play);
           await _capture(binding, 'transpose_keyless_idle_360x800');
-          await _openPopup(tester, dropdown, 'transpose-offset-0');
+          await _openKeylessPopup(tester, dropdown);
           await _capture(binding, 'transpose_keyless_popup_360x800');
-          await _selectPopupItem(tester, 'transpose-offset-2');
+          await _closePopup(tester);
+          await tester.runAsync(() => controller.transpose(2));
           await _settleNative(tester, controller, repository);
           await _expectChordValues(
             tester,
@@ -118,7 +119,7 @@ void main() {
           expect(controller.state.readerKey, fixture.shiftedKey);
           await _capture(binding, 'transpose_keyless_plus2_360x800');
         } else {
-          await _selectTranspose(tester, dropdown, fixture, 2);
+          await _selectTranspose(tester, controller, dropdown, fixture, 2);
           await _settleNative(tester, controller, repository);
           await _expectChordValues(
             tester,
@@ -183,7 +184,7 @@ void main() {
         expect(controller.state.readerTranspose, 2, reason: fixture.name);
         expect(controller.state.readerKey, fixture.shiftedKey);
 
-        await _selectTranspose(tester, dropdown, fixture, -1);
+        await _selectTranspose(tester, controller, dropdown, fixture, -1);
         await _settleNative(tester, controller, repository);
         await _expectChordValues(
           tester,
@@ -191,7 +192,7 @@ void main() {
           fixture.down,
           reason: fixture.name,
         );
-        await _selectTranspose(tester, dropdown, fixture, 0);
+        await _selectTranspose(tester, controller, dropdown, fixture, 0);
         await _settleNative(tester, controller, repository);
         await _expectChordValues(
           tester,
@@ -205,7 +206,7 @@ void main() {
         await tester.runAsync(() => controller.setShowChords(false));
         await _settleNative(tester, controller, repository);
         expect(controller.state.showChords, isFalse, reason: fixture.name);
-        await _selectTranspose(tester, dropdown, fixture, 0);
+        await _selectTranspose(tester, controller, dropdown, fixture, 0);
         await _settleNative(tester, controller, repository);
         expect(controller.state.showChords, isFalse, reason: fixture.name);
         await tester.runAsync(() => controller.setShowChords(true));
@@ -238,12 +239,13 @@ void main() {
       final rtlPlay = find.byKey(const ValueKey('start-lyric-scroll'));
       expect(rtlDropdown, findsOneWidget);
       expect(rtlPlay, findsOneWidget);
-      await _openPopup(tester, rtlDropdown, 'transpose-offset-0');
-      final plusTwo = find.byKey(const ValueKey('transpose-offset-2'));
-      await tester.ensureVisible(plusTwo);
-      expect(plusTwo.hitTestable(), findsOneWidget);
+      await _openKeylessPopup(tester, rtlDropdown);
+      final editKey = _editKeyItem();
+      await tester.ensureVisible(editKey);
+      expect(editKey.hitTestable(), findsOneWidget);
       await _capture(binding, 'transpose_rtl_large_landscape_popup_900x400');
-      await tester.tap(plusTwo);
+      await _closePopup(tester);
+      await tester.runAsync(() => controller.transpose(2));
       await _settleNative(tester, controller, repository);
       await _expectChordValues(
         tester,
@@ -301,12 +303,15 @@ void main() {
           binding,
           'transpose_actual_${landscape ? 'landscape' : 'portrait'}_plus2',
         );
-        await _openPopup(tester, dropdown, 'transpose-offset-2');
+        await _openKeylessPopup(tester, dropdown);
         await _capture(
           binding,
           'transpose_actual_${landscape ? 'landscape' : 'portrait'}_popup',
         );
-        await _selectPopupItem(tester, 'transpose-offset-0');
+        await _closePopup(tester);
+        await tester.runAsync(
+          () => controller.transpose(-controller.state.readerTranspose),
+        );
         await _settleNative(tester, controller, repository);
         await _expectChordValues(
           tester,
@@ -314,7 +319,7 @@ void main() {
           keyless.original,
           reason: keyless.name,
         );
-        await _selectTranspose(tester, dropdown, keyless, 2);
+        await _selectTranspose(tester, controller, dropdown, keyless, 2);
         await _settleNative(tester, controller, repository);
         await _expectChordValues(
           tester,
@@ -357,15 +362,49 @@ Widget _playerApp(
 
 Future<void> _selectTranspose(
   WidgetTester tester,
+  AppControllerAdapter controller,
   Finder dropdown,
   _TransposePopupFixture fixture,
   int offset,
 ) async {
-  final itemKey = fixture.pitch == null
-      ? 'transpose-offset-$offset'
-      : 'transpose-pitch-${(fixture.pitch! + offset + 12) % 12}';
+  if (fixture.pitch == null) {
+    // Without a known key the menu offers only lyrics-only mode and key
+    // editing, so the offset is applied through the same controller action.
+    await _openKeylessPopup(tester, dropdown);
+    await _closePopup(tester);
+    await tester.runAsync(
+      () => controller.transpose(offset - controller.state.readerTranspose),
+    );
+    return;
+  }
+  final itemKey = 'transpose-pitch-${(fixture.pitch! + offset + 12) % 12}';
   await _openPopup(tester, dropdown, itemKey);
   await _selectPopupItem(tester, itemKey);
+}
+
+Finder _editKeyItem() => find.byWidgetPredicate(
+  (widget) => widget is PopupMenuItem<String> && widget.value == 'edit-key',
+);
+
+/// Opens the menu of a song without a known key and checks that it offers no
+/// pitch choices.
+Future<void> _openKeylessPopup(WidgetTester tester, Finder dropdown) async {
+  await _openPopup(tester, dropdown, 'transpose-no-chords');
+  expect(_editKeyItem(), findsOneWidget);
+  expect(
+    find.byWidgetPredicate((widget) {
+      final key = widget.key;
+      return key is ValueKey<String> &&
+          key.value.startsWith('transpose-pitch-');
+    }),
+    findsNothing,
+  );
+}
+
+Future<void> _closePopup(WidgetTester tester) async {
+  await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+  await tester.pumpAndSettle();
+  expect(_editKeyItem(), findsNothing);
 }
 
 Future<void> _openPopup(
