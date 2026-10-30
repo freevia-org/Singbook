@@ -1471,10 +1471,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get accountImportChordPro => 'ChordPro\'yu Drive\'dan içe aktar';
 
   @override
-  String get accountImportChordProHint =>
-      'Bu kitaplığa eklenecek .cho dosyalarını seçin. Zaten klasörde bulunan dosyalar benimsenir; başka yerlerdeki dosyalar buraya kopyalanır.';
-
-  @override
   String get syncErrorFolderPickerUnavailable =>
       'Drive klasörü seçimi kullanılamıyor';
 
@@ -1519,9 +1515,6 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get accountSignOutBody =>
       'Şarkılarınız ve listeleriniz bu cihazda kalır. Yeniden oturum açana kadar yedeklenmez veya senkronize edilmez.';
-
-  @override
-  String get accountUseDifferent => 'Farklı bir hesap kullan';
 
   @override
   String get accountSignInAgain => 'Tekrar oturum aç';

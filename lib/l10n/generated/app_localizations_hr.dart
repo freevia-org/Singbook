@@ -1479,10 +1479,6 @@ class AppLocalizationsHr extends AppLocalizations {
   String get accountImportChordPro => 'Uvezite ChordPro s Diska';
 
   @override
-  String get accountImportChordProHint =>
-      'Odaberite .cho datoteke za dodavanje u ovu biblioteku. Usvajaju se datoteke koje se već nalaze u mapi; datoteke na drugim mjestima kopiraju se ovdje.';
-
-  @override
   String get syncErrorFolderPickerUnavailable =>
       'Odabir mape pogona nije dostupan';
 
@@ -1527,9 +1523,6 @@ class AppLocalizationsHr extends AppLocalizations {
   @override
   String get accountSignOutBody =>
       'Pjesme i setliste ostat će na ovom uređaju. Sigurnosno kopiranje i sinkronizacija obustavit će se dok se ponovno ne prijavite.';
-
-  @override
-  String get accountUseDifferent => 'Koristi drugi račun';
 
   @override
   String get accountSignInAgain => 'Prijavi se ponovno';

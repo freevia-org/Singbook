@@ -212,24 +212,7 @@ class AccountSection extends StatelessWidget {
           enabled: !state.syncBusy,
           onTap: state.syncBusy ? null : () => _chooseDriveFolder(context),
         ),
-        if (state.syncDriveFolderName != null)
-          ListTile(
-            key: const ValueKey('account-import-drive-chordpro'),
-            leading: const Icon(Icons.file_download_outlined),
-            title: Text(l10n.accountImportChordPro),
-            subtitle: Text(l10n.accountImportChordProHint),
-            enabled: !state.syncBusy,
-            onTap: state.syncBusy ? null : controller.importChordProFromDrive,
-          ),
       ],
-      if (state.syncProvider == SyncProvider.googleDrive)
-        ListTile(
-          key: const ValueKey('account-use-different'),
-          leading: const Icon(Icons.switch_account_outlined),
-          title: Text(l10n.accountUseDifferent),
-          enabled: !state.syncBusy,
-          onTap: state.syncBusy ? null : () => _useDifferentAccount(),
-        ),
       ListTile(
         key: const ValueKey('account-sign-out'),
         leading: const Icon(Icons.logout_rounded),
@@ -269,11 +252,6 @@ class AccountSection extends StatelessWidget {
     }
     if (_signInAgainCodes.contains(code)) return controller.signInForSync;
     return controller.syncNow;
-  }
-
-  Future<void> _useDifferentAccount() async {
-    await controller.signOutFromSync();
-    await controller.signInForSync();
   }
 
   Future<void> _chooseDriveFolder(BuildContext context) async {

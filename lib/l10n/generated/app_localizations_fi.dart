@@ -1468,10 +1468,6 @@ class AppLocalizationsFi extends AppLocalizations {
   String get accountImportChordPro => 'Tuo ChordPro Drivesta';
 
   @override
-  String get accountImportChordProHint =>
-      'Valitse tähän kirjastoon lisättävät .cho-tiedostot. Kansiossa jo olevat tiedostot otetaan käyttöön; muualla olevat tiedostot kopioidaan tänne.';
-
-  @override
   String get syncErrorFolderPickerUnavailable =>
       'Drive-kansion valinta ei ole käytettävissä';
 
@@ -1516,9 +1512,6 @@ class AppLocalizationsFi extends AppLocalizations {
   @override
   String get accountSignOutBody =>
       'Kappaleet ja settilistat säilyvät tällä laitteella. Niitä ei varmuuskopioida tai synkronoida ennen kuin kirjaudut uudelleen sisään.';
-
-  @override
-  String get accountUseDifferent => 'Käytä toista tiliä';
 
   @override
   String get accountSignInAgain => 'Kirjaudu uudelleen sisään';

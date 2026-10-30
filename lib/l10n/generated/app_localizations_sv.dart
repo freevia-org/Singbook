@@ -1469,10 +1469,6 @@ class AppLocalizationsSv extends AppLocalizations {
   String get accountImportChordPro => 'Importera ChordPro från Drive';
 
   @override
-  String get accountImportChordProHint =>
-      'Välj .cho-filer att lägga till i det här biblioteket. Filer som redan finns i mappen antas; filer på andra ställen kopieras hit.';
-
-  @override
   String get syncErrorFolderPickerUnavailable =>
       'Val av Drive-mapp är inte tillgängligt';
 
@@ -1517,9 +1513,6 @@ class AppLocalizationsSv extends AppLocalizations {
   @override
   String get accountSignOutBody =>
       'Dina låtar och setlistor finns kvar på den här enheten. De säkerhetskopieras eller synkroniseras inte förrän du loggar in igen.';
-
-  @override
-  String get accountUseDifferent => 'Använd ett annat konto';
 
   @override
   String get accountSignInAgain => 'Logga in igen';

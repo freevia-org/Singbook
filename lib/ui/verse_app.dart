@@ -11,6 +11,7 @@ import '../application/app_controller.dart';
 import '../application/file_actions.dart';
 import '../application/startup_timings.dart';
 import '../l10n/generated/app_localizations.dart';
+import '../sync/sync_provider.dart';
 import 'app_version.dart';
 import 'account_avatar.dart';
 import 'app_controller_adapter.dart';
@@ -688,6 +689,17 @@ class _VerseAppShellState extends State<VerseAppShell>
       ? Badge(smallSize: 10, backgroundColor: scheme.error, child: icon)
       : icon;
 
+  /// Drive import needs a connected Google Drive with a chosen visible folder,
+  /// on the platforms that have the in-app Picker.
+  bool _canImportFromDrive(VerseUiState state) =>
+      state.syncProvider == SyncProvider.googleDrive &&
+      state.syncSignedIn &&
+      state.syncDriveFolderName != null &&
+      !kIsWeb &&
+      (defaultTargetPlatform == TargetPlatform.android ||
+          defaultTargetPlatform == TargetPlatform.iOS ||
+          defaultTargetPlatform == TargetPlatform.macOS);
+
   List<Widget> _mainHeaderActions(AppLocalizations l10n, VerseUiState state) {
     final actions = <Widget>[];
     switch (state.activeTab) {
@@ -715,6 +727,8 @@ class _VerseAppShellState extends State<VerseAppShell>
                 } else {
                   unawaited(widget.controller.importChordPro());
                 }
+              } else if (value == 'importDrive') {
+                unawaited(widget.controller.importChordProFromDrive());
               }
             },
             itemBuilder: (context) => [
@@ -732,6 +746,13 @@ class _VerseAppShellState extends State<VerseAppShell>
                       : l10n.settingsImportChordPro,
                 ),
               ),
+              if (!setlists && _canImportFromDrive(state))
+                PopupMenuItem(
+                  key: const ValueKey('header-import-drive'),
+                  value: 'importDrive',
+                  enabled: !state.syncBusy,
+                  child: Text(l10n.accountImportChordPro),
+                ),
             ],
           ),
         );

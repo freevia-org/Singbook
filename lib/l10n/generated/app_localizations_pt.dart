@@ -1474,10 +1474,6 @@ class AppLocalizationsPt extends AppLocalizations {
   String get accountImportChordPro => 'Importar ChordPro do Drive';
 
   @override
-  String get accountImportChordProHint =>
-      'Escolha arquivos .cho para adicionar a esta biblioteca. Os arquivos que já estão na pasta são adotados; arquivos em outros lugares são copiados aqui.';
-
-  @override
   String get syncErrorFolderPickerUnavailable =>
       'A seleção da pasta do Drive não está disponível';
 
@@ -1523,9 +1519,6 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get accountSignOutBody =>
       'Suas músicas e listas continuam neste dispositivo. Elas não terão backup nem serão sincronizadas até você entrar novamente.';
-
-  @override
-  String get accountUseDifferent => 'Usar outra conta';
 
   @override
   String get accountSignInAgain => 'Entrar novamente';

@@ -1491,10 +1491,6 @@ class AppLocalizationsUk extends AppLocalizations {
   String get accountImportChordPro => 'Імпортувати ChordPro з Диска';
 
   @override
-  String get accountImportChordProHint =>
-      'Виберіть файли .cho, щоб додати до цієї бібліотеки. Файли, які вже є в папці, приймаються; файли з інших місць копіюються сюди.';
-
-  @override
   String get syncErrorFolderPickerUnavailable =>
       'Вибір папки на Диску недоступний';
 
@@ -1538,9 +1534,6 @@ class AppLocalizationsUk extends AppLocalizations {
   @override
   String get accountSignOutBody =>
       'Ваші пісні та сетлисти залишаться на цьому пристрої. Їх не буде збережено в резервній копії та синхронізовано, доки ви не ввійдете знову.';
-
-  @override
-  String get accountUseDifferent => 'Використати інший обліковий запис';
 
   @override
   String get accountSignInAgain => 'Увійти знову';

@@ -1496,10 +1496,6 @@ class AppLocalizationsSl extends AppLocalizations {
   String get accountImportChordPro => 'Uvozi ChordPro iz Drive';
 
   @override
-  String get accountImportChordProHint =>
-      'Izberite datoteke .cho, ki jih želite dodati v to knjižnico. Datoteke, ki so že v mapi, so sprejete; datoteke drugje se kopirajo sem.';
-
-  @override
   String get syncErrorFolderPickerUnavailable =>
       'Izbira mape Drive ni na voljo';
 
@@ -1544,9 +1540,6 @@ class AppLocalizationsSl extends AppLocalizations {
   @override
   String get accountSignOutBody =>
       'Pesmi in koncertni seznami bodo ostali v tej napravi. Ne bodo varnostno kopirani ali sinhronizirani, dokler se znova ne prijavite.';
-
-  @override
-  String get accountUseDifferent => 'Uporabi drug račun';
 
   @override
   String get accountSignInAgain => 'Znova se prijavi';

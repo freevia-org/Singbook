@@ -1498,10 +1498,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get accountImportChordPro => 'استيراد ChordPro من Drive';
 
   @override
-  String get accountImportChordProHint =>
-      'اختر ملفات .cho لإضافتها إلى هذه المكتبة. تم اعتماد الملفات الموجودة بالفعل في المجلد؛ يتم نسخ الملفات في مكان آخر هنا.';
-
-  @override
   String get syncErrorFolderPickerUnavailable => 'تحديد مجلد Drive غير متاح';
 
   @override
@@ -1543,9 +1539,6 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get accountSignOutBody =>
       'ستبقى أغانيك وقوائمك على هذا الجهاز. لن يتم نسخها احتياطيًا أو مزامنتها حتى تسجل الدخول مجددًا.';
-
-  @override
-  String get accountUseDifferent => 'استخدام حساب آخر';
 
   @override
   String get accountSignInAgain => 'تسجيل الدخول مجددًا';

@@ -1473,10 +1473,6 @@ class AppLocalizationsId extends AppLocalizations {
   String get accountImportChordPro => 'Impor ChordPro dari Drive';
 
   @override
-  String get accountImportChordProHint =>
-      'Pilih file .cho untuk ditambahkan ke perpustakaan ini. File yang sudah ada di folder diadopsi; file di tempat lain disalin di sini.';
-
-  @override
   String get syncErrorFolderPickerUnavailable =>
       'Pemilihan folder drive tidak tersedia';
 
@@ -1521,9 +1517,6 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get accountSignOutBody =>
       'Lagu dan daftar lagu Anda tetap ada di perangkat ini. Lagu tidak akan dicadangkan atau disinkronkan sampai Anda login kembali.';
-
-  @override
-  String get accountUseDifferent => 'Gunakan akun lain';
 
   @override
   String get accountSignInAgain => 'Login kembali';

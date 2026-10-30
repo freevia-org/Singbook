@@ -69,22 +69,16 @@ void main() {
     });
   });
 
-  testWidgets('selected macOS Drive folder exposes explicit file import', (
+  testWidgets('selected macOS Drive folder keeps import on the Songs screen', (
     tester,
   ) async {
     await _withMacOSPlatform(() async {
-      final controller = await _pumpMacOSAccount(
-        tester,
-        driveFolderName: 'Singbook Library',
-      );
+      await _pumpMacOSAccount(tester, driveFolderName: 'Singbook Library');
       expect(find.text('Singbook Library'), findsOneWidget);
       expect(
         find.byKey(const ValueKey('account-import-drive-chordpro')),
-        findsOneWidget,
+        findsNothing,
       );
-
-      await _tapKey(tester, 'account-import-drive-chordpro');
-      expect(controller.calls, contains('importChordProFromDrive'));
     });
   });
 }

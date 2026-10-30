@@ -1472,10 +1472,6 @@ class AppLocalizationsHu extends AppLocalizations {
   String get accountImportChordPro => 'Importálja a ChordPro-t a Drive-ból';
 
   @override
-  String get accountImportChordProHint =>
-      'Válassza ki a könyvtárhoz hozzáadni kívánt .cho fájlokat. A mappában már lévő fájlok átvételre kerülnek; ide másolják a máshol található fájlok.';
-
-  @override
   String get syncErrorFolderPickerUnavailable =>
       'A Drive-mappa nem választható';
 
@@ -1521,9 +1517,6 @@ class AppLocalizationsHu extends AppLocalizations {
   @override
   String get accountSignOutBody =>
       'A dalaid és setlistáid ezen az eszközön maradnak. Nem készül róluk biztonsági mentés, és nem szinkronizálódnak, amíg újra be nem jelentkezel.';
-
-  @override
-  String get accountUseDifferent => 'Másik fiók használata';
 
   @override
   String get accountSignInAgain => 'Bejelentkezés újra';

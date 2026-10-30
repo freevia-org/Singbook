@@ -2652,12 +2652,6 @@ abstract class AppLocalizations {
   /// **'Import ChordPro from Drive'**
   String get accountImportChordPro;
 
-  /// No description provided for @accountImportChordProHint.
-  ///
-  /// In en, this message translates to:
-  /// **'Choose .cho files to add to this library. Files already in the folder are adopted; files elsewhere are copied here.'**
-  String get accountImportChordProHint;
-
   /// No description provided for @syncErrorFolderPickerUnavailable.
   ///
   /// In en, this message translates to:
@@ -2729,12 +2723,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your songs and setlists stay on this device. They won\'t be backed up or synced until you sign in again.'**
   String get accountSignOutBody;
-
-  /// No description provided for @accountUseDifferent.
-  ///
-  /// In en, this message translates to:
-  /// **'Use a different account'**
-  String get accountUseDifferent;
 
   /// No description provided for @accountSignInAgain.
   ///

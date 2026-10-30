@@ -1430,10 +1430,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get accountImportChordPro => '从云端硬盘导入 ChordPro';
 
   @override
-  String get accountImportChordProHint =>
-      '选择要添加到此库的 .cho 文件。采用文件夹中已有的文件；其他地方的文件复制到这里。';
-
-  @override
   String get syncErrorFolderPickerUnavailable => '驱动器文件夹选择不可用';
 
   @override
@@ -1469,9 +1465,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get accountSignOutBody => '你的歌曲和歌单会保留在此设备上。重新登录之前，它们不会备份或同步。';
-
-  @override
-  String get accountUseDifferent => '使用其他账户';
 
   @override
   String get accountSignInAgain => '重新登录';
