@@ -171,7 +171,10 @@ void main() {
           of: find.textContaining('The room is warm tonight').first,
           matching: find.byType(ListView),
         );
-        expect(tester.getSize(lyricsList).width, lessThanOrEqualTo(960));
+        // The reader route uses the full available width (no 960 frame).
+        final lyricsWidth = tester.getSize(lyricsList).width;
+        expect(lyricsWidth, lessThanOrEqualTo(size.width));
+        expect(lyricsWidth, greaterThan(0));
         expect(tester.takeException(), isNull, reason: 'Reader at $size');
         await _capture('populated_reader_$viewport');
 
