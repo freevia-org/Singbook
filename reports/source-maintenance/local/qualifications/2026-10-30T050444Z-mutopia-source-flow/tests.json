@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "e4a3fd842494f3490f413bf854dce7f9d0e01d01",
+  "focusedTests": {
+    "passed": 98,
+    "reportSha256": "1b3f9447cbe252a592059558c5d23befa34a7fdac1ccaaf45196f492d6778967",
+    "status": "passed",
+    "failed": 0
+  },
+  "analysis": {
+    "issues": 0,
+    "files": 17,
+    "status": "clean"
+  },
+  "visualTests": {
+    "passed": 6,
+    "reportSha256": "9bcdb6937952e0627d1610ab252470e6a32b1ec20d55c97f71963020dc1860a3",
+    "status": "passed",
+    "failed": 0
+  },
+  "reviewedLayouts": [
+    "compact phone",
+    "large text",
+    "RTL dark",
+    "landscape",
+    "Ukrainian dark"
+  ],
+  "independentReview": "No remaining save or identity blocker found",
+  "testFiles": [
+    "test/providers/extra/mutopia_test.dart",
+    "test/providers/extra/mutopia_lilypond_test.dart",
+    "test/application/mutopia_stream_flow_test.dart",
+    "test/application/score_artwork_guard_test.dart",
+    "test/domain/source_text_variant_test.dart",
+    "test/domain/search_grouping_test.dart",
+    "test/ui/source_variant_labels_test.dart",
+    "test/ui/source_version_widgets_test.dart",
+    "test/data/chosen_song_save_test.dart",
+    "test/data/chosen_metadata_merge_test.dart"
+  ],
+  "screenshots": [
+    {
+      "file": "search-landscape.png",
+      "sha256": "17f3438eace7134dcb14a8da225e93255d22e57d42924cae5551b2fbec27754e"
+    },
+    {
+      "file": "search-large-text.png",
+      "sha256": "d282280a544e5ad0e5eae10df609f377f72937652355b83b351a6d995e232ead"
+    },
+    {
+      "file": "search-phone.png",
+      "sha256": "d333843d8561e96b440ad63c8ea96668338d96a3af93671d809e335ffffd3d97"
+    },
+    {
+      "file": "search-rtl-dark.png",
+      "sha256": "582a5f133ec0d290ff13d4a2f3cd7118d519e9e16968e5049e01777bdf1e6ffe"
+    },
+    {
+      "file": "search-uk-dark.png",
+      "sha256": "7d61d62ab6d85d3e090b61b67c62c35618adcb65a9676e1d49ae8dac09098664"
+    }
+  ]
+}

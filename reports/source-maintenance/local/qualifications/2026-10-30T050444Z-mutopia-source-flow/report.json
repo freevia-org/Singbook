@@ -1,0 +1,207 @@
+{
+  "schemaVersion": 1,
+  "kind": "candidate-source-and-application-flow-qualification",
+  "runtime": "windows-local",
+  "generatedAt": "2026-10-30T05:12:16.8811041Z",
+  "baseCommit": "66978393717e0327c46e4aa6fad811273ac53330",
+  "sourceCommit": "e4a3fd842494f3490f413bf854dce7f9d0e01d01",
+  "sourceTree": "4c77c3f422b15656178e377f19687b5ff916df8b",
+  "sourceId": "mutopia",
+  "pullRequest": "https://github.com/freevia-org/Singbook/pull/261",
+  "registration": "not_registered",
+  "activation": "not_activated",
+  "catalogChanges": false,
+  "productionLatestChanged": false,
+  "live": {
+    "reason": "New Mutopia provider and source-schema implementation; retained real-response replay passed before these calls.",
+    "measuredAt": "2026-10-30T04:30:09.963755Z",
+    "productionSuiteRepeated": false,
+    "networkRequests": 8,
+    "statuses": {
+      "HTTP429": 0,
+      "HTTP200": 8
+    },
+    "maxRetries": 0,
+    "requests": [
+      {
+        "url": "https://www.mutopiaproject.org/cgibin/make-table.cgi?searchingfor=Notte+e+giorno",
+        "startedAt": "2026-10-30T04:29:59.021341Z",
+        "completedAt": "2026-10-30T04:30:00.135129Z",
+        "status": 200,
+        "bodyBytes": 5741,
+        "sha256": "f433c9f46b9333fe57890d232a89ee41f1b8aee05ef4e355e8d6c0e018072617",
+        "wireExact": false
+      },
+      {
+        "url": "https://www.mutopiaproject.org/ftp/MozartWA/KV527/NotteEGiorno/NotteEGiorno.ly",
+        "startedAt": "2026-10-30T04:30:01.356699Z",
+        "completedAt": "2026-10-30T04:30:01.641465Z",
+        "status": 200,
+        "bodyBytes": 13611,
+        "sha256": "a4528c885c201f7e5408c6e1d2873372a97f020cc0b3fa3809f0c4e02caf5541",
+        "wireExact": false
+      },
+      {
+        "url": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2244",
+        "startedAt": "2026-10-30T04:30:02.853179Z",
+        "completedAt": "2026-10-30T04:30:03.017085Z",
+        "status": 200,
+        "bodyBytes": 6241,
+        "sha256": "6eb22f96922bb59f30211f0466e10e7e513b47ef9e6f64643c0317238072db5a",
+        "wireExact": false
+      },
+      {
+        "url": "https://www.mutopiaproject.org/ftp/MozartWA/KV527/NotteEGiorno/NotteEGiorno.ly",
+        "startedAt": "2026-10-30T04:30:04.22439Z",
+        "completedAt": "2026-10-30T04:30:04.485539Z",
+        "status": 200,
+        "bodyBytes": 13611,
+        "sha256": "a4528c885c201f7e5408c6e1d2873372a97f020cc0b3fa3809f0c4e02caf5541",
+        "wireExact": false
+      },
+      {
+        "url": "https://www.mutopiaproject.org/cgibin/make-table.cgi?searchingfor=What+power+art+thou",
+        "startedAt": "2026-10-30T04:30:05.689634Z",
+        "completedAt": "2026-10-30T04:30:05.895265Z",
+        "status": 200,
+        "bodyBytes": 5824,
+        "sha256": "b6e0739531e46614ff32d34d21ebcf76687d6a0b90d1edd09f688f37f751ab49",
+        "wireExact": false
+      },
+      {
+        "url": "https://www.mutopiaproject.org/ftp/PurcellH/Z628/WhatPowerArtThou/WhatPowerArtThou.ly",
+        "startedAt": "2026-10-30T04:30:07.111643Z",
+        "completedAt": "2026-10-30T04:30:07.245184Z",
+        "status": 200,
+        "bodyBytes": 10441,
+        "sha256": "79ab4ad4c8daaf170432629653cbd8b1d3b840a8ecf5cbf6369b2a700953e8b4",
+        "wireExact": false
+      },
+      {
+        "url": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2243",
+        "startedAt": "2026-10-30T04:30:08.460602Z",
+        "completedAt": "2026-10-30T04:30:08.611027Z",
+        "status": 200,
+        "bodyBytes": 6316,
+        "sha256": "751b19cc5cfb90f5dc68eee0071b3902257c9079dafb7df7fe5d2c0eb08dcab0",
+        "wireExact": false
+      },
+      {
+        "url": "https://www.mutopiaproject.org/ftp/PurcellH/Z628/WhatPowerArtThou/WhatPowerArtThou.ly",
+        "startedAt": "2026-10-30T04:30:09.820407Z",
+        "completedAt": "2026-10-30T04:30:09.953175Z",
+        "status": 200,
+        "bodyBytes": 10441,
+        "sha256": "79ab4ad4c8daaf170432629653cbd8b1d3b840a8ecf5cbf6369b2a700953e8b4",
+        "wireExact": false
+      }
+    ]
+  },
+  "retainedReplay": {
+    "measuredAt": "2026-10-30T05:04:44.199533Z",
+    "networkRequests": 0,
+    "mockTransportRequests": 11,
+    "cases": [
+      {
+        "id": "2244:italianLyrics",
+        "title": "Notte e giorno (Don Giovanni)",
+        "composer": "Wolfgang Amadeus Mozart (1756-1791)",
+        "creditRole": "composer",
+        "publisherTextLabel": "italianLyrics",
+        "bodyCharacters": 638,
+        "bodySha256": "55acaba8dec8e03b8422f9bbfd4b17af024a9d135914323f178bdfbebcbf5d8e",
+        "matchKind": "sameSong",
+        "payloads": [
+          {
+            "sha256": "6eb22f96922bb59f30211f0466e10e7e513b47ef9e6f64643c0317238072db5a",
+            "bytes": 6241,
+            "contentType": "text/html"
+          },
+          {
+            "sha256": "a4528c885c201f7e5408c6e1d2873372a97f020cc0b3fa3809f0c4e02caf5541",
+            "bytes": 13611,
+            "contentType": "text/x-lilypond"
+          }
+        ]
+      },
+      {
+        "id": "2244:englishLyrics",
+        "title": "Notte e giorno (Don Giovanni)",
+        "composer": "Wolfgang Amadeus Mozart (1756-1791)",
+        "creditRole": "composer",
+        "publisherTextLabel": "englishLyrics",
+        "bodyCharacters": 747,
+        "bodySha256": "cf1767812399a8460256eb7b1d77732b14978ff829a008bfd301d8e82b78f65b",
+        "matchKind": "sameSong",
+        "payloads": [
+          {
+            "sha256": "6eb22f96922bb59f30211f0466e10e7e513b47ef9e6f64643c0317238072db5a",
+            "bytes": 6241,
+            "contentType": "text/html"
+          },
+          {
+            "sha256": "a4528c885c201f7e5408c6e1d2873372a97f020cc0b3fa3809f0c4e02caf5541",
+            "bytes": 13611,
+            "contentType": "text/x-lilypond"
+          }
+        ]
+      },
+      {
+        "id": "2243:text",
+        "title": "What power art thou (King Arthur)",
+        "composer": "Henry Purcell (1659-1695)",
+        "creditRole": "composer",
+        "publisherTextLabel": "text",
+        "bodyCharacters": 394,
+        "bodySha256": "c5dd618ef03fd77a313dc8d8a871d5edcb98db9181a13af11554fe7e0e9951dd",
+        "matchKind": "sameSong",
+        "payloads": [
+          {
+            "sha256": "751b19cc5cfb90f5dc68eee0071b3902257c9079dafb7df7fe5d2c0eb08dcab0",
+            "bytes": 6316,
+            "contentType": "text/html"
+          },
+          {
+            "sha256": "79ab4ad4c8daaf170432629653cbd8b1d3b840a8ecf5cbf6369b2a700953e8b4",
+            "bytes": 10441,
+            "contentType": "text/x-lilypond"
+          }
+        ]
+      }
+    ]
+  },
+  "scope": [
+    "publisher-declared Public Domain editions and literal text",
+    "composer/poet/arranger roles retained",
+    "parallel texts kept distinct",
+    "original bytes and sibling provenance retained",
+    "no inferred performer, recording, language, key, tempo, chords or timing"
+  ],
+  "applicationEvidence": [
+    "synthetic real-provider/controller/SQLite/ChordPro flow",
+    "preferred sibling replaces same edition entry and preserves archive/history",
+    "reopen Combined retains selected text",
+    "explicit archived sibling save binds its own reference",
+    "cross-edition and performer-name collisions do not merge",
+    "pending Mutopia sources cannot save",
+    "composer scores do not request recording artwork"
+  ],
+  "pending": [
+    "two native live import/save/reopen/export canaries",
+    "compatible registry/catalog integration and release",
+    "exact-head CI",
+    "actual managed-cloud qualification",
+    "paging and broader mixed-query coverage",
+    "independent lyric oracle and active score attachment"
+  ],
+  "roadblocks": [
+    {
+      "step": "source activation",
+      "reason": "Compatible registration/catalog release, native and managed-cloud qualification not complete",
+      "resolved": false,
+      "userAction": "none at this checkpoint",
+      "attempt": "Source-only candidate validated locally; native build in progress"
+    }
+  ],
+  "rawSourceDocumentsPublished": false
+}
