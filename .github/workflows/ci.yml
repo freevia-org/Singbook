@@ -5,7 +5,9 @@ name: CI
 # ID as a GitHub Actions variable and its optional registration field as a
 # masked Actions secret. This workflow never signs.
 #
-# Layout (fail fast, then fan out):
+# Layout (fail fast, then fan out). Every job runs on a GitHub-hosted runner
+# (free: this repository is public): the local I5 runners sit behind a capacity
+# gate shared with other repositories, where jobs waited up to 35 minutes.
 #   analyze ──┬─> windows-build    (release bundle, packaging + native smoke)
 #             ├─> windows-test     (complete Flutter suite on Windows, sharded)
 #             └─> windows-journey  (deterministic desktop integration journey)
@@ -29,7 +31,7 @@ env:
 
 jobs:
   analyze:
-    runs-on: singbook-i5-linux
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
@@ -64,7 +66,7 @@ jobs:
         run: flutter analyze
 
   test:
-    runs-on: singbook-i5-linux
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v7
@@ -120,7 +122,7 @@ jobs:
 
   windows-build:
     needs: analyze
-    runs-on: singbook-i5-windows
+    runs-on: windows-2025
     timeout-minutes: 30
     env:
       SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID: ${{ vars.SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID }}
@@ -269,7 +271,7 @@ jobs:
   windows-test:
     name: windows-test (${{ matrix.shard }}/2)
     needs: analyze
-    runs-on: singbook-i5-windows
+    runs-on: windows-2025
     timeout-minutes: 25
     strategy:
       fail-fast: false
@@ -315,7 +317,7 @@ jobs:
 
   windows-journey:
     needs: analyze
-    runs-on: singbook-i5-windows
+    runs-on: windows-2025
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v7
