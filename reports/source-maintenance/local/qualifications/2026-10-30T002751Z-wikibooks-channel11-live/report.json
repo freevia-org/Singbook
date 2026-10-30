@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "kind": "selected_live_candidate_qualification",
+  "sourceCommit": "b17b2d862a303ef1a0b9ce8b9e0b219f08df40c2",
+  "sourceTree": "c6b434810b0e030f365a06350bf5d764dab72c87",
+  "pullRequest": "https://github.com/freevia-org/Singbook/pull/259",
+  "runtime": "Windows host; Flutter-bundled Dart 3.12.2 maintenance CLI",
+  "measuredAt": "2026-10-30T00:27:51.979689Z",
+  "candidateCatalog": "config/source-catalog-v11.json",
+  "candidateChannel": 11,
+  "candidateRevision": 24,
+  "qualificationOverlayRevision": 25,
+  "qualificationOverlay": "Separate ignored test-only catalog with Wikibooks status active, row revision advanced and default false; never production configuration",
+  "requestBudgetReason": "Validate the newly integrated v11 probe and required-field contract for two existing page IDs; no full production-suite rerun",
+  "source": {
+    "id": "wikibooksliederbuch",
+    "status": "healthy",
+    "coverage": {
+      "status": "complete",
+      "verifiedCapabilities": [
+        "catalog",
+        "chords",
+        "lyrics",
+        "metadata"
+      ],
+      "unverifiedCapabilities": []
+    },
+    "probes": [
+      {
+        "id": "118857",
+        "status": "healthy",
+        "candidateId": "sha256:fc94bda78a5c6087",
+        "bodyCharacters": 587,
+        "verifiedCapabilities": [
+          "catalog",
+          "chords",
+          "lyrics",
+          "metadata"
+        ]
+      },
+      {
+        "id": "115615",
+        "status": "healthy",
+        "candidateId": "sha256:f50869b31d4cc7d9",
+        "bodyCharacters": 678,
+        "verifiedCapabilities": [
+          "catalog",
+          "chords",
+          "lyrics",
+          "metadata"
+        ]
+      }
+    ]
+  },
+  "httpDiagnostics": {
+    "networkFailures": 0,
+    "hosts": {
+      "de.wikibooks.org": {
+        "requests": 4,
+        "statuses": {
+          "200": 4
+        },
+        "retryAfterSeconds": {},
+        "databaseLag": {}
+      }
+    }
+  },
+  "rawPrivateReportSha256": "b09bd9d37adea43bb790a784b56ba4769b97f16a30a4514c71ae99c1bbcba628",
+  "nativeAppQualified": false,
+  "managedCloudQualified": false,
+  "rightsQualified": false,
+  "githubCiQualified": false,
+  "activated": false,
+  "productionLatestUpdated": false,
+  "remainingGates": [
+    "Actual native app",
+    "Managed-cloud reachability and capability qualification",
+    "Rights and activation review",
+    "Current-head CI and compatible release"
+  ],
+  "rawSourceDocumentsIncluded": false
+}
