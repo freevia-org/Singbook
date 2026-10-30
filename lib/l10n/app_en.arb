@@ -540,6 +540,7 @@
   "setlistEntryRemoved": "Removed {song} from setlist",
   "backupTitle": "Backup and restore",
   "backupExport": "Export backup",
+  "backupSaveToDevice": "Save backup to device",
   "backupRestore": "Restore backup",
   "backupIncludePreferences": "Include app preferences",
   "backupRestorePreferences": "Restore app preferences",

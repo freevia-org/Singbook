@@ -1887,6 +1887,9 @@ class AppLocalizationsHi extends AppLocalizations {
   String get backupExport => 'बैकअप निर्यात करें';
 
   @override
+  String get backupSaveToDevice => 'बैकअप डिवाइस में सहेजें';
+
+  @override
   String get backupRestore => 'बैकअप पुनर्स्थापित करें';
 
   @override

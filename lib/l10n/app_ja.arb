@@ -765,6 +765,7 @@
   "setlistEntryRemoved": "「{song}」をセットリストから削除しました",
   "backupTitle": "バックアップと復元",
   "backupExport": "バックアップをエクスポート",
+  "backupSaveToDevice": "バックアップをデバイスに保存",
   "backupRestore": "バックアップを復元",
   "backupIncludePreferences": "アプリの設定を含める",
   "backupRestorePreferences": "アプリの設定を復元",

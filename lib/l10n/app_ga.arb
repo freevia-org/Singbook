@@ -767,6 +767,7 @@
   "setlistEntryRemoved": "Baineadh {song} den liosta seinm",
   "backupTitle": "Cúltaca agus athchóiriú",
   "backupExport": "Easpórtáil cúltaca",
+  "backupSaveToDevice": "Sábháil cúltaca ar an ngléas",
   "backupRestore": "Athchóirigh cúltaca",
   "backupIncludePreferences": "Cuir sainroghanna na haipe san áireamh",
   "backupRestorePreferences": "Athchóirigh sainroghanna na haipe",

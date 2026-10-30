@@ -767,6 +767,7 @@
   "setlistEntryRemoved": "Pjesma „{song}” uklonjena je s popisa",
   "backupTitle": "Sigurnosna kopija i vraćanje",
   "backupExport": "Izvezi sigurnosnu kopiju",
+  "backupSaveToDevice": "Spremi sigurnosnu kopiju na uređaj",
   "backupRestore": "Vrati sigurnosnu kopiju",
   "backupIncludePreferences": "Uključi postavke aplikacije",
   "backupRestorePreferences": "Vrati postavke aplikacije",

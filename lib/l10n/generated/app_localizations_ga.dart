@@ -1912,6 +1912,9 @@ class AppLocalizationsGa extends AppLocalizations {
   String get backupExport => 'Easpórtáil cúltaca';
 
   @override
+  String get backupSaveToDevice => 'Sábháil cúltaca ar an ngléas';
+
+  @override
   String get backupRestore => 'Athchóirigh cúltaca';
 
   @override

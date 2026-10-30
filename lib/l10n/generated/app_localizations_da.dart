@@ -1891,6 +1891,9 @@ class AppLocalizationsDa extends AppLocalizations {
   String get backupExport => 'Eksportér sikkerhedskopi';
 
   @override
+  String get backupSaveToDevice => 'Gem sikkerhedskopi på enheden';
+
+  @override
   String get backupRestore => 'Gendan sikkerhedskopi';
 
   @override

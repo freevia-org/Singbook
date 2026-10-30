@@ -1902,6 +1902,9 @@ class AppLocalizationsHu extends AppLocalizations {
   String get backupExport => 'Biztonsági mentés exportálása';
 
   @override
+  String get backupSaveToDevice => 'Biztonsági mentés mentése az eszközre';
+
+  @override
   String get backupRestore => 'Biztonsági mentés visszaállítása';
 
   @override

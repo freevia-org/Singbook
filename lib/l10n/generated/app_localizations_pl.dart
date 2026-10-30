@@ -1927,6 +1927,9 @@ class AppLocalizationsPl extends AppLocalizations {
   String get backupExport => 'Eksportuj kopię zapasową';
 
   @override
+  String get backupSaveToDevice => 'Zapisz kopię zapasową na urządzeniu';
+
+  @override
   String get backupRestore => 'Przywróć kopię zapasową';
 
   @override

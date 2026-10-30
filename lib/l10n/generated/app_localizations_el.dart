@@ -1920,6 +1920,9 @@ class AppLocalizationsEl extends AppLocalizations {
   String get backupExport => 'Εξαγωγή αντιγράφου ασφαλείας';
 
   @override
+  String get backupSaveToDevice => 'Αποθήκευση αντιγράφου στη συσκευή';
+
+  @override
   String get backupRestore => 'Επαναφορά αντιγράφου ασφαλείας';
 
   @override

@@ -549,6 +549,16 @@ class VerseFileActions {
     origin,
   );
 
+  /// Writes a backup through the platform's save dialog so it can go to local
+  /// storage or any document provider without a share target. Returns null
+  /// when the user dismisses the dialog.
+  Future<Uri?> saveBackupBytes(Uint8List bytes) => _saveFile(
+    fileName:
+        'Singbook-${DateTime.now().toIso8601String().substring(0, 10)}.lyrics-setlist',
+    bytes: bytes,
+    mimeType: 'application/zip',
+  );
+
   /// Removes stale temporary share copies. Android reports no outcome for a
   /// share, so its copies are otherwise only swept by the next share; call
   /// this at app start or resume too.

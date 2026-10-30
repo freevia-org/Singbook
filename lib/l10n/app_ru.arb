@@ -765,6 +765,7 @@
   "setlistEntryRemoved": "Композиция «{song}» удалена из сет-листа",
   "backupTitle": "Резервное копирование и восстановление",
   "backupExport": "Экспортировать резервную копию",
+  "backupSaveToDevice": "Сохранить резервную копию на устройстве",
   "backupRestore": "Восстановить резервную копию",
   "backupIncludePreferences": "Включить настройки приложения",
   "backupRestorePreferences": "Восстановить настройки приложения",

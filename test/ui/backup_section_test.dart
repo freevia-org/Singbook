@@ -80,11 +80,18 @@ class _BackupFiles extends VerseFileActions {
   final PickedDocument? document;
   int pickCount = 0;
   Uint8List? sharedBytes;
+  Uint8List? savedBytes;
 
   @override
   Future<PickedDocument?> pickDocument() async {
     pickCount++;
     return document;
+  }
+
+  @override
+  Future<Uri?> saveBackupBytes(Uint8List bytes) async {
+    savedBytes = bytes;
+    return Uri.parse('content://saved');
   }
 
   @override
@@ -179,9 +186,11 @@ void main() {
     await _pumpDialog(tester);
     expect(find.text(l10n.backupSummary(12, 3, 1)), findsOneWidget);
     expect(
-      tester.widget<RadioGroup<BackupRestoreMode>>(
-        find.byType(RadioGroup<BackupRestoreMode>),
-      ).groupValue,
+      tester
+          .widget<RadioGroup<BackupRestoreMode>>(
+            find.byType(RadioGroup<BackupRestoreMode>),
+          )
+          .groupValue,
       BackupRestoreMode.merge,
     );
     await tester.tap(find.text(l10n.backupRestore).last);
@@ -267,6 +276,25 @@ void main() {
       expect(files.sharedBytes, orderedEquals([4, 5, 6, 7]));
     },
   );
+
+  testWidgets('save to device exports with the preference choice and saves', (
+    tester,
+  ) async {
+    final controller = _BackupController(preview: _preview());
+    controller.exportBytes = Uint8List.fromList([8, 9]);
+    final files = _BackupFiles(null);
+    await _pumpSection(tester, controller, files);
+    final l10n = AppLocalizations.of(tester.element(find.byType(Scaffold)));
+
+    await tester.tap(find.text(l10n.backupIncludePreferences));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('backup-save-device')));
+    await tester.pumpAndSettle();
+
+    expect(controller.exports, [false]);
+    expect(files.savedBytes, orderedEquals([8, 9]));
+    expect(files.sharedBytes, isNull);
+  });
 
   testWidgets('invalid preview shows failure and never restores', (
     tester,

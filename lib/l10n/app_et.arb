@@ -767,6 +767,7 @@
   "setlistEntryRemoved": "Lugu „{song}“ eemaldati esituskavast",
   "backupTitle": "Varundamine ja taastamine",
   "backupExport": "Ekspordi varukoopia",
+  "backupSaveToDevice": "Salvesta varukoopia seadmesse",
   "backupRestore": "Taasta varukoopia",
   "backupIncludePreferences": "Kaasa rakenduse eelistused",
   "backupRestorePreferences": "Taasta rakenduse eelistused",

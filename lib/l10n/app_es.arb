@@ -767,6 +767,7 @@
   "setlistEntryRemoved": "Se ha quitado {song} de la lista",
   "backupTitle": "Copia de seguridad y restauración",
   "backupExport": "Exportar copia de seguridad",
+  "backupSaveToDevice": "Guardar copia de seguridad en el dispositivo",
   "backupRestore": "Restaurar copia de seguridad",
   "backupIncludePreferences": "Incluir preferencias de la aplicación",
   "backupRestorePreferences": "Restaurar preferencias de la aplicación",

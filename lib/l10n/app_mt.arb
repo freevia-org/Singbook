@@ -765,6 +765,7 @@
   "setlistEntryRemoved": "{song} tneħħiet mil-lista tal-kanzunetti",
   "backupTitle": "Backup u restawr",
   "backupExport": "Esporta backup",
+  "backupSaveToDevice": "Issejvja l-backup fuq l-apparat",
   "backupRestore": "Irrestawra backup",
   "backupIncludePreferences": "Inkludi l-preferenzi tal-app",
   "backupRestorePreferences": "Irrestawra l-preferenzi tal-app",

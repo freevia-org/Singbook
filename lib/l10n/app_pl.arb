@@ -765,6 +765,7 @@
   "setlistEntryRemoved": "Utwór „{song}” usunięto z setlisty",
   "backupTitle": "Kopia zapasowa i przywracanie",
   "backupExport": "Eksportuj kopię zapasową",
+  "backupSaveToDevice": "Zapisz kopię zapasową na urządzeniu",
   "backupRestore": "Przywróć kopię zapasową",
   "backupIncludePreferences": "Uwzględnij ustawienia aplikacji",
   "backupRestorePreferences": "Przywróć ustawienia aplikacji",
