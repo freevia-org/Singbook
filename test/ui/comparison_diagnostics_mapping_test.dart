@@ -99,15 +99,18 @@ class _IdentityDiscovery extends SourceDiscoveryService {
     Map<String, CancellationToken> providerCancellation = const {},
     Duration alternativeTimeout = const Duration(seconds: 30),
   }) async {
+    await app.flushCombine();
     final before = app.combined;
     final cached = app.results.single;
     onProgress?.call(
       ProviderCheck(providerId: 'fixture', state: 'found', result: cached),
     );
+    await Future<void>.delayed(const Duration(milliseconds: 100));
     preservedCombinedForNoOp = identical(app.combined, before);
     onProgress?.call(
       ProviderCheck(providerId: 'fixture', state: 'found', result: result),
     );
+    await Future<void>.delayed(const Duration(milliseconds: 100));
     replacedCombinedForNewResult = !identical(app.combined, before);
     updatedCombinedMetadata = app.combined?.metadata['key'] == 'D';
     return [result];
@@ -220,6 +223,7 @@ void main() {
       );
       final app = AppController(repository: repository, discovery: discovery);
       discovery.app = app;
+      app.discoveryCombineInterval = const Duration(milliseconds: 20);
       try {
         await app.initialize();
         await app.selectCandidate(selected, cachedResults: [cached]);

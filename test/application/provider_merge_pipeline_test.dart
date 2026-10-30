@@ -213,12 +213,36 @@ void main() {
       expect(h.app.selection?.identity, secondaryCandidate.identity);
       expect(h.app.suggestions, isEmpty);
       expect(h.ui.state.comparison?.reference.id, secondaryCandidate.identity);
+      await h.app.flushCombine();
       expect(h.app.combined?.body, _short);
       discovery.response.complete([]);
       await choice;
       expect(h.ui.state.comparison?.reference.id, secondaryCandidate.identity);
       expect(h.app.results.single.id, lyrics.id);
       expect(await h.repository.listSongs(), isEmpty);
+    },
+  );
+
+  test(
+    'results arriving within one interval are merged as a single batch',
+    () async {
+      final h = await open();
+      h.app.discoveryCombineInterval = const Duration(milliseconds: 80);
+      final flow = await h.beginSelection();
+      final before = h.app.combineRunner.startedRuns;
+      flow.request.publish(_source('genius'));
+      flow.request.publish(_source('genius', metadata: {'album': 'A'}));
+      flow.request.publish(_source('lrclib', body: _full));
+      flow.request.publish(_source('genius', metadata: {'album': 'B'}));
+      await Future<void>.delayed(Duration.zero);
+      expect(h.app.combineRunner.startedRuns, before);
+      await Future<void>.delayed(const Duration(milliseconds: 200));
+      expect(h.app.combineRunner.startedRuns, before + 1);
+      expect(h.app.combined?.body, _full);
+      flow.request.response.complete([]);
+      await flow.completion;
+      expect(h.app.combineRunner.startedRuns, before + 2);
+      expect(h.app.combined?.body, _full);
     },
   );
 
@@ -239,6 +263,7 @@ void main() {
           metadata: {'label': 'Live secondary label'},
         ),
       );
+      await h.app.flushCombine();
       expect(h.app.combined?.metadata['label'], 'Live secondary label');
       await h.app.setProviderEnabled('lrclib', false);
       expect(secondaryToken.isCancelled, isTrue);
@@ -249,6 +274,7 @@ void main() {
       expect(h.app.results.map((source) => source.candidate.providerId), [
         'genius',
       ]);
+      await h.app.flushCombine();
       expect(h.app.combined?.metadata['label'], isNull);
       expect(h.app.checks.containsKey('lrclib'), isFalse);
 
@@ -270,6 +296,7 @@ void main() {
         },
       );
       flow.request.publish(improvedPrimary);
+      await h.app.flushCombine();
       expect(h.app.combined?.body, _full);
       expect(h.app.combined?.metadata['composers'], ['Active Primary Writer']);
       flow.request.response.complete([forbidden, improvedPrimary]);
@@ -336,6 +363,7 @@ void main() {
       expect(secondaryToken.isCancelled, isTrue);
       expect(request.providerCancellation['genius']?.isCancelled, isFalse);
       expect(h.app.results.single.toJson(), cached.toJson());
+      await h.app.flushCombine();
       expect(h.app.combined?.body, _full);
       expect(h.app.combined?.metadata['album'], 'Saved Album');
       final forbidden = _source(
@@ -621,6 +649,7 @@ void main() {
         tracks: [priorTiming],
       );
       flow.request.publish(accepted);
+      await h.app.flushCombine();
       expect(h.app.combined?.body, _full);
       final rejected = _source(
         'genius',
@@ -878,6 +907,7 @@ void main() {
       final h = await open();
       final flow = await h.beginSelection();
       flow.request.publish(_source('genius'));
+      await h.app.flushCombine();
       expect(h.app.combined?.body, _short);
       final fuller = _source(
         'lrclib',
@@ -890,6 +920,7 @@ void main() {
         },
       );
       flow.request.publish(fuller);
+      await h.app.flushCombine();
       expect(h.app.combined?.body, _full);
       expect(h.app.combined?.metadata['album'], 'Dawn Collection');
       expect(h.app.combined?.metadata['durationSeconds'], 123);

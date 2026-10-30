@@ -1775,6 +1775,7 @@ void main() {
       ),
     );
     await discovery.started.future;
+    await app.flushCombine();
 
     expect(ui.state.comparison?.suggested?.matchSummary, 'pending');
     expect(ui.state.comparison?.suggested?.sameRecording, isFalse);

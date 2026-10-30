@@ -12,7 +12,9 @@ final chordPattern = RegExp(
 String unescapeChordPro(String text) =>
     text.replaceAllMapped(RegExp(r'\\([\\\[\]{}#])'), (m) => m[1]!);
 bool containsChords(String body) => chordPattern.hasMatch(body);
-String plainLyrics(String body) => lyricLines(body).join('\n');
+String plainLyrics(String body) =>
+    _plainLyricsCache.get(body) ??
+    _plainLyricsCache.put(body, lyricLines(body).join('\n'));
 List<String> lyricLines(String body) {
   final result = <String>[];
   var chorus = <String>[];
@@ -136,7 +138,40 @@ String? sectionLabelForLine(ArrangementLine line) {
   return bracketed == null ? null : _sectionName(bracketed.group(1)!);
 }
 
-List<ArrangementLine> parseArrangement(String body) =>
+/// Parses once per distinct body per isolate. A merge and its prefilters parse
+/// the same provider bodies dozens of times, and discovery repeats the merge
+/// as sources arrive. Each call still returns its own list; the cached lines
+/// and their chord lists are immutable.
+List<ArrangementLine> parseArrangement(String body) {
+  final cached = _arrangementCache.get(body);
+  if (cached != null) return List.of(cached);
+  final parsed = _parseArrangement(body);
+  _arrangementCache.put(body, parsed);
+  return List.of(parsed);
+}
+
+final _arrangementCache = _BodyCache<List<ArrangementLine>>();
+final _plainLyricsCache = _BodyCache<String>();
+
+/// Small least-recently-used map keyed by a body's text. Bodies are only
+/// retained while they keep being used, so memory stays bounded.
+class _BodyCache<T extends Object> {
+  static const _capacity = 96;
+  final _entries = <String, T>{};
+  T? get(String key) {
+    final value = _entries.remove(key);
+    if (value != null) _entries[key] = value;
+    return value;
+  }
+
+  T put(String key, T value) {
+    _entries[key] = value;
+    if (_entries.length > _capacity) _entries.remove(_entries.keys.first);
+    return value;
+  }
+}
+
+List<ArrangementLine> _parseArrangement(String body) =>
     body.split('\n').map((line) {
       if (line.trimLeft().startsWith('{')) {
         return ArrangementLine(line, const [], directive: true);
@@ -154,7 +189,10 @@ List<ArrangementLine> parseArrangement(String body) =>
         last = m.end;
       }
       text.write(unescapeChordPro(line.substring(last)));
-      return ArrangementLine(text.toString(), chords);
+      return ArrangementLine(
+        text.toString(),
+        List<ChordAnchor>.unmodifiable(chords),
+      );
     }).toList();
 
 /// Adds inferred Verse and Chorus directives when an arrangement has
