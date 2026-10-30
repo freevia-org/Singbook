@@ -88,7 +88,7 @@ void main() {
       app.saveSong(SongDocument(id: id, title: id, artist: 'A', body: body));
 
   test(
-    'switching cloud provider disconnects without cloud work or library edits',
+    'switching cloud provider keeps each sign-in without cloud work or library edits',
     () async {
       final previous = debugDefaultTargetPlatformOverride;
       debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
@@ -98,15 +98,37 @@ void main() {
       cloud.resetCounters();
       await app.selectSyncProvider(SyncProvider.iCloud);
       expect(app.syncProvider, SyncProvider.iCloud);
-      expect(device.auth.connected, isFalse);
+      // The Google session is not signed out by looking at iCloud.
+      expect(device.auth.connected, isTrue);
       expect(app.syncConnected, isFalse);
       expect(await device.repo.getSetting('sync.provider'), 'icloud');
       expect(await device.body('local'), 'keep this song');
       expect(cloud.requests, 0);
       await app.selectSyncProvider(SyncProvider.googleDrive);
       expect(app.syncProvider, SyncProvider.googleDrive);
-      expect(app.syncConnected, isFalse);
+      expect(app.syncConnected, isTrue);
       expect(await device.repo.getSetting('sync.provider'), 'google');
+      expect(await device.body('local'), 'keep this song');
+      expect(cloud.requests, 0);
+    },
+  );
+
+  test(
+    'switching back to a provider whose saved session is gone stays signed out',
+    () async {
+      final previous = debugDefaultTargetPlatformOverride;
+      debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+      addTearDown(() => debugDefaultTargetPlatformOverride = previous);
+      final app = await start();
+      await app.selectSyncProvider(SyncProvider.iCloud);
+      device.auth
+        ..connected = false
+        ..restoreError = StateError('saved session revoked');
+      cloud.resetCounters();
+      await app.selectSyncProvider(SyncProvider.googleDrive);
+      expect(app.syncProvider, SyncProvider.googleDrive);
+      expect(app.syncConnected, isFalse);
+      expect(app.syncError, isNull);
       expect(cloud.requests, 0);
     },
   );
