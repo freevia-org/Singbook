@@ -448,7 +448,7 @@ class AppController extends ChangeNotifier {
 
   /// Updates local account metadata after an explicit account action, then
   /// schedules a debounced sync for the signed-in account.
-  Future<void> _afterSignIn() async {
+  Future<void> _afterSignIn({bool scheduleSync = true}) async {
     final sync = _sync!;
     await sync.refreshDriveFolderSelection();
     if (_disposed) return;
@@ -466,7 +466,7 @@ class AppController extends ChangeNotifier {
     }
     syncPreviousAccountEmail = null;
     if (syncError == 'account_changed') syncError = null;
-    _scheduleAutoSync();
+    if (scheduleSync) _scheduleAutoSync();
   }
 
   int _reloadEpoch = 0;
@@ -1675,29 +1675,38 @@ class AppController extends ChangeNotifier {
       });
 
   /// Switching providers is opt-in and never copies, removes or syncs a library.
-  /// The selected provider must then be explicitly connected by the user.
-  Future<void> selectSyncProvider(
-    SyncProvider provider,
-  ) => _runSyncAction(() async {
-    if (provider == syncProvider) return;
-    if (provider == SyncProvider.iCloud && !appleSyncSupported) {
-      throw const SyncException('icloud_unavailable');
-    }
-    _sync?.cancel();
-    // Drop this device's session without revoking grants or deleting cloud data.
-    await _sync?.disconnect();
-    await repository.setSetting(
-      'sync.provider',
-      provider == SyncProvider.iCloud ? 'icloud' : 'google',
-    );
-    syncProvider = provider;
-    _sync = _serviceForProvider(provider);
-    syncReport = null;
-    syncWarning = null;
-    syncPreviousAccountEmail = null;
-    lastSyncAt = null;
-    lastSyncConflicts = 0;
-  });
+  /// Each provider keeps its own sign-in and folder grant, so switching away
+  /// does not sign the person out; coming back restores the saved session
+  /// without any cloud sync.
+  Future<void> selectSyncProvider(SyncProvider provider) => _runSyncAction(
+    () async {
+      if (provider == syncProvider) return;
+      if (provider == SyncProvider.iCloud && !appleSyncSupported) {
+        throw const SyncException('icloud_unavailable');
+      }
+      _sync?.cancel();
+      await repository.setSetting(
+        'sync.provider',
+        provider == SyncProvider.iCloud ? 'icloud' : 'google',
+      );
+      syncProvider = provider;
+      final next = _sync = _serviceForProvider(provider);
+      syncReport = null;
+      syncWarning = null;
+      syncPreviousAccountEmail = null;
+      lastSyncAt = null;
+      lastSyncConflicts = 0;
+      if (!next.isConnected) {
+        try {
+          await next.restore();
+        } catch (_) {
+          // A saved session that cannot be restored just leaves it signed out.
+        }
+      }
+      if (_disposed || !identical(_sync, next) || !next.isConnected) return;
+      await _afterSignIn(scheduleSync: false);
+    },
+  );
 
   /// Connects after an explicit user action. A saved session is tried first;
   /// when it cannot be restored, the account picker is shown. A successful
