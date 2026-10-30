@@ -1,0 +1,122 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "3a0e6b5931fb65430495706e9edbe7ba969c5752",
+  "passed": 23,
+  "cases": [
+    {
+      "name": "ordinary discovery projects only live matching recording analysis into source checks",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "provider check analysis is safe and readable phone",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "ordinary controller flow exposes safe analysis and preserves exact source through SQLite and ChordPro",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "source estimates stay labelled and readable phone",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "sample offset must refer to an existing submission",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "preserves sample facts and labels while excluding private arbitrary data",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "never treats another provider or verified-accuracy assertion as this analysis",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "rejects invalid counts, recording IDs and unbounded sample lists",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "rejects malformed keys, non-finite tempo and duplicate offsets",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "provider check analysis is safe and readable large-text",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "provider check analysis is safe and readable rtl-dark",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "source estimates stay labelled and readable large-text",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "source estimates stay labelled and readable rtl-dark",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "provider check analysis is safe and readable landscape",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "source estimates stay labelled and readable landscape",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "source estimates stay labelled and readable uk-dark",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "provider check analysis is safe and readable uk-dark",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "live analysis withdraws on navigation but check history remains",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "all checks open and live errors expand phone",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "all checks open and live errors expand large-text",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "all checks open and live errors expand rtl-dark",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "all checks open and live errors expand landscape",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "all checks open and live errors expand desktop-landscape",
+      "result": "success",
+      "skipped": false
+    }
+  ]
+}

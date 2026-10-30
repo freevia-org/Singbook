@@ -1,0 +1,180 @@
+{
+  "schemaVersion": 1,
+  "kind": "candidate-parser-and-search-access-only",
+  "runtime": "local",
+  "reportPreparedAt": "2026-10-30T03:41:45.346428+00:00",
+  "baseCommit": "66978393717e0327c46e4aa6fad811273ac53330",
+  "sourceCommit": "179b1ce8ad6bf7201e3c4d26fb1ed316b170adc0",
+  "tree": "d5f148fc3f4ba773d4056a845cce862413f028ff",
+  "pullRequest": "https://github.com/freevia-org/Singbook/pull/261",
+  "registered": false,
+  "activated": false,
+  "productionLatestUpdated": false,
+  "catalogChannelsChanged": false,
+  "retainedSourceAssessment": {
+    "schemaVersion": 1,
+    "kind": "retained-source-parser-assessment-only",
+    "generatedAt": "2026-10-30T02:30:14.221061Z",
+    "networkRequests": 0,
+    "sourceBodiesPublished": false,
+    "independentLyricOracleVerified": false,
+    "providerIntegrationQualified": false,
+    "cases": [
+      {
+        "editionId": "2244",
+        "sourceSha256": "a4528c885c201f7e5408c6e1d2873372a97f020cc0b3fa3809f0c4e02caf5541",
+        "sourceBytes": 13611,
+        "version": "2.18.2",
+        "title": "Notte e giorno (Don Giovanni)",
+        "license": "Public Domain",
+        "headerFields": [
+          "arranger",
+          "composer",
+          "footer",
+          "license",
+          "maintainer",
+          "mutopiacomposer",
+          "mutopiainstrument",
+          "mutopiapoet",
+          "mutopiatitle",
+          "poet",
+          "source",
+          "style",
+          "title"
+        ],
+        "streamCount": 2,
+        "streams": [
+          {
+            "publisherVariable": "italianLyrics",
+            "literalVoiceReference": "voice",
+            "attachmentVerified": false,
+            "characters": 638,
+            "syllables": 183,
+            "textSha256": "55acaba8dec8e03b8422f9bbfd4b17af024a9d135914323f178bdfbebcbf5d8e"
+          },
+          {
+            "publisherVariable": "englishLyrics",
+            "literalVoiceReference": "voice",
+            "attachmentVerified": false,
+            "characters": 747,
+            "syllables": 180,
+            "textSha256": "cf1767812399a8460256eb7b1d77732b14978ff829a008bfd301d8e82b78f65b"
+          }
+        ]
+      },
+      {
+        "editionId": "2243",
+        "sourceSha256": "79ab4ad4c8daaf170432629653cbd8b1d3b840a8ecf5cbf6369b2a700953e8b4",
+        "sourceBytes": 10441,
+        "version": "2.18.2",
+        "title": "What power art thou (King Arthur)",
+        "license": "Public Domain",
+        "headerFields": [
+          "arranger",
+          "composer",
+          "footer",
+          "license",
+          "maintainer",
+          "mutopiacomposer",
+          "mutopiainstrument",
+          "mutopiapoet",
+          "mutopiatitle",
+          "poet",
+          "source",
+          "style",
+          "title"
+        ],
+        "streamCount": 1,
+        "streams": [
+          {
+            "publisherVariable": "text",
+            "literalVoiceReference": "voice",
+            "attachmentVerified": false,
+            "characters": 394,
+            "syllables": 91,
+            "textSha256": "c5dd618ef03fd77a313dc8d8a871d5edcb98db9181a13af11554fe7e0e9951dd"
+          }
+        ]
+      }
+    ]
+  },
+  "newSearchAccessEvidence": {
+    "records": [
+      {
+        "query": "Notte e giorno",
+        "url": "https://www.mutopiaproject.org/cgibin/make-table.cgi?searchingfor=Notte%20e%20giorno",
+        "bytes": 5741,
+        "redirectLocation": "",
+        "status": 200,
+        "sha256": "f433c9f46b9333fe57890d232a89ee41f1b8aee05ef4e355e8d6c0e018072617",
+        "retryCount": 0,
+        "startedAt": "2026-10-30T03:21:24.8627615Z"
+      },
+      {
+        "query": "What power art thou",
+        "url": "https://www.mutopiaproject.org/cgibin/make-table.cgi?searchingfor=What%20power%20art%20thou",
+        "bytes": 5824,
+        "redirectLocation": "",
+        "status": 200,
+        "sha256": "b6e0739531e46614ff32d34d21ebcf76687d6a0b90d1edd09f688f37f751ab49",
+        "retryCount": 0,
+        "startedAt": "2026-10-30T03:21:26.9093779Z"
+      },
+      {
+        "query": "singbook-no-match-9d62e7",
+        "url": "https://www.mutopiaproject.org/cgibin/make-table.cgi?searchingfor=singbook-no-match-9d62e7",
+        "bytes": 4071,
+        "redirectLocation": "",
+        "status": 200,
+        "sha256": "ac8f1e7908685792e0ee06aed5146dc05424159e8fd38c224a9af0308cab7e85",
+        "retryCount": 0,
+        "startedAt": "2026-10-30T03:21:28.3309356Z"
+      }
+    ],
+    "kind": "candidate-search-contract-only",
+    "sourceBodiesPublished": false,
+    "httpRequests": 3,
+    "generatedAt": "2026-10-30T03:21:29.7631352Z",
+    "schemaVersion": 1
+  },
+  "validation": {
+    "passedSyntheticTests": 12,
+    "analysis": "No issues found",
+    "otherDiscoveryEntriesUnchanged": 52,
+    "all54DecisionsUnchanged": true
+  },
+  "capabilities": {
+    "literalStreamParsingQualifiedOnRetainedFiles": true,
+    "searchAccessQualified": true,
+    "searchResponseParserQualified": false,
+    "activeScoreAttachmentVerified": false,
+    "languageVerified": false,
+    "independentLyricOracleVerified": false,
+    "appStreamSelectionQualified": false,
+    "nativeImportExportQualified": false,
+    "managedCloudQualified": false,
+    "recordingIdentityOrChordsOrTimingInferred": false
+  },
+  "roadblocks": [
+    {
+      "step": "Provider integration",
+      "reason": "Single-body lyrics flow cannot silently flatten parallel literal streams. Search response selectors, paging, duplicate/error behavior and explicit edition/stream selection remain unimplemented.",
+      "tried": "Preserved separate streams, literal references and private source hashes; acquired two positive and one empty-control real search responses.",
+      "resolved": false,
+      "userAction": null,
+      "nextWork": "Implement bounded search parsing and stable stream-level candidates/selection, then native persistence/export and actual cloud qualification."
+    }
+  ],
+  "privacy": {
+    "sourceBodiesPublished": false,
+    "rawLyricsPublished": false,
+    "credentialsUsed": false
+  },
+  "nextGates": [
+    "Strict search and edition/stream identity",
+    "Per-edition attribution/licensing",
+    "Two full native extraction/import/persistence/export canaries",
+    "Compatible compiled registry/catalog/app release",
+    "Actual managed-cloud qualification"
+  ]
+}

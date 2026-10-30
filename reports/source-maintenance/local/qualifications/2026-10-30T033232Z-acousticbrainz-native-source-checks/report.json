@@ -1,0 +1,398 @@
+{
+  "schemaVersion": 1,
+  "kind": "candidate-ordinary-android-qualification",
+  "measuredAt": "2026-10-30T03:32:32.237763Z",
+  "reportPreparedAt": "2026-10-30T03:41:45.346428+00:00",
+  "runtime": "local-android",
+  "productionLatestUpdated": false,
+  "candidate": {
+    "baseCommit": "66978393717e0327c46e4aa6fad811273ac53330",
+    "headCommit": "3a0e6b5931fb65430495706e9edbe7ba969c5752",
+    "tree": "3445bfe219044e68d53293d0e7a29c98afde64b4",
+    "pullRequest": "https://github.com/freevia-org/Singbook/pull/260",
+    "state": "draft-unmerged"
+  },
+  "catalog": {
+    "path": "config/source-catalog-v10.json",
+    "channel": 10,
+    "productionRevision": 23,
+    "privateNativeRevision": 24,
+    "privateCatalogSha256": "b796ee684d81494a2f4ec03572bb299d427d851fe09e0355ed8f17b612bce170",
+    "privateDefaultEnabledIds": [
+      "musicbrainz",
+      "acousticbrainz",
+      "lrclib"
+    ],
+    "fullCompiledRosterIds": [
+      "genius",
+      "songsterr",
+      "ultimateguitar",
+      "lrclib",
+      "youtubemusic",
+      "lyricsovh",
+      "synclrc",
+      "betterlyrics",
+      "unison",
+      "ozbcoz",
+      "chordie",
+      "worshipcommons",
+      "openfilksongbook",
+      "seanmcgrathmusic",
+      "worshiptogether",
+      "musicbrainz",
+      "wikidata",
+      "wikimediacommons",
+      "wikisource",
+      "lrcred",
+      "roswellmusicjam",
+      "karamoe",
+      "amll",
+      "vocadb",
+      "touhoudb",
+      "utaitedb",
+      "startjamming",
+      "lyricsplus",
+      "chordsandtabs",
+      "pisni",
+      "openscorelieder",
+      "acousticbrainz"
+    ],
+    "offlineStructuralCheckPassedBeforeLiveCalls": true,
+    "providerAndDomainCodeUnchangedFromBase": true
+  },
+  "native": {
+    "ordinaryEntrypoint": "lib/main.dart",
+    "hiddenHarness": false,
+    "packageId": "org.freevia.singbook",
+    "version": "0.2.32+46",
+    "buildType": "debug-test-only",
+    "androidApi": 36,
+    "pageSizeBytes": 16384,
+    "abi": "x86_64",
+    "isolatedOwnedEmulator": true,
+    "physicalDevicesUsed": false,
+    "sharedEmulatorUsed": false,
+    "sameSignerInPlaceUpdate": true,
+    "uninstallOrDataClearing": false,
+    "apkSha256": "4a4003686f05e5bb0cff4df6a0ce1c041adab259396c17aa1c37ec4704495c4e",
+    "baselineApkSha256": "e7ff9a1ba6b3ab3697e0d5adcbaa368e25f523aefeb324997d928478b1717d81",
+    "debugSignerSha256": "3fc9b99645962e4b5348a6d4ade05ae9671f0b7dcae6c3b5db42cd8bc8fe7a08",
+    "ownedEmulatorStoppedAndReservationLifted": true
+  },
+  "http": {
+    "nativeRequests": null,
+    "nativeRetries": null,
+    "instrumented": false,
+    "reason": "Ordinary native app transport was not instrumented. Source status and saved response evidence establish extraction success, not total request counts or source-specific request timestamps. Artwork/key/catalog requests may also occur.",
+    "fullProductionLiveSuiteRepeated": false,
+    "selectedNativeReason": "New ordinary-app recording metadata capability and repair of unreachable estimate details",
+    "mutopiaSearchRequestsCountedSeparately": 3
+  },
+  "canaries": [
+    {
+      "title": "Mysterons",
+      "artist": "Portishead",
+      "recordingMbid": "b5d7d380-f43a-4c1f-a5de-694150b093ac",
+      "liveExtractionProducerCommit": "66978393717e0327c46e4aa6fad811273ac53330",
+      "providerCodeIdenticalToCandidate": true,
+      "ordinaryAppSearchResolveSave": true,
+      "retainedOnCandidateUpdateAndReopen": true,
+      "currentHeadNativeEstimateUiReprobed": false,
+      "submissionCount": 148,
+      "samplesRetained": 2,
+      "nativeUiFindingOnBase": "Metadata result found and preserved; estimates unreachable through lyric version tabs.",
+      "chordProExportByteIdenticalToDatabase": false,
+      "chordProDecodedModeledDocumentIdentical": true,
+      "exportSha256": "088d951f52119295556d410e9e4ef8b487581cebbc93fd7edd41d25b44b7f269",
+      "savedDocumentSha256": "ed4155c5ab25aef073c9190bdcb96ce902dee8c4caaceddc6de08c0a0a9410e2"
+    },
+    {
+      "title": "Colors and the Kids",
+      "artist": "Cat Power",
+      "recordingMbid": "099b148e-fe99-4b79-be6e-5078e4bb7415",
+      "liveExtractionProducerCommit": "3a0e6b5931fb65430495706e9edbe7ba969c5752",
+      "ordinaryAppSearchResolveSave": true,
+      "reopenedAfterRestart": true,
+      "currentHeadNativeEstimateUiVerified": true,
+      "detailsCapturedAt": "2026-10-30T03:23:41.7533226Z",
+      "submissionCount": 44,
+      "samplesRetained": 2,
+      "allThreeProviderChecksFound": [
+        "musicbrainz",
+        "lrclib",
+        "acousticbrainz"
+      ],
+      "chordProExportByteIdenticalToDatabase": true,
+      "exportSha256": "8d2300e12f50961d721fcbb26d03a646504e99aeed7b684633439e9f2f831300"
+    }
+  ],
+  "preservation": {
+    "consistentBackupsVerified": true,
+    "priorThreeSongIdsAndHashesUnchangedAfterUpdate": true,
+    "allFourSongIdsAndHashesUnchangedAfterReopen": true,
+    "savedRows": [
+      {
+        "id": "01d65599-b384-461f-950f-26ed3b7fb339",
+        "title": "Die Gedanken sind frei",
+        "documentSha256": "fb0b884d656374316bb4c20ad2fb804d923731e718ee59a1e086c5458c7b8955"
+      },
+      {
+        "id": "4686af84-a6c2-4e71-aabb-fe5a23ce8e6b",
+        "title": "Mysterons",
+        "documentSha256": "ed4155c5ab25aef073c9190bdcb96ce902dee8c4caaceddc6de08c0a0a9410e2"
+      },
+      {
+        "id": "bf245ce1-e7f5-4718-bcec-4d3a31ae758e",
+        "title": "Colors and the Kids",
+        "documentSha256": "8d2300e12f50961d721fcbb26d03a646504e99aeed7b684633439e9f2f831300"
+      },
+      {
+        "id": "daac5d38-6d15-425c-ad6e-19dee58d5eb8",
+        "title": "Kein schöner Land",
+        "documentSha256": "16e8840bb0790d6e6c03431ca281792e0ee91d778cd50116d12832a929051373"
+      }
+    ],
+    "fourOriginalAcousticBrainzPayloadHashesVerified": true,
+    "canonicalKeyOriginsMentionAcousticBrainz": false,
+    "nativeFilePickerReimportTested": false
+  },
+  "safeSavedMetadata": [
+    {
+      "title": "Die Gedanken sind frei",
+      "selectedSourceId": "wikibooksliederbuch:115615",
+      "selectedRecordingIds": {},
+      "documentSha256": "fb0b884d656374316bb4c20ad2fb804d923731e718ee59a1e086c5458c7b8955",
+      "canonicalKeyOriginsMentionAcousticBrainz": false,
+      "sources": [
+        {
+          "providerId": "wikibooksliederbuch",
+          "id": "115615",
+          "matchKind": "sameSong"
+        }
+      ]
+    },
+    {
+      "title": "Mysterons",
+      "selectedSourceId": "lrclib:34420651",
+      "selectedRecordingIds": {
+        "musicbrainz": "b5d7d380-f43a-4c1f-a5de-694150b093ac"
+      },
+      "documentSha256": "ed4155c5ab25aef073c9190bdcb96ce902dee8c4caaceddc6de08c0a0a9410e2",
+      "canonicalKeyOriginsMentionAcousticBrainz": false,
+      "sources": [
+        {
+          "providerId": "musicbrainz",
+          "id": "b5d7d380-f43a-4c1f-a5de-694150b093ac",
+          "matchKind": "sameRecording"
+        },
+        {
+          "providerId": "lrclib",
+          "id": "34420651",
+          "matchKind": "sameSong"
+        },
+        {
+          "providerId": "lrclib",
+          "id": "35266310",
+          "matchKind": "sameSong"
+        },
+        {
+          "providerId": "acousticbrainz",
+          "id": "b5d7d380-f43a-4c1f-a5de-694150b093ac",
+          "matchKind": "sameRecording",
+          "safeAnalysis": {
+            "recordingMbid": "b5d7d380-f43a-4c1f-a5de-694150b093ac",
+            "submissionCount": 148,
+            "musicalAccuracy": "unverified",
+            "samples": [
+              {
+                "submissionOffset": 0,
+                "estimatedBpm": 164.019683838,
+                "estimatedKey": {
+                  "tonic": "D#",
+                  "scale": "minor",
+                  "strength": 0.61598700285
+                },
+                "estimateStatus": "unverified"
+              },
+              {
+                "submissionOffset": 1,
+                "estimatedBpm": 163.974990845,
+                "estimatedKey": {
+                  "tonic": "D#",
+                  "scale": "minor",
+                  "strength": 0.616016805172
+                },
+                "estimateStatus": "unverified"
+              }
+            ]
+          },
+          "originalPayloads": [
+            {
+              "sha256": "866f605adbdc88f63e7d8cfaa8cf71e261e9926792952c6b816b8ad18f8ee306",
+              "bytes": 73,
+              "declaredHashMatches": true
+            },
+            {
+              "sha256": "ec8c9ffba97e1394c2ee9da7321ea562dcafbff1bb95cd3ced5c936c2258020b",
+              "bytes": 3945,
+              "declaredHashMatches": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Colors and the Kids",
+      "selectedSourceId": "lrclib:296156",
+      "selectedRecordingIds": {
+        "musicbrainz": "099b148e-fe99-4b79-be6e-5078e4bb7415"
+      },
+      "documentSha256": "8d2300e12f50961d721fcbb26d03a646504e99aeed7b684633439e9f2f831300",
+      "canonicalKeyOriginsMentionAcousticBrainz": false,
+      "sources": [
+        {
+          "providerId": "musicbrainz",
+          "id": "099b148e-fe99-4b79-be6e-5078e4bb7415",
+          "matchKind": "sameRecording"
+        },
+        {
+          "providerId": "lrclib",
+          "id": "296156",
+          "matchKind": "sameRecording"
+        },
+        {
+          "providerId": "acousticbrainz",
+          "id": "099b148e-fe99-4b79-be6e-5078e4bb7415",
+          "matchKind": "sameRecording",
+          "safeAnalysis": {
+            "recordingMbid": "099b148e-fe99-4b79-be6e-5078e4bb7415",
+            "submissionCount": 44,
+            "musicalAccuracy": "unverified",
+            "samples": [
+              {
+                "submissionOffset": 0,
+                "estimatedBpm": 117.968910217,
+                "estimatedKey": {
+                  "tonic": "F",
+                  "scale": "minor",
+                  "strength": 0.591552376747
+                },
+                "estimateStatus": "unverified"
+              },
+              {
+                "submissionOffset": 1,
+                "estimatedBpm": 120.136474609,
+                "estimatedKey": {
+                  "tonic": "A",
+                  "scale": "major",
+                  "strength": 0.819124400616
+                },
+                "estimateStatus": "unverified"
+              }
+            ]
+          },
+          "originalPayloads": [
+            {
+              "sha256": "5b93840dee81572738550979c6e505633d269c03982e76ea3542d64ec7723755",
+              "bytes": 72,
+              "declaredHashMatches": true
+            },
+            {
+              "sha256": "ace9e9d46fc9461db0c048cd366e9a87176890ee37e20ba83e255717003f3128",
+              "bytes": 3241,
+              "declaredHashMatches": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Kein schöner Land",
+      "selectedSourceId": "wikibooksliederbuch:118857",
+      "selectedRecordingIds": {},
+      "documentSha256": "16e8840bb0790d6e6c03431ca281792e0ee91d778cd50116d12832a929051373",
+      "canonicalKeyOriginsMentionAcousticBrainz": false,
+      "sources": [
+        {
+          "providerId": "wikibooksliederbuch",
+          "id": "118857",
+          "matchKind": "sameSong"
+        }
+      ]
+    }
+  ],
+  "validation": {
+    "passedTests": 23,
+    "skippedTests": 0,
+    "failedTests": 0,
+    "changedDartFilesAnalyzed": 5,
+    "analysis": "No issues found",
+    "screenshotsReviewed": [
+      "phone",
+      "large-text",
+      "rtl-arabic-dark",
+      "landscape",
+      "ukrainian-dark",
+      "ordinary-native-colors-provider-details"
+    ],
+    "independentReadOnlyReview": "No production blockers found"
+  },
+  "roadblocks": [
+    {
+      "step": "Android build",
+      "reason": "First attempt explicitly selected a nonexistent Java directory.",
+      "tried": "Resolved the installed Java executable and rebuilt with its JDK.",
+      "resolved": true,
+      "userAction": null
+    },
+    {
+      "step": "Android first launch",
+      "reason": "Activity-manager cold-start wait timed out although the app became ready.",
+      "tried": "Fresh UI capture confirmed the normal home screen; a later cold launch completed normally.",
+      "resolved": true,
+      "userAction": null
+    },
+    {
+      "step": "Native UI automation",
+      "reason": "Fresh hierarchy capture occasionally returned a null root during layout transitions; early loading control position changed.",
+      "tried": "Discarded missing captures; captured new unique files and used the current observed control location without repeating searches, selections or save.",
+      "resolved": true,
+      "userAction": null
+    },
+    {
+      "step": "Mysterons ChordPro export",
+      "reason": "Export serialization SHA differed from the stored document.",
+      "tried": "Compared actual export and stored ChordPro through the real codec; zero modeled field differences, identical lyric-body hash and preserved original source bytes.",
+      "resolved": true,
+      "serializationBytesIdentical": false,
+      "userAction": null
+    },
+    {
+      "step": "Existing landscape comparison UI test",
+      "reason": "An unchanged existing test emits a close-button hit-test warning while passing.",
+      "tried": "Recorded warning without suppressing it; native Back dismissal and new navigation-withdrawal tests pass.",
+      "resolved": false,
+      "impact": "That specific test click is not proof of successful close-button interaction.",
+      "userAction": null
+    },
+    {
+      "step": "Publication",
+      "reason": "PR260 remains a draft; no CI, merge, app release or managed-cloud qualification was performed.",
+      "tried": "Published the tested feature branch and exact handoff to authorized SB Integration.",
+      "resolved": false,
+      "userAction": "Integration review and coordinated CI/release remain pending."
+    }
+  ],
+  "privacy": {
+    "rawSourceDocumentsPublished": false,
+    "uploadedAudioTagFilenamesPublished": false,
+    "credentialsOrCookiesUsedOrPublished": false,
+    "privateBackupsAndExportsPublished": false
+  },
+  "limits": [
+    "Two ordinary native extraction/save cases used provider-identical code across base and candidate; actual new provider-details UI was exercised natively for Colors only.",
+    "Unverified submission samples are not musical ground truth or an all-submission consensus.",
+    "Local success does not prove managed-cloud reachability.",
+    "No whole production source validation run, new public catalog revision, provider activation or app release is claimed."
+  ]
+}

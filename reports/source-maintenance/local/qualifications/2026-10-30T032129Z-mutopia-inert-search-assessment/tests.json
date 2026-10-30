@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "179b1ce8ad6bf7201e3c4d26fb1ed316b170adc0",
+  "passed": 12,
+  "cases": [
+    {
+      "name": "parseMutopiaLilypond keeps attached lyric variables separate and preserves safe spans",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "parseMutopiaLilypond accepts a direct text lyric variable with bar checks and source newlines",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "parseMutopiaLilypond decodes quoted escapes without interpreting syntax characters",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "parseMutopiaLilypond ignores nested block comments and Scheme quoted decoys",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "parseMutopiaLilypond keeps punctuation music commands inert outside lyrics",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "parseMutopiaLilypond does not claim a lexical voice reference is an active attachment",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "parseMutopiaLilypond rejects unresolved and ambiguously bound lyric variables",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "parseMutopiaLilypond rejects unsupported lyrics entry routes",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "parseMutopiaLilypond reads only direct header scalar fields and rejects ambiguity",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "parseMutopiaLilypond rejects unsupported dynamic bodies and external dependencies",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "parseMutopiaLilypond rejects malformed braces, trailing hyphens, and oversized input",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "parseMutopiaLilypond enforces aggregate decoded text and stream limits",
+      "result": "success",
+      "skipped": false
+    }
+  ]
+}
