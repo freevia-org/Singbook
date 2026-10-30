@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "provenance": {
+    "sourceCommit": "b17b2d862a303ef1a0b9ce8b9e0b219f08df40c2",
+    "sourceTree": "c6b434810b0e030f365a06350bf5d764dab72c87",
+    "baseCommit": "66978393717e0327c46e4aa6fad811273ac53330",
+    "pullRequest": "https://github.com/freevia-org/Singbook/pull/259",
+    "runtime": "Windows host; Flutter 3.44.8; Dart 3.12.2",
+    "kind": "offline_candidate_qualification",
+    "candidateCatalog": "config/source-catalog-v11.json",
+    "channel": 11,
+    "catalogRevision": 24
+  },
+  "observedAtUtc": "2026-10-30T00:22:04Z",
+  "verification": "Independent reviewer executed exact-head locked offline pub get, default offline CLI, Flutter tests and changed-file analysis; primary agent parsed machine events",
+  "testCounts": {
+    "skipped": 0,
+    "passed": 87,
+    "failed": 0
+  },
+  "analysis": {
+    "exitCode": 0,
+    "issues": 0,
+    "changedDartFiles": 12
+  },
+  "offlineCatalogRows": 33,
+  "coverageGaps": 0,
+  "offlineSummary": {
+    "offline_unverified": 28,
+    "import_only": 1,
+    "retired": 1,
+    "disabled": 3
+  },
+  "httpDiagnostics": {
+    "networkFailures": 0,
+    "hosts": {}
+  },
+  "rawPrivateOfflineLogSha256": "7377a6827410edd480d9e976581f778cc8fdf1a14611b622e06da83090e63f76",
+  "initialLauncher": "An initial dart test invocation failed before tests with exit65; no test events, dependency or code changes. The corrected flutter test invocation completed successfully; the failed startup log remains private.",
+  "liveDatasourceCanaries": 0,
+  "nativeAppQualified": false,
+  "managedCloudQualified": false,
+  "activated": false,
+  "githubCiVerified": false,
+  "productionLatestUpdated": false,
+  "limitations": [
+    "Synthetic host tests and offline structure do not establish real extraction, installed-app behavior or cloud reachability.",
+    "Production merge, compatible release and activation remain with the integration owner."
+  ],
+  "rawDocumentsOrMessagesPublished": false
+}
