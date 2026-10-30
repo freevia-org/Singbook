@@ -157,6 +157,69 @@ void main() {
     },
   );
   test(
+    'a valid tenth older snapshot preserves repairs and removals after invalid history',
+    () async {
+      final removed = fixture.source(
+        id: 'removed-two',
+        adapter: 'json',
+        hosts: ['api.music.example.org'],
+        extraction: {'path': 'lyrics'},
+      );
+      final baseline = fixture.catalog(
+        2,
+        sources: [
+          fixture.source(id: 'builtin-one'),
+          removed,
+        ],
+      );
+      final current = fixture.catalog(
+        11,
+        sources: [
+          fixture.source(id: 'builtin-one'),
+          removed,
+        ],
+      );
+      var requests = 0, writes = 0;
+      final transport = fixture.makeTransport((r) async {
+        requests++;
+        throw StateError('Offline cache migration must not request a source');
+      });
+      final client = SourceCatalogClient(
+        runtime: fixture.makeRuntime(),
+        transport: transport,
+        loadBundled: () async => current,
+        readCache: () async => 'invalid current cache',
+        writeCache: (text) async {
+          writes++;
+          fail('Offline cache migration must not write a cache');
+        },
+        readPreviousCaches: () async => [
+          for (var index = 0; index < 9; index++)
+            (
+              bundled: index.isEven ? 'invalid baseline' : baseline,
+              cached: index.isEven ? repaired : 'invalid previous cache',
+            ),
+          (bundled: baseline, cached: repaired),
+        ],
+      );
+      try {
+        await client.initialize();
+        expect(
+          client.runtime.providers.single.definition.name,
+          'Cached repair',
+        );
+        expect(client.runtime.catalog!.revision, 11);
+        expect(client.runtime.catalog!.sources.map((entry) => entry.id), [
+          'builtin-one',
+        ]);
+        expect(requests, 0);
+        expect(writes, 0);
+      } finally {
+        await transport.close();
+      }
+    },
+  );
+  test(
     'newer bundled source revisions override previous edits and omissions',
     () async {
       final current = fixture.catalog(
