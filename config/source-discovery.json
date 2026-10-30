@@ -15,6 +15,20 @@
       "reason": "Three deterministic canaries passed on 2026-10-15: exact search for Give It Up / Don Toliver, direct ID 31, and direct ID 1494 Love Never Felt So Good / Michael Jackson. Direct reads retained raw TTML; parsed tracks have 341/441 cues including explicit line and positioned word cues. Source attribution is https://unison.boidu.dev; individual lyric-text rights remain unverified and no ODbL claim is made."
     },
     {
+      "id": "wikibooksliederbuch",
+      "name": "Wikibooks Liederbuch",
+      "firstSeen": "2026-10-28",
+      "lastChecked": "2026-10-30",
+      "status": "deferred",
+      "documentation": [
+        "https://de.wikibooks.org/wiki/Liederbuch",
+        "https://de.wikibooks.org/w/api.php?action=help&modules=query%2Bsearch%7Cparse",
+        "https://creativecommons.org/licenses/by-sa/4.0/"
+      ],
+      "endpoint": "https://de.wikibooks.org/w/api.php",
+      "reason": "Public anonymous MediaWiki API supports revision-attributed German song-sheet search and bounded poem/chord extraction. Two independent live canaries passed, including 67 retained chord anchors in the earlier qualification. Fresh 30 October local HTTP checks verified required identity/language/notation/revision fields with four200 responses and no retries. The unreleased channel11 candidate also passed both real-source stock Android debug app imports, save/restart/reopen and ChordPro export with source metadata, separate contribution/underlying rights and original API payload hashes retained; sanitized baseline: https://github.com/freevia-org/Singbook/blob/29175134d8c095be02a3779f6e3ebcf7c69c0196/reports/source-maintenance/local/qualifications/2026-10-30T010853Z-wikibooks-native-baseline/report.json. Native searches exposed mainspace navigation/template pages; the follow-up adds bounded classification regressions without per-hit HTTP fetches. Page contributions use CC-BY-SA-4.0; underlying lyrics/music rights remain unknown, and no recording artist, verified timing or musical accuracy is inferred. No catalog-size census is claimed. Current-head CI, managed-cloud qualification, rights/activation review and compatible app release remain required. The draft registry/catalog entry remains disabled and default-off; older production channels are unchanged."
+    },
+    {
       "id": "startjamming",
       "name": "Start Jamming",
       "firstSeen": "2026-10-15",

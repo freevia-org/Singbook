@@ -144,3 +144,28 @@ The contribution license does not become blanket clearance of underlying works;
 their unknown status remains explicit in portable source evidence. No provider,
 catalog default, release artifact or production report is changed by this
 persistence follow-up.
+
+## Native qualification and search correction on 30 October 2026
+
+The unreleased channel11 candidate at `b17b2d862a303ef1a0b9ce8b9e0b219f08df40c2`
+passed two real-source app imports in a fresh isolated Android 16 / 16 KB
+emulator. The ordinary debug app used a private bundled catalog that enabled
+only Wikibooks. Both songs saved, reopened after process restart and generated
+ChordPro exports byte-identical to their saved documents. Source revisions,
+all required metadata, chords, attribution, original API response hashes and
+separately scoped rights survived. No account or credential was used; nothing
+was sent from the share chooser. This is candidate-only debug evidence, not a
+released build or production activation. The sanitized baseline is retained in
+[the health branch](https://github.com/freevia-org/Singbook/blob/29175134d8c095be02a3779f6e3ebcf7c69c0196/reports/source-maintenance/local/qualifications/2026-10-30T010853Z-wikibooks-native-baseline/report.json).
+
+The native searches also exposed mainspace utility pages among song results:
+`Inhalt`, `Hilfe`, `Lieder nach Akkorden` and `Vorlage:Liedheader`. The follow-up
+excludes these observed navigation titles and template helpers during both
+search and identity validation, without fetching every hit. Actual song
+arrangements and colons within song titles remain supported. Synthetic
+regressions cover those boundaries. Lyric/chord parsing and rights handling
+are unchanged; fresh selected-source checks must qualify this follow-up.
+
+The versioned candidate remains disabled and default-off. Current-head CI,
+managed-cloud qualification, rights/activation review and a compatible app
+release remain required. Older production catalog channels are preserved.

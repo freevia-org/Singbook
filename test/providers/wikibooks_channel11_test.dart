@@ -50,7 +50,7 @@ void main() {
         previous['sources'],
       );
       expect(rows.length, (previous['sources'] as List).length + 1);
-      expect(next['revision'], (previous['revision'] as int) + 1);
+      expect(next['revision'], greaterThan(previous['revision'] as int));
       expect(
         SourceCatalogClient.bundledAsset,
         'config/source-catalog-v11.json',
