@@ -714,6 +714,36 @@
       ],
       "endpoint": "https://api.secondhandsongs.com",
       "reason": "Publisher-indexed primary documentation describes JSON search for artists, works and performances plus object retrieval; a rate-limited anonymous API and optional approved key are documented. Current indexed terms distinguish private use from public tools/services, require prior written authorization for non-private API retrieval, and restrict automated website collection. Direct documentation opens returned403; stopped without alternate-host/API/content requests, credentials or workarounds. Search-index text is documentation evidence, not proof of current live machine access, exact schema or granted app-use permission. No work/performance rows, lyric/chord content, media, extraction canaries or accounts were requested. Potential cover/original/credit relationship enrichment is unmeasured and does not establish lyrics, chord charts or incremental catalog size. Defer pending publisher-approved public-app access/persistence/export terms, readable current documentation, precise work-versus-recording identity, attribution/quota contract, compatible adapter and two independent real extraction canaries. No registration or activation."
+    },
+    {
+      "id": "kithara",
+      "name": "Kithara / Greek lyrics and chords",
+      "firstSeen": "2026-10-29",
+      "lastChecked": "2026-10-29",
+      "status": "deferred",
+      "documentation": [
+        "https://kithara.to/",
+        "https://kithara.to/fi",
+        "https://kithara.to/robots.txt",
+        "https://kithara.to/contact"
+      ],
+      "endpoint": "https://kithara.to",
+      "reason": "Greek-language song-sheet candidate: the publisher homepage displays 45,802 entries (updated 25 October 2026), not a measured unique lyric/chord count or overlap result. Its search guidance requires Greek letters and ignores accent differences; performer, creator and contributor navigation are distinct. The footer reserves rights; underlying song/arrangement rights and app reuse permission are unverified. Anonymous local access review on 29 October at 20:33 UTC used two HTTPS requests and zero retries: robots.txt returned HTTP 200 and permitted the public search page for the identifying maintenance agent, but /fi returned HTTP 403 with a Cloudflare Attention Required access-block page. No song extraction or download requests followed; no account or session was used. Browsable publisher pages are discovery evidence, not native app or cloud reachability proof. Defer pending a publisher-supported automated access path, bounded Greek search/identity/lyric/chord/credit extraction, two independent exact extraction canaries, attribution/persistence/export and compatible native/cloud qualification. No source is registered or activated."
+    },
+    {
+      "id": "chordwiki",
+      "name": "ChordWiki / Japanese ChordPro charts",
+      "firstSeen": "2026-10-29",
+      "lastChecked": "2026-10-29",
+      "status": "deferred",
+      "documentation": [
+        "https://ja.chordwiki.org/",
+        "https://ja.chordwiki.org/TermOfUse.html",
+        "https://ja.chordwiki.org/Guideline.html",
+        "https://ja.chordwiki.org/help.html"
+      ],
+      "endpoint": "https://ja.chordwiki.org",
+      "reason": "Japanese lyrics/chord-sheet candidate reviewed through primary documentation only. Publisher-indexed snapshots advertise roughly 27,000 charts, but the direct homepage reader omitted its dynamic count; current usable/unique size and overlap are unmeasured. Help describes ChordPro with local extensions; guidelines distinguish same-title songs by singer and request lyricist/composer/singer credits. Terms dated 26 June 2023 restrict JASRAC-managed lyrics to licensed website streaming and prohibit download/copy/print; remaining chart/source rights belong to contributors. The terms' API section concerns external YouTube services, not a verified public chart API. No chart bodies, machine extraction requests, credentials, accounts, age-gate interaction or canaries were requested. Defer automated app import/persistence/export pending explicit publisher-supported access and applicable rights, stable identity/attribution, compatible grammar and two independent live extractions plus native/cloud qualification. No source is registered or activated."
     }
   ]
 }
