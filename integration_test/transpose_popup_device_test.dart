@@ -208,7 +208,13 @@ void main() {
         expect(controller.state.showChords, isFalse, reason: fixture.name);
         await _selectTranspose(tester, controller, dropdown, fixture, 0);
         await _settleNative(tester, controller, repository);
-        expect(controller.state.showChords, isFalse, reason: fixture.name);
+        // Choosing a key from the menu leaves lyrics-only mode, including the
+        // current key; keyless songs only change the offset.
+        expect(
+          controller.state.showChords,
+          fixture.pitch != null,
+          reason: fixture.name,
+        );
         await tester.runAsync(() => controller.setShowChords(true));
         await _settleNative(tester, controller, repository);
         expect(controller.state.showChords, isTrue, reason: fixture.name);

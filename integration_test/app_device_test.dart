@@ -227,7 +227,7 @@ void main() {
         expect(find.text('Evening Set'), findsWidgets);
         if (size.width >= 800) {
           expect(
-            find.byKey(const ValueKey('tablet-setlists-grid')),
+            find.byKey(const ValueKey('setlists-library-list')),
             findsOneWidget,
           );
         }
