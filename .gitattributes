@@ -13,6 +13,9 @@ gradlew text eol=lf
 windows/flutter/generated_plugin_registrant.cc text eol=lf
 windows/flutter/generated_plugin_registrant.h text eol=lf
 windows/flutter/generated_plugins.cmake text eol=lf
+linux/flutter/generated_plugin_registrant.cc text eol=lf
+linux/flutter/generated_plugin_registrant.h text eol=lf
+linux/flutter/generated_plugins.cmake text eol=lf
 *.png -text
 *.ttf -text
 *.jar -text
