@@ -223,12 +223,7 @@ void main() {
       expect(tester.takeException(), isNull);
 
       if (_capture) {
-        await tester.scrollUntilVisible(
-          find.text(l10n.sourceAnalysisHeading),
-          -80,
-          scrollable: scrollable,
-        );
-        await tester.ensureVisible(find.text(l10n.sourceAnalysisHeading));
+        tester.state<ScrollableState>(scrollable).position.jumpTo(0);
         await tester.pumpAndSettle();
         await expectLater(
           find.byType(Overlay).first,
