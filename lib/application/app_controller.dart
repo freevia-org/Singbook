@@ -7,7 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:xml/xml.dart' show XmlException;
 import '../data/library_repository.dart';
-import '../domain/arrangement.dart' show parseArrangement, plainLyrics;
+import '../domain/arrangement.dart' show plainLyrics;
 import '../domain/models.dart';
 import '../domain/chordpro.dart';
 import '../domain/combine.dart';
@@ -20,6 +20,7 @@ import '../providers/extra/extra_providers.dart';
 import '../providers/source_catalog.dart';
 import '../providers/source_catalog_client.dart';
 import '../providers/configurable_provider.dart';
+import 'combine_runner.dart';
 import 'file_actions.dart';
 import '../sync/google_drive_sync.dart';
 import '../sync/icloud_auth.dart';
@@ -260,10 +261,8 @@ class AppController extends ChangeNotifier {
   /// Automatic sync is enabled for signed-in accounts.
   bool get autoSyncEnabled => true;
   int _searchEpoch = 0, _discoveryEpoch = 0;
-  int _immediateDiscoveryRecomputeCount = 0;
   CancellationToken? _searchCancel, _discoveryCancel;
   CancellationToken? _youtubeDiscoveryCancel;
-  Timer? _pendingDiscoveryCombine;
   String? _searchProviderId;
   bool _disposed = false;
   Future<void>? _activeSyncAction;
@@ -378,8 +377,18 @@ class AppController extends ChangeNotifier {
   }
 
   void _emit() {
-    if (!_disposed) notifyListeners();
+    if (_disposed) return;
+    if (_savedSourceMergePending) {
+      _emitHeld = true;
+      return;
+    }
+    notifyListeners();
   }
+
+  // Saved sources are shown together with their merge. Listeners are not told
+  // about them while that first background merge is still running.
+  bool _savedSourceMergePending = false, _emitHeld = false;
+  int _combinesInFlight = 0;
 
   Future<void>? _initializing;
 
@@ -649,7 +658,8 @@ class AppController extends ChangeNotifier {
                 _cachedDiscoverySourceIds.contains(source.id),
           )
           .toList();
-      if (selection != null) _combine(selection!);
+      ++_combineGeneration;
+      if (selection != null) _combineInBackground(selection!);
     }
     await setSetting('providers', {
       ...jsonMap(settings['providers']),
@@ -877,8 +887,7 @@ class AppController extends ChangeNotifier {
 
   void cancelDiscovery() {
     ++_discoveryEpoch;
-    _immediateDiscoveryRecomputeCount = 0;
-    _cancelPendingDiscoveryCombine();
+    ++_combineGeneration;
     _discoveryCancel?.cancel();
     for (final token in _providerDiscoveryCancellations.values) {
       token.cancel();
@@ -1058,9 +1067,14 @@ class AppController extends ChangeNotifier {
     _cachedDiscoverySourceIds = cached.map((source) => source.id).toSet();
     results = cached;
     discovering = true;
-    _combine(candidate);
     errorCode = null;
-    _emit();
+    if (results.isEmpty) {
+      _combineInBackground(candidate);
+      _emit();
+    } else {
+      _savedSourceMergePending = true;
+      unawaited(_combine(candidate).then((_) {}, onError: (Object _) {}));
+    }
     var discoveryClosed = false;
     try {
       final found = await discovery.discover(
@@ -1106,12 +1120,7 @@ class AppController extends ChangeNotifier {
               !(result.hasChords &&
                   _cachedDiscoverySourceIds.contains(result.id))) {
             results = _mergeDiscoveryResults(candidate, results, [result]);
-            if (_immediateDiscoveryRecomputeCount < 2) {
-              _immediateDiscoveryRecomputeCount++;
-              _combine(candidate, preserveProgressRecomputeCount: true);
-            } else {
-              _scheduleDiscoveryCombine(candidate, epoch);
-            }
+            _combineInBackground(candidate);
           }
           _emit();
         },
@@ -1125,7 +1134,6 @@ class AppController extends ChangeNotifier {
               providerEnabled(source.candidate.providerId))
             source,
       ]);
-      _combine(candidate);
     } catch (error) {
       if (epoch != _discoveryEpoch || _disposed) return;
       errorCode = error is ProviderException ? error.code : 'discovery_failed';
@@ -1134,42 +1142,31 @@ class AppController extends ChangeNotifier {
       if (epoch == _discoveryEpoch) {
         _providerDiscoveryCancellations = {};
         discovering = false;
-        _combine(candidate);
+        try {
+          // The only merge after the last provider: readiness depends on
+          // discovery having closed.
+          await _combine(candidate);
+        } finally {
+          if (epoch == _discoveryEpoch) combineRunner.release();
+        }
         _emit();
       }
     }
   }
 
-  static const _discoveryCombineInterval = Duration(milliseconds: 50);
+  /// Merges run on a background isolate, one at a time, newest request wins.
+  /// Replaceable so tests can observe or slow the merge.
+  @visibleForTesting
+  CombineRunner combineRunner = CombineRunner();
 
-  void _scheduleDiscoveryCombine(SongCandidate candidate, int epoch) {
-    if (_pendingDiscoveryCombine != null) return;
-    _pendingDiscoveryCombine = Timer(_discoveryCombineInterval, () {
-      _pendingDiscoveryCombine = null;
-      if (_disposed ||
-          epoch != _discoveryEpoch ||
-          !discovering ||
-          selection?.identity != candidate.identity) {
-        return;
-      }
-      _combine(candidate);
-      _emit();
-    });
-  }
+  /// Bumped when pending merge results must no longer be shown: discovery was
+  /// reset or the set of enabled sources shrank.
+  int _combineGeneration = 0;
 
-  void _cancelPendingDiscoveryCombine() {
-    _pendingDiscoveryCombine?.cancel();
-    _pendingDiscoveryCombine = null;
-  }
-
-  void _combine(
-    SongCandidate candidate, {
-    bool preserveProgressRecomputeCount = false,
-  }) {
-    _cancelPendingDiscoveryCombine();
-    if (!preserveProgressRecomputeCount) {
-      _immediateDiscoveryRecomputeCount = 0;
-    }
+  /// Merges the current [results]. Completes once [combined] reflects them, or
+  /// immediately when a newer request replaced this one or discovery was
+  /// reset. Progress updates use [_combineInBackground] instead.
+  Future<void> _combine(SongCandidate candidate) async {
     final available = results
         .map(
           (source) => isSourceReady(source)
@@ -1180,34 +1177,52 @@ class AppController extends ChangeNotifier {
                 ),
         )
         .toList();
-    final usable = available.where(
-      (r) =>
-          (r.matchKind != MatchKind.rejected ||
-              _historicalCacheUses.any((use) => use.allows(candidate, r))) &&
-          (plainLyrics(r.body).trim().isNotEmpty ||
-              parseArrangement(
-                r.body,
-              ).any((line) => !line.directive && line.chords.isNotEmpty)),
-    );
+    final generation = _combineGeneration;
+    _combinesInFlight++;
     try {
-      if (usable.isNotEmpty) {
-        // A verified own arrangement may contain only chord rows. This is a
-        // content prefilter; combineSources still decides identity, readiness,
-        // editions and whether the chart is eligible without a lyric base.
-        combined = combineSources(
-          candidate,
-          available,
+      final outcome = await combineRunner.submit(
+        CombineRequest(
+          candidate: candidate,
+          results: available,
           historicalCacheUses: _historicalCacheUses,
-        );
-      } else {
-        // Rejected payloads remain inspectable as alternatives. Only an
-        // explicit source save may opt into a rejected arrangement; automatic
-        // recombination must not restore authority withdrawn by final checks.
-        combined = null;
+        ),
+      );
+      if (outcome == null || _disposed || generation != _combineGeneration) {
+        return;
       }
-    } on FormatException {
-      combined = null;
+      combined = outcome.document;
+    } finally {
+      if (--_combinesInFlight == 0 && _savedSourceMergePending) {
+        _savedSourceMergePending = false;
+        if (_emitHeld) {
+          _emitHeld = false;
+          _emit();
+        }
+      }
     }
+  }
+
+  /// Merges the current selection now, ignoring the batch interval, and
+  /// completes when [combined] is up to date.
+  @visibleForTesting
+  Future<void> flushCombine() async {
+    final candidate = selection;
+    if (candidate == null) return;
+    await _combine(candidate);
+    _emit();
+  }
+
+  void _combineInBackground(SongCandidate candidate) {
+    unawaited(
+      _combine(candidate).then(
+        (_) {
+          if (!_disposed) _emit();
+        },
+        // The closing merge of discovery awaits its own result and reports
+        // failures; an intermediate one must not escape as an unhandled error.
+        onError: (Object _) {},
+      ),
+    );
   }
 
   String? savedResultId({SourceResult? source}) => source != null
@@ -2189,7 +2204,7 @@ class AppController extends ChangeNotifier {
   @override
   void dispose() {
     _disposed = true;
-    _cancelPendingDiscoveryCombine();
+    combineRunner.release();
     _historicalCacheUses = const [];
     _autoSyncTimer?.cancel();
     for (final service in {..._syncProviders.values, ?_sync}) {

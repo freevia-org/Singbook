@@ -516,6 +516,15 @@ void main() {
       tester.element(find.byType(VerseHomeScreen)),
     );
     expect(find.byKey(const ValueKey('discovery-progress')), findsOneWidget);
+    expect(
+      tester
+          .widget<LinearProgressIndicator>(
+            find.byKey(const ValueKey('discovery-progress')),
+          )
+          .value,
+      0.5,
+      reason: 'one of two sources has completed',
+    );
     expect(find.byTooltip(l10n.searchDiscoveryProgress(1, 2)), findsOneWidget);
     expect(find.byKey(const ValueKey('source-checks-button')), findsOneWidget);
     expect(
