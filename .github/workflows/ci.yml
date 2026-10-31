@@ -92,7 +92,7 @@ jobs:
           --tags=performance test/domain/combined_enrichment_test.dart
 
       - name: Validate metadata accuracy corpus and offline cache
-        run: flutter test --no-pub tool/metadata_accuracy_benchmark_test.dart tool/metadata_response_cache_test.dart
+        run: flutter test --no-pub tool/metadata_accuracy_benchmark_test.dart tool/metadata_response_cache_test.dart tool/combine_worker_benchmark_test.dart
 
       - name: Upload setlist visual captures
         if: always()
