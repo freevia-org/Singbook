@@ -110,7 +110,9 @@ class _IdentityDiscovery extends SourceDiscoveryService {
     onProgress?.call(
       ProviderCheck(providerId: 'fixture', state: 'found', result: result),
     );
-    await Future<void>.delayed(const Duration(milliseconds: 100));
+    for (var i = 0; i < 100 && identical(app.combined, before); i++) {
+      await Future<void>.delayed(const Duration(milliseconds: 20));
+    }
     replacedCombinedForNewResult = !identical(app.combined, before);
     updatedCombinedMetadata = app.combined?.metadata['key'] == 'D';
     return [result];
@@ -223,7 +225,6 @@ void main() {
       );
       final app = AppController(repository: repository, discovery: discovery);
       discovery.app = app;
-      app.discoveryCombineInterval = const Duration(milliseconds: 20);
       try {
         await app.initialize();
         await app.selectCandidate(selected, cachedResults: [cached]);

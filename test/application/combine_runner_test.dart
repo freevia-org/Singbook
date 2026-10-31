@@ -90,8 +90,8 @@ void main() {
       final third = runner.submit(_request(sources(3)));
       final fourth = runner.submit(_request(sources(4)));
       gates.single.complete();
-      // The first run began before the newer submissions, so it is stale.
-      expect(await first, isNull);
+      // The running merge is delivered; the queued ones collapse to the newest.
+      expect(await first, isNotNull);
       expect(await second, isNull);
       expect(await third, isNull);
       await Future<void>.delayed(Duration.zero);

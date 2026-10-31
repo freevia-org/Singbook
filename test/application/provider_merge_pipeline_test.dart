@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:singbook/application/combine_runner.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:singbook/application/app_controller.dart';
 import 'package:singbook/data/library_repository.dart';
@@ -223,28 +224,53 @@ void main() {
     },
   );
 
-  test(
-    'results arriving within one interval are merged as a single batch',
-    () async {
-      final h = await open();
-      h.app.discoveryCombineInterval = const Duration(milliseconds: 80);
-      final flow = await h.beginSelection();
-      final before = h.app.combineRunner.startedRuns;
-      flow.request.publish(_source('genius'));
-      flow.request.publish(_source('genius', metadata: {'album': 'A'}));
-      flow.request.publish(_source('lrclib', body: _full));
-      flow.request.publish(_source('genius', metadata: {'album': 'B'}));
-      await Future<void>.delayed(Duration.zero);
-      expect(h.app.combineRunner.startedRuns, before);
-      await Future<void>.delayed(const Duration(milliseconds: 200));
-      expect(h.app.combineRunner.startedRuns, before + 1);
-      expect(h.app.combined?.body, _full);
-      flow.request.response.complete([]);
-      await flow.completion;
-      expect(h.app.combineRunner.startedRuns, before + 2);
-      expect(h.app.combined?.body, _full);
-    },
-  );
+  test('the first result merges at once and later arrivals coalesce', () async {
+    final h = await open();
+    final gates = <Completer<void>>[];
+    final merged = <List<String>>[];
+    h.app.combineRunner = CombineRunner(
+      compute: (request) async {
+        merged.add([for (final r in request.results) r.id]);
+        final gate = Completer<void>();
+        gates.add(gate);
+        await gate.future;
+        return computeCombine(request);
+      },
+    );
+    final flow = await h.beginSelection();
+    Future<void> settle() => Future<void>.delayed(Duration.zero);
+    await settle();
+    // Nothing has arrived: the opening merge has no sources. Let it finish.
+    gates.removeAt(0).complete();
+    await settle();
+    merged.clear();
+    flow.request.publish(_source('genius'));
+    await settle();
+    expect(merged, hasLength(1), reason: 'the first source merges at once');
+    flow.request.publish(_source('genius', metadata: {'album': 'A'}));
+    flow.request.publish(_source('lrclib', body: _full));
+    flow.request.publish(_source('genius', metadata: {'album': 'B'}));
+    await settle();
+    expect(merged, hasLength(1), reason: 'later arrivals wait for the merge');
+    gates.removeAt(0).complete();
+    await settle();
+    await settle();
+    expect(merged, hasLength(2), reason: 'then one merge of the latest set');
+    expect(merged.last, hasLength(2));
+    gates.removeAt(0).complete();
+    for (var i = 0; i < 100 && h.app.combined?.body != _full; i++) {
+      await Future<void>.delayed(const Duration(milliseconds: 10));
+    }
+    expect(h.app.combined?.body, _full);
+    flow.request.response.complete([]);
+    final done = flow.completion;
+    for (var i = 0; i < 100 && gates.isEmpty; i++) {
+      await Future<void>.delayed(const Duration(milliseconds: 10));
+    }
+    gates.removeAt(0).complete();
+    await done;
+    expect(h.app.combined?.body, _full);
+  });
 
   test(
     'disabling an in-flight discovery provider preserves other work and excludes its late results',

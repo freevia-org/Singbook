@@ -590,11 +590,10 @@ void main() {
         beta.id,
         gamma.id,
       ]);
-      expect(
-        h.app.combined,
-        isNull,
-        reason: 'results arriving together are merged in one timed batch',
-      );
+      // The first arrival merges at once; the others queue behind it. If the
+      // worker was still starting, all three are already in that first merge.
+      await waitForCombined(h, () => h.app.combined != null);
+      expect(h.app.combined?.body, anyOf(alpha.body, gamma.body));
       await waitForCombined(h, () => h.app.combined?.body == gamma.body);
       expect(h.app.combined?.body, gamma.body);
       expect(h.app.combined?.extra['fieldOrigins']['mood'], gamma.id);
@@ -606,80 +605,86 @@ void main() {
     },
   );
 
-  test('same-source progress bursts coalesce into one timed batch', () async {
-    final h = await open(providers: [_PendingProvider('alpha')]);
-    h.discovery.holdDiscoveries = true;
-    final candidate = SongCandidate(
-      providerId: 'catalog',
-      id: 'lantern-song',
-      title: 'Lantern Song',
-      artist: 'Lanterns',
-    );
-    SourceResult result(String body, {JsonMap metadata = const {}}) =>
-        SourceResult(
-          candidate: SongCandidate(
-            providerId: 'alpha',
-            id: 'lantern-song',
-            title: candidate.title,
-            artist: candidate.artist,
-          ),
-          body: body,
-          metadata: metadata,
-          matchKind: MatchKind.sameSong,
-          matchReason: 'same_song',
-        );
-    final first = result('Lanterns glow');
-    final second = result('Lanterns glow', metadata: {'mood': 'reflective'});
-    final third = result(
-      'Lanterns glow',
-      metadata: {
-        'mood': 'reflective',
-        'genres': ['folk'],
-      },
-    );
-    final latest = result(
-      'Lanterns glow',
-      metadata: {
-        'mood': 'reflective',
-        'genres': ['folk'],
-        'year': 1970,
-      },
-    );
+  test(
+    'same-source progress bursts coalesce behind the running merge',
+    () async {
+      final h = await open(providers: [_PendingProvider('alpha')]);
+      h.discovery.holdDiscoveries = true;
+      final candidate = SongCandidate(
+        providerId: 'catalog',
+        id: 'lantern-song',
+        title: 'Lantern Song',
+        artist: 'Lanterns',
+      );
+      SourceResult result(String body, {JsonMap metadata = const {}}) =>
+          SourceResult(
+            candidate: SongCandidate(
+              providerId: 'alpha',
+              id: 'lantern-song',
+              title: candidate.title,
+              artist: candidate.artist,
+            ),
+            body: body,
+            metadata: metadata,
+            matchKind: MatchKind.sameSong,
+            matchReason: 'same_song',
+          );
+      final first = result('Lanterns glow');
+      final second = result('Lanterns glow', metadata: {'mood': 'reflective'});
+      final third = result(
+        'Lanterns glow',
+        metadata: {
+          'mood': 'reflective',
+          'genres': ['folk'],
+        },
+      );
+      final latest = result(
+        'Lanterns glow',
+        metadata: {
+          'mood': 'reflective',
+          'genres': ['folk'],
+          'year': 1970,
+        },
+      );
 
-    final selection = h.app.selectCandidate(candidate);
-    final request = await h.discovery.discoveryAt(0);
-    final runsBefore = h.app.combineRunner.startedRuns;
-    request.publish(first);
-    request.publish(second);
-    request.publish(third);
-    request.publish(latest);
+      final selection = h.app.selectCandidate(candidate);
+      final request = await h.discovery.discoveryAt(0);
+      request.publish(first);
+      await waitForCombined(h, () => h.app.combined?.body == first.body);
+      expect(h.app.combined?.body, first.body);
+      request.publish(second);
+      await waitForCombined(
+        h,
+        () => h.app.combined?.extra['fieldOrigins']?['mood'] == second.id,
+      );
+      expect(h.app.combined?.body, second.body);
+      expect(h.app.combined?.extra['fieldOrigins']['mood'], second.id);
+      request.publish(third);
+      request.publish(latest);
 
-    expect(h.app.results, hasLength(1));
-    expect(h.app.results.single.body, latest.body);
-    expect(h.app.results.single.metadata['year'], 1970);
-    expect(
-      h.app.combined,
-      isNull,
-      reason: 'no merge starts until the batch interval elapses',
-    );
-    await waitForCombined(
-      h,
-      () => h.app.combined?.sources.single.metadata.containsKey('year') == true,
-    );
-    expect(h.app.combined?.body, latest.body);
-    expect(h.app.combined?.extra['fieldOrigins']['mood'], latest.id);
-    expect(h.app.combined?.sources.single.metadata['year'], 1970);
-    expect(
-      h.app.combineRunner.startedRuns - runsBefore,
-      1,
-      reason: 'four updates produce one merge of the latest set',
-    );
+      expect(h.app.results, hasLength(1));
+      expect(h.app.results.single.body, latest.body);
+      expect(h.app.results.single.metadata['year'], 1970);
+      expect(
+        h.app.combined?.sources.single.metadata.containsKey('year'),
+        isFalse,
+        reason: 'updates arriving behind the running merge are coalesced',
+      );
+      await waitForCombined(
+        h,
+        () =>
+            h.app.combined?.sources.single.metadata.containsKey('year') == true,
+      );
+      expect(h.app.combined?.body, latest.body);
+      expect(h.app.combined?.extra['fieldOrigins']['mood'], latest.id);
+      expect(h.app.combined?.sources.single.metadata['year'], 1970);
 
-    request.response.complete([latest]);
-    await selection;
-    expect(h.app.combined?.body, latest.body);
-    expect(h.app.combined?.extra['fieldOrigins']['mood'], latest.id);
-  });
+      request.response.complete([latest]);
+      await selection;
+      expect(h.app.combined?.body, latest.body);
+      expect(h.app.combined?.extra['fieldOrigins']['mood'], latest.id);
+    },
+  );
 
   test('cancelled discovery cannot run its queued recombination', () async {
     final h = await open(

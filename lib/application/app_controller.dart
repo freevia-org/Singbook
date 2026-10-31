@@ -263,7 +263,6 @@ class AppController extends ChangeNotifier {
   int _searchEpoch = 0, _discoveryEpoch = 0;
   CancellationToken? _searchCancel, _discoveryCancel;
   CancellationToken? _youtubeDiscoveryCancel;
-  Timer? _pendingDiscoveryCombine;
   String? _searchProviderId;
   bool _disposed = false;
   Future<void>? _activeSyncAction;
@@ -659,6 +658,7 @@ class AppController extends ChangeNotifier {
                 _cachedDiscoverySourceIds.contains(source.id),
           )
           .toList();
+      ++_combineGeneration;
       if (selection != null) _combineInBackground(selection!);
     }
     await setSetting('providers', {
@@ -888,7 +888,6 @@ class AppController extends ChangeNotifier {
   void cancelDiscovery() {
     ++_discoveryEpoch;
     ++_combineGeneration;
-    _cancelPendingDiscoveryCombine();
     _discoveryCancel?.cancel();
     for (final token in _providerDiscoveryCancellations.values) {
       token.cancel();
@@ -1121,7 +1120,7 @@ class AppController extends ChangeNotifier {
               !(result.hasChords &&
                   _cachedDiscoverySourceIds.contains(result.id))) {
             results = _mergeDiscoveryResults(candidate, results, [result]);
-            _scheduleDiscoveryCombine(candidate, epoch);
+            _combineInBackground(candidate);
           }
           _emit();
         },
@@ -1155,41 +1154,19 @@ class AppController extends ChangeNotifier {
     }
   }
 
-  /// Provider results arriving during discovery are merged in timed batches
-  /// instead of once per result; one closing merge follows the last provider.
-  @visibleForTesting
-  Duration discoveryCombineInterval = const Duration(milliseconds: 450);
-
-  void _scheduleDiscoveryCombine(SongCandidate candidate, int epoch) {
-    if (_pendingDiscoveryCombine != null) return;
-    _pendingDiscoveryCombine = Timer(discoveryCombineInterval, () {
-      _pendingDiscoveryCombine = null;
-      if (_disposed ||
-          epoch != _discoveryEpoch ||
-          !discovering ||
-          selection?.identity != candidate.identity) {
-        return;
-      }
-      _combineInBackground(candidate);
-    });
-  }
-
-  void _cancelPendingDiscoveryCombine() {
-    _pendingDiscoveryCombine?.cancel();
-    _pendingDiscoveryCombine = null;
-  }
-
   /// Merges run on a background isolate, one at a time, newest request wins.
   /// Replaceable so tests can observe or slow the merge.
   @visibleForTesting
   CombineRunner combineRunner = CombineRunner();
+
+  /// Bumped when pending merge results must no longer be shown: discovery was
+  /// reset or the set of enabled sources shrank.
   int _combineGeneration = 0;
 
   /// Merges the current [results]. Completes once [combined] reflects them, or
   /// immediately when a newer request replaced this one or discovery was
   /// reset. Progress updates use [_combineInBackground] instead.
   Future<void> _combine(SongCandidate candidate) async {
-    _cancelPendingDiscoveryCombine();
     final available = results
         .map(
           (source) => isSourceReady(source)
@@ -1200,7 +1177,7 @@ class AppController extends ChangeNotifier {
                 ),
         )
         .toList();
-    final generation = ++_combineGeneration;
+    final generation = _combineGeneration;
     _combinesInFlight++;
     try {
       final outcome = await combineRunner.submit(
@@ -2227,7 +2204,6 @@ class AppController extends ChangeNotifier {
   @override
   void dispose() {
     _disposed = true;
-    _cancelPendingDiscoveryCombine();
     combineRunner.release();
     _historicalCacheUses = const [];
     _autoSyncTimer?.cancel();

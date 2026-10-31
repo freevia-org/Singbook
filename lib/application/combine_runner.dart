@@ -136,9 +136,10 @@ void _workerMain(SendPort main) {
 
 /// Runs merges one at a time off the caller's isolate and keeps only the
 /// newest queued request: while one merge is running, any number of later
-/// submissions collapse into the last one. A submission that was replaced, or
-/// that finished after a newer one arrived, completes with null so callers
-/// ignore it.
+/// submissions collapse into the last one, which starts as soon as the running
+/// merge finishes. A submission replaced while still queued completes with
+/// null so callers ignore it, and so does a failure that a newer request
+/// already supersedes.
 class CombineRunner {
   /// Without [compute], merges run on a [CombineWorker] that is created on
   /// first use and ended by [release]. A custom [compute] suits tests.
@@ -195,7 +196,9 @@ class CombineRunner {
         startedRuns++;
         try {
           final outcome = await _compute(entry.request);
-          entry.completer.complete(entry.id == _latest ? outcome : null);
+          // A finished merge is valid even if newer sources queued behind
+          // it; showing it now is what makes the first result fast.
+          entry.completer.complete(outcome);
         } catch (error, stack) {
           if (entry.id == _latest) {
             entry.completer.completeError(error, stack);
