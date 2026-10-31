@@ -101,7 +101,6 @@ void main() {
     TargetPlatform.android,
     TargetPlatform.iOS,
     TargetPlatform.macOS,
-    TargetPlatform.linux,
   ]) {
     test('$platform preserves the existing factory and library path', () async {
       debugDefaultTargetPlatformOverride = platform;

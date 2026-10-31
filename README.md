@@ -10,12 +10,13 @@
 
 The [website](https://freevia.org/singbook/) shows real Android and Windows app screenshots using fictional sample-song content. Apple is still reviewing iOS and macOS 0.2.25 (build 39); neither is publicly available on the App Store as of 29 October 2026.
 
-A local-first Flutter songbook for Android, Windows and macOS, with an iOS release in review. Search Genius, compare lyrics and chord arrangements from free sources, and keep each song in one portable ChordPro file. No Singbook backend is required. SQLite stores the local library; source HTTP requests run on the device.
+A local-first Flutter songbook for Android, Windows, macOS and Linux (CI-built AppImage and .deb, not yet published), with an iOS release in review. Search Genius, compare lyrics and chord arrangements from free sources, and keep each song in one portable ChordPro file. No Singbook backend is required. SQLite stores the local library; source HTTP requests run on the device.
 
 ## Develop and test
 
 Windows desktop setup and current platform gaps are documented in the
-[Windows desktop guide](docs/windows-desktop.md).
+[Windows desktop guide](docs/windows-desktop.md). Linux build, packaging and
+platform differences are in the [Linux desktop guide](docs/linux-desktop.md).
 
 For macOS setup, simulator builds, and signing steps, see [iOS build preparation](docs/ios-build.md). Production listing copy, screenshot inventory, offline validation and the remaining publishing decisions are covered in the [App Store handoff](docs/ios-testflight.md#app-store-publishing-handoff--2026-10-19).
 
@@ -142,7 +143,9 @@ segment alignment of the 64-bit native libraries; for an `.aab` it needs
 `UNVERIFIED` and fails without it. Continuous integration runs analysis, the
 complete Linux and sharded Windows test suites, Windows native smoke checks,
 and a desktop journey. It also builds an unsigned Windows portable bundle;
-the separate macOS lane builds an unsigned universal app. Store packaging
+the Linux job builds a release bundle, an AppImage and a .deb and runs the
+desktop journey under Xvfb; the separate macOS lane builds an unsigned
+universal app. Store packaging
 reuses the pinned Windows bundle instead of compiling it again. These jobs
 do not sign or submit store releases. See the [integration and release
 pipeline](docs/release-pipeline.md) for validation gates and artifact reuse.

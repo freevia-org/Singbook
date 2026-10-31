@@ -45,6 +45,7 @@ List<PopupMenuEntry<String>> buildLibraryActionMenu(
 }) {
   final desktopExport =
       defaultTargetPlatform == TargetPlatform.windows ||
+      defaultTargetPlatform == TargetPlatform.linux ||
       defaultTargetPlatform == TargetPlatform.macOS;
   final labels = {
     'edit': l10n.actionEdit,

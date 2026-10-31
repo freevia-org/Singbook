@@ -11,6 +11,7 @@ name: CI
 #   analyze ──┬─> windows-build    (release bundle, packaging + native smoke)
 #             ├─> windows-test     (complete Flutter suite on Windows, sharded)
 #             └─> windows-journey  (deterministic desktop integration journey)
+#             └─> linux-build      (release bundle, AppImage + .deb, xvfb journey)
 #   test        (complete Flutter suite on Linux; runs in parallel with analyze)
 # The Microsoft Store packaging workflows consume the `windows-release-bundle`
 # artifact of a successful run of this workflow, so keep its name and contents.
@@ -314,6 +315,59 @@ jobs:
             test/**/failures/**
           if-no-files-found: ignore
           retention-days: 7
+
+  linux-build:
+    needs: analyze
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    env:
+      SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID: ${{ vars.SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID }}
+      SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET: ${{ secrets.SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Install Linux desktop build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev             liblzma-dev libstdc++-14-dev imagemagick xvfb libegl1 libgl1-mesa-dri             libsecret-1-dev zenity desktop-file-utils
+
+      - name: Get dependencies
+        run: flutter pub get --enforce-lockfile --no-example
+
+      - name: Build the release bundle
+        run: |
+          defines=()
+          [ -n "$SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID" ] && defines+=(--dart-define=SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID="$SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID")
+          [ -n "$SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET" ] && defines+=(--dart-define=SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET="$SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET")
+          flutter build linux --release "${defines[@]}"
+
+      - name: Package the AppImage and .deb
+        run: scripts/package-linux.sh build/linux-packages
+
+      - name: Smoke-test the packaged .deb contents
+        run: |
+          dpkg-deb -c build/linux-packages/*.deb | grep -E 'opt/singbook/(singbook|lib/libapp.so)'
+          timeout 20 xvfb-run -a build/linux/x64/release/bundle/singbook || test $? -eq 124
+
+      - name: Run the desktop journey on Linux
+        run: >-
+          xvfb-run -a flutter test integration_test/singbook_journey_device_test.dart
+          -d linux --dart-define=SINGBOOK_SKIP_SCREENSHOTS=true --reporter=expanded
+
+      - name: Upload Linux packages
+        uses: actions/upload-artifact@v7
+        with:
+          name: linux-packages
+          path: build/linux-packages/
+          retention-days: 14
 
   windows-journey:
     needs: analyze

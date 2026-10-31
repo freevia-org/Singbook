@@ -136,7 +136,9 @@ class LibraryRepository {
     DatabaseFactory? factory,
   }) async {
     final dbFactory = factory ?? databaseFactory;
-    final windows = defaultTargetPlatform == TargetPlatform.windows;
+    final windows =
+        defaultTargetPlatform == TargetPlatform.windows ||
+        defaultTargetPlatform == TargetPlatform.linux;
     final location =
         path ??
         (windows && factory == null
