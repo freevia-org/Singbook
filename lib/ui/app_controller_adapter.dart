@@ -1764,11 +1764,13 @@ class AppControllerAdapter extends VerseUiController {
 
   @override
   Future<void> setSearchCatalog(String id) => _guard(() async {
-    if (_disposed ||
-        _route != VerseRoute.main ||
-        _tab != VerseTab.home ||
-        _homeMode != HomeListMode.online ||
-        app.selection != null) {
+    final inSettings = _route == VerseRoute.main && _tab == VerseTab.settings;
+    final inOnlineSearch =
+        _route == VerseRoute.main &&
+        _tab == VerseTab.home &&
+        _homeMode == HomeListMode.online &&
+        app.selection == null;
+    if (_disposed || (!inSettings && !inOnlineSearch)) {
       return;
     }
     if (!app.searchCatalogs.any((provider) => provider.id == id)) return;
@@ -1788,9 +1790,16 @@ class AppControllerAdapter extends VerseUiController {
     if (!changed ||
         change != _catalogChangeRevision ||
         !_isCurrentNavigationIntent(intent) ||
-        _homeMode != HomeListMode.online ||
-        _query != query ||
         app.searchCatalogId != id) {
+      return;
+    }
+    if (inSettings) {
+      notifyListeners();
+      return;
+    }
+    if (_tab != VerseTab.home ||
+        _homeMode != HomeListMode.online ||
+        _query != query) {
       return;
     }
     _searchDebounce?.cancel();
