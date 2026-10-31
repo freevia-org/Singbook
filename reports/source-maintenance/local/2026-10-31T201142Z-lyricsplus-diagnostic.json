@@ -1,0 +1,118 @@
+{
+  "schemaVersion": 1,
+  "runtime": "windows-local",
+  "reason": "Changed production outcome: LyricsPlus HTTP200 but unavailable for both canaries; inspect winner identity without repeating full suite.",
+  "productionSuiteRepeated": false,
+  "httpDiagnostics": {
+    "networkFailures": 0,
+    "hosts": {
+      "lyricsplus.prjktla.my.id": {
+        "requests": 2,
+        "statuses": {
+          "200": 2
+        },
+        "retryAfterSeconds": {},
+        "databaseLag": {}
+      }
+    }
+  },
+  "probes": [
+    {
+      "title": "Billie Jean",
+      "artist": "Michael Jackson",
+      "startedAt": "2026-10-31T20:14:16.708252Z",
+      "completedAt": "2026-10-31T20:14:16.934631Z",
+      "bytes": 41185,
+      "sha256": "ec384bd006c298a7e98b78507f74184c178f616a344f5d0a9cd1e81fa876eefd",
+      "topFields": [
+        "type",
+        "KpoeTools",
+        "metadata",
+        "lyrics",
+        "cached",
+        "processingTime"
+      ],
+      "metadataShape": [
+        "source",
+        "songWriters",
+        "leadingSilence",
+        "agents",
+        "songParts"
+      ],
+      "sourceShape": null,
+      "sourcesShape": null,
+      "lyricsShape": {
+        "count": 100,
+        "firstFields": [
+          "time",
+          "duration",
+          "text",
+          "syllabus",
+          "element"
+        ]
+      },
+      "metadataSource": "QQ Music",
+      "winnerSource": "qq",
+      "pickedSource": "QQ Music",
+      "pickedFields": [
+        "source",
+        "title",
+        "artist",
+        "duration",
+        "songPlatformId"
+      ],
+      "platformIdentityPresent": true,
+      "diagnosis": "unsupported_upstream_winner; production adapter verifies Apple winners only"
+    },
+    {
+      "title": "Creep",
+      "artist": "Radiohead",
+      "startedAt": "2026-10-31T20:14:16.947617Z",
+      "completedAt": "2026-10-31T20:14:18.080267Z",
+      "bytes": 14331,
+      "sha256": "deb742fcf24333adef7e82f93d81168c56779f6f6f1134e1a60f37ec76528438",
+      "topFields": [
+        "type",
+        "KpoeTools",
+        "metadata",
+        "lyrics",
+        "cached",
+        "processingTime"
+      ],
+      "metadataShape": [
+        "source",
+        "songWriters",
+        "leadingSilence",
+        "agents",
+        "songParts"
+      ],
+      "sourceShape": null,
+      "sourcesShape": null,
+      "lyricsShape": {
+        "count": 39,
+        "firstFields": [
+          "time",
+          "duration",
+          "text",
+          "syllabus",
+          "element"
+        ]
+      },
+      "metadataSource": "QQ Music",
+      "winnerSource": "qq",
+      "pickedSource": "QQ Music",
+      "pickedFields": [
+        "source",
+        "title",
+        "artist",
+        "album",
+        "duration",
+        "songISRC",
+        "songPlatformId"
+      ],
+      "platformIdentityPresent": true,
+      "diagnosis": "unsupported_upstream_winner; production adapter verifies Apple winners only"
+    }
+  ],
+  "rawSourceDocumentsPublished": false
+}

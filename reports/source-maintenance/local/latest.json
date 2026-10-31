@@ -1,15 +1,15 @@
 {
   "schemaVersion": 1,
   "catalogRevision": 23,
-  "measuredAt": "2026-10-29T06:59:42.766868Z",
+  "measuredAt": "2026-10-31T20:11:42.817467Z",
   "offline": false,
   "summary": {
-    "healthy": 24,
-    "unavailable": 1,
+    "healthy": 21,
+    "transient_error": 3,
+    "unavailable": 2,
     "import_only": 1,
     "partial_coverage": 2,
     "retired": 1,
-    "transient_error": 1,
     "disabled": 2
   },
   "sources": [
@@ -54,8 +54,7 @@
           "timingRawRetained": false,
           "hasChords": false
         }
-      ],
-      "sourceRevision": 1
+      ]
     },
     {
       "id": "songsterr",
@@ -94,8 +93,7 @@
           "timingRawRetained": false,
           "hasChords": true
         }
-      ],
-      "sourceRevision": 1
+      ]
     },
     {
       "id": "ultimateguitar",
@@ -137,51 +135,29 @@
           "timingRawRetained": false,
           "hasChords": true
         }
-      ],
-      "sourceRevision": 2
+      ]
     },
     {
       "id": "lrclib",
       "name": "LRCLIB",
-      "status": "healthy",
+      "status": "transient_error",
       "coverage": {
-        "status": "complete",
-        "verifiedCapabilities": [
+        "status": "partial",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
           "catalog",
           "lineTiming",
           "lyrics",
           "metadata"
-        ],
-        "unverifiedCapabilities": []
+        ]
       },
       "probes": [
         {
           "id": "sound-of-silence-studio-recording",
-          "status": "healthy",
-          "candidateId": "14961166",
-          "providerId": "lrclib",
-          "bodyCharacters": 1157,
-          "metadataFields": [
-            "album",
-            "duration",
-            "hasLyrics",
-            "instrumental"
-          ],
-          "verifiedCapabilities": [
-            "catalog",
-            "lineTiming",
-            "lyrics",
-            "metadata"
-          ],
-          "timingTrackCount": 1,
-          "timingGranularities": [
-            "line"
-          ],
-          "timingRawRetained": true,
-          "hasChords": false
+          "status": "transient_error",
+          "reason": "network"
         }
-      ],
-      "sourceRevision": 2
+      ]
     },
     {
       "id": "youtubemusic",
@@ -219,8 +195,7 @@
           "timingRawRetained": false,
           "hasChords": false
         }
-      ],
-      "sourceRevision": 1
+      ]
     },
     {
       "id": "lyricsovh",
@@ -239,7 +214,7 @@
         {
           "id": "wonderwall-oasis-studio",
           "status": "healthy",
-          "candidateId": "sha256:2b4b09e294390b78",
+          "candidateId": "sha256:c3ca9000ed0c9e2b",
           "providerId": "lyricsovh",
           "bodyCharacters": 1307,
           "metadataFields": [
@@ -258,23 +233,23 @@
           "timingRawRetained": false,
           "hasChords": false
         }
-      ],
-      "sourceRevision": 1
+      ]
     },
     {
       "id": "synclrc",
       "name": "SyncLRC",
-      "status": "healthy",
+      "status": "unavailable",
       "coverage": {
-        "status": "complete",
+        "status": "partial",
         "verifiedCapabilities": [
-          "catalog",
           "lineTiming",
           "lyrics",
           "metadata",
           "wordTiming"
         ],
-        "unverifiedCapabilities": []
+        "unverifiedCapabilities": [
+          "catalog"
+        ]
       },
       "probes": [
         {
@@ -333,39 +308,15 @@
         },
         {
           "id": "never-gonna-give-you-up-catalog-search",
-          "status": "healthy",
-          "candidateId": "sha256:4fd5697d65d5f955",
-          "providerId": "synclrc",
-          "bodyCharacters": 1927,
-          "metadataFields": [
-            "album",
-            "duration",
-            "hasLyrics",
-            "instrumental",
-            "query"
-          ],
-          "verifiedCapabilities": [
-            "catalog",
-            "lineTiming",
-            "lyrics",
-            "metadata",
-            "wordTiming"
-          ],
-          "timingTrackCount": 2,
-          "timingGranularities": [
-            "line",
-            "word"
-          ],
-          "timingRawRetained": true,
-          "hasChords": false
+          "status": "unavailable",
+          "reason": "empty_search_results"
         }
-      ],
-      "sourceRevision": 4
+      ]
     },
     {
       "id": "betterlyrics",
       "name": "Better Lyrics",
-      "status": "unavailable",
+      "status": "transient_error",
       "coverage": {
         "status": "partial",
         "verifiedCapabilities": [],
@@ -380,11 +331,10 @@
       "probes": [
         {
           "id": "never-gonna-give-you-up-studio-recording",
-          "status": "unavailable",
-          "reason": "unavailable"
+          "status": "transient_error",
+          "reason": "network"
         }
-      ],
-      "sourceRevision": 1
+      ]
     },
     {
       "id": "unison",
@@ -459,8 +409,7 @@
           "timingRawRetained": true,
           "hasChords": false
         }
-      ],
-      "sourceRevision": 3
+      ]
     },
     {
       "id": "ozbcoz",
@@ -481,8 +430,7 @@
           "id": "import-only",
           "status": "import_only"
         }
-      ],
-      "sourceRevision": 1
+      ]
     },
     {
       "id": "chordie",
@@ -521,8 +469,7 @@
           "timingRawRetained": false,
           "hasChords": true
         }
-      ],
-      "sourceRevision": 1
+      ]
     },
     {
       "id": "worshipcommons",
@@ -575,8 +522,7 @@
           "timingRawRetained": true,
           "hasChords": true
         }
-      ],
-      "sourceRevision": 1
+      ]
     },
     {
       "id": "openfilksongbook",
@@ -615,8 +561,7 @@
           "timingRawRetained": false,
           "hasChords": true
         }
-      ],
-      "sourceRevision": 1
+      ]
     },
     {
       "id": "seanmcgrathmusic",
@@ -677,8 +622,7 @@
           "timingRawRetained": false,
           "hasChords": true
         }
-      ],
-      "sourceRevision": 2
+      ]
     },
     {
       "id": "worshiptogether",
@@ -699,8 +643,7 @@
           "id": "import-only",
           "status": "retired"
         }
-      ],
-      "sourceRevision": 2
+      ]
     },
     {
       "id": "musicbrainz",
@@ -728,6 +671,7 @@
             "identityScope",
             "isrcs",
             "musicbrainzRecordingId",
+            "musicbrainzWorks",
             "relationships",
             "releases",
             "version"
@@ -757,6 +701,7 @@
             "isrcs",
             "musicbrainzRecordingId",
             "musicbrainzReleaseId",
+            "musicbrainzWorks",
             "relationships",
             "releases"
           ],
@@ -782,14 +727,17 @@
             "artistCredits",
             "artworkAssets",
             "artworkUrl",
+            "credits",
             "durationSeconds",
             "identityScope",
             "isrcs",
             "mediaLinks",
             "musicbrainzRecordingId",
             "musicbrainzReleaseId",
+            "musicbrainzWorks",
             "relationships",
-            "releases"
+            "releases",
+            "writers"
           ],
           "verifiedCapabilities": [
             "artwork",
@@ -802,87 +750,32 @@
           "artworkEvidence": "source_declared_location_and_provenance",
           "artworkImageBytesValidated": false
         }
-      ],
-      "sourceRevision": 3
+      ]
     },
     {
       "id": "wikidata",
       "name": "Wikidata",
-      "status": "healthy",
+      "status": "transient_error",
       "coverage": {
-        "status": "complete",
-        "verifiedCapabilities": [
+        "status": "partial",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
           "catalog",
           "metadata"
-        ],
-        "unverifiedCapabilities": []
+        ]
       },
       "probes": [
         {
           "id": "imagine-composition",
-          "status": "healthy",
-          "candidateId": "Q1971",
-          "providerId": "wikidata",
-          "bodyCharacters": 0,
-          "metadataFields": [
-            "composers",
-            "description",
-            "durationClaims",
-            "externalIdentifiers",
-            "identityScope",
-            "key",
-            "keyAssertions",
-            "lyricists",
-            "partOf",
-            "performerIds",
-            "performers",
-            "publicationDates",
-            "types",
-            "wikidataId"
-          ],
-          "verifiedCapabilities": [
-            "catalog",
-            "metadata"
-          ],
-          "timingTrackCount": 0,
-          "timingGranularities": [],
-          "timingRawRetained": false,
-          "hasChords": false
+          "status": "transient_error",
+          "reason": "provider_busy"
         },
         {
           "id": "wonderwall-composition",
-          "status": "healthy",
-          "candidateId": "Q1045517",
-          "providerId": "wikidata",
-          "bodyCharacters": 0,
-          "metadataFields": [
-            "composers",
-            "description",
-            "durationClaims",
-            "externalIdentifiers",
-            "identityScope",
-            "key",
-            "keyAssertions",
-            "lyricists",
-            "partOf",
-            "performerIds",
-            "performers",
-            "publicationDates",
-            "types",
-            "wikidataId",
-            "wikimediaCommonsFile"
-          ],
-          "verifiedCapabilities": [
-            "catalog",
-            "metadata"
-          ],
-          "timingTrackCount": 0,
-          "timingGranularities": [],
-          "timingRawRetained": false,
-          "hasChords": false
+          "status": "transient_error",
+          "reason": "provider_busy"
         }
-      ],
-      "sourceRevision": 3
+      ]
     },
     {
       "id": "wikimediacommons",
@@ -915,8 +808,7 @@
           "timingRawRetained": false,
           "hasChords": false
         }
-      ],
-      "sourceRevision": 1
+      ]
     },
     {
       "id": "wikisource",
@@ -980,8 +872,7 @@
           "timingRawRetained": false,
           "hasChords": false
         }
-      ],
-      "sourceRevision": 3
+      ]
     },
     {
       "id": "lrcred",
@@ -1065,8 +956,7 @@
           "timingRawRetained": true,
           "hasChords": false
         }
-      ],
-      "sourceRevision": 2
+      ]
     },
     {
       "id": "roswellmusicjam",
@@ -1136,8 +1026,7 @@
           "timingRawRetained": false,
           "hasChords": true
         }
-      ],
-      "sourceRevision": 2
+      ]
     },
     {
       "id": "karamoe",
@@ -1247,8 +1136,7 @@
           "timingRawRetained": true,
           "hasChords": false
         }
-      ],
-      "sourceRevision": 2
+      ]
     },
     {
       "id": "amll",
@@ -1412,8 +1300,7 @@
           "timingRawRetained": true,
           "hasChords": false
         }
-      ],
-      "sourceRevision": 1
+      ]
     },
     {
       "id": "vocadb",
@@ -1527,8 +1414,7 @@
           "timingRawRetained": false,
           "hasChords": false
         }
-      ],
-      "sourceRevision": 1
+      ]
     },
     {
       "id": "touhoudb",
@@ -1590,8 +1476,7 @@
           "timingRawRetained": false,
           "hasChords": false
         }
-      ],
-      "sourceRevision": 1
+      ]
     },
     {
       "id": "utaitedb",
@@ -1655,8 +1540,7 @@
           "timingRawRetained": false,
           "hasChords": false
         }
-      ],
-      "sourceRevision": 1
+      ]
     },
     {
       "id": "startjamming",
@@ -1722,13 +1606,12 @@
           "timingRawRetained": false,
           "hasChords": true
         }
-      ],
-      "sourceRevision": 1
+      ]
     },
     {
       "id": "lyricsplus",
       "name": "LyricsPlus",
-      "status": "transient_error",
+      "status": "unavailable",
       "coverage": {
         "status": "partial",
         "verifiedCapabilities": [],
@@ -1743,16 +1626,15 @@
       "probes": [
         {
           "id": "billie-jean-michael-jackson",
-          "status": "transient_error",
-          "reason": "network"
+          "status": "unavailable",
+          "reason": "unavailable"
         },
         {
           "id": "creep-radiohead",
-          "status": "transient_error",
-          "reason": "network"
+          "status": "unavailable",
+          "reason": "unavailable"
         }
-      ],
-      "sourceRevision": 1
+      ]
     },
     {
       "id": "chordsandtabs",
@@ -1815,8 +1697,7 @@
           "timingRawRetained": false,
           "hasChords": true
         }
-      ],
-      "sourceRevision": 2
+      ]
     },
     {
       "id": "pisni",
@@ -1832,8 +1713,7 @@
           "metadata"
         ]
       },
-      "probes": [],
-      "sourceRevision": 1
+      "probes": []
     },
     {
       "id": "openscorelieder",
@@ -1857,8 +1737,7 @@
           "id": "6217099",
           "status": "disabled"
         }
-      ],
-      "sourceRevision": 1
+      ]
     },
     {
       "id": "acousticbrainz",
@@ -1912,8 +1791,7 @@
           "timingRawRetained": false,
           "hasChords": false
         }
-      ],
-      "sourceRevision": 1
+      ]
     }
   ],
   "httpDiagnostics": {
@@ -1935,14 +1813,6 @@
         "retryAfterSeconds": {},
         "databaseLag": {}
       },
-      "api.betterlyrics.org": {
-        "requests": 1,
-        "statuses": {
-          "401": 1
-        },
-        "retryAfterSeconds": {},
-        "databaseLag": {}
-      },
       "api.genius.com": {
         "requests": 2,
         "statuses": {
@@ -1960,9 +1830,10 @@
         "databaseLag": {}
       },
       "api.synclrc.dev": {
-        "requests": 3,
+        "requests": 4,
         "statuses": {
-          "200": 3
+          "200": 3,
+          "503": 1
         },
         "retryAfterSeconds": {},
         "databaseLag": {}
@@ -2016,9 +1887,9 @@
         "databaseLag": {}
       },
       "lrclib.net": {
-        "requests": 4,
+        "requests": 2,
         "statuses": {
-          "200": 4
+          "502": 2
         },
         "retryAfterSeconds": {},
         "databaseLag": {}
@@ -2026,8 +1897,7 @@
       "lyricsplus.prjktla.my.id": {
         "requests": 4,
         "statuses": {
-          "200": 2,
-          "502": 2
+          "200": 4
         },
         "retryAfterSeconds": {},
         "databaseLag": {}
@@ -2041,14 +1911,11 @@
         "databaseLag": {}
       },
       "musicbrainz.org": {
-        "requests": 7,
+        "requests": 6,
         "statuses": {
-          "200": 6,
-          "503": 1
+          "200": 6
         },
-        "retryAfterSeconds": {
-          "0": 1
-        },
+        "retryAfterSeconds": {},
         "databaseLag": {}
       },
       "raw.githubusercontent.com": {
@@ -2156,16 +2023,20 @@
         "databaseLag": {}
       },
       "www.wikidata.org": {
-        "requests": 14,
+        "requests": 2,
         "statuses": {
-          "200": 14
+          "200": 2
         },
-        "retryAfterSeconds": {},
-        "databaseLag": {}
+        "retryAfterSeconds": {
+          "5": 2
+        },
+        "databaseLag": {
+          "6": 2
+        }
       }
     }
   },
-  "sourceCommit": "1a4573eefc7f0f0e28c8ab7ab77cd4479c1d2a05",
+  "sourceCommit": "8eac0a59d3290ee81e259a1d8386fdc66bb54342",
   "catalogPath": "config/source-catalog-v10.json",
   "catalogChannel": 10,
   "catalogSha256": "a61377c845601888f22a8abf0f43a66ace1a61a85b6f627cd709e9f376b28dce",
@@ -2173,18 +2044,112 @@
   "dartVersion": "3.12.2",
   "flutterVersion": "3.44.8",
   "production": true,
-  "scheduledInvocation": "2026-10-29T06:56:26.731Z",
+  "scheduledInvocation": "singbook-datasource-maintenance/2026-10-31T20:07:36.871Z",
   "measurementWindow": {
-    "startedAt": "2026-10-29T06:58:03.995437+00:00",
-    "completedAt": "2026-10-29T06:59:42.794804+00:00",
-    "scope": "full_live_suite"
+    "startedAt": "2026-10-31T20:10:08.7956928Z",
+    "completedAt": "2026-10-31T20:11:42.8312630Z"
   },
   "execution": {
     "exitCode": 1,
     "fullSuiteInvocations": 1,
     "ordinaryBoundedRetries": true,
     "anonymousYouTubeMusic": true,
+    "privateBrowserSessionUsed": false,
     "dedicatedGeniusMaintenanceCredential": true,
-    "userLibraryAccessed": false
-  }
+    "appCredentialRead": false,
+    "userLibraryAccessed": false,
+    "offlineStructuralCheck": "passed",
+    "registryCatalogMismatch": false
+  },
+  "comparisonEvidence": {
+    "priorLocalMeasuredAt": "2026-10-29T06:59:42.766868Z",
+    "priorLocalSourceCommit": "1a4573eefc7f0f0e28c8ab7ab77cd4479c1d2a05",
+    "cloudLatestMeasuredAt": "2026-10-29T07:04:20.47468Z",
+    "cloudLatestSourceCommit": null,
+    "cloudEvidenceCurrentForThisRun": false,
+    "cloudLatestBlob": "e38c104fc40ccc27a9b067e0d54d7cd8c25d29f8",
+    "localSuccessIsNotCloudProof": true
+  },
+  "phaseBudgets": {
+    "productionCliRequests": 90,
+    "publisherFileImportRequests": 2,
+    "changedLyricsPlusDiagnosticRequests": 2,
+    "documentedApplePreferenceRequests": 2,
+    "totalLocalProviderRequests": 96,
+    "http429": 0,
+    "webDocumentationChecksIncluded": false,
+    "fullSuiteRepeated": false
+  },
+  "roadblocks": [
+    {
+      "affected": "LRCLIB",
+      "safeReason": "HTTP502 from search, no schema regression established",
+      "whatWasTried": "One scheduled probe; ordinary configured transport policy; no full-suite rerun",
+      "resolved": false,
+      "userAction": "None; upstream recovery required"
+    },
+    {
+      "affected": "Better Lyrics",
+      "safeReason": "Its LRCLIB discovery dependency failed before the Better Lyrics API could be validated",
+      "whatWasTried": "Scheduled ordinary adapter search; compared shared catalog implementation and host request counts",
+      "resolved": false,
+      "userAction": "None; catalog dependency must recover; previous API401 is not a fresh result"
+    },
+    {
+      "affected": "SyncLRC catalog",
+      "safeReason": "Search returned no results; both direct timed lyric canaries passed",
+      "whatWasTried": "All three ordinary probes; transport also recovered from one503",
+      "resolved": false,
+      "userAction": "None; retain separate extraction success and search limitation"
+    },
+    {
+      "affected": "Wikidata",
+      "safeReason": "Publisher maxlag response: database lag6 exceeds requested5; HTTP200 with Retry-After5",
+      "whatWasTried": "Two ordinary composition probes; respected maxlag, no bypass or selected recheck",
+      "resolved": false,
+      "userAction": "None; database replication must catch up"
+    },
+    {
+      "affected": "LyricsPlus",
+      "safeReason": "Both current winners are QQ Music; adapter independently verifies Apple only",
+      "whatWasTried": "Production4HTTP200; separate2diagnosticHTTP200 with lyric rows; documented source=apple2HTTP404 without forceReload/retries",
+      "resolved": false,
+      "userAction": "None; Apple upstream recovery or independently qualified QQ identity support required"
+    },
+    {
+      "affected": "Chordie and Wikisource fileImport",
+      "safeReason": "Search/extraction passed; separate publisher import capability remains unverified",
+      "whatWasTried": "Regular probes; did not infer publisher-download coverage from synthetic decoding",
+      "resolved": false,
+      "userAction": "None currently; permitted dedicated import qualification remains pending"
+    },
+    {
+      "affected": "Ozbcoz native file picker",
+      "safeReason": "Host file import passes; native picker behavior is outside this host check",
+      "whatWasTried": "Two publisher downloads, decoder/controller/SQLite save-reopen and ChordPro export passed",
+      "resolved": false,
+      "userAction": "None for host validation; dedicated native qualification remains separate"
+    },
+    {
+      "affected": "Pisni and OpenScore Lieder activation",
+      "safeReason": "Catalog entries intentionally disabled pending existing qualification/rights gates",
+      "whatWasTried": "Included in full compiled roster and reported explicit disabled states; existing repair/rollout PRs inspected",
+      "resolved": false,
+      "userAction": "No new permission requested; keep existing integration review"
+    },
+    {
+      "affected": "Cloud freshness",
+      "safeReason": "Latest durable cloud report remains2026-10-29; no fresh cloud reachability can be claimed",
+      "whatWasTried": "Fetched current health branch and compared cloud/local timestamps, source commits and outcomes",
+      "resolved": false,
+      "userAction": "Coordinator to verify existing cloud worker; no schedule or environment changed"
+    },
+    {
+      "affected": "ABC discovery",
+      "safeReason": "Direct primary documentation reads403; indexed help disallows website copying and site-display consent is not app permission",
+      "whatWasTried": "Documentation-only search and3direct reads; no tune content, alternate host or bypass",
+      "resolved": false,
+      "userAction": "None; source deferred pending permitted access and rights"
+    }
+  ]
 }

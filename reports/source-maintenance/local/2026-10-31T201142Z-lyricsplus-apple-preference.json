@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "runtime": "windows-local",
+  "reason": "New bounded capability check: publisher documents source preference; test source=apple without forceReload or identity overrides, separately from production.",
+  "productionSuiteRepeated": false,
+  "httpDiagnostics": {
+    "networkFailures": 0,
+    "hosts": {
+      "lyricsplus.prjktla.my.id": {
+        "requests": 2,
+        "statuses": {
+          "404": 2
+        },
+        "retryAfterSeconds": {},
+        "databaseLag": {}
+      }
+    }
+  },
+  "probes": [
+    {
+      "title": "Billie Jean",
+      "artist": "Michael Jackson",
+      "startedAt": "2026-10-31T20:15:47.434841Z",
+      "error": "unavailable"
+    },
+    {
+      "title": "Creep",
+      "artist": "Radiohead",
+      "startedAt": "2026-10-31T20:15:47.742627Z",
+      "error": "unavailable"
+    }
+  ],
+  "rawSourceDocumentsPublished": false
+}

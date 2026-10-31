@@ -1,0 +1,250 @@
+{
+  "schemaVersion": 1,
+  "runtime": "windows-local",
+  "sourceCommit": "8eac0a59d3290ee81e259a1d8386fdc66bb54342",
+  "discoveryCommit": "d6f4293c945ade15a9b90aa5e15e5886f26bd046",
+  "discoveryPullRequest": "https://github.com/freevia-org/Singbook/pull/285",
+  "baseHealthCommit": "b23233a4a0eecbc1c913ed39113422c1b97c7f1c",
+  "cloudLatestBlobBefore": "e38c104fc40ccc27a9b067e0d54d7cd8c25d29f8",
+  "offlineRegistryCatalog": "passed",
+  "discoveryStructure": "passed",
+  "maintenanceCredentialTests": {
+    "passed": 34,
+    "failed": 0,
+    "reportSha256": "9d3f99fcce51789e78ec097eb2b10551300b3032e244403fc355c5f1aec6767c"
+  },
+  "publisherImports": {
+    "passed": 2,
+    "requests": 2,
+    "nativeFilePickerTested": false
+  },
+  "catalogOrRuntimeChanges": false,
+  "catalogAnalysis": "Not repeated: no Dart or catalog changes; current-main offline validation remains applicable",
+  "comparison": [
+    {
+      "id": "genius",
+      "currentLocal": "healthy",
+      "previousLocal": "healthy",
+      "previousCloud": "transient_error",
+      "localStatusChanged": false
+    },
+    {
+      "id": "songsterr",
+      "currentLocal": "healthy",
+      "previousLocal": "healthy",
+      "previousCloud": "healthy",
+      "localStatusChanged": false
+    },
+    {
+      "id": "ultimateguitar",
+      "currentLocal": "healthy",
+      "previousLocal": "healthy",
+      "previousCloud": "transient_error",
+      "localStatusChanged": false
+    },
+    {
+      "id": "lrclib",
+      "currentLocal": "transient_error",
+      "previousLocal": "healthy",
+      "previousCloud": "healthy",
+      "localStatusChanged": true
+    },
+    {
+      "id": "youtubemusic",
+      "currentLocal": "healthy",
+      "previousLocal": "healthy",
+      "previousCloud": "transient_error",
+      "localStatusChanged": false
+    },
+    {
+      "id": "lyricsovh",
+      "currentLocal": "healthy",
+      "previousLocal": "healthy",
+      "previousCloud": "healthy",
+      "localStatusChanged": false
+    },
+    {
+      "id": "synclrc",
+      "currentLocal": "unavailable",
+      "previousLocal": "healthy",
+      "previousCloud": "healthy",
+      "localStatusChanged": true
+    },
+    {
+      "id": "betterlyrics",
+      "currentLocal": "transient_error",
+      "previousLocal": "unavailable",
+      "previousCloud": "unavailable",
+      "localStatusChanged": true
+    },
+    {
+      "id": "unison",
+      "currentLocal": "healthy",
+      "previousLocal": "healthy",
+      "previousCloud": "healthy",
+      "localStatusChanged": false
+    },
+    {
+      "id": "ozbcoz",
+      "currentLocal": "import_only",
+      "previousLocal": "import_only",
+      "previousCloud": "import_only",
+      "localStatusChanged": false
+    },
+    {
+      "id": "chordie",
+      "currentLocal": "partial_coverage",
+      "previousLocal": "partial_coverage",
+      "previousCloud": "transient_error",
+      "localStatusChanged": false
+    },
+    {
+      "id": "worshipcommons",
+      "currentLocal": "healthy",
+      "previousLocal": "healthy",
+      "previousCloud": "healthy",
+      "localStatusChanged": false
+    },
+    {
+      "id": "openfilksongbook",
+      "currentLocal": "healthy",
+      "previousLocal": "healthy",
+      "previousCloud": "healthy",
+      "localStatusChanged": false
+    },
+    {
+      "id": "seanmcgrathmusic",
+      "currentLocal": "healthy",
+      "previousLocal": "healthy",
+      "previousCloud": "healthy",
+      "localStatusChanged": false
+    },
+    {
+      "id": "worshiptogether",
+      "currentLocal": "retired",
+      "previousLocal": "retired",
+      "previousCloud": "retired",
+      "localStatusChanged": false
+    },
+    {
+      "id": "musicbrainz",
+      "currentLocal": "healthy",
+      "previousLocal": "healthy",
+      "previousCloud": "healthy",
+      "localStatusChanged": false
+    },
+    {
+      "id": "wikidata",
+      "currentLocal": "transient_error",
+      "previousLocal": "healthy",
+      "previousCloud": "healthy",
+      "localStatusChanged": true
+    },
+    {
+      "id": "wikimediacommons",
+      "currentLocal": "healthy",
+      "previousLocal": "healthy",
+      "previousCloud": "healthy",
+      "localStatusChanged": false
+    },
+    {
+      "id": "wikisource",
+      "currentLocal": "partial_coverage",
+      "previousLocal": "partial_coverage",
+      "previousCloud": "partial_coverage",
+      "localStatusChanged": false
+    },
+    {
+      "id": "lrcred",
+      "currentLocal": "healthy",
+      "previousLocal": "healthy",
+      "previousCloud": "healthy",
+      "localStatusChanged": false
+    },
+    {
+      "id": "roswellmusicjam",
+      "currentLocal": "healthy",
+      "previousLocal": "healthy",
+      "previousCloud": "healthy",
+      "localStatusChanged": false
+    },
+    {
+      "id": "karamoe",
+      "currentLocal": "healthy",
+      "previousLocal": "healthy",
+      "previousCloud": "healthy",
+      "localStatusChanged": false
+    },
+    {
+      "id": "amll",
+      "currentLocal": "healthy",
+      "previousLocal": "healthy",
+      "previousCloud": "healthy",
+      "localStatusChanged": false
+    },
+    {
+      "id": "vocadb",
+      "currentLocal": "healthy",
+      "previousLocal": "healthy",
+      "previousCloud": "healthy",
+      "localStatusChanged": false
+    },
+    {
+      "id": "touhoudb",
+      "currentLocal": "healthy",
+      "previousLocal": "healthy",
+      "previousCloud": "healthy",
+      "localStatusChanged": false
+    },
+    {
+      "id": "utaitedb",
+      "currentLocal": "healthy",
+      "previousLocal": "healthy",
+      "previousCloud": "healthy",
+      "localStatusChanged": false
+    },
+    {
+      "id": "startjamming",
+      "currentLocal": "healthy",
+      "previousLocal": "healthy",
+      "previousCloud": "healthy",
+      "localStatusChanged": false
+    },
+    {
+      "id": "lyricsplus",
+      "currentLocal": "unavailable",
+      "previousLocal": "transient_error",
+      "previousCloud": "transient_error",
+      "localStatusChanged": true
+    },
+    {
+      "id": "chordsandtabs",
+      "currentLocal": "healthy",
+      "previousLocal": "healthy",
+      "previousCloud": "healthy",
+      "localStatusChanged": false
+    },
+    {
+      "id": "pisni",
+      "currentLocal": "disabled",
+      "previousLocal": "disabled",
+      "previousCloud": "disabled",
+      "localStatusChanged": false
+    },
+    {
+      "id": "openscorelieder",
+      "currentLocal": "disabled",
+      "previousLocal": "disabled",
+      "previousCloud": "disabled",
+      "localStatusChanged": false
+    },
+    {
+      "id": "acousticbrainz",
+      "currentLocal": "healthy",
+      "previousLocal": "healthy",
+      "previousCloud": "transient_error",
+      "localStatusChanged": false
+    }
+  ],
+  "rawSourceDocumentsPublished": false
+}
