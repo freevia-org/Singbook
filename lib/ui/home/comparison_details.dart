@@ -173,6 +173,9 @@ void _showProviderDetails(
     return [
       _heading(context, check.name),
       _paragraph(_status(l10n, check.state)),
+      // Only the current check can supply estimates. The initial operations
+      // may remain visible as history after navigation or withdrawal.
+      ..._analysisFields(l10n, live?.recordingAnalysis),
       if (check.code != null) ..._codeDetails(context, check.code!),
       if (check.operations.isEmpty && check.state == 'pending')
         _paragraph(l10n.searchCheckQueued),
@@ -350,6 +353,13 @@ List<Widget> _recordingAnalysisFields(
     version.providerId,
     version.metadata,
   );
+  return _analysisFields(l10n, analysis);
+}
+
+List<Widget> _analysisFields(
+  AppLocalizations l10n,
+  AcousticBrainzAnalysis? analysis,
+) {
   if (analysis == null) return const [];
   return [
     _paragraph(l10n.sourceAnalysisHeading),
