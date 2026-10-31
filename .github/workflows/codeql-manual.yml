@@ -13,7 +13,7 @@ jobs:
   analyze:
     name: Analyze (${{ matrix.language }})
     runs-on: ${{ matrix.runner }}
-    timeout-minutes: 120
+    timeout-minutes: ${{ matrix.runner == 'singbook-i5-linux' && 180 || 120 }}
     strategy:
       fail-fast: false
       max-parallel: 1
@@ -37,12 +37,15 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
+        timeout-minutes: 10
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v4
+        timeout-minutes: 20
         with:
           languages: ${{ matrix.language }}
           build-mode: ${{ matrix.build-mode }}
       - name: Perform CodeQL analysis
         uses: github/codeql-action/analyze@v4
+        timeout-minutes: 120
         with:
           category: /language:${{ matrix.language }}
