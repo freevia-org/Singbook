@@ -260,7 +260,9 @@ class _EditorScreenState extends State<EditorScreen> {
     final saveModifier = isMacOS
         ? keyboard.isMetaPressed
         : keyboard.isControlPressed;
-    if ((defaultTargetPlatform == TargetPlatform.windows || isMacOS) &&
+    if ((defaultTargetPlatform == TargetPlatform.windows ||
+            defaultTargetPlatform == TargetPlatform.linux ||
+            isMacOS) &&
         event is KeyDownEvent &&
         event.logicalKey == LogicalKeyboardKey.keyS &&
         saveModifier &&
@@ -545,6 +547,7 @@ class _EditorScreenState extends State<EditorScreen> {
             IconButton(
               tooltip:
                   defaultTargetPlatform == TargetPlatform.windows ||
+                      defaultTargetPlatform == TargetPlatform.linux ||
                       defaultTargetPlatform == TargetPlatform.macOS
                   ? '${l10n.actionSave} (${defaultTargetPlatform == TargetPlatform.macOS ? '⌘' : 'Ctrl+'}S)'
                   : l10n.actionSave,
@@ -616,6 +619,7 @@ class _EditorScreenState extends State<EditorScreen> {
     return Focus(
       autofocus:
           defaultTargetPlatform == TargetPlatform.windows ||
+          defaultTargetPlatform == TargetPlatform.linux ||
           defaultTargetPlatform == TargetPlatform.macOS,
       onKeyEvent: _handleDesktopKey,
       child: content,

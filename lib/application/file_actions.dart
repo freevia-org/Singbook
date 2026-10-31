@@ -577,6 +577,7 @@ class VerseFileActions {
     // file_picker writes these bytes after the native Save As confirmation,
     // including overwrite confirmation and the suggested file's extension.
     if (_platform == TargetPlatform.windows ||
+        _platform == TargetPlatform.linux ||
         _platform == TargetPlatform.macOS) {
       final saved = await _saveFile(
         fileName: name,

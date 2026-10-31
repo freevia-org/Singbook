@@ -397,6 +397,7 @@ class _VerseAppShellState extends State<VerseAppShell>
     _handlesDesktopClose =
         !kIsWeb &&
         (defaultTargetPlatform == TargetPlatform.windows ||
+            defaultTargetPlatform == TargetPlatform.linux ||
             defaultTargetPlatform == TargetPlatform.macOS);
     if (_handlesDesktopClose) {
       _windowCloseChannel.setMethodCallHandler((call) async {

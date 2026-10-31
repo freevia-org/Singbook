@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Singbook
+GenericName=Lyrics and chords
+Comment=Lyrics, chords and songbooks, together offline.
+Exec=singbook %F
+Icon=org.freevia.singbook
+Terminal=false
+Categories=AudioVideo;Audio;Music;
+MimeType=text/x-chordpro;
+StartupWMClass=org.freevia.singbook
