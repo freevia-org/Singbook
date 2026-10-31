@@ -337,7 +337,7 @@ jobs:
       - name: Install Linux desktop build dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev             liblzma-dev libstdc++-14-dev imagemagick xvfb libegl1 libgl1-mesa-dri             libsecret-1-dev zenity
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev             liblzma-dev libstdc++-14-dev imagemagick xvfb libegl1 libgl1-mesa-dri             libsecret-1-dev zenity desktop-file-utils
 
       - name: Get dependencies
         run: flutter pub get --enforce-lockfile --no-example
