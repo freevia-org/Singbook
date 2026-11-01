@@ -41,13 +41,6 @@ on:
         description: SHA-256 of the portable release ZIP (releases 29 and 30 only)
         required: false
         type: string
-  pull_request:
-    branches: [main]
-    paths:
-      - '.github/workflows/package-windows-store-release.yml'
-      - 'scripts/windows-store/**'
-      - 'scripts/test-windows-store-msix-install.ps1'
-
 permissions:
   actions: read
   contents: read
