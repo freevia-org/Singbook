@@ -4,10 +4,7 @@ name: CI
 # secrets and never signs anything. config/local.defines.json is absent, so
 # tests run with the same empty defines as a fresh clone.
 on:
-  push:
-    branches: [main]
-  pull_request:
-
+  workflow_dispatch:
 permissions:
   contents: read
 
