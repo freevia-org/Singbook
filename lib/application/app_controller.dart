@@ -14,6 +14,8 @@ import '../domain/combine.dart';
 import '../domain/metadata_enrichment.dart' show displayMetadataFor;
 import '../domain/search_grouping.dart' show sameSearchRecording;
 import '../domain/source_result_merge.dart';
+import '../domain/source_text_variant.dart';
+import '../domain/song_identity.dart';
 import '../providers/provider.dart';
 import '../providers/core/core_providers.dart';
 import '../providers/extra/extra_providers.dart';
@@ -812,6 +814,9 @@ class AppController extends ChangeNotifier {
   void requestArtwork(Iterable<SongCandidate> rows) {
     if (_disposed || _artworkCatalogs.isEmpty) return;
     for (final row in rows) {
+      // A composition, historical text, or composer-credited score cannot
+      // identify the recording whose artwork an ordinary catalog returns.
+      if (!sameSearchRecording(row, row)) continue;
       if (artworkLookups.containsKey(row.identity) ||
           !_artworkQueued.add(row.identity)) {
         continue;
@@ -1277,6 +1282,8 @@ class AppController extends ChangeNotifier {
           }
         }
         if (selectedSource == null ||
+            (selectedSource.candidate.providerId == 'mutopia' &&
+                selectedSource.hasPendingMatchCheck) ||
             (selectedSource.matchKind == MatchKind.rejected &&
                 !allowRejectedSource &&
                 fallbackCombinedSourceId == null) ||
@@ -1287,8 +1294,26 @@ class AppController extends ChangeNotifier {
       // combineSources also checks song identity and arrangement usability.
       // For a source save this allows a ready result even while other provider
       // checks are still running.
+      // A publisher text stream is the reference itself, not a performance.
+      // An explicit choice of its archived sibling must save that stream's
+      // reference too, while the repository retains the work's library ID.
+      final selectedWork = librarySongIdentity(selected.title, selected.artist);
+      final savedReference =
+          selectedSource != null &&
+              sourceTextVariant(selected) != null &&
+              sourceTextVariant(selectedSource.candidate) != null &&
+              sourceTextVariant(selected)!.editionId ==
+                  sourceTextVariant(selectedSource.candidate)!.editionId &&
+              selectedWork != null &&
+              selectedWork ==
+                  librarySongIdentity(
+                    selectedSource.candidate.title,
+                    selectedSource.candidate.artist,
+                  )
+          ? selectedSource.candidate
+          : selected;
       final document = combineSources(
-        selected,
+        savedReference,
         resultSnapshots,
         preferredSourceId: selectedSource?.id ?? fallbackCombinedSourceId,
         allowRejectedPreferredSource:

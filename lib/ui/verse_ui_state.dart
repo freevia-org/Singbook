@@ -118,10 +118,12 @@ class SongCardData {
     this.modifiedAt,
     this.authored = false,
     this.isConflictCopy = false,
+    this.sourceVariantLabel,
   });
   final String id, title;
   final String artist;
   final String? album, artworkUrl, key;
+  final String? sourceVariantLabel;
   final double? durationSeconds;
   final bool favorite, authored, hasChords;
 
@@ -285,11 +287,16 @@ class SearchReferenceData {
     this.matchReason,
     this.isHistoricalText = false,
     this.sourceNames = const [],
+    this.sourceVariantLabel,
   });
   final String id, title, artist, providerId, providerName;
   final String? album, artworkUrl, matchReason;
   final double? durationSeconds;
   final bool isHistoricalText;
+
+  /// Publisher's literal label for the selected source text, not a language
+  /// or recording claim. This stays separate from the work's title and album.
+  final String? sourceVariantLabel;
 
   /// Every source that found this recording, the opened one ([providerName])
   /// first. Empty for a reference that is not a grouped search result.

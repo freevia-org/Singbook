@@ -720,6 +720,8 @@ class _VersionDocumentState extends State<_VersionDocument>
         : widget.reference.artworkUrl;
     final metadata = [
       widget.reference.artist,
+      if (widget.reference.sourceVariantLabel case final variant?)
+        formatSourceVariantLabel(variant),
       if (album?.trim().isNotEmpty == true && album!.toLowerCase() != 'unknown')
         album,
       if (widget.reference.durationSeconds != null)

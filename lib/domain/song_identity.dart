@@ -1,4 +1,5 @@
 import 'models.dart';
+import 'source_text_variant.dart';
 
 /// A conservative library key: punctuation/case can vary between providers,
 /// but artist names and edition words (live, remix, acoustic, etc.) stay intact.
@@ -24,6 +25,17 @@ int librarySongMatchPriority(SongDocument song, SongCandidate selected) {
     return 2;
   }
   final identity = librarySongIdentity(selected.title, selected.artist);
+  if (selected.providerId == 'mutopia' || reference?.providerId == 'mutopia') {
+    final first = sourceTextVariant(reference);
+    final second = sourceTextVariant(selected);
+    // An edition's parallel texts share its preferred library entry. A
+    // homonymous score edition or performer recording has no such identity.
+    return first != null &&
+            second != null &&
+            first.editionId == second.editionId
+        ? 1
+        : 0;
+  }
   if (identity == null) return 0;
   return librarySongIdentity(song.title, song.artist) == identity ||
           reference != null &&

@@ -240,6 +240,8 @@ bool sameSearchRecording(SongCandidate a, SongCandidate b) {
 bool _ungroupable(SongCandidate candidate) {
   const scopes = {'historicalText', 'composition', 'work', 'artist', 'image'};
   return candidate.providerId == 'wikisource' ||
+      (_isArrangement(candidate) &&
+          candidate.metadata['artistCreditRole'] == 'composer') ||
       scopes.contains(candidate.metadata['identityScope']) ||
       scopes.contains(candidate.extra['identityScope']) ||
       candidate.metadata['pendingMatchCheck'] == true ||

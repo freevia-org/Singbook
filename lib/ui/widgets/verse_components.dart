@@ -321,6 +321,8 @@ class SongRow extends StatelessWidget {
     // leaving out empty parts such as a missing artist.
     final spoken = [
       accessibilityLabel.replaceAll(RegExp(r'[,\s]+$'), ''),
+      if (song.sourceVariantLabel case final variant?)
+        formatSourceVariantLabel(variant),
       if (caption != null) caption,
       if (caption == null && song.album?.isNotEmpty == true) song.album,
       if (caption == null && song.durationSeconds != null)
@@ -358,6 +360,14 @@ class SongRow extends StatelessWidget {
                                 ?.copyWith(fontWeight: FontWeight.w600),
                           ),
                           const SizedBox(height: 3),
+                          if (song.sourceVariantLabel case final variant?)
+                            Text(
+                              formatSourceVariantLabel(variant),
+                              key: ValueKey('song-variant-${song.id}'),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
                           Text(
                             caption ??
                                 [

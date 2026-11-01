@@ -21,6 +21,7 @@ import '../domain/combine.dart'
 import '../domain/metadata_enrichment.dart' show displayMetadataFor;
 import '../domain/models.dart';
 import '../domain/search_grouping.dart';
+import '../domain/source_text_variant.dart';
 import '../domain/timing.dart' show timingOccurrenceMap;
 import '../domain/source_contributions.dart';
 import 'format.dart';
@@ -689,6 +690,10 @@ class AppControllerAdapter extends VerseUiController {
       Expando<({SongCandidate selection, bool usable})>();
 
   bool _hasUsableBody(SourceResult result) {
+    if (result.candidate.providerId == 'mutopia' &&
+        result.hasPendingMatchCheck) {
+      return false;
+    }
     if (_hasLyrics(result)) return true;
     final selected = app.selection;
     if (selected == null ||
@@ -766,6 +771,7 @@ class AppControllerAdapter extends VerseUiController {
     authored: song.sources.isEmpty,
     playCount: _opens[song.id] ?? 0,
     hasChords: song.hasChords,
+    sourceVariantLabel: _sourceVariantLabel(song.selectedRecording),
     isConflictCopy:
         song.id.startsWith('conflict-') || song.extra['syncConflict'] != null,
   );
@@ -861,6 +867,10 @@ class AppControllerAdapter extends VerseUiController {
     );
   }
 
+  String? _sourceVariantLabel(SongCandidate? value) {
+    return sourceTextVariant(value)?.label;
+  }
+
   SearchReferenceData _reference(
     SongCandidate value, [
     List<SongCandidate>? donors,
@@ -876,6 +886,7 @@ class AppControllerAdapter extends VerseUiController {
       durationSeconds: display.durationSeconds,
       artworkUrl: display.artworkUrl,
       isHistoricalText: value.providerId == 'wikisource',
+      sourceVariantLabel: _sourceVariantLabel(value),
     );
   }
 
@@ -919,6 +930,7 @@ class AppControllerAdapter extends VerseUiController {
       artworkUrl: group.artworkUrl ?? app.artworkLookups[value.identity],
       isHistoricalText: value.providerId == 'wikisource',
       sourceNames: names,
+      sourceVariantLabel: _sourceVariantLabel(value),
     );
   }
 
@@ -1368,10 +1380,13 @@ class AppControllerAdapter extends VerseUiController {
       title: candidate.title,
       artist: candidate.artist,
       sourceUrl: safeDiagnosticUrl(candidate.url),
-      metadata: _diagnosticMetadata({
-        ...candidate.metadata,
-        ...result.metadata,
-      }, providerId: candidate.providerId),
+      metadata: {
+        ..._diagnosticMetadata({
+          ...candidate.metadata,
+          ...result.metadata,
+        }, providerId: candidate.providerId),
+        'sourceVariantLabel': ?_sourceVariantLabel(candidate),
+      },
       album: display.album,
       durationSeconds: display.durationSeconds,
       artworkUrl: display.artworkUrl,
@@ -1633,6 +1648,8 @@ class AppControllerAdapter extends VerseUiController {
   }
 
   String _subtitle(SongDocument song) => [
+    if (_sourceVariantLabel(song.selectedRecording) case final variant?)
+      formatSourceVariantLabel(variant),
     if (song.metadata['album'] is String) song.metadata['album'],
     if (_validDuration(song.metadata['durationSeconds']) case final duration?)
       formatDuration(duration),
