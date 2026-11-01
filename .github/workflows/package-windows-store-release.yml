@@ -8,7 +8,7 @@ name: Package and smoke test Microsoft Store release
 # Adding a release: add a `release` choice and a matching block in the
 # "Resolve release pins" step. Releases whose CI artifact pins were supplied at
 # dispatch time (29, 30) still require all five artifact inputs; releases with
-# frozen pins (32, 33, 34, 35, 36, 37, 38, 44, 45, 46) reject overrides.
+# frozen pins (32, 33, 34, 35, 36, 37, 38, 44, 45, 46, 49) reject overrides.
 #
 # Start this package and smoke test explicitly from the Actions tab.
 on:
@@ -17,9 +17,9 @@ on:
       release:
         description: Store release build number to package
         required: true
-        default: '45'
+        default: '49'
         type: choice
-        options: ['29', '30', '32', '33', '34', '35', '36', '37', '38', '44', '45', '46']
+        options: ['29', '30', '32', '33', '34', '35', '36', '37', '38', '44', '45', '46', '49']
       ci_run_id:
         description: Successful CI run ID for the pinned release commit (releases 29 and 30 only)
         required: false
@@ -50,11 +50,11 @@ concurrency:
 
 jobs:
   package-and-smoke:
-    name: package-and-smoke (release ${{ inputs.release || '45' }})
+    name: package-and-smoke (release ${{ inputs.release || '49' }})
     runs-on: singbook-i5-windows
     timeout-minutes: 25
     env:
-      RELEASE: ${{ inputs.release || '45' }}
+      RELEASE: ${{ inputs.release || '49' }}
       INPUT_CI_RUN_ID: ${{ inputs.ci_run_id }}
       INPUT_CI_ARTIFACT_ID: ${{ inputs.ci_artifact_id }}
       INPUT_CI_ARTIFACT_DIGEST: ${{ inputs.ci_artifact_digest }}
@@ -266,6 +266,24 @@ jobs:
                 CI_ARTIFACT_DIGEST = 'sha256:abb22e49ec69fdc55710d788361ab6f31399230986791d599eb2bd74762bb5a8'
                 PORTABLE_MANIFEST_SHA256 = 'b44d4fc70f93711166dd2b1e9102485f456ed893432adf296a3813389b4271fe'
                 PORTABLE_ZIP_SHA256 = '00bde55a35d7e83e48e953f423a359d467620e6d640429c6ea1f59780ed35c19'
+              }
+            }
+            '49' {
+              # Exact main release49 CI bundle; package workflow is authorized only
+              # after that pinned run completes successfully.
+              $pins = [ordered]@{
+                RELEASE_HEAD_SHA = '481819e5ebd98ea18cf57951e994bd392b3bf303'
+                RELEASE_COMPILED_SOURCE_SHA = '481819e5ebd98ea18cf57951e994bd392b3bf303'
+                RELEASE_SOURCE_TREE = '721f0e17ecb1a136858e9c34a083e2a35a99cba6'
+                RELEASE_PRODUCT_VERSION = '0.2.35+49'
+                RELEASE_CI_BRANCH = 'main'
+              }
+              $artifactPins = [ordered]@{
+                CI_RUN_ID = '41287820752'
+                CI_ARTIFACT_ID = '13076201417'
+                CI_ARTIFACT_DIGEST = 'sha256:ba33127c4835e9403f993ec7ab63506a16ca899ede712bfef378fbb01257eb1d'
+                PORTABLE_MANIFEST_SHA256 = '88eda6ec036e5959fbe188a5641394646aef38564bf653340ae1a553ffcb3cbc'
+                PORTABLE_ZIP_SHA256 = 'f6af111eb6a9fe328cb1e74b729f43d7a19602a4060c837e01723025e0f630c9'
               }
             }
             default { throw "Unknown Store release '$($env:RELEASE)'." }
