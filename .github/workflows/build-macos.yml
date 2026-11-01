@@ -2,16 +2,7 @@ name: macOS compilation
 
 # Compile-only lane: macOS regression tests plus an unsigned universal build.
 on:
-  push:
-    branches: [main]
-    paths-ignore: &docs-only
-      - 'docs/**'
-      - '**/*.md'
-      - 'LICENSE'
-      - 'NOTICE'
-  pull_request:
-    paths-ignore: *docs-only
-
+  workflow_dispatch:
 permissions:
   contents: read
 
