@@ -51,7 +51,10 @@ concurrency:
 jobs:
   package-and-smoke:
     name: package-and-smoke (release ${{ inputs.release || '49' }})
-    runs-on: singbook-i5-windows
+    # The isolated install smoke test temporarily trusts a self-signed test
+    # certificate in LocalMachine\TrustedPeople, which requires admin rights.
+    # GitHub-hosted Windows VMs provide that capability without changing I5.
+    runs-on: windows-latest
     timeout-minutes: 25
     env:
       RELEASE: ${{ inputs.release || '49' }}
