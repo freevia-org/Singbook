@@ -13,6 +13,7 @@ import 'chords_and_tabs.dart';
 import 'pisni.dart';
 import 'openscore_lieder.dart';
 import 'acousticbrainz.dart';
+import 'wikibooks_liederbuch.dart';
 
 export 'import_sources.dart';
 export 'metadata.dart';
@@ -28,6 +29,7 @@ export 'chords_and_tabs.dart';
 export 'pisni.dart';
 export 'openscore_lieder.dart';
 export 'acousticbrainz.dart';
+export 'wikibooks_liederbuch.dart';
 
 /// All sources in the architecture, including truthful file-import-only routes.
 List<LyricsProvider> createExtraProviders({ProviderTransport? transport}) {
@@ -56,5 +58,6 @@ List<LyricsProvider> createExtraProviders({ProviderTransport? transport}) {
     PisniProvider(http),
     OpenScoreLiederProvider(http),
     AcousticBrainzProvider(http),
+    WikibooksLiederbuchProvider(http),
   ];
 }
