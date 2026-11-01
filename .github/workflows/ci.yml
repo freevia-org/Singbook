@@ -4,9 +4,7 @@ name: CI
 # Windows release bundle embeds the repository's public Desktop OAuth client
 # ID as a GitHub Actions variable. This workflow uses no secrets and never signs.
 on:
-  push:
-    branches: [main]
-  pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
