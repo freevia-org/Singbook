@@ -17,9 +17,9 @@ on:
       release:
         description: Store release build number to package
         required: true
-        default: '49'
+        default: '50'
         type: choice
-        options: ['29', '30', '32', '33', '34', '35', '36', '37', '38', '44', '45', '46', '49']
+        options: ['29', '30', '32', '33', '34', '35', '36', '37', '38', '44', '45', '46', '49', '50']
       ci_run_id:
         description: Successful CI run ID for the pinned release commit (releases 29 and 30 only)
         required: false
@@ -50,14 +50,14 @@ concurrency:
 
 jobs:
   package-and-smoke:
-    name: package-and-smoke (release ${{ inputs.release || '49' }})
+    name: package-and-smoke (release ${{ inputs.release || '50' }})
     # The isolated install smoke test temporarily trusts a self-signed test
     # certificate in LocalMachine\TrustedPeople, which requires admin rights.
     # GitHub-hosted Windows VMs provide that capability without changing I5.
     runs-on: windows-latest
     timeout-minutes: 25
     env:
-      RELEASE: ${{ inputs.release || '49' }}
+      RELEASE: ${{ inputs.release || '50' }}
       INPUT_CI_RUN_ID: ${{ inputs.ci_run_id }}
       INPUT_CI_ARTIFACT_ID: ${{ inputs.ci_artifact_id }}
       INPUT_CI_ARTIFACT_DIGEST: ${{ inputs.ci_artifact_digest }}
@@ -287,6 +287,24 @@ jobs:
                 CI_ARTIFACT_DIGEST = 'sha256:ba33127c4835e9403f993ec7ab63506a16ca899ede712bfef378fbb01257eb1d'
                 PORTABLE_MANIFEST_SHA256 = '88eda6ec036e5959fbe188a5641394646aef38564bf653340ae1a553ffcb3cbc'
                 PORTABLE_ZIP_SHA256 = 'f6af111eb6a9fe328cb1e74b729f43d7a19602a4060c837e01723025e0f630c9'
+              }
+            }
+            '50' {
+              # Exact successful main release50 CI bundle; the CI run and file hashes
+              # below are frozen before any MSIX is packaged from this source.
+              $pins = [ordered]@{
+                RELEASE_HEAD_SHA = '0d72e38c7bece7df0e8b6c12c8cebc0f2fe2b3ec'
+                RELEASE_COMPILED_SOURCE_SHA = '0d72e38c7bece7df0e8b6c12c8cebc0f2fe2b3ec'
+                RELEASE_SOURCE_TREE = 'cd85fd2788e432a3fb715163b386a7ee86760f48'
+                RELEASE_PRODUCT_VERSION = '0.2.36+50'
+                RELEASE_CI_BRANCH = 'main'
+              }
+              $artifactPins = [ordered]@{
+                CI_RUN_ID = '41318544797'
+                CI_ARTIFACT_ID = '13088600981'
+                CI_ARTIFACT_DIGEST = 'sha256:1a2c5d621349132c903d8ad2604c227706a1ffe51e22e5ce1ea229e4ec0ffd44'
+                PORTABLE_MANIFEST_SHA256 = '88211cf3f85f45043497d2d1315d5c72a6aef186e0f1cf45e140ccdee93fe9bc'
+                PORTABLE_ZIP_SHA256 = '92d54b8d5412f1c57a223de013a1f5118c35467089c258fc1a01dd696bed8ad9'
               }
             }
             default { throw "Unknown Store release '$($env:RELEASE)'." }
