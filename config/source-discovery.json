@@ -714,6 +714,20 @@
       ],
       "endpoint": "https://api.secondhandsongs.com",
       "reason": "Publisher-indexed primary documentation describes JSON search for artists, works and performances plus object retrieval; a rate-limited anonymous API and optional approved key are documented. Current indexed terms distinguish private use from public tools/services, require prior written authorization for non-private API retrieval, and restrict automated website collection. Direct documentation opens returned403; stopped without alternate-host/API/content requests, credentials or workarounds. Search-index text is documentation evidence, not proof of current live machine access, exact schema or granted app-use permission. No work/performance rows, lyric/chord content, media, extraction canaries or accounts were requested. Potential cover/original/credit relationship enrichment is unmeasured and does not establish lyrics, chord charts or incremental catalog size. Defer pending publisher-approved public-app access/persistence/export terms, readable current documentation, precise work-versus-recording identity, attribution/quota contract, compatible adapter and two independent real extraction canaries. No registration or activation."
+    },
+    {
+      "id": "noise-song-catalog",
+      "name": "NØISE song catalogue",
+      "firstSeen": "2026-11-01",
+      "lastChecked": "2026-11-01",
+      "status": "deferred",
+      "documentation": [
+        "https://noise-app.com/docs/reference/api",
+        "https://noise-app.com/legal/terms",
+        "https://noise-app.com/legal/content-rules"
+      ],
+      "endpoint": "https://noise-app.com",
+      "reason": "Publisher documents an anonymous read-only catalog and structured chord charts with key, tempo, sections and public IDs, limited to120 requests per minute per IP with Retry-After. Its example total is illustrative, not an independently measured catalog size. Published terms grant users personal downloads for the NØISE app and do not establish Singbook storage/export permission; content rules exclude lyrics and melody. No song API/content, media, account or canary requests were made. Defer pending permission for intended use, stable arrangement identity, attribution, compatible chart extraction and two independent live canaries. No registration, activation or catalog change."
     }
   ]
 }
