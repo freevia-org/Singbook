@@ -13,16 +13,7 @@ name: CI
 # The Microsoft Store packaging workflows consume the `windows-release-bundle`
 # artifact of a successful run of this workflow, so keep its name and contents.
 on:
-  push:
-    branches: [main]
-    paths-ignore: &docs-only
-      - 'docs/**'
-      - '**/*.md'
-      - 'LICENSE'
-      - 'NOTICE'
-  pull_request:
-    paths-ignore: *docs-only
-
+  workflow_dispatch:
 permissions:
   contents: read
 
