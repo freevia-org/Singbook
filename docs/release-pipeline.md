@@ -37,7 +37,7 @@ evidence, not a substitute for reviewing the diff and results.
 | CI analysis | Generated localization drift and Dart analysis | Required before Windows fanout; locked dependencies. |
 | Linux suite | Complete Flutter unit/widget suite | Includes the six UX focused regression files. |
 | Windows shards | Complete suite split across two jobs | Keep both results; retry only a failed shard after inspection, retaining the original failure. |
-| Windows build and journey | Portable packaging, native smoke and deterministic desktop journey | Separate from host widget geometry; never qualifies Android/iOS UI. |
+| Windows build and journey | Portable packaging on the local I5 Windows runner; hosted native smoke and deterministic desktop journey | The local job is noninteractive; hosted Windows owns app launch, clipboard, credential and window-state checks. Separate from host widget geometry; never qualifies Android/iOS UI. |
 | UX host visuals | 25 dedicated captures with hashed sidecars | Runs on the PR merge tree, matching general CI; review relevant originals. Does not prove native fullscreen or OS dialogs. |
 | UX focused / Wikisource | Extra bounded regressions and diagnostics | UX focused runs on manual dispatch; all six files remain in complete CI on PRs. Wikisource explicitly records head-only evidence. |
 | macOS compilation | Platform regressions and unsigned universal app | Does not establish GUI acceptance, signing or notarization. |
