@@ -72,8 +72,9 @@ Windows and macOS local build scripts, strip
 are public clients and cannot keep this value confidential; the app code would
 embed it if supplied as a compile-time define. If the hosted probe reports that
 the client requires a secret, desktop CI fails before packaging. Store package
-workflows reject portable manifests that report a configured client secret, so
-older candidates must be rebuilt from the secretless build path before repackaging.
+workflows require manifests to explicitly report
+`googleDesktopClientSecretConfigured: false`; candidates with a true or missing
+flag must be rebuilt from the secretless build path before repackaging.
 
 Use `scripts/build-android.ps1` for Android. Bundle/symbol destination collisions
 fail before Flutter starts, and are checked again before copying. Reuse verified

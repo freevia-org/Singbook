@@ -31,10 +31,10 @@ Store package version is `1.0.<pubspec build number>.0`, for example pubspec
 1. Land the release commit on `main` and let `ci.yml` pass; note the CI run ID,
    the `windows-release-bundle` artifact ID and digest, the portable manifest
    and ZIP SHA-256 values, the source commit and its tree hash.
-   The portable manifest must report
+   The portable manifest must explicitly report
    `googleDesktopClientSecretConfigured: false`; Store workflows reject bundles
-   built with the client secret. Rebuild older candidates using current CI
-   before repackaging them.
+   with a true or missing flag. Rebuild older candidates using current CI before
+   repackaging them.
 2. Add a release choice and a matching block in the "Resolve release pins" step
    of `package-windows-store-release.yml` (same shape as the existing blocks).
    Frozen pins are reviewed in a PR, never passed at dispatch time.
