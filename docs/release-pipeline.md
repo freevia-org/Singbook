@@ -43,6 +43,13 @@ evidence, not a substitute for reviewing the diff and results.
 | macOS compilation | Platform regressions and unsigned universal app | Does not establish GUI acceptance, signing or notarization. |
 | Native acceptance | Target platform behavior and representative visual matrix | Use bounded, serialized runs; release the lease and retain evidence on failure. Never replay a consumed grant. |
 
+Keep `linux-build` on hosted `ubuntu-24.04`. Its workflow installs desktop and
+packaging dependencies with `sudo apt-get`, then uses ImageMagick, Xvfb, Zenity
+and desktop-file utilities. The current `ci-singbook-linux-current` container
+lacks those packages; its root filesystem is read-only and sudo cannot elevate.
+The audit also reports missing `libgbm-dev` and WebKitGTK 4.0 (only 4.1 is
+installed), so this container is not a suitable replacement runner.
+
 Resolve dependencies once per job with the committed lockfile. Use `--no-pub`
 for subsequent commands in that prepared job. Separate jobs need their own
 resolution; do not share mutable build directories to save startup time.
