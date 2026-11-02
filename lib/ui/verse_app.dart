@@ -908,16 +908,21 @@ class _VerseAppShellState extends State<VerseAppShell>
                   ],
                 ),
               Expanded(
-                child: Center(
-                  child: ConstrainedBox(
-                    key: const ValueKey('tablet-content-frame'),
-                    constraints: BoxConstraints(
-                      maxWidth: isDesktop || state.route == VerseRoute.reader
-                          ? double.infinity
-                          : 1200,
-                    ),
-                    child: _body(context, state),
-                  ),
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final useFullWidth =
+                        isDesktop || state.route == VerseRoute.reader;
+                    return Center(
+                      child: ConstrainedBox(
+                        key: const ValueKey('tablet-content-frame'),
+                        constraints: BoxConstraints(
+                          minWidth: useFullWidth ? constraints.maxWidth : 0,
+                          maxWidth: useFullWidth ? constraints.maxWidth : 1200,
+                        ),
+                        child: _body(context, state),
+                      ),
+                    );
+                  },
                 ),
               ),
             ],
