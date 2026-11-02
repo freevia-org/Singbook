@@ -1,15 +1,18 @@
 name: CI
 
 # On-demand CI. Source checks use the same empty defines as a fresh clone. The unsigned
-# Windows release bundle embeds the repository's public Desktop OAuth client
-# ID as a GitHub Actions variable and its optional registration field as a
-# masked Actions secret. This workflow never signs.
+# Windows release bundle embeds the public Desktop OAuth client ID from a
+# GitHub Actions variable. A hosted preflight verifies the PKCE flow without a
+# client secret; the local build explicitly compiles with that field blank.
+# This workflow never signs.
 #
 # Layout (fail fast, then fan out). Analysis and the Linux Flutter suite use the
-# local I5 Linux runner. The two Windows Flutter test shards use the persistent
-# I5 Windows runner and queue one at a time; Windows release build and desktop
-# journey stay on hosted Windows VMs, while Linux packaging stays on Ubuntu 24.04.
-#   analyze ──┬─> windows-build    (release bundle, packaging + native smoke)
+# local I5 Linux runner. The Windows release bundle is built on local I5 Windows;
+# its interactive/native smoke and desktop journey stay on hosted Windows VMs.
+# The two Windows Flutter test shards use the persistent I5 runner and queue one
+# at a time. Linux packaging stays on hosted Ubuntu 24.04.
+#   analyze ──┬─> windows-build    (local release bundle)
+#             ├─> windows-native-smoke (hosted startup, clipboard + credentials)
 #             ├─> windows-test     (Windows Flutter suite; serialized shards)
 #             ├─> windows-journey  (deterministic desktop integration journey)
 #             └─> linux-build      (release bundle, AppImage + .deb, xvfb journey)
@@ -122,13 +125,56 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
 
-  windows-build:
+  desktop-oauth-preflight:
+    name: Desktop OAuth preflight (hosted, no secret)
     needs: analyze
     runs-on: windows-2025
-    timeout-minutes: 30
+    timeout-minutes: 5
     env:
       SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID: ${{ vars.SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID }}
-      SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET: ${{ secrets.SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET }}
+    steps:
+      - name: Check secretless Windows OAuth PKCE configuration
+        shell: pwsh
+        run: |
+          if ([string]::IsNullOrWhiteSpace($env:SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID)) {
+            throw 'The SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID Actions variable is required for desktop release bundles.'
+          }
+
+          # Probe the public Desktop client using a deliberately invalid code.
+          # invalid_grant confirms the client accepts the secretless PKCE flow
+          # without authenticating a user or exposing any secret to the local runner.
+          $probe = @{
+            client_id = $env:SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID
+            code = 'codex-release-preflight-invalid-code'
+            code_verifier = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+            grant_type = 'authorization_code'
+            redirect_uri = 'http://127.0.0.1:49152'
+          }
+          try {
+            $response = Invoke-RestMethod -Method Post -Uri 'https://oauth2.googleapis.com/token' -ContentType 'application/x-www-form-urlencoded' -Body $probe
+            $oauthError = $response.error
+          } catch {
+            $errorBody = $_.ErrorDetails.Message
+            try { $oauthError = ($errorBody | ConvertFrom-Json).error }
+            catch { throw 'Google OAuth secretless Desktop-client preflight could not read the token endpoint response.' }
+          }
+          if ($oauthError -ne 'invalid_grant') {
+            if ($errorBody -match 'client_secret') { $oauthError = 'client_secret_required' }
+            throw "Google OAuth Desktop-client preflight without a client secret failed ($oauthError). The local release build deliberately omits the public-client secret."
+          }
+
+  windows-build:
+    needs: [analyze, desktop-oauth-preflight]
+    # Only noninteractive build work runs on this persistent user profile. The
+    # native window, clipboard, and credential checks remain on hosted Windows.
+    if: github.ref == 'refs/heads/main'
+    runs-on: singbook-i5-windows
+    timeout-minutes: 30
+    outputs:
+      build_evidence_artifact_id: ${{ steps.build-evidence.outputs['artifact-id'] }}
+      release_bundle_artifact_id: ${{ steps.release-bundle.outputs['artifact-id'] }}
+    env:
+      SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID: ${{ vars.SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -151,42 +197,6 @@ jobs:
       - name: Get dependencies
         run: flutter pub get --enforce-lockfile --no-example
 
-      - name: Check Windows OAuth configuration
-        id: windows-oauth-preflight
-        continue-on-error: true
-        shell: pwsh
-        run: |
-          if ([string]::IsNullOrWhiteSpace($env:SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID)) {
-            throw 'The SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID Actions variable is required for the Windows release bundle.'
-          }
-
-          # A public client ID can be syntactically valid while pointing at an
-          # OAuth client that cannot complete the app's installed-desktop flow.
-          # Exchange a deliberately invalid code: a working registration should
-          # reach Google's invalid_grant response without authenticating anyone.
-          $probe = @{
-            client_id = $env:SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID
-            code = 'codex-release-preflight-invalid-code'
-            code_verifier = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
-            grant_type = 'authorization_code'
-            redirect_uri = 'http://127.0.0.1:49152'
-          }
-          if (-not [string]::IsNullOrWhiteSpace($env:SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET)) {
-            $probe.client_secret = $env:SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET
-          }
-          try {
-            $response = Invoke-RestMethod -Method Post -Uri 'https://oauth2.googleapis.com/token' -ContentType 'application/x-www-form-urlencoded' -Body $probe
-            $oauthError = $response.error
-          } catch {
-            $errorBody = $_.ErrorDetails.Message
-            try { $oauthError = ($errorBody | ConvertFrom-Json).error }
-            catch { throw 'Google OAuth desktop-client preflight could not read the token endpoint response.' }
-          }
-          if ($oauthError -ne 'invalid_grant') {
-            if ($errorBody -match 'client_secret') { $oauthError = 'missing_client_secret' }
-            throw "Google OAuth desktop-client preflight failed ($oauthError). Check that the ID is a Desktop app client and that its optional secret is configured when required."
-          }
-
       - name: Record dependency generation source status
         shell: pwsh
         run: |
@@ -196,9 +206,64 @@ jobs:
 
       - name: Build and package Windows release
         shell: pwsh
-        run: ./scripts/build-windows.ps1 -AllowMissingDefines
+        env:
+          # The versioned example has an empty client-secret field and avoids
+          # consuming any ignored local defines from the persistent runner.
+          SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET: ''
+        run: ./scripts/build-windows.ps1 -DefinesFile config/defines.example.json
 
-      - name: Inspect Windows PDF printer capability
+      - name: Hand off build evidence to hosted native smoke
+        id: build-evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: windows-build-evidence-${{ github.run_id }}
+          path: |
+            artifacts/windows-parity/dependency-generation/
+            artifacts/windows/**/build.log
+            artifacts/windows/**/manifest.json
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Preserve Windows release bundle
+        id: release-bundle
+        uses: actions/upload-artifact@v7
+        with:
+          name: windows-release-bundle
+          # Store packaging consumes the archive and matching provenance only;
+          # build logs remain in the separate validation evidence artifact.
+          path: |
+            artifacts/windows/*/*.zip
+            artifacts/windows/*/manifest.json
+          if-no-files-found: error
+          retention-days: 90
+
+  windows-native-smoke:
+    name: Windows portable and native smoke
+    needs: windows-build
+    runs-on: windows-2025
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - name: Download exact same-run Windows release bundle
+        uses: actions/download-artifact@v8
+        with:
+          artifact-ids: ${{ needs.windows-build.outputs.release_bundle_artifact_id }}
+          path: ${{ runner.temp }}/singbook-windows-release-bundle
+          digest-mismatch: error
+
+      - name: Download build evidence for the validation artifact
+        uses: actions/download-artifact@v8
+        with:
+          artifact-ids: ${{ needs.windows-build.outputs.build_evidence_artifact_id }}
+          path: ${{ github.workspace }}/artifacts
+          digest-mismatch: error
+
+      - name: Inspect hosted Windows PDF printer capability
         shell: pwsh
         run: |
           $evidencePath = 'artifacts/windows-parity/print-acceptance-runner-capabilities.json'
@@ -232,9 +297,41 @@ jobs:
           $evidence | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath $evidencePath -Encoding utf8
           $evidence | ConvertTo-Json -Depth 5
 
+      - name: Verify and extract the portable release bundle
+        id: portable-bundle
+        shell: pwsh
+        run: |
+          $artifactRoot = Join-Path $env:RUNNER_TEMP 'singbook-windows-release-bundle'
+          $zips = @(Get-ChildItem -LiteralPath $artifactRoot -Filter '*.zip' -File -Recurse)
+          $manifests = @(Get-ChildItem -LiteralPath $artifactRoot -Filter 'manifest.json' -File -Recurse)
+          if ($zips.Count -ne 1 -or $manifests.Count -ne 1) {
+            throw "Expected one Windows portable ZIP and one manifest, found $($zips.Count) ZIP(s) and $($manifests.Count) manifest(s)."
+          }
+          if ($zips[0].DirectoryName -ne $manifests[0].DirectoryName) {
+            throw 'Windows portable ZIP and manifest must come from the same evidence directory.'
+          }
+          $manifest = Get-Content -LiteralPath $manifests[0].FullName -Raw | ConvertFrom-Json
+          if ($manifest.sourceCommit -ne $env:GITHUB_SHA -or
+              $manifest.configuration -ne 'release' -or
+              $manifest.distribution -ne 'portable-release') {
+            throw 'Windows portable manifest does not match the workflow source and release configuration.'
+          }
+          $expanded = Join-Path $env:RUNNER_TEMP 'singbook-windows-portable-smoke'
+          Expand-Archive -LiteralPath $zips[0].FullName -DestinationPath $expanded
+          $rootEntries = @(Get-ChildItem -LiteralPath $expanded -Force)
+          if ($rootEntries.Count -ne 1 -or -not $rootEntries[0].PSIsContainer -or $rootEntries[0].Name -ne 'Singbook') {
+            throw 'Portable ZIP must contain exactly one root directory named Singbook.'
+          }
+          if (-not (Test-Path -LiteralPath (Join-Path $rootEntries[0].FullName 'singbook.exe') -PathType Leaf)) {
+            throw 'Extracted portable bundle is missing singbook.exe.'
+          }
+          "bundle_directory=$($rootEntries[0].FullName)" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+
       - name: Smoke test the portable Windows app in an isolated profile
         shell: pwsh
-        run: ./scripts/test-windows-portable-startup.ps1
+        env:
+          BUNDLE_DIRECTORY: ${{ steps.portable-bundle.outputs.bundle_directory }}
+        run: ./scripts/test-windows-portable-startup.ps1 -BundleDirectory $env:BUNDLE_DIRECTORY
 
       - name: Check native clipboard formats and isolated credential storage
         shell: pwsh
@@ -251,24 +348,6 @@ jobs:
             artifacts/windows/**/manifest.json
           if-no-files-found: ignore
           retention-days: 7
-
-      - name: Preserve Windows release bundle
-        uses: actions/upload-artifact@v7
-        with:
-          name: windows-release-bundle
-          # Store packaging consumes the archive and matching provenance only;
-          # build logs remain in the separate validation evidence artifact.
-          path: |
-            artifacts/windows/*/*.zip
-            artifacts/windows/*/manifest.json
-          if-no-files-found: error
-          retention-days: 90
-
-      - name: Enforce Windows OAuth release readiness
-        if: always() && steps.windows-oauth-preflight.outcome != 'success'
-        shell: pwsh
-        run: |
-          throw 'Windows OAuth preflight failed. The package and native checks ran, but the release is not ready for Google Drive sign-in.'
 
   windows-test:
     name: windows-test (${{ matrix.shard }}/2)
@@ -321,12 +400,11 @@ jobs:
           retention-days: 7
 
   linux-build:
-    needs: analyze
+    needs: [analyze, desktop-oauth-preflight]
     runs-on: ubuntu-24.04
     timeout-minutes: 40
     env:
       SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID: ${{ vars.SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID }}
-      SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET: ${{ secrets.SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -347,11 +425,7 @@ jobs:
         run: flutter pub get --enforce-lockfile --no-example
 
       - name: Build the release bundle
-        run: |
-          defines=()
-          [ -n "$SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID" ] && defines+=(--dart-define=SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID="$SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID")
-          [ -n "$SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET" ] && defines+=(--dart-define=SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET="$SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET")
-          flutter build linux --release "${defines[@]}"
+        run: scripts/build-linux.sh release
 
       - name: Package the AppImage and .deb
         run: scripts/package-linux.sh build/linux-packages

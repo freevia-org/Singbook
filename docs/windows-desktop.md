@@ -61,16 +61,15 @@ Create an OAuth client of type **Desktop app** in the **same Google Cloud
 project** as the Android/iOS clients, with Drive API and Google Picker API
 enabled. Do not use the
 Android or Web client ID for the desktop loopback flow. Copy its identifier to
-`SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID` in the ignored build configuration. If the
-downloaded desktop registration requires its generated client secret, put it in
-`SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET`. For GitHub Actions builds, configure the
-ID as the `SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID` Actions variable and, only when the
-registration requires it, configure the secret as the
-`SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET` Actions secret. The Windows package embeds
-any configured value, so it is not confidential once distributed. Do not put
-the downloaded JSON or tokens in Git or validation logs. Desktop registrations
-are public clients; PKCE is still required even when a registration has this
-field.
+`SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID` in the ignored build configuration. For
+GitHub Actions builds, configure the ID as the
+`SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID` Actions variable. Desktop build scripts omit
+`SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET` from app defines, and the hosted CI
+preflight checks that the Desktop client accepts PKCE without that value. If the
+preflight reports that a secret is required, CI stops before packaging rather
+than embedding it. Desktop registrations are public clients and cannot keep
+client secrets confidential; PKCE is required. Do not put downloaded JSON or
+tokens in Git or validation logs.
 
 The desktop module opens the system browser, validates a random state value at
 an ephemeral IPv4 loopback callback, exchanges an S256 PKCE code, obtains the

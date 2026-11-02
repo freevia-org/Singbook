@@ -81,6 +81,10 @@ jobs:
           $extract = Join-Path $env:RUNNER_TEMP 'release-artifact'
           $manifests = @(Get-ChildItem -LiteralPath $extract -Filter manifest.json -File -Recurse)
           if ($manifests.Count -ne 1) { throw "Expected one release manifest, found $($manifests.Count)." }
+          $manifest = Get-Content -LiteralPath $manifests[0].FullName -Raw | ConvertFrom-Json
+          if ($manifest.oauthConfiguration.googleDesktopClientSecretConfigured -ne $false) {
+            throw 'The pinned portable bundle was built with a Desktop OAuth client secret; rebuild a secretless bundle before Store packaging.'
+          }
           if ((Get-FileHash -LiteralPath $manifests[0].FullName -Algorithm SHA256).Hash -ne 'A9400A9D2D8EF367E3469ED1DA12BA71DE5A7E0DED5857AF65928B817B93014B') { throw 'Portable manifest differs from Root-qualified input.' }
           $zips = @(Get-ChildItem -LiteralPath $extract -Filter '*.zip' -File -Recurse)
           if ($zips.Count -ne 1) { throw "Expected one portable ZIP, found $($zips.Count)." }

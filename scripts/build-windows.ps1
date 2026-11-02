@@ -5,6 +5,7 @@ param(
 )
 $ErrorActionPreference = 'Stop'
 $workspace = Split-Path -Parent $PSScriptRoot
+$sanitizedDefinesFile = $null
 Push-Location $workspace
 try {
     $revision = (& git rev-parse HEAD).Trim()
@@ -20,14 +21,15 @@ try {
     $configuration = if ($Debug) { 'Debug' } else { 'Release' }
     $buildArguments = @('build', 'windows', "--$mode")
     $desktopClientId = $null
-    $desktopClientSecret = $null
     if (Test-Path -LiteralPath $DefinesFile) {
-        $buildArguments += "--dart-define-from-file=$DefinesFile"
         $defines = Get-Content -LiteralPath $DefinesFile -Raw | ConvertFrom-Json
         $desktopIdProperty = $defines.PSObject.Properties['SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID']
-        $desktopSecretProperty = $defines.PSObject.Properties['SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET']
         if ($null -ne $desktopIdProperty) { $desktopClientId = [string]$desktopIdProperty.Value }
-        if ($null -ne $desktopSecretProperty) { $desktopClientSecret = [string]$desktopSecretProperty.Value }
+        [void]$defines.PSObject.Properties.Remove('SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET')
+        $sanitizedDefinesFile = Join-Path ([IO.Path]::GetTempPath()) "singbook-windows-defines-$([guid]::NewGuid().ToString('N')).json"
+        $safeDefinesJson = ConvertTo-Json -InputObject $defines -Depth 100
+        [IO.File]::WriteAllText($sanitizedDefinesFile, $safeDefinesJson, [Text.UTF8Encoding]::new($false))
+        $buildArguments += "--dart-define-from-file=$sanitizedDefinesFile"
     } elseif (-not $AllowMissingDefines) {
         throw 'Build configuration is missing. Provide -DefinesFile or use -AllowMissingDefines for an offline preview.'
     }
@@ -37,13 +39,8 @@ try {
         $desktopClientId = $env:SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID
         $buildArguments += "--dart-define=SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID=$($env:SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID)"
     }
-    # The optional registration field is a public-client value embedded in the
-    # distributed app. Accept it from ignored local defines or a masked CI
-    # secret, and record presence only; never print or write its value to logs.
-    if (-not [string]::IsNullOrWhiteSpace($env:SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET)) {
-        $desktopClientSecret = $env:SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET
-        $buildArguments += "--dart-define=SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET=$($env:SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET)"
-    }
+    # Desktop apps are public OAuth clients. Never compile their client secret
+    # from local defines or environment variables into a distributed bundle.
     $stamp = [DateTime]::UtcNow.ToString('yyyyMMddTHHmmssfffZ')
     $name = "singbook-$($versionMatch.Groups[1].Value)-windows-x64-$mode-$($revision.Substring(0,8))-$stamp"
     $evidence = Join-Path $workspace "artifacts/windows/$name"
@@ -140,7 +137,7 @@ try {
         oauthConfiguration = @{
             googleDesktopClientIdConfigured = -not [string]::IsNullOrWhiteSpace($desktopClientId)
             googleDesktopClientIdSha256 = $desktopClientIdSha256
-            googleDesktopClientSecretConfigured = -not [string]::IsNullOrWhiteSpace($desktopClientSecret)
+            googleDesktopClientSecretConfigured = $false
         }
         builtAtUtc = $stamp
         requiredFiles = @($requiredFiles | Sort-Object)
@@ -154,5 +151,8 @@ try {
     Write-Output "Windows bundle: $archive"
     Write-Output "SHA256: $((Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash)"
 } finally {
+    if ($null -ne $sanitizedDefinesFile -and (Test-Path -LiteralPath $sanitizedDefinesFile)) {
+        Remove-Item -LiteralPath $sanitizedDefinesFile -Force
+    }
     Pop-Location
 }

@@ -37,11 +37,18 @@ evidence, not a substitute for reviewing the diff and results.
 | CI analysis | Generated localization drift and Dart analysis | Required before Windows fanout; locked dependencies. |
 | Linux suite | Complete Flutter unit/widget suite | Includes the six UX focused regression files. |
 | Windows shards | Complete suite split across two jobs | Keep both results; retry only a failed shard after inspection, retaining the original failure. |
-| Windows build and journey | Portable packaging, native smoke and deterministic desktop journey | Separate from host widget geometry; never qualifies Android/iOS UI. |
+| Windows build and journey | Portable packaging on the local I5 Windows runner; hosted native smoke and deterministic desktop journey | The local job is noninteractive; hosted Windows owns app launch, clipboard, credential and window-state checks. Separate from host widget geometry; never qualifies Android/iOS UI. |
 | UX host visuals | 25 dedicated captures with hashed sidecars | Runs on the PR merge tree, matching general CI; review relevant originals. Does not prove native fullscreen or OS dialogs. |
 | UX focused / Wikisource | Extra bounded regressions and diagnostics | UX focused runs on manual dispatch; all six files remain in complete CI on PRs. Wikisource explicitly records head-only evidence. |
 | macOS compilation | Platform regressions and unsigned universal app | Does not establish GUI acceptance, signing or notarization. |
 | Native acceptance | Target platform behavior and representative visual matrix | Use bounded, serialized runs; release the lease and retain evidence on failure. Never replay a consumed grant. |
+
+Keep `linux-build` on hosted `ubuntu-24.04`. Its workflow installs desktop and
+packaging dependencies with `sudo apt-get`, then uses ImageMagick, Xvfb, Zenity
+and desktop-file utilities. The current `ci-singbook-linux-current` container
+lacks those packages; its root filesystem is read-only and sudo cannot elevate.
+The audit also reports missing `libgbm-dev` and WebKitGTK 4.0 (only 4.1 is
+installed), so this container is not a suitable replacement runner.
 
 Resolve dependencies once per job with the committed lockfile. Use `--no-pub`
 for subsequent commands in that prepared job. Separate jobs need their own
@@ -57,6 +64,17 @@ stable. Candidate bundles are retained for 90 days (subject to repository policy
 This is a staging window, not permanent archival storage: preserve qualified
 release assets and receipts durably before expiry. Longer retention does not
 restore expired historical pins.
+
+Desktop CI validates the Google OAuth client on hosted Windows with a PKCE token
+exchange that omits the client secret. Windows and Linux CI builds, plus the
+Windows and macOS local build scripts, strip
+`SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET` from app defines. Desktop OAuth clients
+are public clients and cannot keep this value confidential; the app code would
+embed it if supplied as a compile-time define. If the hosted probe reports that
+the client requires a secret, desktop CI fails before packaging. Store package
+workflows require manifests to explicitly report
+`googleDesktopClientSecretConfigured: false`; candidates with a true or missing
+flag must be rebuilt from the secretless build path before repackaging.
 
 Use `scripts/build-android.ps1` for Android. Bundle/symbol destination collisions
 fail before Flutter starts, and are checked again before copying. Reuse verified
