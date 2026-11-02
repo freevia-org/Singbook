@@ -63,6 +63,30 @@ void main() {
     },
   );
 
+  test('empty or blank picked_file_ids yields no file IDs', () async {
+    for (final raw in ['', 'a,,b,']) {
+      messenger.setMockMethodCallHandler(channel, (call) async {
+        final state = Uri.parse(
+          (call.arguments as Map)['url'] as String,
+        ).queryParameters['state']!;
+        return Uri.parse(callback)
+            .replace(
+              queryParameters: {
+                'state': state,
+                'code': 'authorization-code',
+                'picked_file_ids': raw,
+              },
+            )
+            .toString();
+      });
+      final grant = await IOSPickerOAuthFlow().pickDriveFiles(
+        clientId: clientId,
+        accountEmail: 'singer@example.com',
+      );
+      expect(grant.fileIds, raw.isEmpty ? isEmpty : ['a', 'b']);
+    }
+  });
+
   for (final bad in [
     'wrong-state',
     'wrong-scheme',

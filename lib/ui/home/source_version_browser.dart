@@ -337,9 +337,18 @@ class _SourceVersionBrowserState extends State<_SourceVersionPages> {
           ),
         ),
         if (comparison.discovering)
-          const LinearProgressIndicator(
-            key: ValueKey('discovery-progress'),
-            minHeight: 2,
+          // Determinate once the sources are known; the same localized
+          // "checked of total" text the counter's tooltip uses.
+          LinearProgressIndicator(
+            key: const ValueKey('discovery-progress'),
+            minHeight: 3,
+            value: comparison.providerChecks.isEmpty
+                ? null
+                : checked / comparison.providerChecks.length,
+            semanticsLabel: l10n.searchDiscoveryProgress(
+              checked,
+              comparison.providerChecks.length,
+            ),
           ),
         Padding(
           padding: EdgeInsetsDirectional.only(

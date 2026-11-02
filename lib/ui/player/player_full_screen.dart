@@ -40,6 +40,7 @@ class PlayerFullScreen {
               await _channel.invokeMethod<void>('setEnabled', enabled);
             case TargetPlatform.macOS:
             case TargetPlatform.windows:
+            case TargetPlatform.linux:
               await _channel.invokeMethod<void>('setEnabled', enabled);
             case TargetPlatform.iOS:
               await SystemChrome.setEnabledSystemUIMode(

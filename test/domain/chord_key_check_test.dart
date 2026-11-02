@@ -139,6 +139,33 @@ void main() {
     expect(doc.metadata['key'], 'E');
   });
 
+  test('a chart found again by search keeps its key shift', () {
+    const candidate = SongCandidate(
+      providerId: 'ug',
+      id: 'ug',
+      title: 'Harbor Song',
+      artist: 'Test Artist',
+    );
+    final chart = SourceResult(
+      candidate: candidate,
+      body: _inG,
+      matchKind: MatchKind.sameSong,
+      metadata: const {'key': 'G'},
+      extra: {
+        'keyConsensus': false,
+        'keyShift': 9,
+        // Discovery saw the same chart among its search candidates.
+        'discoveryEvidence': {
+          'searchCandidates': [
+            {'candidate': candidate.toJson()},
+          ],
+        },
+      },
+    );
+    final doc = combineSources(_selected, [_source('lyrics', _lyrics), chart]);
+    expect(doc.extra['chordKeyShifts'], {chart.id: 9});
+  });
+
   test('a label contradicting its chords can settle the key', () {
     final inC = transposeBody(_clearE, 8);
     // The C chart says it is in E; with the E chart that is a majority.
@@ -151,6 +178,25 @@ void main() {
     ]);
     expect(_chords(doc.body).first, 'E');
     expect(doc.metadata['key'], 'E');
+  });
+
+  test('a relative-key dispute is settled by a clear chart', () {
+    final inAm = _chart(['Am', 'Dm', 'E7', 'Am', 'F', 'Dm', 'E7', 'Am']);
+    final doc = combineSources(_selected, [
+      SourceResult(
+        candidate: const SongCandidate(
+          providerId: 'catalog',
+          id: 'catalog',
+          title: 'Harbor Song',
+          artist: 'Test Artist',
+        ),
+        body: _lyrics,
+        matchKind: MatchKind.sameSong,
+        metadata: const {'key': 'C'},
+      ),
+      labelled(inAm, 'Am'),
+    ]);
+    expect(doc.metadata['key'], 'Am');
   });
 
   test('a contradicting label without a correction names no key', () {

@@ -149,6 +149,28 @@ void main() {
   );
 
   test(
+    'Settings saves the preferred source without starting a search',
+    () async {
+      final h = await open();
+      h.ui.setTab(VerseTab.settings);
+
+      await h.ui.setSearchCatalog('wikisource');
+
+      await _expectCatalogAgreement(h, 'wikisource');
+      expect(h.ui.state.activeTab, VerseTab.settings);
+      expect(h.allRequests, isEmpty);
+
+      h.ui.setTab(VerseTab.home);
+      h.online('Lantern path');
+      final search = h.ui.submitSearch();
+      (await h.wiki.requestAt(0)).complete('preferred-source-result');
+      await search;
+      expect(h.app.suggestions.single.id, 'preferred-source-result');
+      expect(h.lrclib.requests, isEmpty);
+    },
+  );
+
+  test(
     'no available catalog fails locally and can recover after enablement',
     () async {
       final h = await open();
@@ -508,6 +530,7 @@ void main() {
       discovery.publish(source);
       expect(h.app.selection?.identity, candidate.identity);
       expect(h.app.discovering, isTrue);
+      await h.app.flushCombine();
       expect(h.app.combined?.body, source.body);
 
       await gate.release();
@@ -589,7 +612,10 @@ void main() {
         beta.id,
         gamma.id,
       ]);
-      expect(h.app.combined?.body, alpha.body);
+      // The first arrival merges at once; the others queue behind it. If the
+      // worker was still starting, all three are already in that first merge.
+      await waitForCombined(h, () => h.app.combined != null);
+      expect(h.app.combined?.body, anyOf(alpha.body, gamma.body));
       await waitForCombined(h, () => h.app.combined?.body == gamma.body);
       expect(h.app.combined?.body, gamma.body);
       expect(h.app.combined?.extra['fieldOrigins']['mood'], gamma.id);
@@ -602,7 +628,7 @@ void main() {
   );
 
   test(
-    'same-source progress bursts coalesce after two immediate recomputes',
+    'same-source progress bursts coalesce behind the running merge',
     () async {
       final h = await open(providers: [_PendingProvider('alpha')]);
       h.discovery.holdDiscoveries = true;
@@ -646,8 +672,13 @@ void main() {
       final selection = h.app.selectCandidate(candidate);
       final request = await h.discovery.discoveryAt(0);
       request.publish(first);
+      await waitForCombined(h, () => h.app.combined?.body == first.body);
       expect(h.app.combined?.body, first.body);
       request.publish(second);
+      await waitForCombined(
+        h,
+        () => h.app.combined?.extra['fieldOrigins']?['mood'] == second.id,
+      );
       expect(h.app.combined?.body, second.body);
       expect(h.app.combined?.extra['fieldOrigins']['mood'], second.id);
       request.publish(third);
@@ -659,7 +690,7 @@ void main() {
       expect(
         h.app.combined?.sources.single.metadata.containsKey('year'),
         isFalse,
-        reason: 'updates after the two immediate recomputes are coalesced',
+        reason: 'updates arriving behind the running merge are coalesced',
       );
       await waitForCombined(
         h,
@@ -853,6 +884,7 @@ void main() {
       expect(active.cancel?.isCancelled, isFalse);
       expect(h.app.selection?.toJson(), reference.toJson());
       expect(h.app.results.single.toJson(), saved.sources.single.toJson());
+      await h.app.flushCombine();
       expect(h.app.combined?.body, saved.body);
       expect(h.app.discovering, isTrue);
       await h.app.setProviderEnabled('lrclib', false);

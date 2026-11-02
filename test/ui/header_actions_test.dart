@@ -1,9 +1,24 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:singbook/sync/sync_provider.dart';
 import 'package:singbook/ui/account_avatar.dart';
 import 'support/fake_controller.dart';
 import 'package:singbook/ui/verse_ui_state.dart';
+
+Future<void> _withPlatform(
+  TargetPlatform platform,
+  Future<void> Function() action,
+) async {
+  final previous = debugDefaultTargetPlatformOverride;
+  debugDefaultTargetPlatformOverride = platform;
+  try {
+    await action();
+  } finally {
+    debugDefaultTargetPlatformOverride = previous;
+  }
+}
 
 void main() {
   group('main header actions', () {
@@ -51,6 +66,86 @@ void main() {
             .first,
       );
       expect(find.text(l10n.settingsClearHistory), findsOneWidget);
+    });
+
+    group('Songs import from Google Drive', () {
+      Future<FakeUiController> pumpSongs(
+        WidgetTester tester,
+        VerseUiState state,
+      ) async {
+        final controller = FakeUiController((_) => state);
+        addTearDown(controller.dispose);
+        await pumpShell(tester, controller);
+        await tester.tap(find.byKey(const ValueKey('header-overflow-menu')));
+        await tester.pumpAndSettle();
+        return controller;
+      }
+
+      const connected = VerseUiState(
+        activeTab: VerseTab.songs,
+        syncSignedIn: true,
+        syncDriveFolderName: 'Singbook Library',
+      );
+
+      testWidgets(
+        'is offered next to the file import and runs the Drive import',
+        (tester) async {
+          await _withPlatform(TargetPlatform.iOS, () async {
+            final controller = await pumpSongs(tester, connected);
+            final l10n = l10nOf(tester);
+            expect(find.text(l10n.settingsImportChordPro), findsOneWidget);
+            expect(find.text(l10n.accountImportChordPro), findsOneWidget);
+            await tester.tap(find.byKey(const ValueKey('header-import-drive')));
+            await tester.pumpAndSettle();
+            expect(controller.calls, contains('importChordProFromDrive'));
+            expect(controller.calls, isNot(contains('importChordPro')));
+          });
+        },
+      );
+
+      for (final entry in {
+        'signed out': const VerseUiState(
+          activeTab: VerseTab.songs,
+          syncDriveFolderName: 'Singbook Library',
+        ),
+        'no visible folder': const VerseUiState(
+          activeTab: VerseTab.songs,
+          syncSignedIn: true,
+        ),
+        'iCloud': const VerseUiState(
+          activeTab: VerseTab.songs,
+          syncProvider: SyncProvider.iCloud,
+          syncSignedIn: true,
+          syncDriveFolderName: 'Singbook Library',
+        ),
+        'setlists tab': const VerseUiState(
+          activeTab: VerseTab.setlists,
+          syncSignedIn: true,
+          syncDriveFolderName: 'Singbook Library',
+        ),
+      }.entries) {
+        testWidgets('is hidden when ${entry.key}', (tester) async {
+          await _withPlatform(TargetPlatform.iOS, () async {
+            await pumpSongs(tester, entry.value);
+            expect(
+              find.byKey(const ValueKey('header-import-drive')),
+              findsNothing,
+            );
+          });
+        });
+      }
+
+      testWidgets('is hidden on platforms without the in-app Picker', (
+        tester,
+      ) async {
+        await _withPlatform(TargetPlatform.windows, () async {
+          await pumpSongs(tester, connected);
+          expect(
+            find.byKey(const ValueKey('header-import-drive')),
+            findsNothing,
+          );
+        });
+      });
     });
 
     testWidgets('song and setlist overflow entries call their actions', (

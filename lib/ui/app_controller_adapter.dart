@@ -537,10 +537,12 @@ class AppControllerAdapter extends VerseUiController {
       accountName: app.syncAccountEmail,
       syncDriveFolderName: app.syncDriveFolderName,
       accountPhotoUrl: app.syncAccountPhotoUrl,
-      accountError: _syncWarningOnly ? null : app.syncError,
+      accountError: _syncWarningOnly || _syncCancelled ? null : app.syncError,
       lastSyncAt: _lastSyncAt,
       lastSyncConflicts: _lastSyncConflicts,
-      lastSyncErrorCode: _syncWarningOnly ? null : _lastSyncErrorCode,
+      lastSyncErrorCode: _syncWarningOnly || _syncCancelled
+          ? null
+          : _lastSyncErrorCode,
       syncWarningCode: _syncWarningOnly ? app.syncWarning : null,
       syncSuspiciousDeletionCount: app.syncSuspiciousDeletionCount,
       autoSyncEnabled: _autoSyncEnabled,
@@ -608,6 +610,76 @@ class AppControllerAdapter extends VerseUiController {
   bool _isUsableResult(SourceResult result, {bool allowRejected = false}) {
     return (allowRejected || result.matchKind != MatchKind.rejected) &&
         _hasUsableBody(result);
+  }
+
+  AcousticBrainzAnalysis? _checkRecordingAnalysis(
+    String providerId,
+    String state,
+    SourceResult? checked,
+    List<SourceVersionData> versions,
+  ) {
+    if (providerId != 'acousticbrainz' ||
+        state != 'found' ||
+        !app.providerEnabled(providerId) ||
+        checked == null ||
+        checked.candidate.providerId != providerId ||
+        checked.matchKind != MatchKind.sameRecording ||
+        checked.hasPendingMatchCheck) {
+      return null;
+    }
+    final sources = app.results
+        .where(
+          (source) =>
+              source.id == checked.id &&
+              source.candidate.providerId == providerId,
+        )
+        .toList();
+    final current = versions
+        .where(
+          (version) =>
+              version.id == checked.id &&
+              version.providerId == providerId &&
+              version.sameRecording &&
+              !version.isChecking,
+        )
+        .toList();
+    if (sources.length != 1 || current.length != 1) return null;
+    final source = sources.single;
+    if (source.matchKind != MatchKind.sameRecording ||
+        source.hasPendingMatchCheck) {
+      return null;
+    }
+    // _version revalidates the selected recording and any live, enabled
+    // MusicBrainz witnesses; do not treat an archived payload as that proof.
+    final analysis = AcousticBrainzAnalysis.fromMetadata(
+      providerId,
+      current.single.metadata,
+    );
+    if (analysis == null) return null;
+    final candidate = source.candidate;
+    final id = analysis.recordingId.toLowerCase();
+    if (candidate.id.toLowerCase() != id ||
+        candidate.recordingIds['musicbrainz']?.toLowerCase() != id) {
+      return null;
+    }
+    final selection = app.selection;
+    if (selection == null) return null;
+    final selectedId =
+        selection.recordingIds['musicbrainz'] ??
+        (selection.providerId == 'musicbrainz' ? selection.id : null);
+    if (selectedId != null) {
+      if (selectedId.toLowerCase() != id) return null;
+    } else if (!recordingContextCompatible(
+      selection,
+      source,
+      app.results,
+      eligible: (provider) =>
+          app.providerEnabled(provider) &&
+          const {'found', 'completed'}.contains(app.checks[provider]?.state),
+    )) {
+      return null;
+    }
+    return analysis;
   }
 
   bool _hasLyrics(SourceResult result) =>
@@ -1043,6 +1115,12 @@ class AppControllerAdapter extends VerseUiController {
             state: check.result?.matchKind == MatchKind.rejected
                 ? 'rejected'
                 : check.state,
+            recordingAnalysis: _checkRecordingAnalysis(
+              check.providerId,
+              check.state,
+              check.result,
+              knownResults,
+            ),
             operations: List.unmodifiable([
               for (final operation in check.operations)
                 SearchProviderOperationData(
@@ -1762,11 +1840,13 @@ class AppControllerAdapter extends VerseUiController {
 
   @override
   Future<void> setSearchCatalog(String id) => _guard(() async {
-    if (_disposed ||
-        _route != VerseRoute.main ||
-        _tab != VerseTab.home ||
-        _homeMode != HomeListMode.online ||
-        app.selection != null) {
+    final inSettings = _route == VerseRoute.main && _tab == VerseTab.settings;
+    final inOnlineSearch =
+        _route == VerseRoute.main &&
+        _tab == VerseTab.home &&
+        _homeMode == HomeListMode.online &&
+        app.selection == null;
+    if (_disposed || (!inSettings && !inOnlineSearch)) {
       return;
     }
     if (!app.searchCatalogs.any((provider) => provider.id == id)) return;
@@ -1786,9 +1866,16 @@ class AppControllerAdapter extends VerseUiController {
     if (!changed ||
         change != _catalogChangeRevision ||
         !_isCurrentNavigationIntent(intent) ||
-        _homeMode != HomeListMode.online ||
-        _query != query ||
         app.searchCatalogId != id) {
+      return;
+    }
+    if (inSettings) {
+      notifyListeners();
+      return;
+    }
+    if (_tab != VerseTab.home ||
+        _homeMode != HomeListMode.online ||
+        _query != query) {
       return;
     }
     _searchDebounce?.cancel();
@@ -1884,10 +1971,15 @@ class AppControllerAdapter extends VerseUiController {
         ? app.suggestions
         : _cachedAutocomplete;
     if (app.suggestions.isNotEmpty) _cachedAutocomplete = app.suggestions;
-    final candidate = candidates
+    final row = candidates
         .where((item) => item.identity == reference.id)
         .firstOrNull;
-    if (candidate == null) return;
+    if (row == null) return;
+    final candidate = withRowFacts(
+      row,
+      album: reference.album,
+      durationSeconds: reference.durationSeconds,
+    );
     _selectedVersionId = null;
     _selectedQuery = _query.trim();
     await app.selectCandidate(candidate);
@@ -3098,6 +3190,10 @@ class AppControllerAdapter extends VerseUiController {
   /// not a failure.
   bool get _syncWarningOnly =>
       app.syncWarning != null && app.syncError == app.syncWarning;
+
+  /// The person dismissed a system or Google dialog; nothing went wrong, so it
+  /// is neither an error banner nor a failed-sync notice.
+  bool get _syncCancelled => app.syncError == 'cancelled';
   bool get _autoSyncEnabled => app.autoSyncEnabled;
 
   @override
@@ -3176,6 +3272,7 @@ class AppControllerAdapter extends VerseUiController {
     if (!app.syncConnected) return;
     try {
       await app.chooseSyncDriveFolder();
+      if (_syncCancelled) return;
       if (app.syncError != null) {
         postNotice(UiNotice.syncFailed);
       } else {
@@ -3191,6 +3288,7 @@ class AppControllerAdapter extends VerseUiController {
     if (!app.syncConnected || app.syncDriveFolderName == null) return;
     try {
       await app.importChordProFromDrive();
+      if (_syncCancelled) return;
       if (app.syncError != null) {
         postNotice(UiNotice.syncFailed);
       } else {
@@ -3204,6 +3302,8 @@ class AppControllerAdapter extends VerseUiController {
   void _postSyncOutcome(int conflictsBefore) {
     if (_syncWarningOnly) {
       postNotice(UiNotice.syncSkipped);
+    } else if (_syncCancelled) {
+      return;
     } else if (app.syncError != null) {
       // A refused deletion waits for the person's decision (the dialog); it is
       // not announced as a failed sync as well.

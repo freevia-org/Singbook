@@ -1468,10 +1468,6 @@ class AppLocalizationsDa extends AppLocalizations {
   String get accountImportChordPro => 'Importer ChordPro fra Drive';
 
   @override
-  String get accountImportChordProHint =>
-      'Vælg .cho-filer, der skal føjes til dette bibliotek. Filer, der allerede er i mappen, overtages; filer andre steder kopieres her.';
-
-  @override
   String get syncErrorFolderPickerUnavailable =>
       'Valg af Drev-mappe er ikke tilgængeligt';
 
@@ -1516,9 +1512,6 @@ class AppLocalizationsDa extends AppLocalizations {
   @override
   String get accountSignOutBody =>
       'Dine sange og sanglister forbliver på denne enhed. De bliver ikke sikkerhedskopieret eller synkroniseret, før du logger ind igen.';
-
-  @override
-  String get accountUseDifferent => 'Brug en anden konto';
 
   @override
   String get accountSignInAgain => 'Log ind igen';
@@ -1889,6 +1882,9 @@ class AppLocalizationsDa extends AppLocalizations {
 
   @override
   String get backupExport => 'Eksportér sikkerhedskopi';
+
+  @override
+  String get backupSaveToDevice => 'Gem sikkerhedskopi på enheden';
 
   @override
   String get backupRestore => 'Gendan sikkerhedskopi';

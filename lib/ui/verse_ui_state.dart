@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 
+import '../domain/acousticbrainz_analysis.dart';
 import '../sync/sync_provider.dart';
 
 enum VerseTab { home, songs, setlists, settings }
@@ -403,10 +404,15 @@ class SearchProviderCheckData {
     required this.state,
     this.code,
     this.operations = const [],
+    this.recordingAnalysis,
   });
   final String id, name, state;
   final String? code;
   final List<SearchProviderOperationData> operations;
+
+  /// Safe, unverified submission facts bound to the current recording.
+  /// This is read-only display data, never a lyric version or canonical key.
+  final AcousticBrainzAnalysis? recordingAnalysis;
 }
 
 /// A bounded, safe-to-display step in a provider's discovery/check flow.

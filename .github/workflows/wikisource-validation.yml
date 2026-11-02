@@ -21,7 +21,7 @@ jobs:
   regressions:
     name: Wikisource ${{ matrix.group }}
     runs-on: singbook-i5-linux
-    timeout-minutes: 20
+    timeout-minutes: 80
     strategy:
       fail-fast: false
       matrix:
@@ -52,12 +52,14 @@ jobs:
       CI_TEST_PATHS: ${{ matrix.paths }}
     steps:
       - uses: actions/checkout@v7
+        timeout-minutes: 10
         with:
           repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
 
       - name: Record exact source head and input hashes
+        timeout-minutes: 5
         shell: bash
         run: |
           set -euo pipefail
@@ -69,6 +71,7 @@ jobs:
           sha256sum pubspec.lock > "artifacts/wikisource-ci/$CI_GROUP/lock-before.txt"
 
       - uses: subosito/flutter-action@v2
+        timeout-minutes: 20
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: stable
@@ -113,6 +116,7 @@ jobs:
 
       - name: Preserve group evidence
         if: always()
+        timeout-minutes: 5
         uses: actions/upload-artifact@v7
         with:
           name: wikisource-${{ matrix.group }}-${{ github.event.pull_request.head.sha || github.sha }}

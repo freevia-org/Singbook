@@ -390,7 +390,8 @@ class _PlayerScreenState extends State<PlayerScreen>
     if (defaultTargetPlatform == TargetPlatform.macOS) {
       return '$label (${shortcut.replaceFirst('Ctrl+', '⌥')})';
     }
-    return defaultTargetPlatform == TargetPlatform.windows
+    return defaultTargetPlatform == TargetPlatform.windows ||
+            defaultTargetPlatform == TargetPlatform.linux
         ? '$label ($shortcut)'
         : label;
   }
@@ -2005,6 +2006,7 @@ class _PlayerScreenState extends State<PlayerScreen>
           Flexible(
             child:
                 defaultTargetPlatform == TargetPlatform.windows ||
+                    defaultTargetPlatform == TargetPlatform.linux ||
                     defaultTargetPlatform == TargetPlatform.macOS
                 ? Tooltip(
                     message: _shortcutHint(

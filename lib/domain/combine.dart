@@ -10,6 +10,7 @@ import 'artist_credit.dart';
 import 'reviewed_chart_artist.dart';
 import 'metadata_artist_credit.dart';
 import 'published_name_alias.dart';
+import 'search_grouping.dart' show rowAlbumKey, rowDurationKey, withoutRowFacts;
 import 'arrangement_context.dart';
 import 'contextual_chart_lyrics.dart';
 import 'compact_chord_alignment.dart';
@@ -3228,6 +3229,27 @@ SongDocument combineSources(
   String? preferredSourceId,
   bool allowRejectedPreferredSource = false,
   List<HistoricalCacheUse> historicalCacheUses = const [],
+}) =>
+    // The search row's displayed facts fill only what no source stated, and
+    // never enter the selection that is ranked and stored.
+    _combineSources(
+      withoutRowFacts(selected),
+      results,
+      rowAlbum: selected.metadata[rowAlbumKey],
+      rowDuration: selected.metadata[rowDurationKey],
+      preferredSourceId: preferredSourceId,
+      allowRejectedPreferredSource: allowRejectedPreferredSource,
+      historicalCacheUses: historicalCacheUses,
+    );
+
+SongDocument _combineSources(
+  SongCandidate selected,
+  List<SourceResult> results, {
+  required Object? rowAlbum,
+  required Object? rowDuration,
+  String? preferredSourceId,
+  bool allowRejectedPreferredSource = false,
+  List<HistoricalCacheUse> historicalCacheUses = const [],
 }) {
   final inputSources = List<SourceResult>.of(results);
   results = _retainedSourceEvidence(selected, results);
@@ -3767,7 +3789,17 @@ SongDocument combineSources(
     origins['sections'] = sectionSourceIds.first;
     fieldContributors['sections'] = sectionSourceIds.toSet();
   }
-  final sourcesById = {for (final source in matching) source.id: source};
+  // A search-evidence entry can share its ID with the fetched source; the
+  // fetched one carries the chart and its key shift.
+  final sourcesById = <String, SourceResult>{};
+  for (final source in matching) {
+    final known = sourcesById[source.id];
+    if (known == null ||
+        known.extra['searchEvidenceOnly'] == true &&
+            source.extra['searchEvidenceOnly'] != true) {
+      sourcesById[source.id] = source;
+    }
+  }
   final arrangementSourceIds = <String>{best.id};
   for (final sourceId in chordSourceIds) {
     final source = sourcesById[sourceId];
@@ -4214,6 +4246,17 @@ SongDocument combineSources(
         )
       : (body: sectioned, lines: 0);
   final finalBody = filled.body;
+  // The search row's album and length fill only what no source stated.
+  for (final (field, value) in [
+    ('album', rowAlbum),
+    ('durationSeconds', _validDuration(rowDuration)),
+  ]) {
+    if (_hasMetadata(metadata[field]) || value is! Object) continue;
+    if (value is String && value.trim().isEmpty) continue;
+    metadata[field] = value;
+    origins[field] = selected.identity;
+    fieldContributors[field] = {selected.identity};
+  }
   final song = SongDocument(
     id: newId(),
     title: selected.title,
@@ -5561,21 +5604,22 @@ EvidenceRanking _rankSourceCombination(
           !declarations.any(
             (other) =>
                 other.sourceId != claim.sourceId &&
-                _keyDistance(other.value as String, claim.value as String) != 0,
+                _keyIdentity(other.value) != _keyIdentity(claim.value),
           )) {
         continue;
       }
+      // A relative major/minor dispute (C against Am) is a real contest, but
+      // a chart estimate of the relative key cannot settle its mode.
+      final value = claim.value as String;
+      final fit =
+          clearChartKeys.any((key) => _keyIdentity(key) == _keyIdentity(value))
+          ? 8
+          : clearChartKeys.any((key) => _keyDistance(key, value) == 0)
+          ? 0
+          : -8;
       claims[i] = _rebuildClaim(
         claim,
-        qualitySignals: {
-          ...claim.qualitySignals,
-          'contestedHomeKeyFit':
-              clearChartKeys.any(
-                (key) => _keyDistance(key, claim.value as String) == 0,
-              )
-              ? 8
-              : -8,
-        },
+        qualitySignals: {...claim.qualitySignals, 'contestedHomeKeyFit': fit},
       );
     }
   }

@@ -55,9 +55,12 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Original Lantern Song'), findsOneWidget);
       await captureIosCheckpoint('parity_library_mode');
-      await tester.tap(find.byKey(const ValueKey('home-mode-favorites')));
+      await tester.tap(find.byKey(const ValueKey('favorites-filter-button')));
       await tester.pumpAndSettle();
       expect(find.text('Original Lantern Song'), findsNothing);
+      await tester.tap(find.byKey(const ValueKey('favorites-filter-button')));
+      await tester.pumpAndSettle();
+      expect(find.text('Original Lantern Song'), findsOneWidget);
       await tester.tap(find.byKey(const ValueKey('home-mode-recent')));
       await tester.pumpAndSettle();
       expect(find.text(l10n.homeRecentEmpty), findsOneWidget);
@@ -96,7 +99,7 @@ void main() {
         if (section == 'player') {
           final showChords = find.widgetWithText(
             SwitchListTile,
-            l10n.readerShowChords,
+            l10n.editorChordsField,
           );
           await tester.ensureVisible(showChords);
           await tester.tap(showChords);
@@ -162,7 +165,10 @@ void main() {
       await tester.tap(find.text('Original Lantern Song'));
       await tester.pumpAndSettle();
       expect(find.byType(PlayerScreen), findsOneWidget);
-      expect(find.textContaining(l10n.playerEstimatedKey), findsOneWidget);
+      expect(
+        find.byTooltip(RegExp(RegExp.escape(l10n.playerEstimatedKey))),
+        findsOneWidget,
+      );
       final player = tester.widget<PlayerScreen>(find.byType(PlayerScreen));
       expect(player.controller.state.readerKeyEstimated, isTrue);
       expect(player.controller.state.readerKey, isNotNull);
@@ -172,10 +178,14 @@ void main() {
       );
       expect(initialSeek.max, greaterThan(0));
       expect(
-        find.text(
-          l10n.playerEstimatedDuration(formatDuration(initialSeek.max)),
+        find.bySemanticsLabel(
+          RegExp(
+            RegExp.escape(
+              l10n.playerEstimatedDuration(formatDuration(initialSeek.max)),
+            ),
+          ),
         ),
-        findsOneWidget,
+        findsWidgets,
       );
       await captureIosCheckpoint('parity_reader_estimated_metadata');
 

@@ -1,0 +1,1 @@
+The first native Mac version of Singbook brings your offline lyrics, chords and setlists to the desktop, with native file import and export, PDF printing, keyboard controls, and resizable windows.

@@ -22,17 +22,20 @@ jobs:
     # Keep this serial diagnostic lane available for targeted manual runs.
     if: github.event_name == 'workflow_dispatch'
     runs-on: singbook-i5-linux
-    timeout-minutes: 20
+    timeout-minutes: 80
     steps:
       - uses: actions/checkout@v7
+        timeout-minutes: 10
         with:
           persist-credentials: false
       - uses: subosito/flutter-action@v2
+        timeout-minutes: 20
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: stable
           cache: true
       - name: Get locked dependencies
+        timeout-minutes: 15
         run: flutter pub get --enforce-lockfile --no-example
       - name: Run the six focused regression files
         timeout-minutes: 10
@@ -49,6 +52,7 @@ jobs:
             2>&1 | tee artifacts/ux-batch-validation/focused-tests.log
       - name: Preserve focused regression logs
         if: always()
+        timeout-minutes: 5
         uses: actions/upload-artifact@v7
         with:
           name: ux-focused-regressions-${{ github.sha }}
@@ -58,17 +62,20 @@ jobs:
 
   host-visuals:
     runs-on: singbook-i5-linux
-    timeout-minutes: 20
+    timeout-minutes: 80
     steps:
       - uses: actions/checkout@v7
+        timeout-minutes: 10
         with:
           persist-credentials: false
       - uses: subosito/flutter-action@v2
+        timeout-minutes: 20
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: stable
           cache: true
       - name: Get locked dependencies
+        timeout-minutes: 15
         run: flutter pub get --enforce-lockfile --no-example
       - name: Capture the 25 host screenshots
         timeout-minutes: 6
@@ -80,6 +87,7 @@ jobs:
             test/ui/ui_batch_visual_capture.dart \
             2>&1 | tee artifacts/ux-batch-validation/host-visuals.log
       - name: Verify and hash the fresh capture set
+        timeout-minutes: 5
         env:
           VALIDATED_SOURCE_SHA: ${{ github.sha }}
         run: |
@@ -114,6 +122,7 @@ jobs:
           PY
       - name: Preserve fresh host screenshots and logs
         if: always()
+        timeout-minutes: 5
         uses: actions/upload-artifact@v7
         with:
           name: ux-host-visuals-${{ github.sha }}

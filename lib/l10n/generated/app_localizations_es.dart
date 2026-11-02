@@ -1476,10 +1476,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get accountImportChordPro => 'Importar ChordPro desde Drive';
 
   @override
-  String get accountImportChordProHint =>
-      'Elija archivos .cho para agregarlos a esta biblioteca. Se adoptan los archivos que ya están en la carpeta; Los archivos de otros lugares se copian aquí.';
-
-  @override
   String get syncErrorFolderPickerUnavailable =>
       'La selección de carpeta de Drive no está disponible';
 
@@ -1525,9 +1521,6 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get accountSignOutBody =>
       'Tus canciones y listas permanecen en este dispositivo. No se guardarán ni sincronizarán hasta que vuelvas a iniciar sesión.';
-
-  @override
-  String get accountUseDifferent => 'Usar otra cuenta';
 
   @override
   String get accountSignInAgain => 'Volver a iniciar sesión';
@@ -1907,6 +1900,10 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get backupExport => 'Exportar copia de seguridad';
+
+  @override
+  String get backupSaveToDevice =>
+      'Guardar copia de seguridad en el dispositivo';
 
   @override
   String get backupRestore => 'Restaurar copia de seguridad';

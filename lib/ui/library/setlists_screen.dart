@@ -518,6 +518,7 @@ class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
                         editing,
                       );
                       if (defaultTargetPlatform == TargetPlatform.windows ||
+                          defaultTargetPlatform == TargetPlatform.linux ||
                           defaultTargetPlatform == TargetPlatform.macOS) {
                         return _DesktopRowDragStartListener(
                           key: ValueKey(entry.id),

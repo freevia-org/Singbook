@@ -49,6 +49,22 @@ class _BackupSectionState extends State<BackupSection> {
     }
   }
 
+  Future<void> _saveToDevice() async {
+    setState(() => _busy = true);
+    final l10n = AppLocalizations.of(context);
+    try {
+      final bytes = await widget.controller.exportBackup(
+        includePreferences: _includePreferences,
+      );
+      if (!mounted) return;
+      await widget.files.saveBackupBytes(bytes);
+    } catch (_) {
+      _message(l10n.backupFailed);
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
   Future<void> _restore() async {
     setState(() => _busy = true);
     final l10n = AppLocalizations.of(context);
@@ -189,6 +205,13 @@ class _BackupSectionState extends State<BackupSection> {
             title: Text(l10n.backupExport),
             enabled: !_busy,
             onTap: _busy ? null : _export,
+          ),
+          ListTile(
+            key: const ValueKey('backup-save-device'),
+            leading: const Icon(Icons.download),
+            title: Text(l10n.backupSaveToDevice),
+            enabled: !_busy,
+            onTap: _busy ? null : _saveToDevice,
           ),
           ListTile(
             key: const ValueKey('backup-restore'),

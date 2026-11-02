@@ -7,6 +7,7 @@ import 'macos_drive_file_access.dart';
 import 'windows_drive_file_access.dart';
 import 'mobile_drive_file_access.dart';
 import 'sync_protocol.dart';
+import 'linux_credential_store.dart';
 import 'windows_google_auth.dart';
 
 typedef SavedDriveIdentityLoader = Future<Map<String, String>?> Function();
@@ -33,6 +34,10 @@ DriveAuthorization createPlatformDriveAuthorization({
   switch (platformOverride ?? defaultTargetPlatform) {
     case TargetPlatform.windows:
       return windowsBuilder?.call() ?? WindowsGoogleDriveAuth();
+    case TargetPlatform.linux:
+      // Same loopback OAuth flow as Windows; tokens live in a private file.
+      return windowsBuilder?.call() ??
+          WindowsGoogleDriveAuth(credentials: LinuxCredentialStore());
     case TargetPlatform.android:
     case TargetPlatform.iOS:
     case TargetPlatform.macOS:
@@ -63,6 +68,7 @@ DriveFileAccessCapability? createPlatformDriveFileAccess(
   if (isWebOverride ?? kIsWeb) return null;
   final platform = platformOverride ?? defaultTargetPlatform;
   if (platform != TargetPlatform.windows &&
+      platform != TargetPlatform.linux &&
       platform != TargetPlatform.android &&
       platform != TargetPlatform.iOS &&
       platform != TargetPlatform.macOS) {

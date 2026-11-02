@@ -52,6 +52,8 @@ class SourceCatalogClient {
 
   /// Closest older channel first. Used only without a valid current cache.
   /// Bundled baselines distinguish a publisher removal from a new native ID.
+  /// Supply only known local channels; the controller bounds this finite list
+  /// using the compiled cache channel and its bundled predecessor assets.
   final Future<List<PreviousSourceCatalogCache>> Function()? readPreviousCaches;
   final Uri endpoint;
   String? lastErrorCode;
@@ -104,9 +106,10 @@ class SourceCatalogClient {
     }
     if (!currentCacheValid && bundled != null) {
       try {
-        // The controller supplies only known local channel keys/assets. Bound
-        // this optional callback too; invalid older state cannot block startup.
-        for (final previous in (await readPreviousCaches!()).take(9)) {
+        // The controller bounds this history to known local channel keys/assets.
+        // Visit every supplied snapshot so a new channel cannot silently drop
+        // the oldest supported cache. Invalid entries still fall through.
+        for (final previous in await readPreviousCaches!()) {
           try {
             final baseline = SourceCatalog.parse(previous.bundled);
             final cached = SourceCatalog.parse(previous.cached);

@@ -136,6 +136,15 @@ void main() {
     },
   );
 
+  test('Linux reuses the desktop OAuth authorization', () {
+    final auth = createPlatformDriveAuthorization(
+      platformOverride: TargetPlatform.linux,
+      isWebOverride: false,
+    );
+    expect(auth, isA<WindowsGoogleDriveAuth>());
+    expect(auth, isA<DriveFileAccessCapability>());
+  });
+
   test(
     'default constructors retain mobile callbacks and Windows type without native calls',
     () {
@@ -163,7 +172,6 @@ void main() {
   );
 
   for (final platform in [
-    TargetPlatform.linux,
     TargetPlatform.fuchsia,
   ]) {
     test(
@@ -220,6 +228,7 @@ void main() {
       final capable = _Auth(), plain = _PlainAuth();
       for (final platform in [
         TargetPlatform.windows,
+        TargetPlatform.linux,
         TargetPlatform.android,
         TargetPlatform.iOS,
       ]) {

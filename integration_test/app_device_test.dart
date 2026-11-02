@@ -8,6 +8,7 @@ import 'package:singbook/data/library_repository.dart';
 import 'package:singbook/domain/models.dart';
 import 'package:singbook/domain/timing.dart';
 import 'package:singbook/providers/core/service.dart';
+import 'package:singbook/ui/player/player_screen.dart';
 import 'package:singbook/ui/verse_app.dart';
 import 'support/ios_screenshots.dart';
 
@@ -142,17 +143,22 @@ void main() {
           debugPrint(
             'VERSE_TABLET_LAYOUT size=$size '
             'rail=${tester.getSize(find.byType(NavigationRail).first)} '
-            'grid=${tester.getSize(find.byKey(const PageStorageKey('songs-library-grid')))} '
+            'list=${tester.getSize(find.byKey(const PageStorageKey('songs-library-list')))} '
             'firstSong=${tester.getTopLeft(find.text('Small Hours').first)}',
           );
           expect(
-            find.byKey(const PageStorageKey('songs-library-grid')),
+            find.byKey(const PageStorageKey('songs-library-list')),
             findsOneWidget,
           );
-          expect(
-            tester.getTopLeft(find.text('Small Hours').first).dx,
-            lessThan(tester.getTopLeft(find.text('Z Song 0')).dx),
-          );
+          // The library is a single alphabetical list; the lazily built
+          // list may not have reached the Z titles on every viewport.
+          final lastSong = find.text('Z Song 0');
+          if (lastSong.evaluate().isNotEmpty) {
+            expect(
+              tester.getTopLeft(find.text('Small Hours').first).dy,
+              lessThan(tester.getTopLeft(lastSong).dy),
+            );
+          }
         }
         expect(tester.takeException(), isNull, reason: 'Library at $size');
         final viewport = '${size.width.toInt()}x${size.height.toInt()}';
@@ -165,11 +171,27 @@ void main() {
           of: find.textContaining('The room is warm tonight').first,
           matching: find.byType(ListView),
         );
-        expect(tester.getSize(lyricsList).width, lessThanOrEqualTo(960));
+        // The reader route uses the full available width (no 960 frame).
+        final lyricsWidth = tester.getSize(lyricsList).width;
+        expect(lyricsWidth, lessThanOrEqualTo(size.width));
+        expect(lyricsWidth, greaterThan(0));
         expect(tester.takeException(), isNull, reason: 'Reader at $size');
         await _capture('populated_reader_$viewport');
 
-        await tester.tap(find.byIcon(Icons.edit_outlined));
+        // Edit lives in the player's song-actions menu.
+        await tester.tap(
+          find.descendant(
+            of: find.byType(PlayerScreen),
+            matching: find.byIcon(Icons.more_horiz_rounded),
+          ),
+        );
+        await tester.pumpAndSettle();
+        await tester.tap(
+          find.byWidgetPredicate(
+            (widget) =>
+                widget is PopupMenuItem<String> && widget.value == 'edit',
+          ),
+        );
         await tester.pumpAndSettle();
         if (size.width >= 700) {
           final titleField = find.byWidgetPredicate(
@@ -208,7 +230,7 @@ void main() {
         expect(find.text('Evening Set'), findsWidgets);
         if (size.width >= 800) {
           expect(
-            find.byKey(const ValueKey('tablet-setlists-grid')),
+            find.byKey(const ValueKey('setlists-library-list')),
             findsOneWidget,
           );
         }

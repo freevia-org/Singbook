@@ -106,14 +106,6 @@ void main() {
           find.byKey(const ValueKey('account-drive-folder')),
           findsNothing,
         );
-        expect(
-          find.byKey(const ValueKey('account-import-drive-chordpro')),
-          findsNothing,
-        );
-        expect(
-          find.byKey(const ValueKey('account-use-different')),
-          findsNothing,
-        );
 
         signedIn = true;
         controller.refresh();
@@ -121,14 +113,6 @@ void main() {
         expect(find.text('Disconnect iCloud'), findsOneWidget);
         expect(
           find.byKey(const ValueKey('account-drive-folder')),
-          findsNothing,
-        );
-        expect(
-          find.byKey(const ValueKey('account-import-drive-chordpro')),
-          findsNothing,
-        );
-        expect(
-          find.byKey(const ValueKey('account-use-different')),
           findsNothing,
         );
       });

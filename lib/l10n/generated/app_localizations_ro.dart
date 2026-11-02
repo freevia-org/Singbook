@@ -1491,10 +1491,6 @@ class AppLocalizationsRo extends AppLocalizations {
   String get accountImportChordPro => 'Importă ChordPro din Drive';
 
   @override
-  String get accountImportChordProHint =>
-      'Alegeți fișierele .cho pentru a le adăuga la această bibliotecă. Fișierele aflate deja în folder sunt adoptate; fișierele din altă parte sunt copiate aici.';
-
-  @override
   String get syncErrorFolderPickerUnavailable =>
       'Selectarea folderului Drive nu este disponibilă';
 
@@ -1539,9 +1535,6 @@ class AppLocalizationsRo extends AppLocalizations {
   @override
   String get accountSignOutBody =>
       'Melodiile și listele rămân pe acest dispozitiv. Nu vor fi salvate sau sincronizate până când te conectezi din nou.';
-
-  @override
-  String get accountUseDifferent => 'Folosește alt cont';
 
   @override
   String get accountSignInAgain => 'Conectează-te din nou';
@@ -1921,6 +1914,9 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get backupExport => 'Exportă copia de rezervă';
+
+  @override
+  String get backupSaveToDevice => 'Salvează copia de rezervă pe dispozitiv';
 
   @override
   String get backupRestore => 'Restaurează copia de rezervă';

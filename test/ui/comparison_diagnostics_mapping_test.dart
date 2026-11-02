@@ -99,15 +99,20 @@ class _IdentityDiscovery extends SourceDiscoveryService {
     Map<String, CancellationToken> providerCancellation = const {},
     Duration alternativeTimeout = const Duration(seconds: 30),
   }) async {
+    await app.flushCombine();
     final before = app.combined;
     final cached = app.results.single;
     onProgress?.call(
       ProviderCheck(providerId: 'fixture', state: 'found', result: cached),
     );
+    await Future<void>.delayed(const Duration(milliseconds: 100));
     preservedCombinedForNoOp = identical(app.combined, before);
     onProgress?.call(
       ProviderCheck(providerId: 'fixture', state: 'found', result: result),
     );
+    for (var i = 0; i < 100 && identical(app.combined, before); i++) {
+      await Future<void>.delayed(const Duration(milliseconds: 20));
+    }
     replacedCombinedForNewResult = !identical(app.combined, before);
     updatedCombinedMetadata = app.combined?.metadata['key'] == 'D';
     return [result];
