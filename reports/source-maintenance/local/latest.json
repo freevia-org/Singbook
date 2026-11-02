@@ -1,10 +1,11 @@
 {
   "schemaVersion": 1,
   "catalogRevision": 23,
-  "measuredAt": "2026-11-01T07:07:21.483325Z",
+  "measuredAt": "2026-11-02T06:59:35.686275Z",
   "offline": false,
   "summary": {
-    "healthy": 24,
+    "healthy": 23,
+    "identity_mismatch": 1,
     "coverage_gap": 1,
     "import_only": 1,
     "partial_coverage": 2,
@@ -234,7 +235,7 @@
         {
           "id": "wonderwall-oasis-studio",
           "status": "healthy",
-          "candidateId": "sha256:3c85ba8a576d6c38",
+          "candidateId": "sha256:07c74b391827c59c",
           "providerId": "lyricsovh",
           "bodyCharacters": 1307,
           "metadataFields": [
@@ -258,17 +259,18 @@
     {
       "id": "synclrc",
       "name": "SyncLRC",
-      "status": "healthy",
+      "status": "identity_mismatch",
       "coverage": {
-        "status": "complete",
+        "status": "partial",
         "verifiedCapabilities": [
-          "catalog",
           "lineTiming",
           "lyrics",
           "metadata",
           "wordTiming"
         ],
-        "unverifiedCapabilities": []
+        "unverifiedCapabilities": [
+          "catalog"
+        ]
       },
       "probes": [
         {
@@ -327,31 +329,8 @@
         },
         {
           "id": "never-gonna-give-you-up-catalog-search",
-          "status": "healthy",
-          "candidateId": "sha256:103d1847e23a2f97",
-          "providerId": "synclrc",
-          "bodyCharacters": 1927,
-          "metadataFields": [
-            "album",
-            "duration",
-            "hasLyrics",
-            "instrumental",
-            "query"
-          ],
-          "verifiedCapabilities": [
-            "catalog",
-            "lineTiming",
-            "lyrics",
-            "metadata",
-            "wordTiming"
-          ],
-          "timingTrackCount": 2,
-          "timingGranularities": [
-            "line",
-            "word"
-          ],
-          "timingRawRetained": true,
-          "hasChords": false
+          "status": "identity_mismatch",
+          "reason": "expected_candidate_not_found"
         }
       ]
     },
@@ -1981,17 +1960,21 @@
         "databaseLag": {}
       },
       "lrclib.net": {
-        "requests": 3,
+        "requests": 4,
         "statuses": {
-          "200": 3
+          "200": 3,
+          "503": 1
         },
-        "retryAfterSeconds": {},
+        "retryAfterSeconds": {
+          "1": 1
+        },
         "databaseLag": {}
       },
       "lyricsplus.prjktla.my.id": {
         "requests": 4,
         "statuses": {
-          "200": 4
+          "200": 3,
+          "404": 1
         },
         "retryAfterSeconds": {},
         "databaseLag": {}
@@ -2126,7 +2109,7 @@
       }
     }
   },
-  "sourceCommit": "481819e5ebd98ea18cf57951e994bd392b3bf303",
+  "sourceCommit": "823d3b9e956c5c18918b7812c052d606a8c96929",
   "catalogPath": "config/source-catalog-v10.json",
   "catalogChannel": 10,
   "catalogSha256": "a61377c845601888f22a8abf0f43a66ace1a61a85b6f627cd709e9f376b28dce",
@@ -2143,52 +2126,52 @@
     "offlineStructuralCheck": "passed"
   },
   "comparisonEvidence": {
-    "priorLocalMeasuredAt": "2026-10-31T20:11:42.817467Z",
+    "priorLocalMeasuredAt": "2026-11-01T07:07:21.483325Z",
     "cloudLatestMeasuredAt": "2026-11-01T07:02:14.231822Z",
     "cloudAndLocalIndependent": true
   },
   "roadblocks": [
     {
-      "affected": "Better Lyrics",
+      "reason": "Expected Rick Astley candidate absent from ten returned identities",
+      "tried": "Both direct timed lyric probes passed; one separately counted search recheck returned ten other artists",
       "resolved": false,
-      "reason": "Probe found multiple matching candidates; recording identity is ambiguous",
-      "action": "Further identity investigation needed; no user action",
-      "tried": "Full scheduled source search, no first-match selection"
+      "action": "Search coverage remains unverified; do not substitute another song",
+      "affected": "SyncLRC catalog search"
     },
     {
-      "affected": "LyricsPlus",
+      "reason": "Multiple matching candidates prevent an unambiguous identity",
+      "tried": "Scheduled search; no first-match selection",
       "resolved": false,
-      "reason": "Both canaries unavailable; recent diagnostics found QQ Music winners outside the independently verified Apple-only adapter",
-      "action": "Qualify independent upstream identity or await Apple recovery",
-      "tried": "Full scheduled probes and prior October31 documented diagnostics"
+      "action": "Further identity investigation needed",
+      "affected": "Better Lyrics"
     },
     {
-      "affected": "Chordie and Wikisource",
+      "reason": "Both canaries unavailable; prior diagnostics found QQ Music winners outside independently verified Apple-only adapter",
+      "tried": "Scheduled canaries; reused October31 diagnostics",
       "resolved": false,
-      "reason": "Publisher file import capability remains unverified",
+      "action": "Qualify upstream identity or await Apple recovery",
+      "affected": "LyricsPlus"
+    },
+    {
+      "reason": "File import capability remains unverified",
+      "tried": "Scheduled search and extraction canaries passed",
+      "resolved": false,
       "action": "Separate permitted import qualification needed",
-      "tried": "Scheduled search/extraction canaries passed"
+      "affected": "Chordie and Wikisource"
     },
     {
-      "affected": "Ozbcoz",
-      "resolved": false,
       "reason": "Lookup is import-only and native picker coverage is separate",
+      "tried": "Scheduled source check and separate host import phase",
+      "resolved": false,
       "action": "Native picker qualification remains",
-      "tried": "Scheduled source check and separate host import tests"
+      "affected": "Ozbcoz"
     },
     {
-      "affected": "Pisni and OpenScore Lieder",
-      "resolved": false,
       "reason": "Intentionally disabled pending qualification and rights review",
-      "action": "Existing integration review remains",
-      "tried": "Included in full registry/catalog validation"
-    },
-    {
-      "affected": "NØISE discovery",
+      "tried": "Included in full registry/catalog validation",
       "resolved": false,
-      "reason": "Documented personal download rights target its own app; Singbook storage/export permission unestablished",
-      "action": "Access and rights clarification before live qualification",
-      "tried": "Publisher API, terms and content-rule documentation reviewed"
+      "action": "Existing integration review remains",
+      "affected": "Pisni and OpenScore Lieder"
     }
   ]
 }
