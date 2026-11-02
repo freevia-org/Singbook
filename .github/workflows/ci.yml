@@ -5,12 +5,13 @@ name: CI
 # ID as a GitHub Actions variable and its optional registration field as a
 # masked Actions secret. This workflow never signs.
 #
-# Layout (fail fast, then fan out). Every job runs on a GitHub-hosted runner
-# (free: this repository is public): the local I5 runners sit behind a capacity
-# gate shared with other repositories, where jobs waited up to 35 minutes.
+# Layout (fail fast, then fan out). Analysis and the Linux Flutter suite use the
+# local I5 Linux runner. The two Windows Flutter test shards use the persistent
+# I5 Windows runner and queue one at a time; Windows release build and desktop
+# journey stay on hosted Windows VMs, while Linux packaging stays on Ubuntu 24.04.
 #   analyze ──┬─> windows-build    (release bundle, packaging + native smoke)
-#             ├─> windows-test     (complete Flutter suite on Windows, sharded)
-#             └─> windows-journey  (deterministic desktop integration journey)
+#             ├─> windows-test     (Windows Flutter suite; serialized shards)
+#             ├─> windows-journey  (deterministic desktop integration journey)
 #             └─> linux-build      (release bundle, AppImage + .deb, xvfb journey)
 #   test        (complete Flutter suite on Linux; runs in parallel with analyze)
 # The Microsoft Store packaging workflows consume the `windows-release-bundle`
@@ -272,7 +273,10 @@ jobs:
   windows-test:
     name: windows-test (${{ matrix.shard }}/2)
     needs: analyze
-    runs-on: windows-2025
+    # This runner uses Anton's persistent interactive profile. Only run trusted
+    # default-branch code here; the workflow remains manual-only.
+    if: github.ref == 'refs/heads/main'
+    runs-on: singbook-i5-windows
     timeout-minutes: 25
     strategy:
       fail-fast: false
