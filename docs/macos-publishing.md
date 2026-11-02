@@ -45,7 +45,9 @@ instructions using bundle ID `org.freevia.singbook`. Supply its client ID as
 `macos/Runner/Configs/Secrets.xcconfig`, set `GID_CLIENT_ID` to the same ID and
 `GID_REVERSED_CLIENT_ID` to the ID's reversed components. The build preflight
 checks their alignment without printing their values. Do not use the Windows
-desktop OAuth client for this native SDK flow.
+desktop OAuth client for this native SDK flow. `scripts/build-macos.sh` removes
+`SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET` from the local defines before compiling;
+the desktop app cannot keep this public-client value confidential.
 
 Primary sync uses `drive.appdata`. The explicit visible-folder/file Picker
 action uses a separate `drive.file` grant, state and S256 PKCE through

@@ -13,11 +13,14 @@ sudo apt-get install clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev
 ```
 
 ```bash
-flutter build linux --release --dart-define-from-file=config/local.defines.json
+flutter pub get --enforce-lockfile
+scripts/build-linux.sh release
 ```
 
 `config/local.defines.json` is optional and ignored by Git; without it Google
-sync and Genius are unavailable. The bundle is
+sync and Genius are unavailable. The build helper removes
+`SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET` from local defines before compiling so
+the public desktop app never embeds that value. The bundle is
 `build/linux/x64/release/bundle/`. Package it (nothing is published):
 
 ```bash

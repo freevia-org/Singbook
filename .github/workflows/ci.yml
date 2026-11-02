@@ -125,10 +125,9 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
 
-  windows-oauth-preflight:
-    name: Windows OAuth preflight (hosted, no secret)
+  desktop-oauth-preflight:
+    name: Desktop OAuth preflight (hosted, no secret)
     needs: analyze
-    if: github.ref == 'refs/heads/main'
     runs-on: windows-2025
     timeout-minutes: 5
     env:
@@ -138,7 +137,7 @@ jobs:
         shell: pwsh
         run: |
           if ([string]::IsNullOrWhiteSpace($env:SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID)) {
-            throw 'The SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID Actions variable is required for the Windows release bundle.'
+            throw 'The SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID Actions variable is required for desktop release bundles.'
           }
 
           # Probe the public Desktop client using a deliberately invalid code.
@@ -165,7 +164,7 @@ jobs:
           }
 
   windows-build:
-    needs: [analyze, windows-oauth-preflight]
+    needs: [analyze, desktop-oauth-preflight]
     # Only noninteractive build work runs on this persistent user profile. The
     # native window, clipboard, and credential checks remain on hosted Windows.
     if: github.ref == 'refs/heads/main'
@@ -401,12 +400,11 @@ jobs:
           retention-days: 7
 
   linux-build:
-    needs: analyze
+    needs: [analyze, desktop-oauth-preflight]
     runs-on: ubuntu-24.04
     timeout-minutes: 40
     env:
       SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID: ${{ vars.SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID }}
-      SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET: ${{ secrets.SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -427,11 +425,7 @@ jobs:
         run: flutter pub get --enforce-lockfile --no-example
 
       - name: Build the release bundle
-        run: |
-          defines=()
-          [ -n "$SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID" ] && defines+=(--dart-define=SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID="$SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID")
-          [ -n "$SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET" ] && defines+=(--dart-define=SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET="$SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET")
-          flutter build linux --release "${defines[@]}"
+        run: scripts/build-linux.sh release
 
       - name: Package the AppImage and .deb
         run: scripts/package-linux.sh build/linux-packages

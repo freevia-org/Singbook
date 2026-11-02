@@ -65,14 +65,15 @@ This is a staging window, not permanent archival storage: preserve qualified
 release assets and receipts durably before expiry. Longer retention does not
 restore expired historical pins.
 
-Windows CI validates the Desktop OAuth client on a hosted runner using the PKCE
-token exchange without a client secret, then builds the local portable bundle
-with the secret define explicitly blank and the versioned example defines file.
-Google classifies installed desktop apps as public clients that cannot keep a
-client secret confidential; the application code also reads that field as a
-compile-time define and would embed it in the distributed binary. If the hosted
-probe reports that this client requires a secret, CI fails before the local
-build rather than placing the credential on the persistent runner.
+Desktop CI validates the Google OAuth client on hosted Windows with a PKCE token
+exchange that omits the client secret. Windows and Linux CI builds, plus the
+Windows and macOS local build scripts, strip
+`SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET` from app defines. Desktop OAuth clients
+are public clients and cannot keep this value confidential; the app code would
+embed it if supplied as a compile-time define. If the hosted probe reports that
+the client requires a secret, desktop CI fails before packaging. Store package
+workflows reject portable manifests that report a configured client secret, so
+older candidates must be rebuilt from the secretless build path before repackaging.
 
 Use `scripts/build-android.ps1` for Android. Bundle/symbol destination collisions
 fail before Flutter starts, and are checked again before copying. Reuse verified
