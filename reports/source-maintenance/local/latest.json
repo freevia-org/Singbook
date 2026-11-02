@@ -2172,6 +2172,20 @@
       "resolved": false,
       "action": "Existing integration review remains",
       "affected": "Pisni and OpenScore Lieder"
+    },
+    {
+      "tried": "Two attempts to send to authorized integration thread",
+      "affected": "Integration handoff",
+      "reason": "Codex app-server unavailable",
+      "resolved": false,
+      "action": "Restore Codex app-server connectivity or relay report"
     }
-  ]
+  ],
+  "integrationHandoff": {
+    "status": "failed",
+    "reason": "Codex app-server unavailable",
+    "attempts": 2,
+    "destination": "authorized SB Integration thread",
+    "userAction": "Restore Codex app-server connectivity or relay report to integration"
+  }
 }
