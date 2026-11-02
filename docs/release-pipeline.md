@@ -35,9 +35,10 @@ evidence, not a substitute for reviewing the diff and results.
 | Lane | Purpose | Reuse and limits |
 | --- | --- | --- |
 | CI analysis | Generated localization drift and Dart analysis | Required before Windows fanout; locked dependencies. |
-| Linux suite | Complete Flutter unit/widget suite | Includes the six UX focused regression files. |
-| Windows shards | Complete suite split across two jobs | Keep both results; retry only a failed shard after inspection, retaining the original failure. |
-| Windows build and journey | Portable packaging on the local I5 Windows runner; hosted native smoke and deterministic desktop journey | The local job is noninteractive; hosted Windows owns app launch, clipboard, credential and window-state checks. Separate from host widget geometry; never qualifies Android/iOS UI. |
+| Linux suite | Complete Flutter unit/widget suite on the local I5 Linux runner | Includes the six UX focused regression files. |
+| Windows shards and build | Complete Flutter suite and portable packaging on the local I5 Windows runner | Keep both shard results; retry only a failed shard after inspection, retaining the original failure. These jobs are noninteractive. |
+| Desktop OAuth preflight | Secretless PKCE check on the local I5 Windows runner; main only | Validates the public client configuration before packaging. |
+| Windows native smoke and journey | Hosted native smoke and deterministic desktop journey | Hosted Windows owns isolated app launch, clipboard, credential and window-state checks. Separate from host widget geometry; never qualifies Android/iOS UI. |
 | UX host visuals | 25 dedicated captures with hashed sidecars | Runs on the PR merge tree, matching general CI; review relevant originals. Does not prove native fullscreen or OS dialogs. |
 | UX focused / Wikisource | Extra bounded regressions and diagnostics | UX focused runs on manual dispatch; all six files remain in complete CI on PRs. Wikisource explicitly records head-only evidence. |
 | macOS compilation | Platform regressions and unsigned universal app | Does not establish GUI acceptance, signing or notarization. |
@@ -45,10 +46,29 @@ evidence, not a substitute for reviewing the diff and results.
 
 Keep `linux-build` on hosted `ubuntu-24.04`. Its workflow installs desktop and
 packaging dependencies with `sudo apt-get`, then uses ImageMagick, Xvfb, Zenity
-and desktop-file utilities. The current `ci-singbook-linux-current` container
-lacks those packages; its root filesystem is read-only and sudo cannot elevate.
-The audit also reports missing `libgbm-dev` and WebKitGTK 4.0 (only 4.1 is
-installed), so this container is not a suitable replacement runner.
+and desktop-file utilities. The current `singbook-i5-linux` runner's
+`ci-singbook-linux-current` container lacks those packages; its root filesystem
+is read-only and sudo cannot elevate. The audit also reports missing
+`libgbm-dev` and WebKitGTK 4.0 (only 4.1 is installed), so it cannot build and
+exercise the Linux desktop package as configured.
+
+Keep `windows-native-smoke` and `windows-journey` on hosted Windows. They launch
+the packaged app and exercise native clipboard, Credential Manager, and window
+state in a clean desktop session. The CI configuration identifies the
+self-hosted Windows runner as using a persistent interactive profile and does
+not declare a separate disposable desktop session for GUI acceptance. Hosted
+Windows provides a clean job-scoped session, avoiding interference with that
+persistent profile during native checks.
+
+Keep both Store install checks hosted: `test-windows-store-msix-install` and
+the `smoke` job in `package-windows-store-release` create a disposable signing
+certificate, import it into `LocalMachine\TrustedPeople`, then install and
+restart the MSIX. The machine-store import requires administrator rights; a
+prior attempt on the persistent I5 runner failed at this import with
+`E_ACCESSDENIED`
+([run 41288532718](https://github.com/freevia-org/Singbook/actions/runs/41288532718)).
+Store package assembly remains on the local Windows runner and hands the exact
+artifact to the isolated hosted smoke job.
 
 Resolve dependencies once per job with the committed lockfile. Use `--no-pub`
 for subsequent commands in that prepared job. Separate jobs need their own
@@ -65,12 +85,12 @@ This is a staging window, not permanent archival storage: preserve qualified
 release assets and receipts durably before expiry. Longer retention does not
 restore expired historical pins.
 
-Desktop CI validates the Google OAuth client on hosted Windows with a PKCE token
-exchange that omits the client secret. Windows and Linux CI builds, plus the
-Windows and macOS local build scripts, strip
+Desktop CI validates the Google OAuth client on the trusted local I5 Windows
+runner, on `main` only, with a PKCE token exchange that omits the client secret.
+Windows and Linux CI builds, plus the Windows and macOS local build scripts, strip
 `SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET` from app defines. Desktop OAuth clients
 are public clients and cannot keep this value confidential; the app code would
-embed it if supplied as a compile-time define. If the hosted probe reports that
+embed it if supplied as a compile-time define. If the preflight reports that
 the client requires a secret, desktop CI fails before packaging. Store package
 workflows require manifests to explicitly report
 `googleDesktopClientSecretConfigured: false`; candidates with a true or missing
