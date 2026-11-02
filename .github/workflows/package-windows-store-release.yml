@@ -49,13 +49,21 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  package-and-smoke:
-    name: package-and-smoke (release ${{ inputs.release || '50' }})
-    # The isolated install smoke test temporarily trusts a self-signed test
-    # certificate in LocalMachine\TrustedPeople, which requires admin rights.
-    # GitHub-hosted Windows VMs provide that capability without changing I5.
-    runs-on: windows-latest
+  package:
+    name: package (release ${{ inputs.release || '50' }})
+    # Packaging does not require elevation. Restrict the persistent runner to
+    # reviewed workflow code from main; the certificate-dependent install runs
+    # separately on a hosted Windows VM.
+    if: github.ref == 'refs/heads/main'
+    runs-on: singbook-i5-windows
     timeout-minutes: 25
+    outputs:
+      release: ${{ steps.resolve-pins.outputs.release }}
+      release_source_tree: ${{ steps.resolve-pins.outputs.release_source_tree }}
+      release_product_version: ${{ steps.resolve-pins.outputs.release_product_version }}
+      portable_manifest_sha256: ${{ steps.resolve-pins.outputs.portable_manifest_sha256 }}
+      msix_sha256: ${{ steps.package.outputs.sha256 }}
+      package_artifact_id: ${{ steps.package-artifact.outputs['artifact-id'] }}
     env:
       RELEASE: ${{ inputs.release || '50' }}
       INPUT_CI_RUN_ID: ${{ inputs.ci_run_id }}
@@ -65,6 +73,7 @@ jobs:
       INPUT_PORTABLE_ZIP_SHA256: ${{ inputs.portable_zip_sha256 }}
     steps:
       - name: Resolve release pins
+        id: resolve-pins
         shell: pwsh
         run: |
           $supplied = [ordered]@{
@@ -322,8 +331,10 @@ jobs:
           foreach ($table in @($pins, $artifactPins)) {
             foreach ($entry in $table.GetEnumerator()) {
               "$($entry.Key)=$($entry.Value)" | Out-File -FilePath $env:GITHUB_ENV -Append
+              "$($entry.Key.ToLowerInvariant())=$($entry.Value)" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
             }
           }
+          "release=$env:RELEASE" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
 
       - name: Refuse packaging until successful CI pins are frozen
         shell: pwsh
@@ -458,12 +469,70 @@ jobs:
           "provenance=$($provenance[0].FullName)" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
           "sha256=$((Get-FileHash -LiteralPath $msix[0].FullName -Algorithm SHA256).Hash)" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
 
+      - name: Hand off the unsigned MSIX and provenance to hosted smoke
+        id: package-artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: singbook-store${{ env.RELEASE }}-package-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/singbook-release${{ env.RELEASE }}-output/*.msix
+            ${{ runner.temp }}/singbook-release${{ env.RELEASE }}-output/*.json
+            ${{ runner.temp }}/singbook-release${{ env.RELEASE }}-output/Package/Assets/*.png
+          if-no-files-found: error
+          retention-days: 1
+
+  smoke:
+    name: smoke (release ${{ needs.package.outputs.release }})
+    needs: package
+    # This install test temporarily trusts its self-signed certificate in
+    # LocalMachine\TrustedPeople, which requires admin rights.
+    runs-on: windows-latest
+    timeout-minutes: 25
+    env:
+      RELEASE: ${{ needs.package.outputs.release }}
+      RELEASE_SOURCE_TREE: ${{ needs.package.outputs.release_source_tree }}
+      RELEASE_PRODUCT_VERSION: ${{ needs.package.outputs.release_product_version }}
+      PORTABLE_MANIFEST_SHA256: ${{ needs.package.outputs.portable_manifest_sha256 }}
+      MSIX_SHA256: ${{ needs.package.outputs.msix_sha256 }}
+    steps:
+      - name: Check out the workflow source
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - name: Download the exact same-run package artifact
+        uses: actions/download-artifact@v8
+        with:
+          artifact-ids: ${{ needs.package.outputs.package_artifact_id }}
+          path: ${{ runner.temp }}/singbook-release${{ env.RELEASE }}-output
+          digest-mismatch: error
+
+      - name: Verify the transferred package hash and provenance
+        id: package
+        shell: pwsh
+        run: |
+          $output = Join-Path $env:RUNNER_TEMP "singbook-release$($env:RELEASE)-output"
+          $msixFiles = @(Get-ChildItem -LiteralPath $output -Filter '*.msix' -File)
+          $provenanceFiles = @(Get-ChildItem -LiteralPath $output -Filter 'package-provenance.json' -File)
+          if ($msixFiles.Count -ne 1 -or $provenanceFiles.Count -ne 1) { throw 'Expected exactly one transferred MSIX and one package provenance file.' }
+          $msixHash = (Get-FileHash -LiteralPath $msixFiles[0].FullName -Algorithm SHA256).Hash
+          if ($msixHash -ne ([string]$env:MSIX_SHA256).ToUpperInvariant()) { throw 'Transferred MSIX SHA-256 differs from the packaging job output.' }
+          $provenance = Get-Content -LiteralPath $provenanceFiles[0].FullName -Raw | ConvertFrom-Json
+          if ($provenance.msixSha256 -ne $msixHash -or
+              $provenance.productVersion -ne $env:RELEASE_PRODUCT_VERSION -or
+              $provenance.sourceTree -ne $env:RELEASE_SOURCE_TREE -or
+              $provenance.sourcePortableManifestSha256 -ne ([string]$env:PORTABLE_MANIFEST_SHA256).ToUpperInvariant()) {
+            throw 'Transferred package provenance differs from the pinned release source, version, manifest, or MSIX hash.'
+          }
+          "msix=$($msixFiles[0].FullName)" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          "provenance=$($provenanceFiles[0].FullName)" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+
       - name: Install and smoke test a temporary signed copy
         shell: pwsh
         env:
           MSIX: ${{ steps.package.outputs.msix }}
           PROVENANCE: ${{ steps.package.outputs.provenance }}
-          MSIX_SHA256: ${{ steps.package.outputs.sha256 }}
         run: |
           ./scripts/test-windows-store-msix-install.ps1 `
             -MsixPath $env:MSIX `
