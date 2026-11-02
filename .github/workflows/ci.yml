@@ -1,9 +1,10 @@
 name: CI
 
 # On-demand CI. Source checks use the same empty defines as a fresh clone. The unsigned
-# Windows release bundle embeds the repository's public Desktop OAuth client
-# ID as a GitHub Actions variable and its optional registration field as a
-# masked Actions secret. This workflow never signs.
+# Windows release bundle embeds the public Desktop OAuth client ID from a
+# GitHub Actions variable. A hosted preflight verifies the PKCE flow without a
+# client secret; the local build explicitly compiles with that field blank.
+# This workflow never signs.
 #
 # Layout (fail fast, then fan out). Analysis and the Linux Flutter suite use the
 # local I5 Linux runner. The Windows release bundle is built on local I5 Windows;
@@ -124,8 +125,47 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
 
-  windows-build:
+  windows-oauth-preflight:
+    name: Windows OAuth preflight (hosted, no secret)
     needs: analyze
+    if: github.ref == 'refs/heads/main'
+    runs-on: windows-2025
+    timeout-minutes: 5
+    env:
+      SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID: ${{ vars.SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID }}
+    steps:
+      - name: Check secretless Windows OAuth PKCE configuration
+        shell: pwsh
+        run: |
+          if ([string]::IsNullOrWhiteSpace($env:SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID)) {
+            throw 'The SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID Actions variable is required for the Windows release bundle.'
+          }
+
+          # Probe the public Desktop client using a deliberately invalid code.
+          # invalid_grant confirms the client accepts the secretless PKCE flow
+          # without authenticating a user or exposing any secret to the local runner.
+          $probe = @{
+            client_id = $env:SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID
+            code = 'codex-release-preflight-invalid-code'
+            code_verifier = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+            grant_type = 'authorization_code'
+            redirect_uri = 'http://127.0.0.1:49152'
+          }
+          try {
+            $response = Invoke-RestMethod -Method Post -Uri 'https://oauth2.googleapis.com/token' -ContentType 'application/x-www-form-urlencoded' -Body $probe
+            $oauthError = $response.error
+          } catch {
+            $errorBody = $_.ErrorDetails.Message
+            try { $oauthError = ($errorBody | ConvertFrom-Json).error }
+            catch { throw 'Google OAuth secretless Desktop-client preflight could not read the token endpoint response.' }
+          }
+          if ($oauthError -ne 'invalid_grant') {
+            if ($errorBody -match 'client_secret') { $oauthError = 'client_secret_required' }
+            throw "Google OAuth Desktop-client preflight without a client secret failed ($oauthError). The local release build deliberately omits the public-client secret."
+          }
+
+  windows-build:
+    needs: [analyze, windows-oauth-preflight]
     # Only noninteractive build work runs on this persistent user profile. The
     # native window, clipboard, and credential checks remain on hosted Windows.
     if: github.ref == 'refs/heads/main'
@@ -136,7 +176,6 @@ jobs:
       release_bundle_artifact_id: ${{ steps.release-bundle.outputs['artifact-id'] }}
     env:
       SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID: ${{ vars.SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID }}
-      SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET: ${{ secrets.SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -159,42 +198,6 @@ jobs:
       - name: Get dependencies
         run: flutter pub get --enforce-lockfile --no-example
 
-      - name: Check Windows OAuth configuration
-        id: windows-oauth-preflight
-        continue-on-error: true
-        shell: pwsh
-        run: |
-          if ([string]::IsNullOrWhiteSpace($env:SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID)) {
-            throw 'The SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID Actions variable is required for the Windows release bundle.'
-          }
-
-          # A public client ID can be syntactically valid while pointing at an
-          # OAuth client that cannot complete the app's installed-desktop flow.
-          # Exchange a deliberately invalid code: a working registration should
-          # reach Google's invalid_grant response without authenticating anyone.
-          $probe = @{
-            client_id = $env:SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID
-            code = 'codex-release-preflight-invalid-code'
-            code_verifier = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
-            grant_type = 'authorization_code'
-            redirect_uri = 'http://127.0.0.1:49152'
-          }
-          if (-not [string]::IsNullOrWhiteSpace($env:SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET)) {
-            $probe.client_secret = $env:SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET
-          }
-          try {
-            $response = Invoke-RestMethod -Method Post -Uri 'https://oauth2.googleapis.com/token' -ContentType 'application/x-www-form-urlencoded' -Body $probe
-            $oauthError = $response.error
-          } catch {
-            $errorBody = $_.ErrorDetails.Message
-            try { $oauthError = ($errorBody | ConvertFrom-Json).error }
-            catch { throw 'Google OAuth desktop-client preflight could not read the token endpoint response.' }
-          }
-          if ($oauthError -ne 'invalid_grant') {
-            if ($errorBody -match 'client_secret') { $oauthError = 'missing_client_secret' }
-            throw "Google OAuth desktop-client preflight failed ($oauthError). Check that the ID is a Desktop app client and that its optional secret is configured when required."
-          }
-
       - name: Record dependency generation source status
         shell: pwsh
         run: |
@@ -204,7 +207,11 @@ jobs:
 
       - name: Build and package Windows release
         shell: pwsh
-        run: ./scripts/build-windows.ps1 -AllowMissingDefines
+        env:
+          # The versioned example has an empty client-secret field and avoids
+          # consuming any ignored local defines from the persistent runner.
+          SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET: ''
+        run: ./scripts/build-windows.ps1 -DefinesFile config/defines.example.json
 
       - name: Hand off build evidence to hosted native smoke
         id: build-evidence
@@ -232,18 +239,9 @@ jobs:
           if-no-files-found: error
           retention-days: 90
 
-      - name: Enforce Windows OAuth release readiness
-        if: always() && steps.windows-oauth-preflight.outcome != 'success'
-        shell: pwsh
-        run: |
-          throw 'Windows OAuth preflight failed. The package and native checks ran, but the release is not ready for Google Drive sign-in.'
-
   windows-native-smoke:
     name: Windows portable and native smoke
     needs: windows-build
-    # Keep exercising the portable artifact when the OAuth readiness gate fails
-    # after the package and artifacts have already been produced.
-    if: always() && needs.windows-build.outputs.release_bundle_artifact_id != ''
     runs-on: windows-2025
     timeout-minutes: 20
     steps:
