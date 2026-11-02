@@ -12,6 +12,9 @@ permissions:
 jobs:
   analyze:
     name: Analyze (${{ matrix.language }})
+    # CodeQL executes checked-out source on persistent Linux and macOS runners.
+    # Only analyze trusted default-branch code on those machines.
+    if: github.ref == 'refs/heads/main'
     runs-on: ${{ matrix.runner }}
     timeout-minutes: ${{ matrix.runner == 'singbook-i5-linux' && 180 || 120 }}
     strategy:

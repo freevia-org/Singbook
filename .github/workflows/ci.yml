@@ -126,9 +126,10 @@ jobs:
           retention-days: 7
 
   desktop-oauth-preflight:
-    name: Desktop OAuth preflight (hosted, no secret)
+    name: Desktop OAuth preflight (local, no secret)
     needs: analyze
-    runs-on: windows-2025
+    if: github.ref == 'refs/heads/main'
+    runs-on: singbook-i5-windows
     timeout-minutes: 5
     env:
       SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID: ${{ vars.SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID }}
