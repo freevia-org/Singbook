@@ -58,7 +58,13 @@ state in a clean desktop session. The CI configuration identifies the
 self-hosted Windows runner as using a persistent interactive profile and does
 not declare a separate disposable desktop session for GUI acceptance. Hosted
 Windows provides a clean job-scoped session, avoiding interference with that
-persistent profile during native checks.
+persistent profile during native checks. These two CI jobs do not require
+administrator rights or a trusted signing certificate. The native smoke starts
+the app in a normal visible window, temporarily writes to the machine clipboard
+and restores its prior contents, and creates then deletes one synthetic
+current-user credential. The journey opens the app and changes its window state.
+Keep both hosted until the local runner has a disposable interactive session;
+the missing capability is desktop/profile isolation, not elevation.
 
 Keep both Store install checks hosted: `test-windows-store-msix-install` and
 the `smoke` job in `package-windows-store-release` create a disposable signing
