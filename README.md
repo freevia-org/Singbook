@@ -113,15 +113,15 @@ on a signed release APK before publishing.
 
 ### Google Play release
 
-Current source version: `0.2.36+51` (see `pubspec.yaml`). This is a prepared
+Current source version: `0.2.37+51` (see `pubspec.yaml`). This is a prepared
 candidate; it has not been built or uploaded. The latest directly verified
 Google Play state on 4 November 2026 is Production `0.2.35` / code 49 and
 Internal testing `0.2.36` / code 50. Build 51 is the current-source candidate
 and has not been published. These build commands do not imply publication on
 other platforms.
 The canonical release value is `MAJOR.MINOR.CODE+BUILD`. `0.2.36+50` and
-`0.2.36+51` keep the same customer-facing version while using different
-artifact builds; a new coordinated release advances both `CODE` and `BUILD`
+`0.2.37+51` are separate coordinated releases: the latter advances both the
+customer-facing `CODE` and artifact `BUILD`.
 (for example, `0.2.37+52`). The number after `+` is the shared artifact build
 ordinal and must always increase; never reset it when the visible version
 changes. Android derives Play's numeric `versionCode` from the full tuple:
@@ -139,7 +139,7 @@ a locale config for all 34 app languages (one per `lib/l10n/app_*.arb`; keep
 
 ```powershell
 .\scripts\build-android.ps1 -Bundle -Production   # signed .aab + symbols + SHA-256 in artifacts\
-.\scripts\verify-release.ps1 -Path artifacts\singbook-0.2.36+51-release.aab
+  .\scripts\verify-release.ps1 -Path artifacts\singbook-0.2.37+51-release.aab
 ```
 
 The build script refuses to overwrite an existing artifact of the same version
