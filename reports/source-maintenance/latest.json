@@ -3,7 +3,7 @@
   "catalogPath": "config/source-catalog-v10.json",
   "catalogChannel": 10,
   "catalogRevision": 23,
-  "measuredAt": "2026-11-03T07:00:02.483791Z",
+  "measuredAt": "2026-11-04T07:05:20.919657Z",
   "offline": false,
   "sources": [
     {
@@ -27,7 +27,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-03T06:57:55.541080Z",
+        "measuredAt": "2026-11-04T07:02:11.153784Z",
         "catalogPath": "config/source-catalog-v2.json",
         "catalogRevision": 13
       },
@@ -71,7 +71,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-03T06:57:55.541080Z",
+        "measuredAt": "2026-11-04T07:02:11.153784Z",
         "catalogPath": "config/source-catalog-v2.json",
         "catalogRevision": 13
       },
@@ -99,7 +99,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-03T06:57:55.541080Z",
+        "measuredAt": "2026-11-04T07:02:11.153784Z",
         "catalogPath": "config/source-catalog-v2.json",
         "catalogRevision": 13
       },
@@ -108,26 +108,45 @@
     {
       "id": "lrclib",
       "name": "LRCLIB",
-      "status": "transient_error",
+      "status": "healthy",
       "coverage": {
-        "status": "partial",
-        "verifiedCapabilities": [],
-        "unverifiedCapabilities": [
+        "status": "complete",
+        "verifiedCapabilities": [
           "catalog",
           "lineTiming",
           "lyrics",
           "metadata"
-        ]
+        ],
+        "unverifiedCapabilities": []
       },
       "probes": [
         {
           "id": "sound-of-silence-studio-recording",
-          "status": "transient_error",
-          "reason": "rate_limited"
+          "status": "healthy",
+          "providerId": "lrclib",
+          "bodyCharacters": 1157,
+          "metadataFields": [
+            "album",
+            "duration",
+            "hasLyrics",
+            "instrumental"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "lineTiming",
+            "lyrics",
+            "metadata"
+          ],
+          "timingTrackCount": 1,
+          "timingGranularities": [
+            "line"
+          ],
+          "timingRawRetained": true,
+          "hasChords": false
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-03T06:57:55.541080Z",
+        "measuredAt": "2026-11-04T07:02:11.153784Z",
         "catalogPath": "config/source-catalog-v2.json",
         "catalogRevision": 13
       },
@@ -154,7 +173,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-03T06:57:55.541080Z",
+        "measuredAt": "2026-11-04T07:02:11.153784Z",
         "catalogPath": "config/source-catalog-v2.json",
         "catalogRevision": 13
       },
@@ -178,7 +197,7 @@
           "id": "wonderwall-oasis-studio",
           "status": "healthy",
           "providerId": "lyricsovh",
-          "bodyCharacters": 1307,
+          "bodyCharacters": 1316,
           "metadataFields": [
             "album",
             "artworkUrl",
@@ -197,7 +216,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-03T06:57:55.541080Z",
+        "measuredAt": "2026-11-04T07:02:11.153784Z",
         "catalogPath": "config/source-catalog-v2.json",
         "catalogRevision": 13
       },
@@ -206,7 +225,7 @@
     {
       "id": "synclrc",
       "name": "SyncLRC",
-      "status": "unavailable",
+      "status": "identity_mismatch",
       "coverage": {
         "status": "partial",
         "verifiedCapabilities": [
@@ -274,12 +293,12 @@
         },
         {
           "id": "never-gonna-give-you-up-catalog-search",
-          "status": "unavailable",
-          "reason": "empty_search_results"
+          "status": "identity_mismatch",
+          "reason": "expected_candidate_not_found"
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-03T06:57:55.541080Z",
+        "measuredAt": "2026-11-04T07:02:11.153784Z",
         "catalogPath": "config/source-catalog-v2.json",
         "catalogRevision": 13
       },
@@ -288,7 +307,7 @@
     {
       "id": "betterlyrics",
       "name": "Better Lyrics",
-      "status": "transient_error",
+      "status": "coverage_gap",
       "coverage": {
         "status": "partial",
         "verifiedCapabilities": [],
@@ -303,12 +322,12 @@
       "probes": [
         {
           "id": "never-gonna-give-you-up-studio-recording",
-          "status": "transient_error",
-          "reason": "rate_limited"
+          "status": "coverage_gap",
+          "reason": "ambiguous_candidate"
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-03T06:57:55.541080Z",
+        "measuredAt": "2026-11-04T07:02:11.153784Z",
         "catalogPath": "config/source-catalog-v2.json",
         "catalogRevision": 13
       },
@@ -386,7 +405,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-03T06:57:55.541080Z",
+        "measuredAt": "2026-11-04T07:02:11.153784Z",
         "catalogPath": "config/source-catalog-v2.json",
         "catalogRevision": 13
       },
@@ -413,7 +432,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-03T06:57:55.541080Z",
+        "measuredAt": "2026-11-04T07:02:11.153784Z",
         "catalogPath": "config/source-catalog-v2.json",
         "catalogRevision": 13
       },
@@ -442,7 +461,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-03T06:57:55.541080Z",
+        "measuredAt": "2026-11-04T07:02:11.153784Z",
         "catalogPath": "config/source-catalog-v2.json",
         "catalogRevision": 13
       },
@@ -500,7 +519,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-03T06:57:55.541080Z",
+        "measuredAt": "2026-11-04T07:02:11.153784Z",
         "catalogPath": "config/source-catalog-v2.json",
         "catalogRevision": 13
       },
@@ -544,7 +563,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-03T06:57:55.541080Z",
+        "measuredAt": "2026-11-04T07:02:11.153784Z",
         "catalogPath": "config/source-catalog-v2.json",
         "catalogRevision": 13
       },
@@ -609,7 +628,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-03T06:57:55.541080Z",
+        "measuredAt": "2026-11-04T07:02:11.153784Z",
         "catalogPath": "config/source-catalog-v2.json",
         "catalogRevision": 13
       },
@@ -636,7 +655,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-03T06:57:55.541080Z",
+        "measuredAt": "2026-11-04T07:02:11.153784Z",
         "catalogPath": "config/source-catalog-v2.json",
         "catalogRevision": 13
       },
@@ -746,7 +765,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-03T06:58:20.678017Z",
+        "measuredAt": "2026-11-04T07:02:46.039330Z",
         "catalogPath": "config/source-catalog-v10.json",
         "catalogRevision": 23
       },
@@ -755,80 +774,29 @@
     {
       "id": "wikidata",
       "name": "Wikidata",
-      "status": "healthy",
+      "status": "transient_error",
       "coverage": {
-        "status": "complete",
-        "verifiedCapabilities": [
+        "status": "partial",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
           "catalog",
           "metadata"
-        ],
-        "unverifiedCapabilities": []
+        ]
       },
       "probes": [
         {
           "id": "imagine-composition",
-          "status": "healthy",
-          "providerId": "wikidata",
-          "bodyCharacters": 0,
-          "metadataFields": [
-            "composers",
-            "description",
-            "durationClaims",
-            "externalIdentifiers",
-            "identityScope",
-            "key",
-            "keyAssertions",
-            "lyricists",
-            "partOf",
-            "performerIds",
-            "performers",
-            "publicationDates",
-            "types",
-            "wikidataId"
-          ],
-          "verifiedCapabilities": [
-            "catalog",
-            "metadata"
-          ],
-          "timingTrackCount": 0,
-          "timingGranularities": [],
-          "timingRawRetained": false,
-          "hasChords": false
+          "status": "transient_error",
+          "reason": "provider_busy"
         },
         {
           "id": "wonderwall-composition",
-          "status": "healthy",
-          "providerId": "wikidata",
-          "bodyCharacters": 0,
-          "metadataFields": [
-            "composers",
-            "description",
-            "durationClaims",
-            "externalIdentifiers",
-            "identityScope",
-            "key",
-            "keyAssertions",
-            "lyricists",
-            "partOf",
-            "performerIds",
-            "performers",
-            "publicationDates",
-            "types",
-            "wikidataId",
-            "wikimediaCommonsFile"
-          ],
-          "verifiedCapabilities": [
-            "catalog",
-            "metadata"
-          ],
-          "timingTrackCount": 0,
-          "timingGranularities": [],
-          "timingRawRetained": false,
-          "hasChords": false
+          "status": "transient_error",
+          "reason": "provider_busy"
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-03T06:57:55.541080Z",
+        "measuredAt": "2026-11-04T07:02:11.153784Z",
         "catalogPath": "config/source-catalog-v2.json",
         "catalogRevision": 13
       },
@@ -866,7 +834,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-03T06:57:55.541080Z",
+        "measuredAt": "2026-11-04T07:02:11.153784Z",
         "catalogPath": "config/source-catalog-v2.json",
         "catalogRevision": 13
       },
@@ -934,7 +902,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-03T06:57:55.541080Z",
+        "measuredAt": "2026-11-04T07:02:11.153784Z",
         "catalogPath": "config/source-catalog-v2.json",
         "catalogRevision": 13
       },
@@ -1022,7 +990,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-03T06:57:55.541080Z",
+        "measuredAt": "2026-11-04T07:02:11.153784Z",
         "catalogPath": "config/source-catalog-v2.json",
         "catalogRevision": 13
       },
@@ -1096,7 +1064,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-03T06:57:55.541080Z",
+        "measuredAt": "2026-11-04T07:02:11.153784Z",
         "catalogPath": "config/source-catalog-v2.json",
         "catalogRevision": 13
       },
@@ -1210,7 +1178,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-03T06:57:55.541080Z",
+        "measuredAt": "2026-11-04T07:02:11.153784Z",
         "catalogPath": "config/source-catalog-v2.json",
         "catalogRevision": 13
       },
@@ -1376,7 +1344,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-03T06:58:32.113605Z",
+        "measuredAt": "2026-11-04T07:02:56.139492Z",
         "catalogPath": "config/source-catalog-v10.json",
         "catalogRevision": 23
       },
@@ -1492,7 +1460,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-03T06:58:46.483470Z",
+        "measuredAt": "2026-11-04T07:03:08.400082Z",
         "catalogPath": "config/source-catalog-v10.json",
         "catalogRevision": 23
       },
@@ -1558,7 +1526,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-03T06:58:59.063996Z",
+        "measuredAt": "2026-11-04T07:03:21.570402Z",
         "catalogPath": "config/source-catalog-v10.json",
         "catalogRevision": 23
       },
@@ -1626,7 +1594,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-03T06:59:09.509498Z",
+        "measuredAt": "2026-11-04T07:03:35.398303Z",
         "catalogPath": "config/source-catalog-v10.json",
         "catalogRevision": 23
       },
@@ -1696,7 +1664,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-03T06:59:17.706618Z",
+        "measuredAt": "2026-11-04T07:03:47.208494Z",
         "catalogPath": "config/source-catalog-v10.json",
         "catalogRevision": 23
       },
@@ -1705,7 +1673,7 @@
     {
       "id": "lyricsplus",
       "name": "LyricsPlus",
-      "status": "unavailable",
+      "status": "transient_error",
       "coverage": {
         "status": "partial",
         "verifiedCapabilities": [],
@@ -1720,17 +1688,17 @@
       "probes": [
         {
           "id": "billie-jean-michael-jackson",
-          "status": "unavailable",
-          "reason": "unavailable"
+          "status": "transient_error",
+          "reason": "rate_limited"
         },
         {
           "id": "creep-radiohead",
-          "status": "unavailable",
-          "reason": "unavailable"
+          "status": "transient_error",
+          "reason": "cancelled"
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-03T06:59:28.674598Z",
+        "measuredAt": "2026-11-04T07:04:36.645618Z",
         "catalogPath": "config/source-catalog-v10.json",
         "catalogRevision": 23
       },
@@ -1797,7 +1765,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-03T06:59:38.337047Z",
+        "measuredAt": "2026-11-04T07:04:53.660686Z",
         "catalogPath": "config/source-catalog-v10.json",
         "catalogRevision": 23
       },
@@ -1819,7 +1787,7 @@
       },
       "probes": [],
       "measurement": {
-        "measuredAt": "2026-11-03T06:59:45.734027Z",
+        "measuredAt": "2026-11-04T07:05:01.437943Z",
         "catalogPath": "config/source-catalog-v10.json",
         "catalogRevision": 23
       },
@@ -1849,7 +1817,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-03T06:59:50.878752Z",
+        "measuredAt": "2026-11-04T07:05:09.738547Z",
         "catalogPath": "config/source-catalog-v10.json",
         "catalogRevision": 23
       },
@@ -1907,7 +1875,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-03T07:00:02.483791Z",
+        "measuredAt": "2026-11-04T07:05:20.919657Z",
         "catalogPath": "config/source-catalog-v10.json",
         "catalogRevision": 23
       },
@@ -1917,7 +1885,8 @@
   "summary": {
     "transient_error": 6,
     "healthy": 19,
-    "unavailable": 2,
+    "identity_mismatch": 1,
+    "coverage_gap": 1,
     "import_only": 1,
     "retired": 1,
     "partial_coverage": 1,
@@ -1989,14 +1958,11 @@
         "databaseLag": {}
       },
       "lrclib.net": {
-        "requests": 7,
+        "requests": 3,
         "statuses": {
-          "200": 1,
-          "503": 6
+          "200": 3
         },
-        "retryAfterSeconds": {
-          "1": 6
-        },
+        "retryAfterSeconds": {},
         "databaseLag": {}
       },
       "music.youtube.com": {
@@ -2006,10 +1972,9 @@
         "databaseLag": {}
       },
       "musicbrainz.org": {
-        "requests": 9,
+        "requests": 8,
         "statuses": {
-          "200": 8,
-          "503": 1
+          "200": 8
         },
         "retryAfterSeconds": {},
         "databaseLag": {}
@@ -2075,12 +2040,16 @@
         "databaseLag": {}
       },
       "www.wikidata.org": {
-        "requests": 14,
+        "requests": 2,
         "statuses": {
-          "200": 14
+          "200": 2
         },
-        "retryAfterSeconds": {},
-        "databaseLag": {}
+        "retryAfterSeconds": {
+          "5": 2
+        },
+        "databaseLag": {
+          "7": 2
+        }
       },
       "api.amll.dev": {
         "requests": 4,
@@ -2123,11 +2092,13 @@
         "databaseLag": {}
       },
       "lyricsplus.prjktla.my.id": {
-        "requests": 4,
+        "requests": 1,
         "statuses": {
-          "200": 4
+          "503": 1
         },
-        "retryAfterSeconds": {},
+        "retryAfterSeconds": {
+          "120": 1
+        },
         "databaseLag": {}
       },
       "www.chords-and-tabs.net": {
@@ -3284,7 +3255,7 @@
   ],
   "execution": {
     "runtime": "managed-cloud",
-    "baseSha": "c034f559864ed6461c81bc6208b104893b0d3e55",
+    "baseSha": "9568046f2418adc104dfc7aee3ad740492968a79",
     "sourceState": "clean detached current-public-main checkout; original checkout preserved",
     "environment": {
       "specRevision": "8",
@@ -3309,22 +3280,22 @@
           "--catalog",
           "config/source-catalog-v2.json",
           "--report",
-          "artifacts/source-maintenance/2026-11-03-v2-live.json"
+          "artifacts/source-maintenance/2026-11-04-v2-live.json"
         ],
         "source": null,
         "catalogPath": "config/source-catalog-v2.json",
         "exitCode": 1,
-        "reportPath": "artifacts/source-maintenance/2026-11-03-v2-live.json",
-        "measuredAt": "2026-11-03T06:57:55.541080Z",
+        "reportPath": "artifacts/source-maintenance/2026-11-04-v2-live.json",
+        "measuredAt": "2026-11-04T07:02:11.153784Z",
         "catalogRevision": 13,
         "summary": {
-          "transient_error": 6,
+          "transient_error": 5,
           "healthy": 12,
-          "unavailable": 1,
+          "identity_mismatch": 1,
+          "coverage_gap": 11,
           "import_only": 1,
           "retired": 1,
-          "partial_coverage": 1,
-          "coverage_gap": 10
+          "partial_coverage": 1
         },
         "httpDiagnostics": {
           "networkFailures": 4,
@@ -3392,14 +3363,11 @@
               "databaseLag": {}
             },
             "lrclib.net": {
-              "requests": 7,
+              "requests": 3,
               "statuses": {
-                "200": 1,
-                "503": 6
+                "200": 3
               },
-              "retryAfterSeconds": {
-                "1": 6
-              },
+              "retryAfterSeconds": {},
               "databaseLag": {}
             },
             "music.youtube.com": {
@@ -3477,12 +3445,16 @@
               "databaseLag": {}
             },
             "www.wikidata.org": {
-              "requests": 14,
+              "requests": 2,
               "statuses": {
-                "200": 14
+                "200": 2
               },
-              "retryAfterSeconds": {},
-              "databaseLag": {}
+              "retryAfterSeconds": {
+                "5": 2
+              },
+              "databaseLag": {
+                "7": 2
+              }
             }
           }
         }
@@ -3497,13 +3469,13 @@
           "--source",
           "musicbrainz",
           "--report",
-          "artifacts/source-maintenance/2026-11-03-musicbrainz-live.json"
+          "artifacts/source-maintenance/2026-11-04-musicbrainz-live.json"
         ],
         "source": "musicbrainz",
         "catalogPath": "config/source-catalog-v10.json",
         "exitCode": 0,
-        "reportPath": "artifacts/source-maintenance/2026-11-03-musicbrainz-live.json",
-        "measuredAt": "2026-11-03T06:58:20.678017Z",
+        "reportPath": "artifacts/source-maintenance/2026-11-04-musicbrainz-live.json",
+        "measuredAt": "2026-11-04T07:02:46.039330Z",
         "catalogRevision": 23,
         "summary": {
           "healthy": 1
@@ -3512,10 +3484,9 @@
           "networkFailures": 0,
           "hosts": {
             "musicbrainz.org": {
-              "requests": 7,
+              "requests": 6,
               "statuses": {
-                "200": 6,
-                "503": 1
+                "200": 6
               },
               "retryAfterSeconds": {},
               "databaseLag": {}
@@ -3533,13 +3504,13 @@
           "--source",
           "amll",
           "--report",
-          "artifacts/source-maintenance/2026-11-03-amll-live.json"
+          "artifacts/source-maintenance/2026-11-04-amll-live.json"
         ],
         "source": "amll",
         "catalogPath": "config/source-catalog-v10.json",
         "exitCode": 0,
-        "reportPath": "artifacts/source-maintenance/2026-11-03-amll-live.json",
-        "measuredAt": "2026-11-03T06:58:32.113605Z",
+        "reportPath": "artifacts/source-maintenance/2026-11-04-amll-live.json",
+        "measuredAt": "2026-11-04T07:02:56.139492Z",
         "catalogRevision": 23,
         "summary": {
           "healthy": 1
@@ -3568,13 +3539,13 @@
           "--source",
           "vocadb",
           "--report",
-          "artifacts/source-maintenance/2026-11-03-vocadb-live.json"
+          "artifacts/source-maintenance/2026-11-04-vocadb-live.json"
         ],
         "source": "vocadb",
         "catalogPath": "config/source-catalog-v10.json",
         "exitCode": 0,
-        "reportPath": "artifacts/source-maintenance/2026-11-03-vocadb-live.json",
-        "measuredAt": "2026-11-03T06:58:46.483470Z",
+        "reportPath": "artifacts/source-maintenance/2026-11-04-vocadb-live.json",
+        "measuredAt": "2026-11-04T07:03:08.400082Z",
         "catalogRevision": 23,
         "summary": {
           "healthy": 1
@@ -3603,13 +3574,13 @@
           "--source",
           "touhoudb",
           "--report",
-          "artifacts/source-maintenance/2026-11-03-touhoudb-live.json"
+          "artifacts/source-maintenance/2026-11-04-touhoudb-live.json"
         ],
         "source": "touhoudb",
         "catalogPath": "config/source-catalog-v10.json",
         "exitCode": 0,
-        "reportPath": "artifacts/source-maintenance/2026-11-03-touhoudb-live.json",
-        "measuredAt": "2026-11-03T06:58:59.063996Z",
+        "reportPath": "artifacts/source-maintenance/2026-11-04-touhoudb-live.json",
+        "measuredAt": "2026-11-04T07:03:21.570402Z",
         "catalogRevision": 23,
         "summary": {
           "healthy": 1
@@ -3638,13 +3609,13 @@
           "--source",
           "utaitedb",
           "--report",
-          "artifacts/source-maintenance/2026-11-03-utaitedb-live.json"
+          "artifacts/source-maintenance/2026-11-04-utaitedb-live.json"
         ],
         "source": "utaitedb",
         "catalogPath": "config/source-catalog-v10.json",
         "exitCode": 0,
-        "reportPath": "artifacts/source-maintenance/2026-11-03-utaitedb-live.json",
-        "measuredAt": "2026-11-03T06:59:09.509498Z",
+        "reportPath": "artifacts/source-maintenance/2026-11-04-utaitedb-live.json",
+        "measuredAt": "2026-11-04T07:03:35.398303Z",
         "catalogRevision": 23,
         "summary": {
           "healthy": 1
@@ -3673,13 +3644,13 @@
           "--source",
           "startjamming",
           "--report",
-          "artifacts/source-maintenance/2026-11-03-startjamming-live.json"
+          "artifacts/source-maintenance/2026-11-04-startjamming-live.json"
         ],
         "source": "startjamming",
         "catalogPath": "config/source-catalog-v10.json",
         "exitCode": 0,
-        "reportPath": "artifacts/source-maintenance/2026-11-03-startjamming-live.json",
-        "measuredAt": "2026-11-03T06:59:17.706618Z",
+        "reportPath": "artifacts/source-maintenance/2026-11-04-startjamming-live.json",
+        "measuredAt": "2026-11-04T07:03:47.208494Z",
         "catalogRevision": 23,
         "summary": {
           "healthy": 1
@@ -3708,26 +3679,28 @@
           "--source",
           "lyricsplus",
           "--report",
-          "artifacts/source-maintenance/2026-11-03-lyricsplus-live.json"
+          "artifacts/source-maintenance/2026-11-04-lyricsplus-live.json"
         ],
         "source": "lyricsplus",
         "catalogPath": "config/source-catalog-v10.json",
         "exitCode": 1,
-        "reportPath": "artifacts/source-maintenance/2026-11-03-lyricsplus-live.json",
-        "measuredAt": "2026-11-03T06:59:28.674598Z",
+        "reportPath": "artifacts/source-maintenance/2026-11-04-lyricsplus-live.json",
+        "measuredAt": "2026-11-04T07:04:36.645618Z",
         "catalogRevision": 23,
         "summary": {
-          "unavailable": 1
+          "transient_error": 1
         },
         "httpDiagnostics": {
           "networkFailures": 0,
           "hosts": {
             "lyricsplus.prjktla.my.id": {
-              "requests": 4,
+              "requests": 1,
               "statuses": {
-                "200": 4
+                "503": 1
               },
-              "retryAfterSeconds": {},
+              "retryAfterSeconds": {
+                "120": 1
+              },
               "databaseLag": {}
             }
           }
@@ -3743,13 +3716,13 @@
           "--source",
           "chordsandtabs",
           "--report",
-          "artifacts/source-maintenance/2026-11-03-chordsandtabs-live.json"
+          "artifacts/source-maintenance/2026-11-04-chordsandtabs-live.json"
         ],
         "source": "chordsandtabs",
         "catalogPath": "config/source-catalog-v10.json",
         "exitCode": 0,
-        "reportPath": "artifacts/source-maintenance/2026-11-03-chordsandtabs-live.json",
-        "measuredAt": "2026-11-03T06:59:38.337047Z",
+        "reportPath": "artifacts/source-maintenance/2026-11-04-chordsandtabs-live.json",
+        "measuredAt": "2026-11-04T07:04:53.660686Z",
         "catalogRevision": 23,
         "summary": {
           "healthy": 1
@@ -3778,13 +3751,13 @@
           "--source",
           "pisni",
           "--report",
-          "artifacts/source-maintenance/2026-11-03-pisni-live.json"
+          "artifacts/source-maintenance/2026-11-04-pisni-live.json"
         ],
         "source": "pisni",
         "catalogPath": "config/source-catalog-v10.json",
         "exitCode": 0,
-        "reportPath": "artifacts/source-maintenance/2026-11-03-pisni-live.json",
-        "measuredAt": "2026-11-03T06:59:45.734027Z",
+        "reportPath": "artifacts/source-maintenance/2026-11-04-pisni-live.json",
+        "measuredAt": "2026-11-04T07:05:01.437943Z",
         "catalogRevision": 23,
         "summary": {
           "disabled": 1
@@ -3804,13 +3777,13 @@
           "--source",
           "openscorelieder",
           "--report",
-          "artifacts/source-maintenance/2026-11-03-openscorelieder-live.json"
+          "artifacts/source-maintenance/2026-11-04-openscorelieder-live.json"
         ],
         "source": "openscorelieder",
         "catalogPath": "config/source-catalog-v10.json",
         "exitCode": 0,
-        "reportPath": "artifacts/source-maintenance/2026-11-03-openscorelieder-live.json",
-        "measuredAt": "2026-11-03T06:59:50.878752Z",
+        "reportPath": "artifacts/source-maintenance/2026-11-04-openscorelieder-live.json",
+        "measuredAt": "2026-11-04T07:05:09.738547Z",
         "catalogRevision": 23,
         "summary": {
           "disabled": 1
@@ -3830,13 +3803,13 @@
           "--source",
           "acousticbrainz",
           "--report",
-          "artifacts/source-maintenance/2026-11-03-acousticbrainz-live.json"
+          "artifacts/source-maintenance/2026-11-04-acousticbrainz-live.json"
         ],
         "source": "acousticbrainz",
         "catalogPath": "config/source-catalog-v10.json",
         "exitCode": 0,
-        "reportPath": "artifacts/source-maintenance/2026-11-03-acousticbrainz-live.json",
-        "measuredAt": "2026-11-03T07:00:02.483791Z",
+        "reportPath": "artifacts/source-maintenance/2026-11-04-acousticbrainz-live.json",
+        "measuredAt": "2026-11-04T07:05:20.919657Z",
         "catalogRevision": 23,
         "summary": {
           "healthy": 1
@@ -3857,7 +3830,7 @@
       }
     ],
     "overallLiveExitCode": 1,
-    "scope": "Requested v2 invocation once; selected current-channel missing/changed entries only. Reused21 unchanged shared entries after exact catalog-entry equality. MusicBrainz revision3/artwork probes measured separately. No duplicate full live suite.",
+    "scope": "Requested v2 invocation once; selected current-channel missing/changed entries only. Reused21 unchanged shared entries after exact configuration equality. MusicBrainz revision3/artwork probes measured separately. No repeated full suite.",
     "youtubeMode": "anonymous HTTP only; no private profile/session/consent flow"
   },
   "validation": {
@@ -3887,26 +3860,26 @@
     "publisherImport": {
       "command": "SINGBOOK_LIVE_IMPORT_CHECK=1 flutter test --no-pub tool/source_import_maintenance_test.dart --reporter compact",
       "exitCode": 1,
-      "measuredAt": "2026-11-03T07:00:07.732792Z",
-      "path": "reports/source-maintenance/2026-11-03T070007Z-imports.json",
+      "measuredAt": "2026-11-04T07:05:35.454969Z",
+      "path": "reports/source-maintenance/2026-11-04T070535Z-imports.json",
       "outcome": "First downloadHTTP400; import unverified, second not reached."
     },
     "sourceChanges": false
   },
   "comparison": {
     "priorCloud": {
-      "measuredAt": "2026-11-02T07:02:36.622892Z",
+      "measuredAt": "2026-11-03T07:00:02.483791Z",
       "catalogRevision": 23,
-      "baseSha": "823d3b9e956c5c18918b7812c052d606a8c96929",
-      "ageHours": 23.957183611111112
+      "baseSha": "c034f559864ed6461c81bc6208b104893b0d3e55",
+      "ageHours": 24.088454444444444
     },
     "priorLocal": {
-      "measuredAt": "2026-11-02T06:59:35.686275Z",
+      "measuredAt": "2026-11-04T06:58:17.966854Z",
       "catalogRevision": 23,
       "path": "reports/source-maintenance/local/latest.json",
-      "ageHours": 24.00744361111111
+      "ageHours": 0.11748694444444445
     },
-    "limits": "Code/probe/runtime/measurement age provenance remains separate. Local success does not make blocked cloud probe healthy. Per-source current phase timestamps retained.",
+    "limits": "Code/probe/runtime and measurement ages remain separate; local pass does not prove cloud reachability. Per-source phase timestamps and catalog revisions retained.",
     "sources": [
       {
         "id": "genius",
@@ -4185,26 +4158,6 @@
       {
         "id": "lrclib",
         "current": {
-          "status": "transient_error",
-          "coverage": {
-            "status": "partial",
-            "verifiedCapabilities": [],
-            "unverifiedCapabilities": [
-              "catalog",
-              "lineTiming",
-              "lyrics",
-              "metadata"
-            ]
-          },
-          "probes": [
-            {
-              "id": "sound-of-silence-studio-recording",
-              "status": "transient_error",
-              "reason": "rate_limited"
-            }
-          ]
-        },
-        "priorCloud": {
           "status": "healthy",
           "coverage": {
             "status": "complete",
@@ -4240,6 +4193,26 @@
               ],
               "timingRawRetained": true,
               "hasChords": false
+            }
+          ]
+        },
+        "priorCloud": {
+          "status": "transient_error",
+          "coverage": {
+            "status": "partial",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "catalog",
+              "lineTiming",
+              "lyrics",
+              "metadata"
+            ]
+          },
+          "probes": [
+            {
+              "id": "sound-of-silence-studio-recording",
+              "status": "transient_error",
+              "reason": "rate_limited"
             }
           ]
         },
@@ -4377,7 +4350,7 @@
               "id": "wonderwall-oasis-studio",
               "status": "healthy",
               "providerId": "lyricsovh",
-              "bodyCharacters": 1307,
+              "bodyCharacters": 1316,
               "metadataFields": [
                 "album",
                 "artworkUrl",
@@ -4447,7 +4420,7 @@
               "id": "wonderwall-oasis-studio",
               "status": "healthy",
               "providerId": "lyricsovh",
-              "bodyCharacters": 1307,
+              "bodyCharacters": 1316,
               "metadataFields": [
                 "album",
                 "artworkUrl",
@@ -4470,80 +4443,6 @@
       {
         "id": "synclrc",
         "current": {
-          "status": "unavailable",
-          "coverage": {
-            "status": "partial",
-            "verifiedCapabilities": [
-              "lineTiming",
-              "lyrics",
-              "metadata",
-              "wordTiming"
-            ],
-            "unverifiedCapabilities": [
-              "catalog"
-            ]
-          },
-          "probes": [
-            {
-              "id": "never-gonna-give-you-up-studio",
-              "status": "healthy",
-              "providerId": "synclrc",
-              "bodyCharacters": 1927,
-              "metadataFields": [
-                "album",
-                "duration",
-                "hasLyrics",
-                "instrumental",
-                "query"
-              ],
-              "verifiedCapabilities": [
-                "lineTiming",
-                "lyrics",
-                "metadata",
-                "wordTiming"
-              ],
-              "timingTrackCount": 2,
-              "timingGranularities": [
-                "line",
-                "word"
-              ],
-              "timingRawRetained": true,
-              "hasChords": false
-            },
-            {
-              "id": "wonderwall-oasis-timed-version",
-              "status": "healthy",
-              "providerId": "synclrc",
-              "bodyCharacters": 1389,
-              "metadataFields": [
-                "album",
-                "duration",
-                "hasLyrics",
-                "instrumental",
-                "query"
-              ],
-              "verifiedCapabilities": [
-                "lineTiming",
-                "lyrics",
-                "metadata",
-                "wordTiming"
-              ],
-              "timingTrackCount": 2,
-              "timingGranularities": [
-                "line",
-                "word"
-              ],
-              "timingRawRetained": true,
-              "hasChords": false
-            },
-            {
-              "id": "never-gonna-give-you-up-catalog-search",
-              "status": "unavailable",
-              "reason": "empty_search_results"
-            }
-          ]
-        },
-        "priorCloud": {
           "status": "identity_mismatch",
           "coverage": {
             "status": "partial",
@@ -4614,6 +4513,80 @@
               "id": "never-gonna-give-you-up-catalog-search",
               "status": "identity_mismatch",
               "reason": "expected_candidate_not_found"
+            }
+          ]
+        },
+        "priorCloud": {
+          "status": "unavailable",
+          "coverage": {
+            "status": "partial",
+            "verifiedCapabilities": [
+              "lineTiming",
+              "lyrics",
+              "metadata",
+              "wordTiming"
+            ],
+            "unverifiedCapabilities": [
+              "catalog"
+            ]
+          },
+          "probes": [
+            {
+              "id": "never-gonna-give-you-up-studio",
+              "status": "healthy",
+              "providerId": "synclrc",
+              "bodyCharacters": 1927,
+              "metadataFields": [
+                "album",
+                "duration",
+                "hasLyrics",
+                "instrumental",
+                "query"
+              ],
+              "verifiedCapabilities": [
+                "lineTiming",
+                "lyrics",
+                "metadata",
+                "wordTiming"
+              ],
+              "timingTrackCount": 2,
+              "timingGranularities": [
+                "line",
+                "word"
+              ],
+              "timingRawRetained": true,
+              "hasChords": false
+            },
+            {
+              "id": "wonderwall-oasis-timed-version",
+              "status": "healthy",
+              "providerId": "synclrc",
+              "bodyCharacters": 1389,
+              "metadataFields": [
+                "album",
+                "duration",
+                "hasLyrics",
+                "instrumental",
+                "query"
+              ],
+              "verifiedCapabilities": [
+                "lineTiming",
+                "lyrics",
+                "metadata",
+                "wordTiming"
+              ],
+              "timingTrackCount": 2,
+              "timingGranularities": [
+                "line",
+                "word"
+              ],
+              "timingRawRetained": true,
+              "hasChords": false
+            },
+            {
+              "id": "never-gonna-give-you-up-catalog-search",
+              "status": "unavailable",
+              "reason": "empty_search_results"
             }
           ]
         },
@@ -4695,27 +4668,6 @@
       {
         "id": "betterlyrics",
         "current": {
-          "status": "transient_error",
-          "coverage": {
-            "status": "partial",
-            "verifiedCapabilities": [],
-            "unverifiedCapabilities": [
-              "catalog",
-              "lineTiming",
-              "lyrics",
-              "metadata",
-              "wordTiming"
-            ]
-          },
-          "probes": [
-            {
-              "id": "never-gonna-give-you-up-studio-recording",
-              "status": "transient_error",
-              "reason": "rate_limited"
-            }
-          ]
-        },
-        "priorCloud": {
           "status": "coverage_gap",
           "coverage": {
             "status": "partial",
@@ -4733,6 +4685,27 @@
               "id": "never-gonna-give-you-up-studio-recording",
               "status": "coverage_gap",
               "reason": "ambiguous_candidate"
+            }
+          ]
+        },
+        "priorCloud": {
+          "status": "transient_error",
+          "coverage": {
+            "status": "partial",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "catalog",
+              "lineTiming",
+              "lyrics",
+              "metadata",
+              "wordTiming"
+            ]
+          },
+          "probes": [
+            {
+              "id": "never-gonna-give-you-up-studio-recording",
+              "status": "transient_error",
+              "reason": "rate_limited"
             }
           ]
         },
@@ -5922,6 +5895,29 @@
       {
         "id": "wikidata",
         "current": {
+          "status": "transient_error",
+          "coverage": {
+            "status": "partial",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
+              "catalog",
+              "metadata"
+            ]
+          },
+          "probes": [
+            {
+              "id": "imagine-composition",
+              "status": "transient_error",
+              "reason": "provider_busy"
+            },
+            {
+              "id": "wonderwall-composition",
+              "status": "transient_error",
+              "reason": "provider_busy"
+            }
+          ]
+        },
+        "priorCloud": {
           "status": "healthy",
           "coverage": {
             "status": "complete",
@@ -5992,54 +5988,6 @@
               "timingGranularities": [],
               "timingRawRetained": false,
               "hasChords": false
-            }
-          ]
-        },
-        "priorCloud": {
-          "status": "unavailable",
-          "coverage": {
-            "status": "complete",
-            "verifiedCapabilities": [
-              "catalog",
-              "metadata"
-            ],
-            "unverifiedCapabilities": []
-          },
-          "probes": [
-            {
-              "id": "imagine-composition",
-              "status": "healthy",
-              "providerId": "wikidata",
-              "bodyCharacters": 0,
-              "metadataFields": [
-                "composers",
-                "description",
-                "durationClaims",
-                "externalIdentifiers",
-                "identityScope",
-                "key",
-                "keyAssertions",
-                "lyricists",
-                "partOf",
-                "performerIds",
-                "performers",
-                "publicationDates",
-                "types",
-                "wikidataId"
-              ],
-              "verifiedCapabilities": [
-                "catalog",
-                "metadata"
-              ],
-              "timingTrackCount": 0,
-              "timingGranularities": [],
-              "timingRawRetained": false,
-              "hasChords": false
-            },
-            {
-              "id": "wonderwall-composition",
-              "status": "unavailable",
-              "reason": "unavailable"
             }
           ]
         },
@@ -8515,7 +8463,7 @@
       {
         "id": "lyricsplus",
         "current": {
-          "status": "unavailable",
+          "status": "transient_error",
           "coverage": {
             "status": "partial",
             "verifiedCapabilities": [],
@@ -8530,13 +8478,13 @@
           "probes": [
             {
               "id": "billie-jean-michael-jackson",
-              "status": "unavailable",
-              "reason": "unavailable"
+              "status": "transient_error",
+              "reason": "rate_limited"
             },
             {
               "id": "creep-radiohead",
-              "status": "unavailable",
-              "reason": "unavailable"
+              "status": "transient_error",
+              "reason": "cancelled"
             }
           ]
         },
@@ -8587,8 +8535,8 @@
             },
             {
               "id": "creep-radiohead",
-              "status": "unavailable",
-              "reason": "unavailable"
+              "status": "transient_error",
+              "reason": "rate_limited"
             }
           ]
         }
@@ -9043,20 +8991,20 @@
     ]
   },
   "findings": {
-    "environment": "Genius ready binding but request failed network; not not_configured. UG, anonymous YouTube Music and Chordie also network failures. No fresh CONNECT/origin probes; historical proxy403 is not a measured status for this run.",
-    "external": "LRCLIB had sixHTTP503 with Retry-After1 plus one200; CLI rate_limited covers503 as well as429. BetterLyrics also failed while using LRCLIB lookup; no api.betterlyrics.org request was reached. Do not infer client quota or shared-IP/global load cause. No extra retries were added.",
-    "identity": "SyncLRC both direct extraction/metadata/line/word probes passed; catalog search empty, catalog remains unverified. Wikidata passed both canaries this run. LyricsPlus fourHTTP200 but both unavailable; no supported extraction/independent Apple chain qualification. No schema evidence or safe speculative source repair established.",
-    "coverage": "Wikisource fileImport remains unverified. AcousticBrainz both metadata probes pass; estimates are submission facts, not verified musical truth. MusicBrainz artwork is declared location/provenance, not decoded image bytes or rights. Disabled entries skipped, never healthy.",
-    "catalogSelection": "Requested v2 path is stale. Registry-missing gaps remain explicit in phase summary; supplemental measured current-channel results provide each missing entry. No schedule change.",
+    "environment": "Genius binding ready but request failed network; not not_configured. UG, anonymous YouTube Music and Chordie also network failures. No fresh status-only CONNECT/origin measurement; historic CONNECT403 not substituted as actual current status.",
+    "service": "LRCLIB passed. Wikidata received twoHTTP200 database-lag responses with lag7/Retry-After5; provider_busy, not successful extraction. LyricsPlus received oneHTTP503 Retry-After120; second canary cancelled without request under cooldown. No extra retries, bypass or schema inference.",
+    "identity": "SyncLRC both direct lyric/metadata/line/word canaries pass; catalog expected recording not found, so catalog unverified. BetterLyrics multiple matches after title/artist/album/duration filter; ambiguous selection remains coverage gap, no first-hit guessing or unverified identity repair.",
+    "limits": "Wikisource fileImport remains unverified. AcousticBrainz both metadata canaries pass; submission estimates are not verified musical truth. MusicBrainz artwork is declared location/binding/provenance, not decoded image bytes or rights. Disabled entries skipped, not healthy.",
+    "catalogSelection": "Requested v2 path stale; missing-registry gaps retained in phase summary, supplemental current-catalog results measured independently for those entries. No schedule changes.",
     "requestCounts": {
-      "liveAttempts": 103,
-      "separatePublisherImportAttempts": 1,
+      "liveAttempts": 83,
+      "publisherImportAttempts": 1,
       "documentationToolReadsSeparate": true
     },
-    "lifecycle": "No source activation, deactivation, retirement, catalog revision changes, secret provisioning or access-control bypass."
+    "lifecycle": "No automatic source disable/retire/reactivation; no catalog revision or secret/policy changes."
   },
   "discovery": {
-    "checkedDate": "2026-11-03",
+    "checkedDate": "2026-11-04",
     "mainCandidateCount": 54,
     "newSourcesActivated": 0,
     "configChanges": false,
@@ -9064,12 +9012,12 @@
       {
         "number": 290,
         "head": "d7de9cc6a6b8a389b9041146c7404aa742b06430",
-        "scope": "NØISE chart API access constraints"
+        "scope": "NØISE access constraints"
       },
       {
         "number": 285,
         "head": "d6f4293c945ade15a9b90aa5e15e5886f26bd046",
-        "scope": "ABC access constraints and local LyricsPlus winner evidence"
+        "scope": "ABC rights and separate local LyricsPlus evidence"
       },
       {
         "number": 261,
@@ -9077,11 +9025,12 @@
         "scope": "Mutopia persistent lyric stream candidate"
       }
     ],
-    "documentationReviewed": [
+    "evidenceUrls": [
       "https://noise-app.com/docs/reference/api",
+      "https://noise-app.com/legal/content-rules",
       "https://www.mutopiaproject.org/legal.html",
       "https://www.mutopiaproject.org/contribute.html"
     ],
-    "decision": "Search confirmed publisher documentation for existing pending candidates. Mutopia per-work licenses/source attribution do not establish lyric-stream extraction and compatible app qualification. NØISE documented structured charts do not supersede existing access/rights deferral. No content/corpus request or new independent two-canary qualification; avoid duplicate config/PR churn."
+    "decision": "Publisher documentation confirms existing pending leads. NØISE read-only chart API and Mutopia per-work licenses do not establish missing permitted extraction/app qualification. No new independent two-canary qualification or content/corpus request; preserve existing decisions, avoid competing PRs or duplicate config churn."
   }
 }
