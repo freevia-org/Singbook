@@ -1,15 +1,16 @@
 {
   "schemaVersion": 1,
   "catalogRevision": 23,
-  "measuredAt": "2026-11-03T09:56:09.648594Z",
+  "measuredAt": "2026-11-04T06:58:17.966854Z",
   "offline": false,
   "summary": {
-    "healthy": 21,
-    "transient_error": 4,
-    "unavailable": 2,
+    "healthy": 23,
+    "identity_mismatch": 1,
+    "coverage_gap": 1,
     "import_only": 1,
+    "partial_coverage": 2,
     "retired": 1,
-    "partial_coverage": 1,
+    "unavailable": 1,
     "disabled": 2
   },
   "sources": [
@@ -140,22 +141,42 @@
     {
       "id": "lrclib",
       "name": "LRCLIB",
-      "status": "transient_error",
+      "status": "healthy",
       "coverage": {
-        "status": "partial",
-        "verifiedCapabilities": [],
-        "unverifiedCapabilities": [
+        "status": "complete",
+        "verifiedCapabilities": [
           "catalog",
           "lineTiming",
           "lyrics",
           "metadata"
-        ]
+        ],
+        "unverifiedCapabilities": []
       },
       "probes": [
         {
           "id": "sound-of-silence-studio-recording",
-          "status": "transient_error",
-          "reason": "rate_limited"
+          "status": "healthy",
+          "candidateId": "14961166",
+          "providerId": "lrclib",
+          "bodyCharacters": 1157,
+          "metadataFields": [
+            "album",
+            "duration",
+            "hasLyrics",
+            "instrumental"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "lineTiming",
+            "lyrics",
+            "metadata"
+          ],
+          "timingTrackCount": 1,
+          "timingGranularities": [
+            "line"
+          ],
+          "timingRawRetained": true,
+          "hasChords": false
         }
       ]
     },
@@ -214,7 +235,7 @@
         {
           "id": "wonderwall-oasis-studio",
           "status": "healthy",
-          "candidateId": "sha256:94b0b020a6ba2cb4",
+          "candidateId": "sha256:c3730a1a91d28a7a",
           "providerId": "lyricsovh",
           "bodyCharacters": 1316,
           "metadataFields": [
@@ -238,7 +259,7 @@
     {
       "id": "synclrc",
       "name": "SyncLRC",
-      "status": "unavailable",
+      "status": "identity_mismatch",
       "coverage": {
         "status": "partial",
         "verifiedCapabilities": [
@@ -308,15 +329,15 @@
         },
         {
           "id": "never-gonna-give-you-up-catalog-search",
-          "status": "unavailable",
-          "reason": "empty_search_results"
+          "status": "identity_mismatch",
+          "reason": "expected_candidate_not_found"
         }
       ]
     },
     {
       "id": "betterlyrics",
       "name": "Better Lyrics",
-      "status": "transient_error",
+      "status": "coverage_gap",
       "coverage": {
         "status": "partial",
         "verifiedCapabilities": [],
@@ -331,8 +352,8 @@
       "probes": [
         {
           "id": "never-gonna-give-you-up-studio-recording",
-          "status": "transient_error",
-          "reason": "rate_limited"
+          "status": "coverage_gap",
+          "reason": "ambiguous_candidate"
         }
       ]
     },
@@ -435,23 +456,39 @@
     {
       "id": "chordie",
       "name": "Chordie",
-      "status": "transient_error",
+      "status": "partial_coverage",
       "coverage": {
         "status": "partial",
-        "verifiedCapabilities": [],
-        "unverifiedCapabilities": [
+        "verifiedCapabilities": [
           "catalog",
           "chords",
-          "fileImport",
           "lyrics",
           "metadata"
+        ],
+        "unverifiedCapabilities": [
+          "fileImport"
         ]
       },
       "probes": [
         {
           "id": "seventh-stranger-duran-duran",
-          "status": "transient_error",
-          "reason": "rate_limited"
+          "status": "healthy",
+          "candidateId": "/chord.pere/tabfu.thudspace.net/d/duran_duran/the_seventh_stranger.pro",
+          "providerId": "chordie",
+          "bodyCharacters": 2573,
+          "metadataFields": [
+            "identityScope"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "chords",
+            "lyrics",
+            "metadata"
+          ],
+          "timingTrackCount": 0,
+          "timingGranularities": [],
+          "timingRawRetained": false,
+          "hasChords": true
         }
       ]
     },
@@ -1668,8 +1705,8 @@
         },
         {
           "id": "creep-radiohead",
-          "status": "unavailable",
-          "reason": "unavailable"
+          "status": "transient_error",
+          "reason": "rate_limited"
         }
       ]
     },
@@ -1779,34 +1816,66 @@
     {
       "id": "acousticbrainz",
       "name": "AcousticBrainz",
-      "status": "transient_error",
+      "status": "healthy",
       "coverage": {
-        "status": "partial",
-        "verifiedCapabilities": [],
-        "unverifiedCapabilities": [
+        "status": "complete",
+        "verifiedCapabilities": [
           "metadata"
-        ]
+        ],
+        "unverifiedCapabilities": []
       },
       "probes": [
         {
           "id": "b5d7d380-f43a-4c1f-a5de-694150b093ac",
-          "status": "transient_error",
-          "reason": "network"
+          "status": "healthy",
+          "candidateId": "sha256:23310a0e4142e36d",
+          "providerId": "acousticbrainz",
+          "bodyCharacters": 0,
+          "metadataFields": [
+            "acousticbrainz",
+            "identityScope",
+            "metadataOnly",
+            "recordingEvidence"
+          ],
+          "verifiedCapabilities": [
+            "metadata"
+          ],
+          "timingTrackCount": 0,
+          "timingGranularities": [],
+          "timingRawRetained": false,
+          "hasChords": false
         },
         {
           "id": "099b148e-fe99-4b79-be6e-5078e4bb7415",
-          "status": "transient_error",
-          "reason": "network"
+          "status": "healthy",
+          "candidateId": "sha256:df7ad6732df23c29",
+          "providerId": "acousticbrainz",
+          "bodyCharacters": 0,
+          "metadataFields": [
+            "acousticbrainz",
+            "identityScope",
+            "metadataOnly",
+            "recordingEvidence"
+          ],
+          "verifiedCapabilities": [
+            "metadata"
+          ],
+          "timingTrackCount": 0,
+          "timingGranularities": [],
+          "timingRawRetained": false,
+          "hasChords": false
         }
       ]
     }
   ],
   "httpDiagnostics": {
-    "networkFailures": 2,
+    "networkFailures": 0,
     "hosts": {
       "acousticbrainz.org": {
-        "requests": 2,
-        "statuses": {},
+        "requests": 4,
+        "statuses": {
+          "200": 4
+        },
         "retryAfterSeconds": {},
         "databaseLag": {}
       },
@@ -1891,22 +1960,23 @@
         "databaseLag": {}
       },
       "lrclib.net": {
-        "requests": 6,
+        "requests": 3,
         "statuses": {
-          "503": 6
+          "200": 3
         },
-        "retryAfterSeconds": {
-          "1": 6
-        },
+        "retryAfterSeconds": {},
         "databaseLag": {}
       },
       "lyricsplus.prjktla.my.id": {
         "requests": 4,
         "statuses": {
           "200": 2,
-          "404": 2
+          "404": 1,
+          "503": 1
         },
-        "retryAfterSeconds": {},
+        "retryAfterSeconds": {
+          "120": 1
+        },
         "databaseLag": {}
       },
       "music.youtube.com": {
@@ -1982,13 +2052,11 @@
         "databaseLag": {}
       },
       "www.chordie.com": {
-        "requests": 3,
+        "requests": 2,
         "statuses": {
-          "503": 3
+          "200": 2
         },
-        "retryAfterSeconds": {
-          "5": 3
-        },
+        "retryAfterSeconds": {},
         "databaseLag": {}
       },
       "www.chords-and-tabs.net": {
@@ -2041,7 +2109,7 @@
       }
     }
   },
-  "sourceCommit": "c034f559864ed6461c81bc6208b104893b0d3e55",
+  "sourceCommit": "9568046f2418adc104dfc7aee3ad740492968a79",
   "catalogPath": "config/source-catalog-v10.json",
   "catalogChannel": 10,
   "catalogSha256": "a61377c845601888f22a8abf0f43a66ace1a61a85b6f627cd709e9f376b28dce",
@@ -2058,73 +2126,52 @@
     "offlineStructuralCheck": "passed"
   },
   "comparisonEvidence": {
-    "priorLocalMeasuredAt": "2026-11-02T06:59:35.686275Z",
+    "priorLocalMeasuredAt": "2026-11-03T09:56:09.648594Z",
     "cloudLatestMeasuredAt": "2026-11-03T07:00:02.483791Z",
     "cloudAndLocalIndependent": true
   },
-  "discovery": {
-    "lead": "Global Folk Songbook",
-    "documentation": "https://globalfolksongbook.com/songbook",
-    "decision": "deferred",
-    "evidence": "Search index describes regional folk songs; direct web reader returned no readable text. Identity, documented machine access, current rights and extraction not established. No content API calls or canaries.",
-    "catalogModified": false
-  },
   "roadblocks": [
     {
-      "reason": "LRCLIB returned six HTTP503 responses with Retry-After1; Better Lyrics depends on its catalog",
-      "action": "Upstream recovery required; 503 is not evidence of HTTP429 or excess scheduling",
-      "affected": "LRCLIB and Better Lyrics",
-      "tried": "One full scheduled suite with bounded retries",
-      "resolved": false
+      "action": "Search coverage remains unverified; do not substitute another song",
+      "resolved": false,
+      "reason": "Expected Rick Astley candidate absent from title-only search",
+      "tried": "Scheduled full suite; both direct timed lyric probes passed and prior November2 diagnostic returned other artists",
+      "affected": "SyncLRC catalog search"
     },
     {
-      "reason": "Three HTTP503 responses with Retry-After5",
-      "action": "Upstream recovery required",
-      "affected": "Chordie",
-      "tried": "One full suite with bounded retries",
-      "resolved": false
+      "action": "Further identity investigation needed",
+      "resolved": false,
+      "reason": "Multiple matching candidates prevent an unambiguous identity",
+      "tried": "Scheduled search; no first-match selection",
+      "affected": "Better Lyrics"
     },
     {
-      "reason": "Both API canaries failed at network transport",
-      "action": "Investigate reachability if persistent",
-      "affected": "AcousticBrainz",
-      "tried": "One full suite; no status response",
-      "resolved": false
+      "action": "Upstream recovery or independently validated source identity needed",
+      "resolved": false,
+      "reason": "One canary unavailable and another returned HTTP503 with Retry-After120",
+      "tried": "Scheduled canaries; respected server retry interval and reused prior QQ versus Apple diagnostics",
+      "affected": "LyricsPlus"
     },
     {
-      "reason": "Search returned no results; both direct timed lyric checks passed",
-      "action": "Search remains unverified; no substitute recording",
-      "affected": "SyncLRC catalog search",
-      "tried": "Scheduled search, compared November2 independent identity diagnostic",
-      "resolved": false
-    },
-    {
-      "reason": "Two canaries unavailable; current HTTP404 and prior QQ versus Apple identity limitation",
-      "action": "Upstream recovery or independently validated QQ support needed",
-      "affected": "LyricsPlus",
-      "tried": "Scheduled probes; reused prior diagnostics",
-      "resolved": false
-    },
-    {
-      "reason": "File import capability unverified",
       "action": "Separate permitted import qualification needed",
-      "affected": "Wikisource",
-      "tried": "Scheduled search and lyrics extraction passed",
-      "resolved": false
+      "resolved": false,
+      "reason": "File import capability remains unverified",
+      "tried": "Scheduled search and extraction canaries passed",
+      "affected": "Chordie and Wikisource"
     },
     {
-      "reason": "Lookup import-only; native picker coverage separate",
       "action": "Native picker qualification remains",
-      "affected": "Ozbcoz",
+      "resolved": false,
+      "reason": "Lookup is import-only and native picker coverage is separate",
       "tried": "Scheduled source check and separate host import phase",
-      "resolved": false
+      "affected": "Ozbcoz"
     },
     {
-      "reason": "Disabled pending qualification and rights review",
       "action": "Existing integration review remains",
-      "affected": "Pisni and OpenScore Lieder",
-      "tried": "Included in offline full registry/catalog check",
-      "resolved": false
+      "resolved": false,
+      "reason": "Disabled pending qualification and rights review",
+      "tried": "Included in full registry/catalog validation",
+      "affected": "Pisni and OpenScore Lieder"
     }
   ]
 }
