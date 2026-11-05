@@ -1,16 +1,15 @@
 {
   "schemaVersion": 1,
   "catalogRevision": 23,
-  "measuredAt": "2026-11-04T06:58:17.966854Z",
+  "measuredAt": "2026-11-05T07:06:31.052622Z",
   "offline": false,
   "summary": {
-    "healthy": 23,
-    "identity_mismatch": 1,
+    "healthy": 24,
     "coverage_gap": 1,
     "import_only": 1,
     "partial_coverage": 2,
     "retired": 1,
-    "unavailable": 1,
+    "transient_error": 1,
     "disabled": 2
   },
   "sources": [
@@ -235,9 +234,9 @@
         {
           "id": "wonderwall-oasis-studio",
           "status": "healthy",
-          "candidateId": "sha256:c3730a1a91d28a7a",
+          "candidateId": "sha256:3d578ba2df6abca7",
           "providerId": "lyricsovh",
-          "bodyCharacters": 1316,
+          "bodyCharacters": 1307,
           "metadataFields": [
             "album",
             "artworkUrl",
@@ -259,18 +258,17 @@
     {
       "id": "synclrc",
       "name": "SyncLRC",
-      "status": "identity_mismatch",
+      "status": "healthy",
       "coverage": {
-        "status": "partial",
+        "status": "complete",
         "verifiedCapabilities": [
+          "catalog",
           "lineTiming",
           "lyrics",
           "metadata",
           "wordTiming"
         ],
-        "unverifiedCapabilities": [
-          "catalog"
-        ]
+        "unverifiedCapabilities": []
       },
       "probes": [
         {
@@ -329,8 +327,31 @@
         },
         {
           "id": "never-gonna-give-you-up-catalog-search",
-          "status": "identity_mismatch",
-          "reason": "expected_candidate_not_found"
+          "status": "healthy",
+          "candidateId": "sha256:4fd5697d65d5f955",
+          "providerId": "synclrc",
+          "bodyCharacters": 1927,
+          "metadataFields": [
+            "album",
+            "duration",
+            "hasLyrics",
+            "instrumental",
+            "query"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "lineTiming",
+            "lyrics",
+            "metadata",
+            "wordTiming"
+          ],
+          "timingTrackCount": 2,
+          "timingGranularities": [
+            "line",
+            "word"
+          ],
+          "timingRawRetained": true,
+          "hasChords": false
         }
       ]
     },
@@ -1685,7 +1706,7 @@
     {
       "id": "lyricsplus",
       "name": "LyricsPlus",
-      "status": "unavailable",
+      "status": "transient_error",
       "coverage": {
         "status": "partial",
         "verifiedCapabilities": [],
@@ -1700,13 +1721,13 @@
       "probes": [
         {
           "id": "billie-jean-michael-jackson",
-          "status": "unavailable",
-          "reason": "unavailable"
+          "status": "transient_error",
+          "reason": "network"
         },
         {
           "id": "creep-radiohead",
           "status": "transient_error",
-          "reason": "rate_limited"
+          "reason": "network"
         }
       ]
     },
@@ -1968,15 +1989,11 @@
         "databaseLag": {}
       },
       "lyricsplus.prjktla.my.id": {
-        "requests": 4,
+        "requests": 2,
         "statuses": {
-          "200": 2,
-          "404": 1,
-          "503": 1
+          "530": 2
         },
-        "retryAfterSeconds": {
-          "120": 1
-        },
+        "retryAfterSeconds": {},
         "databaseLag": {}
       },
       "music.youtube.com": {
@@ -2126,52 +2143,45 @@
     "offlineStructuralCheck": "passed"
   },
   "comparisonEvidence": {
-    "priorLocalMeasuredAt": "2026-11-03T09:56:09.648594Z",
-    "cloudLatestMeasuredAt": "2026-11-03T07:00:02.483791Z",
+    "priorLocalMeasuredAt": "2026-11-04T06:58:17.966854Z",
+    "cloudLatestMeasuredAt": "2026-11-05T07:02:32.674682Z",
     "cloudAndLocalIndependent": true
   },
   "roadblocks": [
     {
-      "action": "Search coverage remains unverified; do not substitute another song",
+      "reason": "Multiple matching candidates prevent unambiguous identity",
       "resolved": false,
-      "reason": "Expected Rick Astley candidate absent from title-only search",
-      "tried": "Scheduled full suite; both direct timed lyric probes passed and prior November2 diagnostic returned other artists",
-      "affected": "SyncLRC catalog search"
+      "tried": "Scheduled search without first-match selection",
+      "affected": "Better Lyrics",
+      "action": "Further identity investigation needed"
     },
     {
-      "action": "Further identity investigation needed",
+      "reason": "Both canaries returned HTTP530",
       "resolved": false,
-      "reason": "Multiple matching candidates prevent an unambiguous identity",
-      "tried": "Scheduled search; no first-match selection",
-      "affected": "Better Lyrics"
+      "tried": "Scheduled probes; reused earlier QQ versus Apple identity diagnostics",
+      "affected": "LyricsPlus",
+      "action": "Upstream recovery or independently validated source identity needed"
     },
     {
-      "action": "Upstream recovery or independently validated source identity needed",
-      "resolved": false,
-      "reason": "One canary unavailable and another returned HTTP503 with Retry-After120",
-      "tried": "Scheduled canaries; respected server retry interval and reused prior QQ versus Apple diagnostics",
-      "affected": "LyricsPlus"
-    },
-    {
-      "action": "Separate permitted import qualification needed",
-      "resolved": false,
       "reason": "File import capability remains unverified",
+      "resolved": false,
       "tried": "Scheduled search and extraction canaries passed",
-      "affected": "Chordie and Wikisource"
+      "affected": "Chordie and Wikisource",
+      "action": "Separate permitted import qualification needed"
     },
     {
-      "action": "Native picker qualification remains",
+      "reason": "Lookup is import-only; native picker coverage is separate",
       "resolved": false,
-      "reason": "Lookup is import-only and native picker coverage is separate",
       "tried": "Scheduled source check and separate host import phase",
-      "affected": "Ozbcoz"
+      "affected": "Ozbcoz",
+      "action": "Native picker qualification remains"
     },
     {
-      "action": "Existing integration review remains",
-      "resolved": false,
       "reason": "Disabled pending qualification and rights review",
+      "resolved": false,
       "tried": "Included in full registry/catalog validation",
-      "affected": "Pisni and OpenScore Lieder"
+      "affected": "Pisni and OpenScore Lieder",
+      "action": "Existing integration review remains"
     }
   ]
 }
