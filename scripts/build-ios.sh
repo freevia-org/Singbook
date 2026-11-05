@@ -16,9 +16,9 @@ if ! xcodebuild -version >/dev/null 2>&1; then
   echo "Install and select full Xcode. See docs/ios-build.md." >&2
   exit 1
 fi
-version="$(sed -n 's/^version: *\([0-9.]*\)$/\1/p' pubspec.yaml)"
-[[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo 'Version must be MAJOR.MINOR.BUILD in pubspec.yaml.' >&2; exit 1; }
-build_number="${version##*.}"
+version="$(awk -F': *' '/^version:/ {print $2}' pubspec.yaml)"
+[[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+\+[0-9]+$ ]] || { echo 'Version must be MAJOR.MINOR.PATCH+BUILD in pubspec.yaml.' >&2; exit 1; }
+build_number="${version##*+}"
 
 defines=()
 if [[ -f config/local.defines.json ]]; then

@@ -13,10 +13,10 @@ args = parser.parse_args()
 root = Path(__file__).resolve().parent.parent
 contents = args.app / 'Contents'
 info = plistlib.loads((contents / 'Info.plist').read_bytes())
-version = re.search(r'^version: (\d+)\.(\d+)\.(\d+)$', (root / 'pubspec.yaml').read_text(), re.M)
-assert version, 'Version must be MAJOR.MINOR.BUILD'
-marketing_version = '.'.join(version.groups())
-build_number = version.group(3)
+version = re.search(r'^version: (\d+\.\d+\.\d+)\+(\d+)$', (root / 'pubspec.yaml').read_text(), re.M)
+assert version, 'Version must be MAJOR.MINOR.PATCH+BUILD'
+marketing_version = version.group(1)
+build_number = version.group(2)
 assert info['CFBundleIdentifier'] == 'org.freevia.singbook', 'Unexpected bundle ID'
 assert (info['CFBundleShortVersionString'], info['CFBundleVersion']) == (marketing_version, build_number), 'Version drift'
 assert info['LSApplicationCategoryType'] == 'public.app-category.music'

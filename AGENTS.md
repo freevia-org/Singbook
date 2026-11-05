@@ -18,10 +18,10 @@ database names and `x_verse` ChordPro payloads, timing, and provenance compatibl
 
 ## Release numbering
 
-- Use exactly one canonical `MAJOR.MINOR.BUILD` value in `pubspec.yaml`; the
-  third component is the monotonically increasing release build. For example,
-  `1.0.50` is followed by `1.0.51`. Never append a separate `+BUILD` value.
-  Store-specific numeric identifiers must be derived from this tuple.
+- Use exactly one canonical `MAJOR.MINOR.PATCH+BUILD` value in `pubspec.yaml`.
+  For example, `1.0.0+50` is followed by `1.0.0+51`. Keep `BUILD` monotonic
+  across version changes, and derive store-specific numeric identifiers from
+  this tuple rather than maintaining an independent code.
 - Update `pubspec.yaml`, `lib/ui/app_version.dart`,
   `lib/providers/transport.dart`, and the current README release example
   together. Run the existing displayed-version and User-Agent drift checks.

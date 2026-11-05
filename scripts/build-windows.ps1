@@ -15,9 +15,9 @@ try {
         $status | Write-Output
         throw 'Commit the source before creating a traceable Windows bundle.'
     }
-    $versionMatch = [regex]::Match((Get-Content pubspec.yaml -Raw), '(?m)^version:\s*(\d+\.\d+\.\d+)\s*$')
-    if (-not $versionMatch.Success) { throw 'Version must be MAJOR.MINOR.BUILD in pubspec.yaml.' }
-    $buildNumber = ($versionMatch.Groups[1].Value -split '\.')[-1]
+    $versionMatch = [regex]::Match((Get-Content pubspec.yaml -Raw), '(?m)^version:\s*(\d+\.\d+\.\d+)\+(\d+)\s*$')
+    if (-not $versionMatch.Success) { throw 'Version must be MAJOR.MINOR.PATCH+BUILD in pubspec.yaml.' }
+    $buildNumber = $versionMatch.Groups[2].Value
     $mode = if ($Debug) { 'debug' } else { 'release' }
     $configuration = if ($Debug) { 'Debug' } else { 'Release' }
     $buildArguments = @('build', 'windows', "--$mode", "--build-number=$buildNumber")
@@ -130,7 +130,7 @@ try {
         }
     }
     $manifest = @{
-        version = $versionMatch.Groups[1].Value
+        version = "$($versionMatch.Groups[1].Value)+$($versionMatch.Groups[2].Value)"
         sourceCommit = $revision
         sourceTree = (& git rev-parse 'HEAD^{tree}').Trim()
         configuration = $mode

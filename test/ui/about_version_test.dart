@@ -82,7 +82,7 @@ void main() {
 
       expect(
         tester.widget<Text>(versionText).data,
-        l10n.appVersion('9.8.7'),
+        l10n.appVersion('9.8.7+456'),
       );
     },
   );

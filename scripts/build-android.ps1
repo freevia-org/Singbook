@@ -71,8 +71,9 @@ try {
     $mode = if ($Debug) { '--debug' } else { '--release' }
     $target = if ($Bundle) { 'appbundle' } else { 'apk' }
     $pubspec = Get-Content -LiteralPath (Join-Path $workspace 'pubspec.yaml') -Raw
-    if ($pubspec -notmatch '(?m)^version:\s*\d+\.\d+\.(\d+)\s*$') { throw 'Version must be MAJOR.MINOR.BUILD in pubspec.yaml.' }
-    $releaseBuildNumber = $Matches[1]
+    if ($pubspec -notmatch '(?m)^version:\s*(\d+\.\d+\.\d+)\+(\d+)\s*$') { throw 'Version must be MAJOR.MINOR.PATCH+BUILD in pubspec.yaml.' }
+    $releaseVersionName = $Matches[1]
+    $releaseBuildNumber = $Matches[2]
     $arguments = @('build', $target, $mode, "--build-number=$releaseBuildNumber", '--dart-define=cronetHttpNoPlay=true')
     $definesPath = Join-Path $workspace 'config/local.defines.json'
     if (Test-Path -LiteralPath $definesPath) {
@@ -108,12 +109,12 @@ try {
     $env:GRADLE_OPTS = if ($gradleOptions) { "$gradleOptions $managedGradleProperties" } else { $managedGradleProperties }
     # Refuse immutable output collisions before Flutter touches build/.
     if ($Bundle) {
-        if ($pubspec -notmatch '(?m)^version:\s*(\d+)\.(\d+)\.(\d+)\s*$') { throw 'Version must be MAJOR.MINOR.BUILD in pubspec.yaml.' }
-        $versionName = "$($Matches[1]).$($Matches[2]).$($Matches[3])"
-        $major = [long]$Matches[1]; $minor = [long]$Matches[2]; $build = [long]$Matches[3]
-        if ($major -gt 20 -or $minor -gt 99 -or $build -lt 1 -or $build -gt 999) { throw 'Version exceeds the supported Play versionCode range.' }
-        $versionCode = $major * 100000000 + $minor * 1000000 + $build * 1000
-        $suffix = $versionName
+        if ($pubspec -notmatch '(?m)^version:\s*(\d+)\.(\d+)\.(\d+)\+(\d+)\s*$') { throw 'Version must be MAJOR.MINOR.PATCH+BUILD in pubspec.yaml.' }
+        $major = [long]$Matches[1]; $minor = [long]$Matches[2]; $patch = [long]$Matches[3]; $build = [long]$Matches[4]
+        if ($major -gt 20 -or $minor -gt 99 -or $patch -gt 999 -or $build -lt 1 -or $build -gt 999) { throw 'Version exceeds the supported Play versionCode range.' }
+        $versionName = "$major.$minor.$patch"
+        $versionCode = $major * 100000000 + $minor * 1000000 + $patch * 1000 + $build
+        $suffix = "$versionName+$build"
         $artifacts = Join-Path $workspace 'artifacts'
 
         $aabName = "singbook-$suffix-release.aab"

@@ -24,7 +24,9 @@ review; a signed export remains blocked until the owner configures the account.
 
 `ios/ExportOptions.plist` uses automatic signing and `app-store-connect`, with
 `destination=export`. It creates a local IPA; it does not upload it. Automatic
-build-number management is disabled so Xcode preserves the repository version.
+build-number management is disabled. The build helper derives Apple's required
+`CFBundleVersion` from the `BUILD` component after `+` in the canonical
+`MAJOR.MINOR.PATCH+BUILD` version and passes it to Flutter/Xcode.
 This historical iOS preparation packet targeted `0.2.9+23`; it does not describe
 the current repository release. As of 2026-10-23, the latest shared repository
 release is `0.2.14+28` for Android and Windows, and no current iOS native or signed

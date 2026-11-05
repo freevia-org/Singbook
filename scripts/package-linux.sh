@@ -9,8 +9,10 @@ root="$(cd "$(dirname "$0")/.." && pwd)"
 out="${1:-$root/build/linux-packages}"
 bundle="$root/build/linux/x64/release/bundle"
 [[ -x "$bundle/singbook" ]] || { echo "Missing $bundle/singbook; build first." >&2; exit 1; }
-version="$(sed -n 's/^version: *\([0-9.]*\)$/\1/p' "$root/pubspec.yaml")"
-build="${version##*.}"
+canonical_version="$(awk -F': *' '/^version:/ {print $2}' "$root/pubspec.yaml")"
+[[ "$canonical_version" =~ ^([0-9]+\.[0-9]+\.[0-9]+)\+([0-9]+)$ ]] || { echo 'Version must be MAJOR.MINOR.PATCH+BUILD.' >&2; exit 1; }
+version="${BASH_REMATCH[1]}"
+build="${BASH_REMATCH[2]}"
 id=org.freevia.singbook
 desktop="$root/linux/packaging/$id.desktop"
 work="$(mktemp -d)"

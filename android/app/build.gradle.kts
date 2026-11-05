@@ -6,17 +6,16 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
-private fun playVersionCode(versionName: String): Int {
+private fun playVersionCode(versionName: String, buildNumber: Int): Int {
     val parts = Regex("^(\\d+)\\.(\\d+)\\.(\\d+)$").matchEntire(versionName)
         ?.groupValues?.drop(1)?.map { it.toLong() }
-        ?: throw GradleException("Release version must be MAJOR.MINOR.BUILD: $versionName")
-    val (major, minor, build) = parts
-    require(major in 0L..20L && minor in 0L..99L && build in 1L..999L) {
+        ?: throw GradleException("Release version must be MAJOR.MINOR.PATCH: $versionName")
+    val (major, minor, patch) = parts
+    require(major in 0L..20L && minor in 0L..99L && patch in 0L..999L && buildNumber in 1..999) {
         "Release version components exceed the supported Play versionCode range"
     }
-    // Derive Play's required numeric identifier solely from the public tuple.
-    // The final component is the monotonic release build; no independent code.
-    val value = major * 100_000_000L + minor * 1_000_000L + build * 1_000L
+    // Derive Play's required numeric identifier from the single canonical tuple.
+    val value = major * 100_000_000L + minor * 1_000_000L + patch * 1_000L + buildNumber
     require(value <= 2_100_000_000L) { "Derived Play versionCode exceeds Google's limit" }
     return value.toInt()
 }
@@ -82,7 +81,7 @@ android {
         // 2026-08-31. flutter.targetSdkVersion is 36 in Flutter 3.44; the
         // explicit floor keeps a future Flutter downgrade from lowering it.
         targetSdk = maxOf(flutter.targetSdkVersion, 36)
-        versionCode = playVersionCode(flutter.versionName)
+        versionCode = playVersionCode(flutter.versionName, flutter.versionCode)
         versionName = flutter.versionName
     }
 

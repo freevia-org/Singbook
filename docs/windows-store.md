@@ -22,9 +22,9 @@ certification, so no certificate or signing key is used anywhere in this repo.
 
 ## Version mapping
 
-Store package version is `<MAJOR>.<MINOR>.<BUILD>.0`, for example canonical
-version `1.0.51` becomes `Singbook_1.0.51.0_x64.msix`. The build number must be
-in 1..65535 and the package version must be newer than the last submission.
+Store package version is `1.0.<BUILD>.0`, for example canonical version
+`1.0.0+51` becomes `Singbook_1.0.51.0_x64.msix`. The build number must be in
+1..65535 and the package version must be newer than the last submission.
 
 ## Packaging a new release (repo side)
 

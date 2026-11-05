@@ -9,9 +9,9 @@ case "$mode" in
 esac
 command -v flutter >/dev/null || { echo 'Add Flutter 3.44.8 to PATH.' >&2; exit 1; }
 xcodebuild -version >/dev/null
-version="$(sed -n 's/^version: *\([0-9.]*\)$/\1/p' pubspec.yaml)"
-[[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo 'Version must be MAJOR.MINOR.BUILD in pubspec.yaml.' >&2; exit 1; }
-build_number="${version##*.}"
+version="$(awk -F': *' '/^version:/ {print $2}' pubspec.yaml)"
+[[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+\+[0-9]+$ ]] || { echo 'Version must be MAJOR.MINOR.PATCH+BUILD in pubspec.yaml.' >&2; exit 1; }
+build_number="${version##*+}"
 stamp="$(date -u +%Y%m%dT%H%M%SZ)"
 revision="$(git rev-parse HEAD)"
 evidence="artifacts/macos/${stamp}-${revision:0:8}-$$"
