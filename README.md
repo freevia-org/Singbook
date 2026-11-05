@@ -2,7 +2,7 @@
 
 **Website:** [freevia.org/singbook](https://freevia.org/singbook/) · **Privacy policy:** [freevia.org/singbook/privacy](https://freevia.org/singbook/privacy/) · **Support and feedback:** [freevia.org/singbook/support](https://freevia.org/singbook/support/)
 
-**Stores (checked 5 November 2026):** [Google Play for Android](https://play.google.com/store/apps/details?id=org.freevia.singbook) (0.2.35 in Production; 0.2.36 in Internal testing) · [App Store](https://apps.apple.com/) (iOS and macOS 0.2.25 Waiting for Review) · [Microsoft Store for Windows](https://apps.microsoft.com/detail/9P2J824JLQGZ) (update in progress for package 1.0.50.0). Current source candidate `1.0.0+51` is not yet built or uploaded.
+**Stores (checked 5 November 2026):** [Google Play for Android](https://play.google.com/store/apps/details?id=org.freevia.singbook) (0.2.35 in Production; 0.2.36 in Internal testing) · [App Store](https://apps.apple.com/) (iOS and macOS 0.2.25 Waiting for Review) · [Microsoft Store for Windows](https://apps.microsoft.com/detail/9P2J824JLQGZ) (update in progress for package 1.0.50.0). Current source candidate `1.0.51+51` is not yet built or uploaded.
 
 **GitHub Android 0.2.26 (build 40):** [Signed APK](https://github.com/freevia-org/Singbook/releases/download/v0.2.26/singbook-0.2.26%2B40-release.apk) · [Release notes and checksums](https://github.com/freevia-org/Singbook/releases/tag/v0.2.26).
 
@@ -113,20 +113,21 @@ on a signed release APK before publishing.
 
 ### Google Play release
 
-Current source version: `1.0.0+51` (see `pubspec.yaml`). This is a prepared
+Current source version: `1.0.51+51` (see `pubspec.yaml`). This is a prepared
 candidate; it has not been built or uploaded. The latest directly verified
 Google Play state on 4 November 2026 is Production `0.2.35` / code 49 and
 Internal testing `0.2.36` / code 50. Build 51 is the current-source candidate
-and has not been published. Its unified version is `1.0.0+51`; Play's required
-numeric `versionCode` is derived as `100000051`. These build commands do not
+and has not been published. Its unified version is `1.0.51+51`; Play's required
+numeric `versionCode` is derived as `100051051`. These build commands do not
 imply publication on other platforms.
-The canonical release value is `MAJOR.MINOR.PATCH+BUILD`; `1.0.0+51` is one
-version with a monotonically increasing build ordinal. Apple build numbers
-come from `BUILD`, Android derives Play's required numeric `versionCode` as
-`MAJOR × 100,000,000 + MINOR × 1,000,000 + PATCH × 1,000 + BUILD`, and the
-Microsoft Store package mapping is `1.0.<BUILD>.0`. Rebuilds of the same
-release and promotion between internal testing and production keep the same
-identifiers.
+The canonical release value is `MAJOR.MINOR.PATCH+BUILD`; `1.0.51+51` is one
+version with a monotonically increasing build ordinal. Singbook advances PATCH
+and BUILD together so the marketing version aligns with Microsoft Store's
+third package component. Apple uses version 1.0.51 and build 51; Android derives
+Play's required numeric `versionCode` as
+`MAJOR × 100,000,000 + MINOR × 1,000,000 + PATCH × 1,000 + BUILD` (100051051);
+Microsoft uses package version 1.0.51.0. Rebuilds of the same release and
+promotion between internal testing and production keep the same identifiers.
 Update `pubspec.yaml`,
 `lib/ui/app_version.dart`, `lib/providers/transport.dart`, and this example
 together before building; the version-drift tests check the displayed and HTTP
@@ -139,7 +140,7 @@ a locale config for all 34 app languages (one per `lib/l10n/app_*.arb`; keep
 
 ```powershell
 .\scripts\build-android.ps1 -Bundle -Production   # signed .aab + symbols + SHA-256 in artifacts\
-  .\scripts\verify-release.ps1 -Path artifacts\singbook-1.0.0+51-release.aab
+  .\scripts\verify-release.ps1 -Path artifacts\singbook-1.0.51+51-release.aab
 ```
 
 The build script refuses to overwrite an existing artifact of the same version

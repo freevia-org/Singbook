@@ -10,7 +10,7 @@ param(
     [Parameter(Mandatory)][string]$IconPath,
     [Parameter(Mandatory)][string]$MakeAppxPath,
     [Parameter(Mandatory)][string]$ExpectedSourceTree,
-    [string]$ExpectedProductVersion = '1.0.0+51'
+    [string]$ExpectedProductVersion = '1.0.51+51'
 )
 $ErrorActionPreference = 'Stop'
 
@@ -58,11 +58,12 @@ if ($release.sourceTree -ne $ExpectedSourceTree) {
 if ($release.version -notmatch '^(\d+)\.(\d+)\.(\d+)\+(\d+)$') {
     throw 'Application version must be MAJOR.MINOR.PATCH+BUILD.'
 }
-$buildNumber = [int]$Matches[4]
+$major = [int]$Matches[1]; $minor = [int]$Matches[2]; $patch = [int]$Matches[3]; $buildNumber = [int]$Matches[4]
 if ($buildNumber -lt 1 -or $buildNumber -gt 65535) {
     throw 'Store package mapping requires a build number from 1 through 65535.'
 }
-$storePackageVersion = "1.0.$buildNumber.0"
+if ($patch -ne $buildNumber) { throw 'For cross-store version alignment, PATCH must equal BUILD.' }
+$storePackageVersion = "$major.$minor.$patch.0"
 $identity = $packageManifest.SelectSingleNode("/*[local-name()='Package']/*[local-name()='Identity']")
 if ($null -eq $identity -or $identity.Name -ne 'Freevia.Singbook' -or
     $identity.Publisher -ne 'CN=BCFA4DEF-81A8-41BB-A9C8-5DDAB2101C9A' -or
@@ -233,7 +234,7 @@ if ((Get-FileHash -LiteralPath (Join-Path $roundTrip 'AppxManifest.xml') -Algori
 $evidence = [ordered]@{
     productVersion = $release.version
     packageVersion = $storePackageVersion
-    packageVersionMapping = '1.0.<BUILD>.0'
+    packageVersionMapping = '<MAJOR>.<MINOR>.<PATCH>.0'
     architecture = 'x64'
     storeIdentity = 'Freevia.Singbook'
     sourceCommitFromArtifact = $release.sourceCommit

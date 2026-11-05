@@ -6,16 +6,19 @@ param(
     [Parameter(Mandatory)][string]$ExpectedSourceTree,
     [Parameter(Mandatory)][string]$ExpectedSourceManifestSha256,
     [Parameter(Mandatory)][string]$EvidenceDirectory,
-    [string]$ExpectedProductVersion = '1.0.0+51'
+    [string]$ExpectedProductVersion = '1.0.51+51'
 )
 $ErrorActionPreference = 'Stop'
 
 $expectedIdentity = 'Freevia.Singbook'
 $expectedPublisher = 'CN=BCFA4DEF-81A8-41BB-A9C8-5DDAB2101C9A'
-if ($ExpectedProductVersion -notmatch '^\d+\.\d+\.\d+\+(\d+)$') {
+if ($ExpectedProductVersion -notmatch '^(\d+)\.(\d+)\.(\d+)\+(\d+)$') {
     throw 'ExpectedProductVersion must be MAJOR.MINOR.PATCH+BUILD.'
 }
-$expectedVersion = [version]("1.0.$($Matches[1]).0")
+if ($Matches[3] -ne $Matches[4]) {
+    throw 'For cross-store version alignment, PATCH must equal BUILD.'
+}
+$expectedVersion = [version]("$($Matches[1]).$($Matches[2]).$($Matches[3]).0")
 $expectedArchitecture = 'x64'
 $expectedExecutable = 'Singbook\singbook.exe'
 $expectedPortableExecutable = 'singbook.exe'
