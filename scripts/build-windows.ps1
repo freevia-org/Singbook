@@ -15,11 +15,12 @@ try {
         $status | Write-Output
         throw 'Commit the source before creating a traceable Windows bundle.'
     }
-    $versionMatch = [regex]::Match((Get-Content pubspec.yaml -Raw), '(?m)^version:\s*(\S+)')
-    if (-not $versionMatch.Success) { throw 'Cannot determine app version.' }
+    $versionMatch = [regex]::Match((Get-Content pubspec.yaml -Raw), '(?m)^version:\s*(\d+\.\d+\.\d+)\s*$')
+    if (-not $versionMatch.Success) { throw 'Version must be MAJOR.MINOR.BUILD in pubspec.yaml.' }
+    $buildNumber = ($versionMatch.Groups[1].Value -split '\.')[-1]
     $mode = if ($Debug) { 'debug' } else { 'release' }
     $configuration = if ($Debug) { 'Debug' } else { 'Release' }
-    $buildArguments = @('build', 'windows', "--$mode")
+    $buildArguments = @('build', 'windows', "--$mode", "--build-number=$buildNumber")
     $desktopClientId = $null
     if (Test-Path -LiteralPath $DefinesFile) {
         $defines = Get-Content -LiteralPath $DefinesFile -Raw | ConvertFrom-Json

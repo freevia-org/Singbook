@@ -10,7 +10,7 @@ param(
     [Parameter(Mandatory)][string]$IconPath,
     [Parameter(Mandatory)][string]$MakeAppxPath,
     [Parameter(Mandatory)][string]$ExpectedSourceTree,
-    [string]$ExpectedProductVersion = '0.2.14+28'
+    [string]$ExpectedProductVersion = '1.0.51'
 )
 $ErrorActionPreference = 'Stop'
 
@@ -55,14 +55,14 @@ if ($null -eq $release.requiredFiles -or $release.requiredFiles.Count -eq 0) {
 if ($release.sourceTree -ne $ExpectedSourceTree) {
     throw 'Input portable artifact was built from an unexpected source tree.'
 }
-if ($release.version -notmatch '^\d+\.\d+\.\d+\+(\d+)$') {
-    throw 'Application version must include the monotonic pubspec build number.'
+if ($release.version -notmatch '^(\d+)\.(\d+)\.(\d+)$') {
+    throw 'Application version must be MAJOR.MINOR.BUILD.'
 }
-$buildNumber = [int]$Matches[1]
+$major = [int]$Matches[1]; $minor = [int]$Matches[2]; $buildNumber = [int]$Matches[3]
 if ($buildNumber -lt 1 -or $buildNumber -gt 65535) {
     throw 'Store package mapping requires a build number from 1 through 65535.'
 }
-$storePackageVersion = "1.0.$buildNumber.0"
+$storePackageVersion = "$major.$minor.$buildNumber.0"
 $identity = $packageManifest.SelectSingleNode("/*[local-name()='Package']/*[local-name()='Identity']")
 if ($null -eq $identity -or $identity.Name -ne 'Freevia.Singbook' -or
     $identity.Publisher -ne 'CN=BCFA4DEF-81A8-41BB-A9C8-5DDAB2101C9A' -or
@@ -233,7 +233,7 @@ if ((Get-FileHash -LiteralPath (Join-Path $roundTrip 'AppxManifest.xml') -Algori
 $evidence = [ordered]@{
     productVersion = $release.version
     packageVersion = $storePackageVersion
-    packageVersionMapping = '1.0.<monotonic pubspec build>.0'
+    packageVersionMapping = '<MAJOR>.<MINOR>.<BUILD>.0'
     architecture = 'x64'
     storeIdentity = 'Freevia.Singbook'
     sourceCommitFromArtifact = $release.sourceCommit

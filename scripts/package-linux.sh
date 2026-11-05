@@ -9,8 +9,8 @@ root="$(cd "$(dirname "$0")/.." && pwd)"
 out="${1:-$root/build/linux-packages}"
 bundle="$root/build/linux/x64/release/bundle"
 [[ -x "$bundle/singbook" ]] || { echo "Missing $bundle/singbook; build first." >&2; exit 1; }
-version="$(sed -n 's/^version: *\([0-9.]*\)+.*/\1/p' "$root/pubspec.yaml")"
-build="$(sed -n 's/^version: *[0-9.]*+\([0-9]*\).*/\1/p' "$root/pubspec.yaml")"
+version="$(sed -n 's/^version: *\([0-9.]*\)$/\1/p' "$root/pubspec.yaml")"
+build="${version##*.}"
 id=org.freevia.singbook
 desktop="$root/linux/packaging/$id.desktop"
 work="$(mktemp -d)"

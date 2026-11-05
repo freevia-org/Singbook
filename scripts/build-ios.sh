@@ -16,6 +16,9 @@ if ! xcodebuild -version >/dev/null 2>&1; then
   echo "Install and select full Xcode. See docs/ios-build.md." >&2
   exit 1
 fi
+version="$(sed -n 's/^version: *\([0-9.]*\)$/\1/p' pubspec.yaml)"
+[[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo 'Version must be MAJOR.MINOR.BUILD in pubspec.yaml.' >&2; exit 1; }
+build_number="${version##*.}"
 
 defines=()
 if [[ -f config/local.defines.json ]]; then
@@ -54,8 +57,8 @@ fi
 flutter pub get --enforce-lockfile
 flutter gen-l10n
 case "$mode" in
-  simulator) flutter build ios --simulator --debug --no-pub "${defines[@]}" ;;
-  device) flutter build ios --release --no-codesign --no-pub "${defines[@]}" ;;
-  archive) flutter build ipa --release --no-codesign --no-pub "${defines[@]}" ;;
-  ipa) flutter build ipa --release --no-pub --export-options-plist=ios/ExportOptions.plist "${defines[@]}" ;;
+  simulator) flutter build ios --simulator --debug --build-number="$build_number" --no-pub "${defines[@]}" ;;
+  device) flutter build ios --release --build-number="$build_number" --no-codesign --no-pub "${defines[@]}" ;;
+  archive) flutter build ipa --release --build-number="$build_number" --no-codesign --no-pub "${defines[@]}" ;;
+  ipa) flutter build ipa --release --build-number="$build_number" --no-pub --export-options-plist=ios/ExportOptions.plist "${defines[@]}" ;;
 esac

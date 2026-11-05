@@ -70,7 +70,10 @@ try {
     if ($Bundle -and -not $Production) { Write-Warning 'Bundle built without -Production: it is only suitable for upload to Play if android/key.properties exists (the build fails otherwise).' }
     $mode = if ($Debug) { '--debug' } else { '--release' }
     $target = if ($Bundle) { 'appbundle' } else { 'apk' }
-    $arguments = @('build', $target, $mode, '--dart-define=cronetHttpNoPlay=true')
+    $pubspec = Get-Content -LiteralPath (Join-Path $workspace 'pubspec.yaml') -Raw
+    if ($pubspec -notmatch '(?m)^version:\s*\d+\.\d+\.(\d+)\s*$') { throw 'Version must be MAJOR.MINOR.BUILD in pubspec.yaml.' }
+    $releaseBuildNumber = $Matches[1]
+    $arguments = @('build', $target, $mode, "--build-number=$releaseBuildNumber", '--dart-define=cronetHttpNoPlay=true')
     $definesPath = Join-Path $workspace 'config/local.defines.json'
     if (Test-Path -LiteralPath $definesPath) {
         $arguments += @('--dart-define-from-file', $definesPath)
@@ -105,11 +108,12 @@ try {
     $env:GRADLE_OPTS = if ($gradleOptions) { "$gradleOptions $managedGradleProperties" } else { $managedGradleProperties }
     # Refuse immutable output collisions before Flutter touches build/.
     if ($Bundle) {
-        $pubspec = Get-Content -LiteralPath (Join-Path $workspace 'pubspec.yaml') -Raw
-        if ($pubspec -notmatch '(?m)^version:\s*([^\s+]+)\+(\d+)') { throw 'Cannot read version from pubspec.yaml.' }
-        $versionName = $Matches[1]
-        $versionCode = $Matches[2]
-        $suffix = "$versionName+$versionCode"
+        if ($pubspec -notmatch '(?m)^version:\s*(\d+)\.(\d+)\.(\d+)\s*$') { throw 'Version must be MAJOR.MINOR.BUILD in pubspec.yaml.' }
+        $versionName = "$($Matches[1]).$($Matches[2]).$($Matches[3])"
+        $major = [long]$Matches[1]; $minor = [long]$Matches[2]; $build = [long]$Matches[3]
+        if ($major -gt 20 -or $minor -gt 99 -or $build -lt 1 -or $build -gt 999) { throw 'Version exceeds the supported Play versionCode range.' }
+        $versionCode = $major * 100000000 + $minor * 1000000 + $build * 1000
+        $suffix = $versionName
         $artifacts = Join-Path $workspace 'artifacts'
 
         $aabName = "singbook-$suffix-release.aab"

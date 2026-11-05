@@ -6,16 +6,16 @@ param(
     [Parameter(Mandatory)][string]$ExpectedSourceTree,
     [Parameter(Mandatory)][string]$ExpectedSourceManifestSha256,
     [Parameter(Mandatory)][string]$EvidenceDirectory,
-    [string]$ExpectedProductVersion = '0.2.14+28'
+    [string]$ExpectedProductVersion = '1.0.51'
 )
 $ErrorActionPreference = 'Stop'
 
 $expectedIdentity = 'Freevia.Singbook'
 $expectedPublisher = 'CN=BCFA4DEF-81A8-41BB-A9C8-5DDAB2101C9A'
-if ($ExpectedProductVersion -notmatch '^\d+\.\d+\.\d+\+(\d+)$') {
-    throw 'ExpectedProductVersion must contain a monotonic numeric build number.'
+if ($ExpectedProductVersion -notmatch '^(\d+)\.(\d+)\.(\d+)$') {
+    throw 'ExpectedProductVersion must be MAJOR.MINOR.BUILD.'
 }
-$expectedVersion = [version]("1.0.$($Matches[1]).0")
+$expectedVersion = [version]("$($Matches[1]).$($Matches[2]).$($Matches[3]).0")
 $expectedArchitecture = 'x64'
 $expectedExecutable = 'Singbook\singbook.exe'
 $expectedPortableExecutable = 'singbook.exe'

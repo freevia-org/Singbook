@@ -2,13 +2,13 @@
 
 **Website:** [freevia.org/singbook](https://freevia.org/singbook/) · **Privacy policy:** [freevia.org/singbook/privacy](https://freevia.org/singbook/privacy/) · **Support and feedback:** [freevia.org/singbook/support](https://freevia.org/singbook/support/)
 
-**Stores:** [Google Play for Android](https://play.google.com/store/apps/details?id=org.freevia.singbook) (0.2.26, build 40, live in Production; 0.2.32, build 46, available to Internal testers) · [Microsoft Store for Windows](https://apps.microsoft.com/detail/9P2J824JLQGZ) (package 1.0.46.0 live through Submission 17). Five Google Play listing-only changes, including the revised description and phone gallery, were published on 29 October 2026; the Microsoft submission updated one search keyword without changing the package.
+**Stores (checked 5 November 2026):** [Google Play for Android](https://play.google.com/store/apps/details?id=org.freevia.singbook) (0.2.35 in Production; 0.2.36 in Internal testing) · [App Store](https://apps.apple.com/) (iOS and macOS 0.2.25 Waiting for Review) · [Microsoft Store for Windows](https://apps.microsoft.com/detail/9P2J824JLQGZ) (update in progress for package 1.0.50.0). Current source candidate `1.0.51` is not yet built or uploaded.
 
 **GitHub Android 0.2.26 (build 40):** [Signed APK](https://github.com/freevia-org/Singbook/releases/download/v0.2.26/singbook-0.2.26%2B40-release.apk) · [Release notes and checksums](https://github.com/freevia-org/Singbook/releases/tag/v0.2.26).
 
 **GitHub desktop 0.2.24 (build 38):** [Portable Windows x64 ZIP](https://github.com/freevia-org/Singbook/releases/download/v0.2.24/singbook-0.2.24%2B38-windows-x64-release-f11a5341-20261025T071344096Z.zip) · [macOS universal ZIP](https://github.com/freevia-org/Singbook/releases/download/v0.2.24/Singbook-0.2.24-macos-universal.zip) · [Release notes](https://github.com/freevia-org/Singbook/releases/tag/v0.2.24).
 
-The [website](https://freevia.org/singbook/) shows real Android and Windows app screenshots using fictional sample-song content. Apple is still reviewing iOS and macOS 0.2.25 (build 39); neither is publicly available on the App Store as of 29 October 2026.
+The [website](https://freevia.org/singbook/) shows real Android and Windows app screenshots using fictional sample-song content. Apple is reviewing iOS and macOS 0.2.25; neither is publicly available on the App Store as of 5 November 2026.
 
 A local-first Flutter songbook for Android, Windows, macOS and Linux (CI-built AppImage and .deb, not yet published), with an iOS release in review. Search Genius, compare lyrics and chord arrangements from free sources, and keep each song in one portable ChordPro file. No Singbook backend is required. SQLite stores the local library; source HTTP requests run on the device.
 
@@ -113,21 +113,21 @@ on a signed release APK before publishing.
 
 ### Google Play release
 
-Current source version: `0.2.37+51` (see `pubspec.yaml`). This is a prepared
+Current source version: `1.0.51` (see `pubspec.yaml`). This is a prepared
 candidate; it has not been built or uploaded. The latest directly verified
 Google Play state on 4 November 2026 is Production `0.2.35` / code 49 and
 Internal testing `0.2.36` / code 50. Build 51 is the current-source candidate
-and has not been published. These build commands do not imply publication on
-other platforms.
-The canonical release value is `MAJOR.MINOR.CODE+BUILD`. `0.2.36+50` and
-`0.2.37+51` are separate coordinated releases: the latter advances both the
-customer-facing `CODE` and artifact `BUILD`.
-(for example, `0.2.37+52`). The number after `+` is the shared artifact build
-ordinal and must always increase; never reset it when the visible version
-changes. Android derives Play's numeric `versionCode` from the full tuple:
-`MAJOR × 100,000,000 + MINOR × 1,000,000 + CODE × 1,000 + BUILD`. Rebuilds of
-the same release and promotion between internal testing and production keep
-the same version. Update `pubspec.yaml`,
+and has not been published. Its unified version is `1.0.51`; Play's required
+numeric `versionCode` is derived as `100051000`. These build commands do not
+imply publication on other platforms.
+The canonical release value is `MAJOR.MINOR.BUILD`; `1.0.51` is one version
+whose third component is also its build ordinal. There is no additional
+independent build/code number. Apple build numbers are derived from the final
+component, Android derives Play's required numeric `versionCode` as
+`MAJOR × 100,000,000 + MINOR × 1,000,000 + BUILD × 1,000`, and Microsoft Store
+maps it to `<MAJOR>.<MINOR>.<BUILD>.0`. Rebuilds of the same release and
+promotion between internal testing and production keep the same identifiers.
+Update `pubspec.yaml`,
 `lib/ui/app_version.dart`, `lib/providers/transport.dart`, and this example
 together before building; the version-drift tests check the displayed and HTTP
 versions. Do not renumber historical releases or overwrite verified artifacts.
@@ -139,7 +139,7 @@ a locale config for all 34 app languages (one per `lib/l10n/app_*.arb`; keep
 
 ```powershell
 .\scripts\build-android.ps1 -Bundle -Production   # signed .aab + symbols + SHA-256 in artifacts\
-  .\scripts\verify-release.ps1 -Path artifacts\singbook-0.2.37+51-release.aab
+  .\scripts\verify-release.ps1 -Path artifacts\singbook-1.0.51-release.aab
 ```
 
 The build script refuses to overwrite an existing artifact of the same version

@@ -427,13 +427,9 @@ class _AboutScreenState extends State<_AboutScreen> {
                     builder: (context, snapshot) {
                       final packageInfo = snapshot.data;
                       final version = packageInfo?.version.trim();
-                      final buildNumber = packageInfo?.buildNumber.trim();
                       var versionAndBuild = singbookVersion;
                       if (version != null && version.isNotEmpty) {
                         versionAndBuild = version;
-                        if (buildNumber != null && buildNumber.isNotEmpty) {
-                          versionAndBuild = '$version+$buildNumber';
-                        }
                       }
                       return Text(
                         l10n.appVersion(versionAndBuild),
