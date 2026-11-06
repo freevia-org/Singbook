@@ -1,0 +1,1865 @@
+{
+  "schemaVersion": 1,
+  "extractionSchemaVersion": 1,
+  "revision": 25,
+  "publishedAt": "2026-10-30T01:15:55.472Z",
+  "sources": [
+    {
+      "id": "genius",
+      "name": "Genius",
+      "adapter": "builtin",
+      "status": "active",
+      "revision": 1,
+      "capabilities": [
+        "catalog",
+        "lyrics",
+        "metadata"
+      ],
+      "enabledByDefault": true,
+      "accessMode": "app_token",
+      "website": "https://genius.com",
+      "hosts": [],
+      "probes": [
+        {
+          "id": "wonderwall-oasis",
+          "query": "Wonderwall Oasis",
+          "expectedTitle": "Wonderwall",
+          "expectedArtist": "Oasis",
+          "requiredFields": [
+            "body",
+            "metadata"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "songsterr",
+      "name": "Songsterr",
+      "adapter": "builtin",
+      "status": "active",
+      "revision": 1,
+      "capabilities": [
+        "catalog",
+        "lyrics",
+        "chords",
+        "metadata"
+      ],
+      "enabledByDefault": true,
+      "accessMode": "public_page",
+      "website": "https://www.songsterr.com",
+      "hosts": [],
+      "probes": [
+        {
+          "id": "wonderwall",
+          "query": "Wonderwall Oasis",
+          "expectedTitle": "Wonderwall",
+          "expectedArtist": "Oasis",
+          "requiredFields": [
+            "body",
+            "metadata",
+            "chords"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ultimateguitar",
+      "name": "Ultimate Guitar",
+      "adapter": "builtin",
+      "status": "active",
+      "revision": 2,
+      "capabilities": [
+        "catalog",
+        "lyrics",
+        "chords",
+        "metadata"
+      ],
+      "enabledByDefault": true,
+      "accessMode": "public_page",
+      "website": "https://www.ultimate-guitar.com",
+      "hosts": [],
+      "probes": [
+        {
+          "id": "wonderwall-oasis-chords",
+          "candidate": {
+            "providerId": "ultimateguitar",
+            "id": "/tab/oasis/wonderwall-chords-6125",
+            "title": "Wonderwall",
+            "artist": "Oasis"
+          },
+          "expectedTitle": "Wonderwall",
+          "expectedArtist": "Oasis",
+          "requiredFields": [
+            "body",
+            "metadata",
+            "chords"
+          ],
+          "query": "Wonderwall Oasis"
+        }
+      ],
+      "changeReason": "2026-10-23: Add search coverage bound to the existing public chord arrangement ID, then resolve and verify its same title/artist, lyrics, chords and metadata. Multiple same-name versions are not interchangeable and no first-hit selection is used."
+    },
+    {
+      "id": "lrclib",
+      "name": "LRCLIB",
+      "adapter": "builtin",
+      "status": "active",
+      "revision": 2,
+      "capabilities": [
+        "catalog",
+        "lyrics",
+        "lineTiming",
+        "metadata"
+      ],
+      "enabledByDefault": true,
+      "accessMode": "public",
+      "website": "https://lrclib.net",
+      "hosts": [],
+      "probes": [
+        {
+          "id": "sound-of-silence-studio-recording",
+          "query": "The Sound of Silence Simon & Garfunkel",
+          "expectedTitle": "The Sound Of Silence",
+          "expectedArtist": "Simon & Garfunkel",
+          "expectedAlbum": "Simon and Garfunkel Sounds Of Silence",
+          "expectedDurationSeconds": 186.0766,
+          "requiredFields": [
+            "body",
+            "metadata",
+            "timing",
+            "lineTiming"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "youtubemusic",
+      "name": "YouTube Music",
+      "adapter": "builtin",
+      "status": "active",
+      "revision": 1,
+      "capabilities": [
+        "catalog",
+        "lyrics",
+        "metadata"
+      ],
+      "enabledByDefault": true,
+      "accessMode": "public_web",
+      "website": "https://music.youtube.com",
+      "hosts": [],
+      "probes": [
+        {
+          "id": "never-gonna-give-you-up",
+          "query": "Never Gonna Give You Up Rick Astley",
+          "expectedTitle": "Never Gonna Give You Up",
+          "expectedArtist": "Rick Astley",
+          "requiredFields": [
+            "body",
+            "metadata"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lyricsovh",
+      "name": "Lyrics.ovh",
+      "adapter": "builtin",
+      "status": "active",
+      "revision": 1,
+      "capabilities": [
+        "catalog",
+        "lyrics",
+        "metadata"
+      ],
+      "enabledByDefault": true,
+      "accessMode": "public",
+      "website": "https://lyrics.ovh",
+      "hosts": [],
+      "probes": [
+        {
+          "id": "wonderwall-oasis-studio",
+          "query": "Wonderwall Oasis",
+          "expectedTitle": "Wonderwall",
+          "expectedArtist": "Oasis",
+          "expectedAlbum": "(What's The Story) Morning Glory?",
+          "expectedDurationSeconds": 258,
+          "requiredFields": [
+            "body",
+            "metadata"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "synclrc",
+      "name": "SyncLRC",
+      "adapter": "builtin",
+      "status": "active",
+      "revision": 4,
+      "capabilities": [
+        "catalog",
+        "lyrics",
+        "lineTiming",
+        "metadata",
+        "wordTiming"
+      ],
+      "enabledByDefault": true,
+      "accessMode": "public",
+      "website": "https://synclrc.dev",
+      "hosts": [],
+      "changeReason": "Use documented contextual and canonical lookup. Two exact content canaries retain returned album/duration, including Oasis259s rather than the old279s selection. Separate catalog probing stays explicit: identical title search returned10rows at05:15Z and0at05:29/31Z(2026-10-27). Healthy retrieval does not prove search availability. Native app lookup needs a compatible build; legacy carried IDs and channel1 remain unchanged.",
+      "probes": [
+        {
+          "id": "never-gonna-give-you-up-studio",
+          "candidate": {
+            "providerId": "synclrc",
+            "id": "e0847f0683371c67a1583e44f10663d8",
+            "title": "Never Gonna Give You Up",
+            "artist": "Rick Astley",
+            "album": "Rick Astley - Never Gonna Give You Up",
+            "durationSeconds": 214,
+            "url": "https://synclrc.dev"
+          },
+          "expectedTitle": "Never Gonna Give You Up",
+          "expectedArtist": "Rick Astley",
+          "expectedAlbum": "Rick Astley - Never Gonna Give You Up",
+          "expectedDurationSeconds": 214,
+          "requiredFields": [
+            "body",
+            "metadata",
+            "timing",
+            "lineTiming",
+            "wordTiming"
+          ]
+        },
+        {
+          "id": "wonderwall-oasis-timed-version",
+          "candidate": {
+            "providerId": "synclrc",
+            "id": "52590772a18697c755282fe2f24680d0",
+            "title": "Wonderwall",
+            "artist": "Oasis",
+            "album": "(What's the Story) Morning Glory? [Deluxe Edition]",
+            "durationSeconds": 259,
+            "url": "https://synclrc.dev"
+          },
+          "expectedTitle": "Wonderwall",
+          "expectedArtist": "Oasis",
+          "expectedAlbum": "(What's the Story) Morning Glory? [Deluxe Edition]",
+          "expectedDurationSeconds": 259,
+          "requiredFields": [
+            "body",
+            "metadata",
+            "timing",
+            "lineTiming",
+            "wordTiming"
+          ]
+        },
+        {
+          "id": "never-gonna-give-you-up-catalog-search",
+          "query": "Never Gonna Give You Up",
+          "expectedTitle": "Never Gonna Give You Up",
+          "expectedArtist": "Rick Astley",
+          "expectedAlbum": "Never Gonna Give You Up",
+          "expectedDurationSeconds": 214,
+          "requiredFields": [
+            "body",
+            "metadata",
+            "timing",
+            "lineTiming",
+            "wordTiming"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "betterlyrics",
+      "name": "Better Lyrics",
+      "adapter": "builtin",
+      "status": "active",
+      "revision": 1,
+      "capabilities": [
+        "catalog",
+        "lyrics",
+        "lineTiming",
+        "metadata",
+        "wordTiming"
+      ],
+      "enabledByDefault": true,
+      "accessMode": "public",
+      "website": "https://better-lyrics.boidu.dev",
+      "hosts": [],
+      "probes": [
+        {
+          "id": "never-gonna-give-you-up-studio-recording",
+          "query": "Never Gonna Give You Up Rick Astley",
+          "expectedTitle": "Never Gonna Give You Up",
+          "expectedArtist": "Rick Astley",
+          "expectedAlbum": "Rick Astley - Never Gonna Give You Up",
+          "expectedDurationSeconds": 214,
+          "requiredFields": [
+            "body",
+            "metadata",
+            "timing"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "unison",
+      "name": "Unison",
+      "adapter": "json",
+      "status": "active",
+      "revision": 3,
+      "capabilities": [
+        "catalog",
+        "lyrics",
+        "lineTiming",
+        "wordTiming"
+      ],
+      "enabledByDefault": true,
+      "accessMode": "publicApi",
+      "website": "https://docs.betterlyrics.org/unison",
+      "attribution": "Lyrics from Unison (https://unison.boidu.dev)",
+      "hosts": [
+        "unison.betterlyrics.org"
+      ],
+      "changeReason": "2026-10-18 live ID 31 uses the publisher's new Composer TTML namespace; ID 1494 retains the legacy namespace. Compiled parser repair recognizes both explicit media-clock profiles and requires a compatible app release; extraction grammar and probes remain unchanged. Preserve source identities, attribution and raw timing; individual lyric-text rights remain unverified.",
+      "extraction": {
+        "search": {
+          "url": "https://unison.betterlyrics.org/lyrics/search?q={query}",
+          "response": "json",
+          "itemsPath": "data",
+          "fields": {
+            "id": "id",
+            "title": "song",
+            "artist": "artist",
+            "durationSeconds": "duration"
+          }
+        },
+        "resolve": {
+          "url": "https://unison.betterlyrics.org/lyrics/{id}",
+          "response": "json",
+          "rootPath": "data",
+          "fields": {
+            "body": "lyrics",
+            "title": "song",
+            "artist": "artist",
+            "format": "format"
+          }
+        },
+        "bodyFormat": "auto"
+      },
+      "probes": [
+        {
+          "id": "search-give-it-up-don-toliver",
+          "query": "Give It Up Don Toliver",
+          "expectedTitle": "Give It Up",
+          "expectedArtist": "Don Toliver",
+          "requiredFields": [
+            "body",
+            "timing",
+            "lineTiming",
+            "wordTiming"
+          ]
+        },
+        {
+          "id": "give-it-up-don-toliver",
+          "candidate": {
+            "providerId": "unison",
+            "id": "31",
+            "title": "Give It Up",
+            "artist": "Don Toliver"
+          },
+          "expectedTitle": "Give It Up",
+          "expectedArtist": "Don Toliver",
+          "requiredFields": [
+            "body",
+            "timing",
+            "lineTiming",
+            "wordTiming"
+          ]
+        },
+        {
+          "id": "love-never-felt-so-good-michael-jackson",
+          "candidate": {
+            "providerId": "unison",
+            "id": "1494",
+            "title": "Love Never Felt So Good",
+            "artist": "Michael Jackson"
+          },
+          "expectedTitle": "Love Never Felt So Good",
+          "expectedArtist": "Michael Jackson",
+          "requiredFields": [
+            "body",
+            "timing",
+            "lineTiming",
+            "wordTiming"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ozbcoz",
+      "name": "Ozbcoz",
+      "adapter": "builtin",
+      "status": "active",
+      "revision": 1,
+      "capabilities": [
+        "chords",
+        "fileImport",
+        "lyrics",
+        "metadata"
+      ],
+      "enabledByDefault": false,
+      "accessMode": "fileImport",
+      "website": "https://ozbcoz.com/Songs/cp/",
+      "description": "downloadChordProThenImport",
+      "hosts": [],
+      "probes": [
+        {
+          "id": "import-only"
+        }
+      ]
+    },
+    {
+      "id": "chordie",
+      "name": "Chordie",
+      "adapter": "builtin",
+      "status": "active",
+      "revision": 1,
+      "capabilities": [
+        "catalog",
+        "chords",
+        "fileImport",
+        "lyrics",
+        "metadata"
+      ],
+      "enabledByDefault": true,
+      "accessMode": "publicPage",
+      "website": "https://www.chordie.com/",
+      "hosts": [],
+      "probes": [
+        {
+          "id": "seventh-stranger-duran-duran",
+          "query": "The Seventh Stranger",
+          "expectedTitle": "The Seventh Stranger",
+          "expectedArtist": "Duran Duran",
+          "requiredFields": [
+            "body",
+            "metadata",
+            "chords"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "worshipcommons",
+      "name": "WorshipCommons",
+      "adapter": "builtin",
+      "status": "active",
+      "revision": 1,
+      "capabilities": [
+        "catalog",
+        "chords",
+        "lyrics",
+        "metadata",
+        "timing"
+      ],
+      "enabledByDefault": true,
+      "accessMode": "public",
+      "website": "https://github.com/ChurchApps/WorshipCommonsContent",
+      "description": "licensedCatalog",
+      "hosts": [],
+      "probes": [
+        {
+          "id": "amazing-grace",
+          "query": "Amazing Grace",
+          "expectedTitle": "Amazing Grace",
+          "expectedArtist": "John Newton",
+          "requiredFields": [
+            "body",
+            "metadata",
+            "chords",
+            "timing"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "openfilksongbook",
+      "name": "Open Filk Songbook",
+      "adapter": "builtin",
+      "status": "active",
+      "revision": 1,
+      "capabilities": [
+        "catalog",
+        "chords",
+        "lyrics",
+        "metadata"
+      ],
+      "enabledByDefault": true,
+      "accessMode": "public",
+      "website": "https://filksongbook.com/",
+      "description": "perSongLicense",
+      "hosts": [],
+      "probes": [
+        {
+          "id": "everything-lastalda",
+          "query": "Everything",
+          "expectedTitle": "Everything",
+          "expectedArtist": "Lastalda",
+          "requiredFields": [
+            "body",
+            "metadata",
+            "chords"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "seanmcgrathmusic",
+      "name": "Sean McGrath Music",
+      "adapter": "builtin",
+      "status": "active",
+      "revision": 2,
+      "capabilities": [
+        "catalog",
+        "chords",
+        "lyrics",
+        "metadata"
+      ],
+      "enabledByDefault": true,
+      "accessMode": "public",
+      "website": "https://seanmcgrathmusic.com/",
+      "description": "originalSongsCcBy",
+      "hosts": [],
+      "probes": [
+        {
+          "id": "be-here-soon",
+          "query": "Be Here Soon",
+          "expectedTitle": "Be Here Soon",
+          "expectedArtist": "Sean McGrath",
+          "requiredFields": [
+            "body",
+            "metadata",
+            "chords"
+          ]
+        },
+        {
+          "id": "black-dog",
+          "query": "Black Dog",
+          "expectedTitle": "Black Dog",
+          "expectedArtist": "Sean McGrath",
+          "requiredFields": [
+            "body",
+            "metadata",
+            "chords"
+          ]
+        }
+      ],
+      "changeReason": "Publisher moved the public index and individual pages from /songs/ to /songs_and_poems/. Native adapter follows current paths while retaining legacy source IDs and resolving saved URLs. Compatible app update required."
+    },
+    {
+      "id": "worshiptogether",
+      "name": "Worship Together",
+      "adapter": "builtin",
+      "status": "retired",
+      "revision": 2,
+      "capabilities": [
+        "chords",
+        "fileImport",
+        "lyrics",
+        "metadata"
+      ],
+      "enabledByDefault": false,
+      "accessMode": "freeAccountImport",
+      "website": "https://www.worshiptogether.com/songs/",
+      "description": "freeAccountDownloadThenImport",
+      "hosts": [],
+      "probes": [
+        {
+          "id": "import-only"
+        }
+      ],
+      "changeReason": "2026-10-24: Retired at the owner's request because this dedicated religious catalog is outside the app's intended general-music focus. Stable source identity and saved attribution remain compatible."
+    },
+    {
+      "id": "musicbrainz",
+      "name": "MusicBrainz",
+      "adapter": "builtin",
+      "status": "active",
+      "revision": 3,
+      "capabilities": [
+        "catalog",
+        "metadata",
+        "artwork"
+      ],
+      "enabledByDefault": true,
+      "accessMode": "noncommercialApi",
+      "website": "https://musicbrainz.org/",
+      "hosts": [],
+      "description": "recordingMetadataOnly",
+      "probes": [
+        {
+          "id": "wonderwall-oasis-recording",
+          "candidate": {
+            "providerId": "musicbrainz",
+            "id": "9de3f212-2121-4c48-9240-96a52b512733",
+            "title": "Wonderwall",
+            "artist": "Oasis",
+            "durationSeconds": 269.293
+          },
+          "expectedTitle": "Wonderwall",
+          "expectedArtist": "Oasis",
+          "expectedDurationSeconds": 269.293,
+          "requiredFields": [
+            "metadata"
+          ],
+          "requiredMetadataFields": [
+            "musicbrainzRecordingId"
+          ],
+          "query": "recording:\"Wonderwall\" AND artist:\"Oasis\" AND dur:[269000 TO 269500]"
+        },
+        {
+          "id": "exact-release-artwork-b5558485-68a8-4c6c-8283-60e6ae940e06",
+          "candidate": {
+            "providerId": "musicbrainz",
+            "id": "b5558485-68a8-4c6c-8283-60e6ae940e06",
+            "title": "オープニング〜爆破ミッション",
+            "artist": "(S_S)",
+            "album": "Final Fantasy VII Chips",
+            "durationSeconds": 238.986,
+            "recordingIds": {
+              "musicbrainz": "b5558485-68a8-4c6c-8283-60e6ae940e06"
+            },
+            "metadata": {
+              "musicbrainzReleaseId": "5b07fe49-39a9-47a6-97b3-e5005992fb2a"
+            }
+          },
+          "expectedTitle": "オープニング〜爆破ミッション",
+          "expectedArtist": "(S_S)",
+          "expectedAlbum": "Final Fantasy VII Chips",
+          "expectedDurationSeconds": 238.986,
+          "requiredFields": [
+            "metadata"
+          ],
+          "requiredMetadataFields": [
+            "musicbrainzRecordingId",
+            "musicbrainzReleaseId",
+            "artworkUrl",
+            "artworkAssets"
+          ]
+        },
+        {
+          "id": "exact-release-artwork-b5d7d380-f43a-4c1f-a5de-694150b093ac",
+          "candidate": {
+            "providerId": "musicbrainz",
+            "id": "b5d7d380-f43a-4c1f-a5de-694150b093ac",
+            "title": "Mysterons",
+            "artist": "Portishead",
+            "album": "Dummy",
+            "durationSeconds": 306.2,
+            "recordingIds": {
+              "musicbrainz": "b5d7d380-f43a-4c1f-a5de-694150b093ac"
+            },
+            "metadata": {
+              "musicbrainzReleaseId": "76df3287-6cda-33eb-8e9a-044b5e15ffdd"
+            }
+          },
+          "expectedTitle": "Mysterons",
+          "expectedArtist": "Portishead",
+          "expectedAlbum": "Dummy",
+          "expectedDurationSeconds": 306.2,
+          "requiredFields": [
+            "metadata"
+          ],
+          "requiredMetadataFields": [
+            "musicbrainzRecordingId",
+            "musicbrainzReleaseId",
+            "artworkUrl",
+            "artworkAssets"
+          ]
+        }
+      ],
+      "changeReason": "2026-10-27: Optional Cover Art Archive front artwork is bound to a validated exact release/recording track. Preserve existing recording search canary; add two explicit independent release-artwork canaries. Ambiguity or missing/darkened art omits the optional image without losing recording metadata. Requires the compiled optional artwork adapter; no first-release or release-group fallback and no blanket artwork license."
+    },
+    {
+      "id": "wikidata",
+      "name": "Wikidata",
+      "adapter": "builtin",
+      "status": "active",
+      "revision": 3,
+      "capabilities": [
+        "catalog",
+        "metadata"
+      ],
+      "enabledByDefault": true,
+      "accessMode": "public",
+      "website": "https://www.wikidata.org/",
+      "hosts": [],
+      "description": "compositionMetadataOnly",
+      "changeReason": "2026-10-23: Q333266 is the Imagine album, not the composition. Pin the actual Imagine work Q1971 and Wonderwall work Q1045517. Require positive composition types, keep cover performers separate from authors, and verify bounded catalog search plus exact-ID metadata. Saved source IDs and user data are not rewritten.",
+      "probes": [
+        {
+          "id": "imagine-composition",
+          "query": "Imagine",
+          "candidate": {
+            "providerId": "wikidata",
+            "id": "Q1971",
+            "title": "Imagine",
+            "artist": "John Lennon",
+            "url": "https://www.wikidata.org/wiki/Q1971",
+            "metadata": {
+              "identityScope": "composition"
+            }
+          },
+          "expectedTitle": "Imagine",
+          "expectedArtist": "John Lennon",
+          "requiredFields": [
+            "metadata"
+          ],
+          "requiredMetadataFields": [
+            "wikidataId",
+            "types.0",
+            "composers.0.wikidataId"
+          ]
+        },
+        {
+          "id": "wonderwall-composition",
+          "query": "Wonderwall",
+          "candidate": {
+            "providerId": "wikidata",
+            "id": "Q1045517",
+            "title": "Wonderwall",
+            "artist": "Noel Gallagher",
+            "url": "https://www.wikidata.org/wiki/Q1045517",
+            "metadata": {
+              "identityScope": "composition"
+            }
+          },
+          "expectedTitle": "Wonderwall",
+          "expectedArtist": "Noel Gallagher",
+          "requiredFields": [
+            "metadata"
+          ],
+          "requiredMetadataFields": [
+            "wikidataId",
+            "types.0",
+            "composers.0.wikidataId"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "wikimediacommons",
+      "name": "Wikimedia Commons",
+      "adapter": "builtin",
+      "status": "active",
+      "revision": 1,
+      "capabilities": [
+        "artwork",
+        "metadata"
+      ],
+      "enabledByDefault": true,
+      "accessMode": "exactEntity",
+      "website": "https://commons.wikimedia.org/",
+      "hosts": [],
+      "description": "exactFileArtworkOnly",
+      "probes": [
+        {
+          "id": "bach-portrait",
+          "candidate": {
+            "providerId": "wikimediacommons",
+            "id": "File:Johann Sebastian Bach.jpg",
+            "title": "Johann Sebastian Bach",
+            "artist": "",
+            "url": "https://commons.wikimedia.org/wiki/File:Johann_Sebastian_Bach.jpg",
+            "metadata": {
+              "wikimediaCommonsFile": "File:Johann Sebastian Bach.jpg",
+              "identityScope": "image"
+            }
+          },
+          "expectedTitle": "Johann Sebastian Bach",
+          "requiredFields": [
+            "metadata"
+          ],
+          "requiredMetadataFields": [
+            "licensedImages.0.license"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "wikisource",
+      "name": "Wikisource",
+      "adapter": "builtin",
+      "status": "active",
+      "revision": 3,
+      "capabilities": [
+        "catalog",
+        "fileImport",
+        "lyrics",
+        "metadata"
+      ],
+      "enabledByDefault": false,
+      "accessMode": "publicDomainText",
+      "website": "https://en.wikisource.org/",
+      "hosts": [],
+      "description": "historicalTextPerWorkLicense",
+      "probes": [
+        {
+          "id": "cleansing-wave-palmer",
+          "candidate": {
+            "providerId": "wikisource",
+            "id": "1490913",
+            "title": "Cleansing Wave",
+            "artist": "Phoebe W. Palmer",
+            "url": "https://en.wikisource.org/?curid=1490913",
+            "metadata": {
+              "identityScope": "historicalText"
+            }
+          },
+          "expectedTitle": "Cleansing Wave",
+          "expectedArtist": "Phoebe W. Palmer",
+          "requiredFields": [
+            "body",
+            "metadata"
+          ],
+          "requiredMetadataFields": [
+            "copyrightTags.0",
+            "revision",
+            "identityScope"
+          ],
+          "query": "intitle:\"Cleansing Wave\""
+        },
+        {
+          "id": "dunbar-hymn-1",
+          "candidate": {
+            "providerId": "wikisource",
+            "id": "212021",
+            "title": "The Complete Poems of Paul Laurence Dunbar/Hymn (1)",
+            "artist": "Paul Laurence Dunbar",
+            "url": "https://en.wikisource.org/?curid=212021",
+            "metadata": {
+              "identityScope": "historicalText"
+            }
+          },
+          "expectedTitle": "The Complete Poems of Paul Laurence Dunbar/Hymn (1)",
+          "expectedArtist": "Paul Laurence Dunbar",
+          "requiredFields": [
+            "body",
+            "metadata"
+          ],
+          "requiredMetadataFields": [
+            "copyrightTags.0",
+            "revision",
+            "identityScope"
+          ],
+          "query": "intitle:\"The Complete Poems of Paul Laurence Dunbar/Hymn (1)\""
+        }
+      ],
+      "changeReason": "2026-10-23: Verify search for each of the two already validated historical works by exact page ID and title before resolution. Author and per-work rights checks remain required at resolve. File-import coverage remains separate; source ID, saved preferences and default-disabled state are unchanged."
+    },
+    {
+      "id": "lrcred",
+      "name": "lrc.red",
+      "adapter": "builtin",
+      "status": "active",
+      "revision": 2,
+      "capabilities": [
+        "catalog",
+        "lyrics",
+        "metadata",
+        "lineTiming",
+        "wordTiming"
+      ],
+      "enabledByDefault": true,
+      "accessMode": "publicApi",
+      "website": "https://lrc.red/",
+      "hosts": [],
+      "attribution": "lrc.red",
+      "changeReason": "Two exact-ISRC canaries passed on 2026-10-26. Android live search/import/readers, native artwork decoding and exact raw timing/source payload retention across SQLite reopening and ChordPro round trips passed. Active in compatible channel2 apps; channel1 unchanged. Timing profile is source-specific; independent transcription or musical accuracy was not adjudicated.",
+      "probes": [
+        {
+          "id": "creep-radiohead",
+          "query": "creep",
+          "candidate": {
+            "providerId": "lrcred",
+            "id": "GBAYE9200070",
+            "title": "Creep",
+            "artist": "Radiohead",
+            "album": "Pablo Honey",
+            "durationSeconds": 238.64,
+            "url": "https://lrc.red/s/GBAYE9200070",
+            "recordingIds": {
+              "isrc": "GBAYE9200070"
+            }
+          },
+          "expectedTitle": "Creep",
+          "expectedArtist": "Radiohead",
+          "expectedAlbum": "Pablo Honey",
+          "expectedDurationSeconds": 238.64,
+          "requiredFields": [
+            "body",
+            "lineTiming",
+            "wordTiming",
+            "metadata"
+          ],
+          "requiredMetadataFields": [
+            "isrcs.0",
+            "language",
+            "credits.0.name",
+            "artworkUrl"
+          ]
+        },
+        {
+          "id": "bohemian-rhapsody-queen",
+          "query": "bohemian rhapsody",
+          "candidate": {
+            "providerId": "lrcred",
+            "id": "GBUM71029604",
+            "title": "Bohemian Rhapsody (Remastered 2011)",
+            "artist": "Queen",
+            "album": "A Night at the Opera",
+            "durationSeconds": 356.52,
+            "url": "https://lrc.red/s/GBUM71029604",
+            "recordingIds": {
+              "isrc": "GBUM71029604"
+            }
+          },
+          "expectedTitle": "Bohemian Rhapsody (Remastered 2011)",
+          "expectedArtist": "Queen",
+          "expectedAlbum": "A Night at the Opera",
+          "expectedDurationSeconds": 356.52,
+          "requiredFields": [
+            "body",
+            "lineTiming",
+            "wordTiming",
+            "metadata"
+          ],
+          "requiredMetadataFields": [
+            "isrcs.0",
+            "language",
+            "credits.0.name",
+            "artworkUrl"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "roswellmusicjam",
+      "name": "Roswell Music Jam",
+      "adapter": "builtin",
+      "status": "active",
+      "revision": 2,
+      "capabilities": [
+        "catalog",
+        "lyrics",
+        "chords",
+        "metadata"
+      ],
+      "enabledByDefault": true,
+      "accessMode": "publicWeb",
+      "website": "https://www.roswellmusicjam.com/songbooks",
+      "hosts": [],
+      "attribution": "Roswell Music Jam",
+      "changeReason": "Two live search/resolve canaries passed using the publisher-documented public ChordPro archive, reused through its 24-hour in-memory cache. Android search/import/readers and exact source/raw payload retention across SQLite reopening and ChordPro round trips passed. Active in compatible channel2 apps; channel1 unchanged. Charts retain arrangement provenance and unknown rights; musical accuracy was not independently adjudicated.",
+      "probes": [
+        {
+          "id": "if-not-for-you-dylan",
+          "query": "If Not For You Bob Dylan",
+          "candidate": {
+            "providerId": "roswellmusicjam",
+            "id": "if-not-for-you.chordpro",
+            "title": "If Not For You",
+            "artist": "Bob Dylan",
+            "url": "https://www.roswellmusicjam.com/songbooks"
+          },
+          "expectedTitle": "If Not For You",
+          "expectedArtist": "Bob Dylan",
+          "requiredFields": [
+            "body",
+            "chords",
+            "metadata"
+          ],
+          "requiredMetadataFields": [
+            "key",
+            "sourceCollections.0",
+            "identityScope",
+            "sourceArchiveSha256",
+            "sourceArchiveFile"
+          ]
+        },
+        {
+          "id": "breakdown-petty",
+          "query": "Breakdown Tom Petty",
+          "candidate": {
+            "providerId": "roswellmusicjam",
+            "id": "breakdown.chordpro",
+            "title": "Breakdown",
+            "artist": "Tom Petty",
+            "url": "https://www.roswellmusicjam.com/songbooks"
+          },
+          "expectedTitle": "Breakdown",
+          "expectedArtist": "Tom Petty",
+          "requiredFields": [
+            "body",
+            "chords",
+            "metadata"
+          ],
+          "requiredMetadataFields": [
+            "key",
+            "tempo",
+            "sourceCollections.0",
+            "identityScope",
+            "sourceArchiveSha256",
+            "sourceArchiveFile"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "karamoe",
+      "name": "kara.moe",
+      "adapter": "builtin",
+      "status": "active",
+      "revision": 2,
+      "capabilities": [
+        "catalog",
+        "lyrics",
+        "metadata",
+        "lineTiming"
+      ],
+      "enabledByDefault": true,
+      "accessMode": "publicApi",
+      "website": "https://kara.moe/",
+      "hosts": [],
+      "attribution": "Kara.moe contributors; per-song karaoke authors",
+      "changeReason": "Two live catalog/lyrics/metadata/line-timing canaries and Android search/import/readers passed. Exact source/raw payloads and the prior cached version survive SQLite reopening and ChordPro round trips. Active in compatible channel2 apps; channel1 unchanged. Karaoke IDs/year/duration remain source-video facts; timing stays sourceDemonstrationOnly. Independent transcription or video synchronization accuracy was not adjudicated.",
+      "probes": [
+        {
+          "id": "man-of-war-radiohead",
+          "query": "Radiohead",
+          "candidate": {
+            "providerId": "karamoe",
+            "id": "998a3b0b-d41c-429b-9229-8600de1c80a6",
+            "title": "Man of war",
+            "artist": "Radiohead",
+            "url": "https://kara.moe/api/karas/998a3b0b-d41c-429b-9229-8600de1c80a6"
+          },
+          "expectedTitle": "Man of war",
+          "expectedArtist": "Radiohead",
+          "requiredFields": [
+            "body",
+            "metadata",
+            "lineTiming"
+          ],
+          "requiredMetadataFields": [
+            "identityScope",
+            "language",
+            "sourceVideoDurationSeconds",
+            "sourceVideoYear",
+            "credits.0.name"
+          ]
+        },
+        {
+          "id": "dune-ai-kizuna-cover",
+          "query": "Kenshi Yonezu",
+          "candidate": {
+            "providerId": "karamoe",
+            "id": "3624f1bc-d346-42ca-9c89-2443632afbcb",
+            "title": "Suna no Wakusei",
+            "artist": "Ai Kizuna",
+            "url": "https://kara.moe/api/karas/3624f1bc-d346-42ca-9c89-2443632afbcb"
+          },
+          "expectedTitle": "Suna no Wakusei",
+          "expectedArtist": "Ai Kizuna",
+          "requiredFields": [
+            "body",
+            "metadata",
+            "lineTiming"
+          ],
+          "requiredMetadataFields": [
+            "identityScope",
+            "language",
+            "sourceVideoDurationSeconds",
+            "sourceVideoYear",
+            "credits.0.name"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "amll",
+      "name": "AMLL Lyrics Database",
+      "adapter": "builtin",
+      "status": "active",
+      "revision": 1,
+      "capabilities": [
+        "catalog",
+        "lineTiming",
+        "lyrics",
+        "metadata",
+        "wordTiming"
+      ],
+      "enabledByDefault": true,
+      "accessMode": "publicApi",
+      "website": "https://amll.dev/",
+      "hosts": [],
+      "probes": [
+        {
+          "id": "269710089745311-canonical",
+          "candidate": {
+            "sourceArtistNames": [
+              "Brendon Urie",
+              "Taylor Swift"
+            ],
+            "providerId": "amll",
+            "id": "269710089745311",
+            "title": "ME!",
+            "artist": "Brendon Urie & Taylor Swift",
+            "album": "Lover"
+          },
+          "expectedTitle": "ME!",
+          "expectedArtist": "Brendon Urie & Taylor Swift",
+          "expectedAlbum": "Lover",
+          "requiredFields": [
+            "body",
+            "metadata",
+            "lineTiming",
+            "wordTiming"
+          ],
+          "requiredMetadataFields": [
+            "album"
+          ]
+        },
+        {
+          "id": "269710089745311-search",
+          "query": "ME!",
+          "candidate": {
+            "sourceArtistNames": [
+              "Brendon Urie",
+              "Taylor Swift"
+            ],
+            "providerId": "amll",
+            "id": "269710089745311",
+            "title": "ME!",
+            "artist": "Brendon Urie & Taylor Swift",
+            "album": "Lover"
+          },
+          "expectedTitle": "ME!",
+          "expectedArtist": "Brendon Urie & Taylor Swift",
+          "expectedAlbum": "Lover",
+          "requiredFields": [
+            "body",
+            "metadata",
+            "lineTiming",
+            "wordTiming"
+          ],
+          "requiredMetadataFields": [
+            "album"
+          ]
+        },
+        {
+          "id": "638303942317135-canonical",
+          "candidate": {
+            "sourceArtistNames": [
+              "Ed Sheeran"
+            ],
+            "providerId": "amll",
+            "id": "638303942317135",
+            "title": "Shape of You",
+            "artist": "Ed Sheeran",
+            "album": "Pop"
+          },
+          "expectedTitle": "Shape of You",
+          "expectedArtist": "Ed Sheeran",
+          "expectedAlbum": "Pop",
+          "requiredFields": [
+            "body",
+            "metadata",
+            "lineTiming",
+            "wordTiming"
+          ],
+          "requiredMetadataFields": [
+            "album"
+          ]
+        },
+        {
+          "id": "638303942317135-search",
+          "query": "Shape of You",
+          "candidate": {
+            "sourceArtistNames": [
+              "Ed Sheeran"
+            ],
+            "providerId": "amll",
+            "id": "638303942317135",
+            "title": "Shape of You",
+            "artist": "Ed Sheeran",
+            "album": "Pop"
+          },
+          "expectedTitle": "Shape of You",
+          "expectedArtist": "Ed Sheeran",
+          "expectedAlbum": "Pop",
+          "requiredFields": [
+            "body",
+            "metadata",
+            "lineTiming",
+            "wordTiming"
+          ],
+          "requiredMetadataFields": [
+            "album"
+          ]
+        }
+      ],
+      "changeReason": "Native anonymous AMLL adapter qualified with two independent canonical and exact-ID search canaries, full identity/contributor arrays, raw JSON/TTML preservation, and explicit source-only timing. New compatible channel3 only; existing endpoints and saved user preferences unchanged.",
+      "attribution": "AMLL TTML Database and its contributors — https://amll.dev"
+    },
+    {
+      "id": "vocadb",
+      "name": "VocaDB",
+      "adapter": "builtin",
+      "status": "active",
+      "revision": 1,
+      "capabilities": [
+        "catalog",
+        "lyrics",
+        "metadata"
+      ],
+      "enabledByDefault": true,
+      "accessMode": "publicApi",
+      "website": "https://vocadb.net/",
+      "hosts": [],
+      "attribution": "VocaDB - https://vocadb.net/ - database metadata CC BY 4.0; underlying lyric rights remain separate.",
+      "probes": [
+        {
+          "id": "1501-canonical",
+          "candidate": {
+            "providerId": "vocadb",
+            "id": "1501",
+            "title": "Rollin' Girl",
+            "artist": "wowaka feat. Hatsune Miku"
+          },
+          "expectedTitle": "Rollin' Girl",
+          "expectedArtist": "wowaka feat. Hatsune Miku",
+          "requiredFields": [
+            "body",
+            "metadata"
+          ],
+          "requiredMetadataFields": [
+            "tempo",
+            "language",
+            "vocadbSongId",
+            "sourceSongType"
+          ]
+        },
+        {
+          "id": "1501-search",
+          "query": "Rollin' Girl",
+          "candidate": {
+            "providerId": "vocadb",
+            "id": "1501",
+            "title": "Rollin' Girl",
+            "artist": "wowaka feat. Hatsune Miku"
+          },
+          "expectedTitle": "Rollin' Girl",
+          "expectedArtist": "wowaka feat. Hatsune Miku",
+          "requiredFields": [
+            "body",
+            "metadata"
+          ],
+          "requiredMetadataFields": [
+            "tempo",
+            "language",
+            "vocadbSongId",
+            "sourceSongType"
+          ]
+        },
+        {
+          "id": "68814-canonical",
+          "candidate": {
+            "providerId": "vocadb",
+            "id": "68814",
+            "title": "ECHO",
+            "artist": "Crusher, CIRCRUSH feat. V3 GUMI (English)"
+          },
+          "expectedTitle": "ECHO",
+          "expectedArtist": "Crusher, CIRCRUSH feat. V3 GUMI (English)",
+          "requiredFields": [
+            "body",
+            "metadata"
+          ],
+          "requiredMetadataFields": [
+            "tempo",
+            "language",
+            "vocadbSongId",
+            "sourceSongType"
+          ]
+        },
+        {
+          "id": "68814-search",
+          "query": "ECHO",
+          "candidate": {
+            "providerId": "vocadb",
+            "id": "68814",
+            "title": "ECHO",
+            "artist": "Crusher, CIRCRUSH feat. V3 GUMI (English)"
+          },
+          "expectedTitle": "ECHO",
+          "expectedArtist": "Crusher, CIRCRUSH feat. V3 GUMI (English)",
+          "requiredFields": [
+            "body",
+            "metadata"
+          ],
+          "requiredMetadataFields": [
+            "tempo",
+            "language",
+            "vocadbSongId",
+            "sourceSongType"
+          ]
+        }
+      ],
+      "changeReason": "Qualified anonymous native API with two independent exact-ID search/detail canaries, complete lyric variants and artist-role metadata, conservative source-version identity and raw response preservation. New compiled channel4 only; older channels and saved preferences preserved."
+    },
+    {
+      "id": "touhoudb",
+      "name": "TouhouDB",
+      "adapter": "builtin",
+      "status": "active",
+      "revision": 1,
+      "capabilities": [
+        "catalog",
+        "lyrics",
+        "metadata"
+      ],
+      "enabledByDefault": true,
+      "accessMode": "publicApi",
+      "website": "https://touhoudb.com/",
+      "hosts": [],
+      "attribution": "TouhouDB - https://touhoudb.com/ - database metadata CC BY4.0; underlying lyric rights remain separate.",
+      "probes": [
+        {
+          "id": "138-search",
+          "candidate": {
+            "providerId": "touhoudb",
+            "id": "138",
+            "title": "Cirno's Perfect Math Class",
+            "artist": "ARM, IOSYS feat. miko"
+          },
+          "expectedTitle": "Cirno's Perfect Math Class",
+          "expectedArtist": "ARM, IOSYS feat. miko",
+          "requiredFields": [
+            "body",
+            "metadata"
+          ],
+          "requiredMetadataFields": [
+            "identityScope",
+            "touhoudbSongId",
+            "sourceSongType"
+          ],
+          "query": "Cirno's Perfect Math Class"
+        },
+        {
+          "id": "51766-search",
+          "candidate": {
+            "providerId": "touhoudb",
+            "id": "51766",
+            "title": "Night dream in the cage",
+            "artist": "Linjin feat. Sakaue Nachi"
+          },
+          "expectedTitle": "Night dream in the cage",
+          "expectedArtist": "Linjin feat. Sakaue Nachi",
+          "requiredFields": [
+            "body",
+            "metadata"
+          ],
+          "requiredMetadataFields": [
+            "identityScope",
+            "touhoudbSongId",
+            "sourceSongType"
+          ],
+          "query": "Night dream in the cage"
+        }
+      ],
+      "changeReason": "Two independent original-lyric entries qualified through the documented anonymous API with complete source/version/variant/credit preservation. New compiled channel5 only. Covers/remasters without their own original lyric remain unavailable; no parent lyric substitution or recording identity inference."
+    },
+    {
+      "id": "utaitedb",
+      "name": "UtaiteDB",
+      "adapter": "builtin",
+      "status": "active",
+      "revision": 1,
+      "capabilities": [
+        "catalog",
+        "lyrics",
+        "metadata"
+      ],
+      "enabledByDefault": true,
+      "accessMode": "publicApi",
+      "website": "https://utaitedb.net/",
+      "hosts": [],
+      "attribution": "UtaiteDB - https://utaitedb.net/ - database metadata CC BY4.0; underlying lyric rights remain separate.",
+      "probes": [
+        {
+          "id": "72011-search",
+          "candidate": {
+            "providerId": "utaitedb",
+            "id": "72011",
+            "title": "Take you to an alien",
+            "artist": "Iyowa feat. SEKAI"
+          },
+          "expectedTitle": "Take you to an alien",
+          "expectedArtist": "Iyowa feat. SEKAI",
+          "requiredFields": [
+            "body",
+            "metadata"
+          ],
+          "requiredMetadataFields": [
+            "identityScope",
+            "utaitedbSongId",
+            "sourceSongType"
+          ],
+          "query": "Take you to an alien"
+        },
+        {
+          "id": "51300-canonical",
+          "candidate": {
+            "providerId": "utaitedb",
+            "id": "51300",
+            "title": "CH4NGE",
+            "artist": "Giga feat. KAFU"
+          },
+          "expectedTitle": "CH4NGE",
+          "expectedArtist": "Giga feat. KAFU",
+          "requiredFields": [
+            "body",
+            "metadata"
+          ],
+          "requiredMetadataFields": [
+            "identityScope",
+            "utaitedbSongId",
+            "sourceSongType"
+          ]
+        }
+      ],
+      "changeReason": "Two independent original-lyric entries qualified through the documented anonymous API with complete source/version/variant/credit preservation. New compiled channel5 only. Covers/remasters without their own original lyric remain unavailable; no parent lyric substitution or recording identity inference."
+    },
+    {
+      "id": "startjamming",
+      "name": "Start Jamming",
+      "adapter": "builtin",
+      "status": "active",
+      "revision": 1,
+      "capabilities": [
+        "catalog",
+        "lyrics",
+        "chords",
+        "metadata"
+      ],
+      "enabledByDefault": true,
+      "accessMode": "publicApi",
+      "website": "https://www.startjamming.com",
+      "attribution": "Start Jamming (https://www.startjamming.com); each song uses its canonical URL",
+      "hosts": [
+        "www.startjamming.com"
+      ],
+      "probes": [
+        {
+          "id": "clinch-mountain-backstep",
+          "query": "Clinch Mountain Backstep",
+          "expectedTitle": "Clinch Mountain Backstep",
+          "requiredFields": [
+            "body",
+            "chords",
+            "metadata"
+          ],
+          "requiredMetadataFields": [
+            "identityScope",
+            "key",
+            "timeSignature"
+          ],
+          "candidate": {
+            "providerId": "startjamming",
+            "id": "clinch-mountain-backstep",
+            "title": "Clinch Mountain Backstep",
+            "artist": "",
+            "url": "https://www.startjamming.com/song/clinch-mountain-backstep",
+            "metadata": {
+              "identityScope": "arrangement"
+            },
+            "startjamming": {
+              "slug": "clinch-mountain-backstep",
+              "song_id": "clinch_mountain_backstep",
+              "id": "clinch-mountain-backstep",
+              "apiUrl": "https://www.startjamming.com/api/songs/clinch-mountain-backstep/full?for=agent",
+              "canonical_id": "clinch-mountain-backstep"
+            }
+          }
+        },
+        {
+          "id": "blue-moon-of-kentucky",
+          "query": "Blue Moon of Kentucky",
+          "expectedTitle": "Blue Moon of Kentucky",
+          "requiredFields": [
+            "body",
+            "chords",
+            "metadata"
+          ],
+          "requiredMetadataFields": [
+            "identityScope",
+            "key",
+            "timeSignature"
+          ],
+          "candidate": {
+            "providerId": "startjamming",
+            "id": "blue-moon-of-kentucky",
+            "title": "Blue Moon of Kentucky",
+            "artist": "",
+            "url": "https://www.startjamming.com/song/blue-moon-of-kentucky",
+            "metadata": {
+              "identityScope": "arrangement"
+            },
+            "startjamming": {
+              "slug": "blue-moon-of-kentucky",
+              "song_id": "blue_moon_of_kentucky",
+              "id": "blue-moon-of-kentucky",
+              "apiUrl": "https://www.startjamming.com/api/songs/blue-moon-of-kentucky/full?for=agent",
+              "canonical_id": "blue-moon-of-kentucky"
+            }
+          }
+        }
+      ],
+      "changeReason": "Native read-only integration uses documented HTTPS search and returned api_url full-song reads with for=agent; lyrics, chords and metadata are qualified by distinct instrumental and vocal probes. Per-work rights remain unknown."
+    },
+    {
+      "id": "lyricsplus",
+      "name": "LyricsPlus",
+      "adapter": "builtin",
+      "status": "active",
+      "revision": 1,
+      "capabilities": [
+        "catalog",
+        "lyrics",
+        "metadata",
+        "lineTiming",
+        "wordTiming"
+      ],
+      "enabledByDefault": true,
+      "accessMode": "publicApi",
+      "website": "https://github.com/ibratabian17/LyricsPlus",
+      "attribution": "LyricsPlus and independently verified upstream source; underlying lyric rights unknown",
+      "hosts": [
+        "lyricsplus.prjktla.my.id",
+        "itunes.apple.com"
+      ],
+      "probes": [
+        {
+          "id": "billie-jean-michael-jackson",
+          "query": "Billie Jean Michael Jackson",
+          "expectedTitle": "Billie Jean",
+          "expectedArtist": "Michael Jackson",
+          "requiredFields": [
+            "body",
+            "metadata",
+            "lineTiming",
+            "wordTiming"
+          ],
+          "requiredMetadataFields": [
+            "identityScope",
+            "documentKind",
+            "album",
+            "durationSeconds",
+            "appleMusicIds"
+          ]
+        },
+        {
+          "id": "creep-radiohead",
+          "query": "Creep Radiohead",
+          "expectedTitle": "Creep",
+          "expectedArtist": "Radiohead",
+          "requiredFields": [
+            "body",
+            "metadata",
+            "lineTiming",
+            "wordTiming"
+          ],
+          "requiredMetadataFields": [
+            "identityScope",
+            "documentKind",
+            "album",
+            "durationSeconds",
+            "appleMusicIds"
+          ]
+        }
+      ],
+      "changeReason": "Activates the native LyricsPlus adapter for compatible channel 7 clients. Search rows remain hints; returned Apple IDs require independent official metadata verification. Actual source metadata, original payloads and unverified line/word timing are retained with attribution and unknown per-work rights."
+    },
+    {
+      "id": "chordsandtabs",
+      "name": "Chords and Tabs",
+      "adapter": "builtin",
+      "status": "active",
+      "revision": 2,
+      "capabilities": [
+        "catalog",
+        "chords",
+        "lyrics",
+        "metadata"
+      ],
+      "enabledByDefault": true,
+      "accessMode": "publicPage",
+      "website": "https://www.chords-and-tabs.net",
+      "attribution": "Chords and Tabs",
+      "hosts": [
+        "www.chords-and-tabs.net"
+      ],
+      "probes": [
+        {
+          "id": "hey-jude-beatles-chart-v4",
+          "query": "Hey Jude",
+          "expectedTitle": "Hey Jude",
+          "expectedArtist": "The Beatles",
+          "candidate": {
+            "providerId": "chordsandtabs",
+            "id": "/song/name/the-beatles-hey-jude-7",
+            "title": "Hey Jude",
+            "artist": "The Beatles",
+            "url": "https://www.chords-and-tabs.net/song/name/the-beatles-hey-jude-7",
+            "metadata": {
+              "identityScope": "arrangement",
+              "searchChartTypeHint": "chords",
+              "searchChartVersionHint": 4
+            }
+          },
+          "requiredFields": [
+            "body",
+            "chords",
+            "metadata"
+          ],
+          "requiredMetadataFields": [
+            "identityScope",
+            "sourceChartType"
+          ]
+        },
+        {
+          "id": "bohemian-rhapsody-queen-chart-v8",
+          "query": "Bohemian Rhapsody",
+          "expectedTitle": "Bohemian rhapsody",
+          "expectedArtist": "Queen",
+          "candidate": {
+            "providerId": "chordsandtabs",
+            "id": "/song/name/queen-bohemian-rhapsody-37",
+            "title": "Bohemian rhapsody",
+            "artist": "Queen",
+            "url": "https://www.chords-and-tabs.net/song/name/queen-bohemian-rhapsody-37",
+            "metadata": {
+              "identityScope": "arrangement",
+              "searchChartTypeHint": "chords",
+              "searchChartVersionHint": 8
+            }
+          },
+          "requiredFields": [
+            "body",
+            "chords",
+            "metadata"
+          ],
+          "requiredMetadataFields": [
+            "identityScope",
+            "sourceChartType"
+          ]
+        }
+      ],
+      "changeReason": "Activated for channel 8 after two Android search/select/resolve/save/offline-reopen canaries, a retained-response offline replay, and provider regression checks. ChordPro attribution and original payloads are retained; these checks do not establish independent musical accuracy or per-work rights, which remain unknown.",
+      "description": "Community-submitted chord charts and lyrics. Source attribution and original payload are retained; per-work rights are not independently verified, and arrangement-specific charts do not establish recording identity or musical accuracy."
+    },
+    {
+      "id": "pisni",
+      "name": "Українські пісні",
+      "adapter": "builtin",
+      "status": "disabled",
+      "revision": 1,
+      "capabilities": [
+        "catalog",
+        "chords",
+        "lyrics",
+        "metadata"
+      ],
+      "enabledByDefault": false,
+      "accessMode": "publicPage",
+      "website": "https://www.pisni.org.ua/",
+      "hosts": [
+        "www.pisni.org.ua"
+      ],
+      "probes": [],
+      "changeReason": "Include the merged native adapter in the compatible roster, but keep it disabled pending managed-cloud qualification and rights review."
+    },
+    {
+      "id": "openscorelieder",
+      "name": "OpenScore Lieder",
+      "adapter": "builtin",
+      "status": "disabled",
+      "revision": 1,
+      "capabilities": [
+        "catalog",
+        "lyrics",
+        "metadata"
+      ],
+      "enabledByDefault": false,
+      "accessMode": "publicRepository",
+      "website": "https://github.com/OpenScore/Lieder",
+      "attribution": "OpenScore Lieder",
+      "hosts": [
+        "raw.githubusercontent.com"
+      ],
+      "probes": [
+        {
+          "id": "6573780",
+          "query": "Der Erlkönig Mayer",
+          "expectedTitle": "Der Erlkönig",
+          "expectedArtist": "Mayer, Emilie",
+          "requiredFields": [
+            "body",
+            "metadata"
+          ],
+          "requiredMetadataFields": [
+            "identityScope",
+            "artistCreditRole",
+            "composer",
+            "lyricist",
+            "language",
+            "openScoreId",
+            "openScoreCatalogFields",
+            "lyricsProvenance"
+          ]
+        },
+        {
+          "id": "6217099",
+          "query": "Clair de lune Jaëll",
+          "expectedTitle": "3 Clair de lune",
+          "expectedArtist": "Jaëll, Marie",
+          "requiredFields": [
+            "body",
+            "metadata"
+          ],
+          "requiredMetadataFields": [
+            "identityScope",
+            "artistCreditRole",
+            "composer",
+            "lyricist",
+            "language",
+            "openScoreId",
+            "openScoreCatalogFields",
+            "lyricsProvenance"
+          ]
+        }
+      ],
+      "changeReason": "Candidate only in a new compatible channel. Keep disabled and off by default pending integration and cloud qualification. Publisher-extracted plaintext and composition credits are retained; score inclusion does not guarantee a lyric file or clear underlying poem/translation rights."
+    },
+    {
+      "id": "acousticbrainz",
+      "name": "AcousticBrainz",
+      "adapter": "builtin",
+      "status": "active",
+      "revision": 1,
+      "capabilities": [
+        "metadata"
+      ],
+      "enabledByDefault": true,
+      "accessMode": "publicApi",
+      "website": "https://acousticbrainz.org/",
+      "attribution": "AcousticBrainz contributors",
+      "hosts": [
+        "acousticbrainz.org"
+      ],
+      "probes": [
+        {
+          "id": "b5d7d380-f43a-4c1f-a5de-694150b093ac",
+          "query": "b5d7d380-f43a-4c1f-a5de-694150b093ac",
+          "expectedTitle": "Mysterons",
+          "expectedArtist": "Portishead",
+          "requiredFields": [
+            "metadata"
+          ],
+          "requiredMetadataFields": [
+            "identityScope",
+            "recordingEvidence",
+            "acousticbrainz"
+          ]
+        },
+        {
+          "id": "099b148e-fe99-4b79-be6e-5078e4bb7415",
+          "query": "099b148e-fe99-4b79-be6e-5078e4bb7415",
+          "expectedTitle": "Colors and the Kids",
+          "expectedArtist": "Cat Power",
+          "requiredFields": [
+            "metadata"
+          ],
+          "requiredMetadataFields": [
+            "identityScope",
+            "recordingEvidence",
+            "acousticbrainz"
+          ]
+        }
+      ],
+      "changeReason": "Native recording-ID metadata enrichment. Preserve bounded publisher-submitted analysis samples and label key/tempo estimates unverified; no canonical musical, duration or timing donation. Channel10 app/cloud qualification gates publication."
+    },
+    {
+      "id": "wikibooksliederbuch",
+      "name": "Wikibooks Liederbuch",
+      "adapter": "builtin",
+      "status": "disabled",
+      "revision": 2,
+      "capabilities": [
+        "catalog",
+        "chords",
+        "lyrics",
+        "metadata"
+      ],
+      "enabledByDefault": false,
+      "accessMode": "publicApi",
+      "website": "https://de.wikibooks.org/wiki/Liederbuch",
+      "attribution": "Wikibooks contributors; exact page and revision attribution retained",
+      "hosts": [
+        "de.wikibooks.org"
+      ],
+      "probes": [
+        {
+          "id": "118857",
+          "query": "Kein schöner Land",
+          "expectedTitle": "Kein schöner Land",
+          "requiredFields": [
+            "body",
+            "chords",
+            "metadata"
+          ],
+          "requiredMetadataFields": [
+            "identityScope",
+            "wikibooksPageId",
+            "wikibooksRevisionId",
+            "sourceChordNotation",
+            "language"
+          ]
+        },
+        {
+          "id": "115615",
+          "query": "Die Gedanken sind frei",
+          "expectedTitle": "Die Gedanken sind frei",
+          "requiredFields": [
+            "body",
+            "chords",
+            "metadata"
+          ],
+          "requiredMetadataFields": [
+            "identityScope",
+            "wikibooksPageId",
+            "wikibooksRevisionId",
+            "sourceChordNotation",
+            "language"
+          ]
+        }
+      ],
+      "changeReason": "Unpublished compatible rollout candidate. Keep disabled and off by default pending actual app, managed-cloud and release review. Preserve arrangement identity, revision attribution, exact source bytes and separate page-contribution versus unknown underlying-work rights; no performer, recording, timing or blanket song license is inferred."
+    }
+  ]
+}

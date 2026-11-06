@@ -99,13 +99,13 @@ void main() {
     expect(pisni['website'], 'https://www.pisni.org.ua/');
     expect(pisni['hosts'], ['www.pisni.org.ua']);
     expect(pisni['probes'], isEmpty);
-    expect(SourceCatalogClient.bundledAsset, 'config/source-catalog-v10.json');
-    expect(SourceCatalogClient.cacheKey, 'sourceCatalog:v10');
+    expect(SourceCatalogClient.bundledAsset, 'config/source-catalog-v11.json');
+    expect(SourceCatalogClient.cacheKey, 'sourceCatalog:v11');
     expect(SourceCatalogClient.channel8CacheKey, 'sourceCatalog:v8');
     expect(SourceCatalogClient.channel7CacheKey, 'sourceCatalog:v7');
     expect(
       SourceCatalogClient.defaultEndpoint,
-      endsWith('/source-catalog-v10.json'),
+      endsWith('/source-catalog-v11.json'),
     );
     expect(
       File('pubspec.yaml').readAsStringSync(),
@@ -125,7 +125,8 @@ void main() {
       ...createExtraProviders(transport: transport).where(
         (provider) =>
             provider.definition.id != 'openscorelieder' &&
-            provider.definition.id != 'acousticbrainz',
+            provider.definition.id != 'acousticbrainz' &&
+            provider.definition.id != 'wikibooksliederbuch',
       ),
     ];
     final native = providers.whereType<ChordsAndTabsProvider>().single;
@@ -185,7 +186,8 @@ void main() {
       ...createExtraProviders(transport: transport).where(
         (provider) =>
             provider.definition.id != 'openscorelieder' &&
-            provider.definition.id != 'acousticbrainz',
+            provider.definition.id != 'acousticbrainz' &&
+            provider.definition.id != 'wikibooksliederbuch',
       ),
     ];
     final catalog = SourceCatalog.parse(channel8File.readAsStringSync());
