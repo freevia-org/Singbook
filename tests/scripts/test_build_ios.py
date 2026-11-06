@@ -10,12 +10,16 @@ import unittest
 
 
 class IosBuildOrchestrationTest(unittest.TestCase):
+    release_version = '1.0.51+51'
+    build_number = release_version.rsplit('+', 1)[1]
+
     def run_build(self, mode, fail_dependencies=False, invalid_google=False):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / 'scripts').mkdir()
             (root / 'config').mkdir()
             source = Path(__file__).resolve().parents[2]
+            (root / 'pubspec.yaml').write_text(f'version: {self.release_version}\n')
             client = 'test-ios.apps.googleusercontent.com'
             (root / 'config/local.defines.json').write_text(json.dumps({
                 'VERSE_GOOGLE_IOS_CLIENT_ID': client,
@@ -59,7 +63,10 @@ if sys.argv[1:3] == ['pub', 'get'] and os.environ.get('FAIL_DEPENDENCIES'):
                 flutter = [call[1:] for call in calls if call[0] == 'flutter']
                 self.assertEqual(flutter[:2], [['pub', 'get', '--enforce-lockfile'], ['gen-l10n']])
                 self.assertEqual(len(flutter), 3)
-                self.assertEqual(flutter[2][:1 + len(expected)], ['build', *expected])
+                self.assertEqual(flutter[2][:2], ['build', expected[0]])
+                for argument in expected[1:]:
+                    self.assertIn(argument, flutter[2])
+                self.assertIn(f'--build-number={self.build_number}', flutter[2])
                 self.assertIn('--no-pub', flutter[2])
                 self.assertIn('--dart-define-from-file=config/local.defines.json', flutter[2])
                 if mode == 'ipa':
