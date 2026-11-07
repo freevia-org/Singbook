@@ -2,8 +2,9 @@ name: CI
 
 # On-demand CI. Source checks use the same empty defines as a fresh clone. The unsigned
 # Windows release bundle embeds the public Desktop OAuth client ID from a
-# GitHub Actions variable. A hosted preflight verifies the PKCE flow without a
-# client secret; the local build explicitly compiles with that field blank.
+# GitHub Actions variable. A main-only preflight on the trusted local Windows
+# runner verifies the PKCE flow without a client secret; the local build
+# explicitly compiles with that field blank.
 # This workflow never signs.
 #
 # Layout (fail fast, then fan out). Analysis and the Linux Flutter suite use the
