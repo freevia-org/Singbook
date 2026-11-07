@@ -18,8 +18,10 @@ evidence, not a substitute for reviewing the diff and results.
    Change source or runtime configuration only between phases. Record commit,
    tree, lockfile, configuration fingerprint and tool versions with each result.
    Never include credential values in evidence.
-4. Batch accepted changes before reserving a new patch/build number. Update the
-   four version surfaces together and run the existing drift checks:
+4. Batch accepted changes before reserving a new version. The sole canonical
+   value is `MAJOR.MINOR.PATCH+BUILD`; keep `BUILD` monotonic and derive
+   store-required numeric identifiers from that tuple. Update the version
+   surfaces together and run the existing drift checks:
    `flutter test --no-pub test/ui/l10n_test.dart test/providers/core/transport_test.dart`.
    A retry or track promotion keeps that release number.
 5. Build each distributable once from frozen inputs. Inspect the actual package,

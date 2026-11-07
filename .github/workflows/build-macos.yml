@@ -33,7 +33,10 @@ jobs:
       - name: macOS regression checks
         run: flutter test --no-pub test/sync/platform_drive_auth_test.dart test/sync/macos_platform_drive_auth_test.dart test/ui/macos_account_sync_test.dart test/ui/macos_exit_test.dart test/application/macos_desktop_parity_test.dart test/ui/macos_setlist_drag_test.dart test/application/macos_startup_options_test.dart test/application/windows_startup_options_test.dart
       - name: Configure macOS
-        run: flutter build macos --release --config-only --no-pub
+        run: |
+          version="$(awk -F': *' '/^version:/ {print $2}' pubspec.yaml)"
+          [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+\+[0-9]+$ ]]
+          flutter build macos --release --build-number="${version##*+}" --config-only --no-pub
       - name: Compile unsigned universal app
         run: >-
           xcodebuild -workspace macos/Runner.xcworkspace -scheme Runner

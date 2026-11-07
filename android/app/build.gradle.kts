@@ -9,12 +9,13 @@ plugins {
 private fun playVersionCode(versionName: String, buildNumber: Int): Int {
     val parts = Regex("^(\\d+)\\.(\\d+)\\.(\\d+)$").matchEntire(versionName)
         ?.groupValues?.drop(1)?.map { it.toLong() }
-        ?: throw GradleException("Release version must be MAJOR.MINOR.CODE: $versionName")
-    val (major, minor, code) = parts
-    require(major in 0L..20L && minor in 0L..99L && code in 0L..999L && buildNumber in 1..999) {
+        ?: throw GradleException("Release version must be MAJOR.MINOR.PATCH: $versionName")
+    val (major, minor, patch) = parts
+    require(major in 0L..20L && minor in 0L..99L && patch in 0L..999L && buildNumber in 1..999) {
         "Release version components exceed the supported Play versionCode range"
     }
-    val value = major * 100_000_000L + minor * 1_000_000L + code * 1_000L + buildNumber
+    // Derive Play's required numeric identifier from the single canonical tuple.
+    val value = major * 100_000_000L + minor * 1_000_000L + patch * 1_000L + buildNumber
     require(value <= 2_100_000_000L) { "Derived Play versionCode exceeds Google's limit" }
     return value.toInt()
 }

@@ -18,9 +18,12 @@ database names and `x_verse` ChordPro payloads, timing, and provenance compatibl
 
 ## Release numbering
 
-- Increment the visible patch version and the monotonic build number for each
-  new release. After `0.2.0+14`, use `0.2.1+15`, then `0.2.2+16`, and so on.
-  Deliberate minor/major version changes still keep increasing the build number.
+- Use exactly one canonical `MAJOR.MINOR.PATCH+BUILD` value in `pubspec.yaml`.
+  For example, `1.0.50+50` is followed by `1.0.51+51`. Keep `BUILD` monotonic
+  across version changes, and derive store-specific numeric identifiers from
+  this tuple rather than maintaining an independent code. For cross-store
+  alignment with Microsoft's package format, the Singbook release `PATCH` and
+  `BUILD` components advance together.
 - Update `pubspec.yaml`, `lib/ui/app_version.dart`,
   `lib/providers/transport.dart`, and the current README release example
   together. Run the existing displayed-version and User-Agent drift checks.

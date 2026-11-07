@@ -13,9 +13,12 @@ args = parser.parse_args()
 root = Path(__file__).resolve().parent.parent
 contents = args.app / 'Contents'
 info = plistlib.loads((contents / 'Info.plist').read_bytes())
-version = re.search(r'^version: (\S+)\+(\d+)$', (root / 'pubspec.yaml').read_text(), re.M)
+version = re.search(r'^version: (\d+\.\d+\.\d+)\+(\d+)$', (root / 'pubspec.yaml').read_text(), re.M)
+assert version, 'Version must be MAJOR.MINOR.PATCH+BUILD'
+marketing_version = version.group(1)
+build_number = version.group(2)
 assert info['CFBundleIdentifier'] == 'org.freevia.singbook', 'Unexpected bundle ID'
-assert (info['CFBundleShortVersionString'], info['CFBundleVersion']) == version.groups(), 'Version drift'
+assert (info['CFBundleShortVersionString'], info['CFBundleVersion']) == (marketing_version, build_number), 'Version drift'
 assert info['LSApplicationCategoryType'] == 'public.app-category.music'
 expected = plistlib.loads((root / 'macos/Runner/PrivacyInfo.xcprivacy').read_bytes())
 declared = {entry['NSPrivacyCollectedDataType']: entry
@@ -44,6 +47,6 @@ if 'Debug' not in str(args.app):
     assert not entitlements.get('com.apple.security.cs.allow-jit'), 'Release has debug JIT entitlement'
 architectures = subprocess.check_output(['lipo', '-archs', str(contents / 'MacOS' / info['CFBundleExecutable'])], text=True).strip()
 assert set(architectures.split()) == {'arm64', 'x86_64'}, 'Expected universal Intel/Apple Silicon app'
-print(json.dumps({'bundleIdentifier': info['CFBundleIdentifier'], 'version': version[1], 'build': version[2],
+print(json.dumps({'bundleIdentifier': info['CFBundleIdentifier'], 'version': marketing_version, 'build': build_number,
                   'minimumOS': info['LSMinimumSystemVersion'], 'architectures': architectures,
                   'privacyManifestCount': len(manifests), 'sandboxVerified': True}, indent=2))

@@ -22,9 +22,10 @@ certification, so no certificate or signing key is used anywhere in this repo.
 
 ## Version mapping
 
-Store package version is `1.0.<pubspec build number>.0`, for example pubspec
-`0.2.34+48` becomes `Singbook_1.0.48.0_x64.msix`. The build number must be in
-1..65535 and must exceed the number of the last submitted package.
+Store package version is `<MAJOR>.<MINOR>.<PATCH>.0`, for example canonical
+version `1.0.51+51` becomes `Singbook_1.0.51.0_x64.msix`. Singbook keeps PATCH
+equal to BUILD so the customer-facing marketing version aligns with the Store
+package version. The package version must be newer than the last submission.
 
 ## Packaging a new release (repo side)
 

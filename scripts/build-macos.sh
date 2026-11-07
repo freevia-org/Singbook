@@ -9,6 +9,9 @@ case "$mode" in
 esac
 command -v flutter >/dev/null || { echo 'Add Flutter 3.44.8 to PATH.' >&2; exit 1; }
 xcodebuild -version >/dev/null
+version="$(awk -F': *' '/^version:/ {print $2}' pubspec.yaml)"
+[[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+\+[0-9]+$ ]] || { echo 'Version must be MAJOR.MINOR.PATCH+BUILD in pubspec.yaml.' >&2; exit 1; }
+build_number="${version##*+}"
 stamp="$(date -u +%Y%m%dT%H%M%SZ)"
 revision="$(git rev-parse HEAD)"
 evidence="artifacts/macos/${stamp}-${revision:0:8}-$$"
@@ -60,7 +63,7 @@ flutter pub get --enforce-lockfile
 flutter gen-l10n
 configuration=release
 [[ "$mode" != debug ]] || configuration=debug
-flutter build macos "--$configuration" --config-only "${defines[@]}" 2>&1 | tee "$evidence/configure.log"
+flutter build macos "--$configuration" --build-number="$build_number" --config-only "${defines[@]}" 2>&1 | tee "$evidence/configure.log"
 product_configuration=Release
 [[ "$configuration" != debug ]] || product_configuration=Debug
 xcodebuild -workspace macos/Runner.xcworkspace -scheme Runner \
