@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "catalogRevision": 23,
-  "measuredAt": "2026-11-07T07:00:38.530897Z",
+  "measuredAt": "2026-11-08T07:05:14.70413Z",
   "offline": false,
   "summary": {
     "healthy": 24,
@@ -234,9 +234,9 @@
         {
           "id": "wonderwall-oasis-studio",
           "status": "healthy",
-          "candidateId": "sha256:a6972293e98e0f23",
+          "candidateId": "sha256:b91bcbf99b0a9cf3",
           "providerId": "lyricsovh",
-          "bodyCharacters": 1307,
+          "bodyCharacters": 1401,
           "metadataFields": [
             "album",
             "artworkUrl",
@@ -2143,45 +2143,45 @@
     "offlineStructuralCheck": "passed"
   },
   "comparisonEvidence": {
-    "priorLocalMeasuredAt": "2026-11-06T07:05:24.07355Z",
-    "cloudLatestMeasuredAt": "2026-11-06T07:02:04.792773Z",
+    "priorLocalMeasuredAt": "2026-11-07T07:00:38.530897Z",
+    "cloudLatestMeasuredAt": "2026-11-07T07:03:27.785992Z",
     "cloudAndLocalIndependent": true
   },
   "roadblocks": [
     {
-      "resolved": false,
-      "affected": "Better Lyrics",
-      "reason": "Multiple matching candidates prevent unambiguous identity",
       "action": "Further identity investigation needed",
-      "tried": "Scheduled search without first-match selection"
+      "resolved": false,
+      "tried": "Scheduled search without first-match selection",
+      "reason": "Multiple matching candidates prevent unambiguous identity",
+      "affected": "Better Lyrics"
     },
     {
-      "resolved": false,
-      "affected": "LyricsPlus",
-      "reason": "Both canaries returned HTTP530",
       "action": "Upstream recovery or independently validated source identity needed",
-      "tried": "Scheduled probes; reused earlier QQ versus Apple identity diagnostics"
+      "resolved": false,
+      "tried": "Scheduled probes; reused earlier QQ versus Apple identity diagnostics",
+      "reason": "Both canaries returned HTTP530",
+      "affected": "LyricsPlus"
     },
     {
-      "resolved": false,
-      "affected": "Chordie and Wikisource",
-      "reason": "File import capability remains unverified",
       "action": "Separate permitted import qualification needed",
-      "tried": "Scheduled search and extraction canaries passed"
+      "resolved": false,
+      "tried": "Scheduled search and extraction canaries passed",
+      "reason": "File import capability remains unverified",
+      "affected": "Chordie and Wikisource"
     },
     {
-      "resolved": false,
-      "affected": "Ozbcoz",
-      "reason": "Lookup is import-only; native picker coverage is separate",
       "action": "Native picker qualification remains",
-      "tried": "Scheduled source check and separate host import phase"
+      "resolved": false,
+      "tried": "Scheduled source check and separate host import phase",
+      "reason": "Lookup is import-only; native picker coverage is separate",
+      "affected": "Ozbcoz"
     },
     {
-      "resolved": false,
-      "affected": "Pisni and OpenScore Lieder",
-      "reason": "Disabled pending qualification and rights review",
       "action": "Existing integration review remains",
-      "tried": "Included in full registry/catalog validation"
+      "resolved": false,
+      "tried": "Included in full registry/catalog validation",
+      "reason": "Disabled pending qualification and rights review",
+      "affected": "Pisni and OpenScore Lieder"
     }
   ]
 }
