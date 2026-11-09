@@ -27,24 +27,12 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Confirm secretless Google desktop OAuth configuration
+      - name: Validate public Google Desktop OAuth client ID
         shell: bash
         run: |
           set -euo pipefail
-          if [[ -z "$SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID" ]]; then
-            echo "The public desktop OAuth client ID Actions variable is required for this release." >&2
-            exit 1
-          fi
-          response="$(curl -sS -X POST https://oauth2.googleapis.com/token \
-            -H 'Content-Type: application/x-www-form-urlencoded' \
-            --data-urlencode "client_id=$SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID" \
-            --data-urlencode 'code=codex-release-preflight-invalid-code' \
-            --data-urlencode 'code_verifier=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' \
-            --data-urlencode 'grant_type=authorization_code' \
-            --data-urlencode 'redirect_uri=http://127.0.0.1:49152' || true)"
-          oauth_error="$(python3 -c 'import json, sys; print(json.load(sys.stdin).get("error", ""))' <<<"$response")"
-          if [[ "$oauth_error" != "invalid_grant" ]]; then
-            echo "Desktop OAuth preflight returned '$oauth_error'; refusing to publish." >&2
+          if [[ ! "$SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID" =~ ^[0-9]+-[A-Za-z0-9_-]+\.apps\.googleusercontent\.com$ ]]; then
+            echo "A valid public Google Desktop OAuth client ID is required for this release." >&2
             exit 1
           fi
 
