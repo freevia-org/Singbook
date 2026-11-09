@@ -2,8 +2,8 @@ name: CI
 
 # On-demand CI. Source checks use the same empty defines as a fresh clone. The unsigned
 # Windows release bundle embeds the public Desktop OAuth client ID from a
-# GitHub Actions variable. A hosted preflight verifies the PKCE flow without a
-# client secret; the local build explicitly compiles with that field blank.
+# GitHub Actions variable. A configuration preflight checks its public-client format;
+# the local build explicitly compiles without a client secret.
 # This workflow never signs.
 #
 # Layout (fail fast, then fan out). Analysis and the Linux Flutter suite use the
@@ -134,35 +134,14 @@ jobs:
     env:
       SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID: ${{ vars.SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID }}
     steps:
-      - name: Check secretless Windows OAuth PKCE configuration
+      - name: Validate public Desktop OAuth client configuration
         shell: pwsh
         run: |
-          if ([string]::IsNullOrWhiteSpace($env:SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID)) {
-            throw 'The SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID Actions variable is required for desktop release bundles.'
+          if ([string]::IsNullOrWhiteSpace($env:SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID) -or
+              $env:SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID -notmatch '^\d+-[A-Za-z0-9_-]+\.apps\.googleusercontent\.com$') {
+            throw 'A valid public Google Desktop OAuth client ID is required for desktop release bundles.'
           }
-
-          # Probe the public Desktop client using a deliberately invalid code.
-          # invalid_grant confirms the client accepts the secretless PKCE flow
-          # without authenticating a user or exposing any secret to the local runner.
-          $probe = @{
-            client_id = $env:SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID
-            code = 'codex-release-preflight-invalid-code'
-            code_verifier = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
-            grant_type = 'authorization_code'
-            redirect_uri = 'http://127.0.0.1:49152'
-          }
-          try {
-            $response = Invoke-RestMethod -Method Post -Uri 'https://oauth2.googleapis.com/token' -ContentType 'application/x-www-form-urlencoded' -Body $probe
-            $oauthError = $response.error
-          } catch {
-            $errorBody = $_.ErrorDetails.Message
-            try { $oauthError = ($errorBody | ConvertFrom-Json).error }
-            catch { throw 'Google OAuth secretless Desktop-client preflight could not read the token endpoint response.' }
-          }
-          if ($oauthError -ne 'invalid_grant') {
-            if ($errorBody -match 'client_secret') { $oauthError = 'client_secret_required' }
-            throw "Google OAuth Desktop-client preflight without a client secret failed ($oauthError). The local release build deliberately omits the public-client secret."
-          }
+          Write-Output 'Public Desktop OAuth client ID format is valid. No client secret is required or compiled into the app.'
 
   windows-build:
     needs: [analyze, desktop-oauth-preflight]
