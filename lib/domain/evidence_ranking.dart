@@ -320,12 +320,16 @@ class _Combination {
   final Map<String, EvidenceClaim> selected;
   final int score;
   final String Function(EvidenceClaim claim) stateKey;
-  const _Combination(this.selected, this.score, this.stateKey);
+  _Combination(this.selected, this.score, this.stateKey);
+
+  String? _cachedSignature;
 
   _Combination withClaim(String field, EvidenceClaim claim, int claimScore) =>
       _Combination({...selected, field: claim}, score + claimScore, stateKey);
 
-  String get signature {
+  String get signature => _cachedSignature ??= _buildSignature();
+
+  String _buildSignature() {
     final fields = selected.keys.toList()..sort();
     return jsonEncode([
       for (final field in fields) [field, stateKey(selected[field]!)],

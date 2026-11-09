@@ -23,7 +23,7 @@ certification, so no certificate or signing key is used anywhere in this repo.
 ## Version mapping
 
 Store package version is `<MAJOR>.<MINOR>.<PATCH>.0`, for example canonical
-version `1.0.51+51` becomes `Singbook_1.0.51.0_x64.msix`. Singbook keeps PATCH
+version `1.0.52+52` becomes `Singbook_1.0.52.0_x64.msix`. Singbook keeps PATCH
 equal to BUILD so the customer-facing marketing version aligns with the Store
 package version. The package version must be newer than the last submission.
 

@@ -10,7 +10,7 @@ import unittest
 
 
 class IosBuildOrchestrationTest(unittest.TestCase):
-    release_version = '1.0.51+51'
+    release_version = '1.0.52+52'
     build_number = release_version.rsplit('+', 1)[1]
 
     def run_build(self, mode, fail_dependencies=False, invalid_google=False):
