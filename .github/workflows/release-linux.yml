@@ -5,7 +5,7 @@ on:
 
 permissions:
   contents: write
-  actions: write
+  id-token: write
 
 concurrency:
   group: singbook-linux-release
@@ -109,6 +109,19 @@ jobs:
           )
           PY
 
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
+
+      - name: Sign Linux packages and manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+          for asset in build/linux-packages/*.deb build/linux-packages/*.AppImage build/linux-packages/LINUX-RELEASE-MANIFEST.json; do
+            test -s "$asset"
+            cosign sign-blob --yes --bundle "$asset.sigstore.json" "$asset"
+            sha256sum "$asset" > "$asset.sha256"
+          done
+
       - name: Publish versioned Linux prerelease to GitHub
         shell: bash
         run: |
@@ -125,16 +138,19 @@ jobs:
             echo "Release tag already exists; refusing to replace it: $tag" >&2
             exit 1
           fi
-          gh release create "$tag" \
-            build/linux-packages/*.deb \
-            build/linux-packages/*.AppImage \
-            build/linux-packages/LINUX-RELEASE-MANIFEST.json \
+          release_assets=(
+            build/linux-packages/*.deb
+            build/linux-packages/*.AppImage
+            build/linux-packages/LINUX-RELEASE-MANIFEST.json
+          )
+          for asset in "${release_assets[@]}"; do
+            test -s "$asset.sha256"
+            test -s "$asset.sigstore.json"
+            release_assets+=("$asset.sha256" "$asset.sigstore.json")
+          done
+          gh release create "$tag" "${release_assets[@]}" \
             --repo "$GITHUB_REPOSITORY" \
             --target "$GITHUB_SHA" \
             --title "Singbook ${release}+${build} — Linux" \
-            --notes "Linux x86_64 preview built from ${GITHUB_SHA}. The manifest records exact package hashes. SHA-256 files and keyless Sigstore bundles are added by the signing workflow after publication." \
+            --notes "Linux x86_64 preview built from ${GITHUB_SHA}. Package contents and a smoke launch passed on Ubuntu 24.04. The manifest records package hashes; SHA-256 files and keyless Sigstore bundles for both packages and the manifest are included." \
             --prerelease
-          gh workflow run sign-linux-release-assets.yml \
-            --repo "$GITHUB_REPOSITORY" \
-            --ref main \
-            -f "release_tag=$tag"
