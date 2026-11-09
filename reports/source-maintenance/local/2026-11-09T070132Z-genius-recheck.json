@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "catalogRevision": 23,
+  "measuredAt": "2026-11-09T07:02:49.875720Z",
+  "offline": false,
+  "summary": {
+    "healthy": 1
+  },
+  "sources": [
+    {
+      "id": "genius",
+      "name": "Genius",
+      "status": "healthy",
+      "coverage": {
+        "status": "complete",
+        "verifiedCapabilities": [
+          "catalog",
+          "lyrics",
+          "metadata"
+        ],
+        "unverifiedCapabilities": []
+      },
+      "probes": [
+        {
+          "id": "wonderwall-oasis",
+          "status": "healthy",
+          "candidateId": "76654",
+          "providerId": "genius",
+          "bodyCharacters": 1549,
+          "metadataFields": [
+            "album",
+            "artworkUrl",
+            "credits",
+            "language",
+            "mediaLinks",
+            "recordingLocation",
+            "releaseDate",
+            "releaseDateDisplay",
+            "year"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "lyrics",
+            "metadata"
+          ],
+          "timingTrackCount": 0,
+          "timingGranularities": [],
+          "timingRawRetained": false,
+          "hasChords": false
+        }
+      ]
+    }
+  ],
+  "httpDiagnostics": {
+    "networkFailures": 0,
+    "hosts": {
+      "api.genius.com": {
+        "requests": 2,
+        "statuses": {
+          "200": 2
+        },
+        "retryAfterSeconds": {},
+        "databaseLag": {}
+      },
+      "genius.com": {
+        "requests": 1,
+        "statuses": {
+          "200": 1
+        },
+        "retryAfterSeconds": {},
+        "databaseLag": {}
+      }
+    }
+  }
+}

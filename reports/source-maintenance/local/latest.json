@@ -1,58 +1,36 @@
 {
   "schemaVersion": 1,
   "catalogRevision": 23,
-  "measuredAt": "2026-11-08T07:05:14.70413Z",
+  "measuredAt": "2026-11-09T07:01:32.704791Z",
   "offline": false,
   "summary": {
-    "healthy": 24,
+    "transient_error": 2,
+    "healthy": 23,
     "coverage_gap": 1,
     "import_only": 1,
     "partial_coverage": 2,
     "retired": 1,
-    "transient_error": 1,
     "disabled": 2
   },
   "sources": [
     {
       "id": "genius",
       "name": "Genius",
-      "status": "healthy",
+      "status": "transient_error",
       "coverage": {
-        "status": "complete",
-        "verifiedCapabilities": [
+        "status": "partial",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
           "catalog",
           "lyrics",
           "metadata"
-        ],
-        "unverifiedCapabilities": []
+        ]
       },
       "probes": [
         {
           "id": "wonderwall-oasis",
-          "status": "healthy",
-          "candidateId": "76654",
-          "providerId": "genius",
-          "bodyCharacters": 1549,
-          "metadataFields": [
-            "album",
-            "artworkUrl",
-            "credits",
-            "language",
-            "mediaLinks",
-            "recordingLocation",
-            "releaseDate",
-            "releaseDateDisplay",
-            "year"
-          ],
-          "verifiedCapabilities": [
-            "catalog",
-            "lyrics",
-            "metadata"
-          ],
-          "timingTrackCount": 0,
-          "timingGranularities": [],
-          "timingRawRetained": false,
-          "hasChords": false
+          "status": "transient_error",
+          "reason": "timeout"
         }
       ]
     },
@@ -234,9 +212,9 @@
         {
           "id": "wonderwall-oasis-studio",
           "status": "healthy",
-          "candidateId": "sha256:b91bcbf99b0a9cf3",
+          "candidateId": "sha256:7f2abc8e0c8957ba",
           "providerId": "lyricsovh",
-          "bodyCharacters": 1401,
+          "bodyCharacters": 1307,
           "metadataFields": [
             "album",
             "artworkUrl",
@@ -1890,7 +1868,7 @@
     }
   ],
   "httpDiagnostics": {
-    "networkFailures": 0,
+    "networkFailures": 1,
     "hosts": {
       "acousticbrainz.org": {
         "requests": 4,
@@ -1911,7 +1889,7 @@
       "api.genius.com": {
         "requests": 2,
         "statuses": {
-          "200": 2
+          "200": 1
         },
         "retryAfterSeconds": {},
         "databaseLag": {}
@@ -1952,14 +1930,6 @@
         "requests": 2,
         "statuses": {
           "200": 2
-        },
-        "retryAfterSeconds": {},
-        "databaseLag": {}
-      },
-      "genius.com": {
-        "requests": 1,
-        "statuses": {
-          "200": 1
         },
         "retryAfterSeconds": {},
         "databaseLag": {}
@@ -2140,48 +2110,56 @@
     "privateBrowserSessionUsed": false,
     "dedicatedGeniusMaintenanceCredential": true,
     "userLibraryAccessed": false,
-    "offlineStructuralCheck": "passed"
+    "offlineStructuralCheck": "passed",
+    "geniusSelectedRecheck": "initial timeout; separately rechecked successfully, 3 HTTP200"
   },
   "comparisonEvidence": {
-    "priorLocalMeasuredAt": "2026-11-07T07:00:38.530897Z",
-    "cloudLatestMeasuredAt": "2026-11-07T07:03:27.785992Z",
+    "priorLocalMeasuredAt": "2026-11-08T07:05:14.70413Z",
+    "cloudLatestMeasuredAt": "2026-11-08T07:06:31.643467Z",
     "cloudAndLocalIndependent": true
   },
   "roadblocks": [
     {
-      "action": "Further identity investigation needed",
-      "resolved": false,
+      "tried": "One changed-response selected-source recheck completed healthy with3 HTTP200",
+      "reason": "One scheduled probe timed out after an API response",
+      "affected": "Genius",
+      "resolved": true,
+      "action": "None"
+    },
+    {
       "tried": "Scheduled search without first-match selection",
       "reason": "Multiple matching candidates prevent unambiguous identity",
-      "affected": "Better Lyrics"
+      "affected": "Better Lyrics",
+      "resolved": false,
+      "action": "Further identity investigation needed"
     },
     {
-      "action": "Upstream recovery or independently validated source identity needed",
-      "resolved": false,
       "tried": "Scheduled probes; reused earlier QQ versus Apple identity diagnostics",
       "reason": "Both canaries returned HTTP530",
-      "affected": "LyricsPlus"
+      "affected": "LyricsPlus",
+      "resolved": false,
+      "action": "Upstream recovery or independently validated source identity needed"
     },
     {
-      "action": "Separate permitted import qualification needed",
-      "resolved": false,
       "tried": "Scheduled search and extraction canaries passed",
       "reason": "File import capability remains unverified",
-      "affected": "Chordie and Wikisource"
+      "affected": "Chordie and Wikisource",
+      "resolved": false,
+      "action": "Separate permitted import qualification needed"
     },
     {
-      "action": "Native picker qualification remains",
-      "resolved": false,
       "tried": "Scheduled source check and separate host import phase",
       "reason": "Lookup is import-only; native picker coverage is separate",
-      "affected": "Ozbcoz"
+      "affected": "Ozbcoz",
+      "resolved": false,
+      "action": "Native picker qualification remains"
     },
     {
-      "action": "Existing integration review remains",
-      "resolved": false,
       "tried": "Included in full registry/catalog validation",
       "reason": "Disabled pending qualification and rights review",
-      "affected": "Pisni and OpenScore Lieder"
+      "affected": "Pisni and OpenScore Lieder",
+      "resolved": false,
+      "action": "Existing integration review remains"
     }
   ]
 }
