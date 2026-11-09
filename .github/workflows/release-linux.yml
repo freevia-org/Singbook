@@ -42,8 +42,9 @@ jobs:
             --data-urlencode 'code_verifier=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' \
             --data-urlencode 'grant_type=authorization_code' \
             --data-urlencode 'redirect_uri=http://127.0.0.1:49152' || true)"
-          if ! grep -q '"error":"invalid_grant"' <<<"$response"; then
-            echo "Desktop OAuth preflight did not return invalid_grant; refusing to publish." >&2
+          oauth_error="$(python3 -c 'import json, sys; print(json.load(sys.stdin).get("error", ""))' <<<"$response")"
+          if [[ "$oauth_error" != "invalid_grant" ]]; then
+            echo "Desktop OAuth preflight returned '$oauth_error'; refusing to publish." >&2
             exit 1
           fi
 
