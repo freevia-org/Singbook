@@ -19,7 +19,7 @@ database names and `x_verse` ChordPro payloads, timing, and provenance compatibl
 ## Release numbering
 
 - Use exactly one canonical `MAJOR.MINOR.PATCH+BUILD` value in `pubspec.yaml`.
-  For example, `1.0.50+50` is followed by `1.0.51+51`. Keep `BUILD` monotonic
+  For example, `1.0.51+51` is followed by `1.0.52+52`. Keep `BUILD` monotonic
   across version changes, and derive store-specific numeric identifiers from
   this tuple rather than maintaining an independent code. For cross-store
   alignment with Microsoft's package format, the Singbook release `PATCH` and

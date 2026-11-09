@@ -89,6 +89,35 @@ void main() {
     );
   });
 
+  test('long tied combination signatures preserve deterministic ranking', () {
+    final longValue = List.filled(1024, 'x').join();
+    final claims = [
+      for (var field = 0; field < 8; field++)
+        for (var option = 0; option < 12; option++)
+          claim(
+            'field-$field',
+            'option-$option-$longValue',
+            'source-$option',
+            'provider-$option',
+          ),
+    ];
+    final forward = rankEvidenceClaims(claims, beamBudget: 16);
+    final reversed = rankEvidenceClaims(claims.reversed, beamBudget: 16);
+
+    expect(
+      forward.chosenByField.map(
+        (field, item) => MapEntry(field, item.sourceId),
+      ),
+      reversed.chosenByField.map(
+        (field, item) => MapEntry(field, item.sourceId),
+      ),
+    );
+    expect(
+      forward.claims.map((item) => item.claim.sourceId),
+      reversed.claims.map((item) => item.claim.sourceId),
+    );
+  });
+
   test(
     'distinct providers corroborate while provider and copied lineage count once',
     () {
