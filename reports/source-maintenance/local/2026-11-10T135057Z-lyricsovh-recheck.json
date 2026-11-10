@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "catalogRevision": 23,
+  "measuredAt": "2026-11-10T13:52:23.034412Z",
+  "offline": false,
+  "summary": {
+    "identity_mismatch": 1
+  },
+  "sources": [
+    {
+      "id": "lyricsovh",
+      "name": "Lyrics.ovh",
+      "status": "identity_mismatch",
+      "coverage": {
+        "status": "partial",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
+          "catalog",
+          "lyrics",
+          "metadata"
+        ]
+      },
+      "probes": [
+        {
+          "id": "wonderwall-oasis-studio",
+          "status": "identity_mismatch",
+          "reason": "expected_candidate_not_found"
+        }
+      ]
+    }
+  ],
+  "httpDiagnostics": {
+    "networkFailures": 0,
+    "hosts": {
+      "api.lyrics.ovh": {
+        "requests": 1,
+        "statuses": {
+          "200": 1
+        },
+        "retryAfterSeconds": {},
+        "databaseLag": {}
+      }
+    }
+  }
+}

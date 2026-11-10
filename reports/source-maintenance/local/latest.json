@@ -1,22 +1,23 @@
 {
   "schemaVersion": 1,
   "catalogRevision": 23,
-  "measuredAt": "2026-11-09T07:01:32.704791Z",
+  "measuredAt": "2026-11-10T13:50:57.634919Z",
   "offline": false,
   "summary": {
-    "transient_error": 2,
-    "healthy": 23,
+    "identity_mismatch": 2,
+    "healthy": 22,
     "coverage_gap": 1,
     "import_only": 1,
     "partial_coverage": 2,
     "retired": 1,
+    "transient_error": 1,
     "disabled": 2
   },
   "sources": [
     {
       "id": "genius",
       "name": "Genius",
-      "status": "transient_error",
+      "status": "identity_mismatch",
       "coverage": {
         "status": "partial",
         "verifiedCapabilities": [],
@@ -29,8 +30,8 @@
       "probes": [
         {
           "id": "wonderwall-oasis",
-          "status": "transient_error",
-          "reason": "timeout"
+          "status": "identity_mismatch",
+          "reason": "expected_candidate_not_found"
         }
       ]
     },
@@ -198,38 +199,21 @@
     {
       "id": "lyricsovh",
       "name": "Lyrics.ovh",
-      "status": "healthy",
+      "status": "identity_mismatch",
       "coverage": {
-        "status": "complete",
-        "verifiedCapabilities": [
+        "status": "partial",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
           "catalog",
           "lyrics",
           "metadata"
-        ],
-        "unverifiedCapabilities": []
+        ]
       },
       "probes": [
         {
           "id": "wonderwall-oasis-studio",
-          "status": "healthy",
-          "candidateId": "sha256:7f2abc8e0c8957ba",
-          "providerId": "lyricsovh",
-          "bodyCharacters": 1307,
-          "metadataFields": [
-            "album",
-            "artworkUrl",
-            "duration",
-            "mediaLinks"
-          ],
-          "verifiedCapabilities": [
-            "catalog",
-            "lyrics",
-            "metadata"
-          ],
-          "timingTrackCount": 0,
-          "timingGranularities": [],
-          "timingRawRetained": false,
-          "hasChords": false
+          "status": "identity_mismatch",
+          "reason": "expected_candidate_not_found"
         }
       ]
     },
@@ -1868,7 +1852,7 @@
     }
   ],
   "httpDiagnostics": {
-    "networkFailures": 1,
+    "networkFailures": 0,
     "hosts": {
       "acousticbrainz.org": {
         "requests": 4,
@@ -1887,7 +1871,7 @@
         "databaseLag": {}
       },
       "api.genius.com": {
-        "requests": 2,
+        "requests": 1,
         "statuses": {
           "200": 1
         },
@@ -1895,9 +1879,9 @@
         "databaseLag": {}
       },
       "api.lyrics.ovh": {
-        "requests": 2,
+        "requests": 1,
         "statuses": {
-          "200": 2
+          "200": 1
         },
         "retryAfterSeconds": {},
         "databaseLag": {}
@@ -2096,7 +2080,7 @@
       }
     }
   },
-  "sourceCommit": "fd33a769b83f3f3d9ace5e94d85be559b158698e",
+  "sourceCommit": "dc9d723452abf16670b0b8155448b72b8cc550e5",
   "catalogPath": "config/source-catalog-v10.json",
   "catalogChannel": 10,
   "catalogSha256": "a61377c845601888f22a8abf0f43a66ace1a61a85b6f627cd709e9f376b28dce",
@@ -2111,55 +2095,62 @@
     "dedicatedGeniusMaintenanceCredential": true,
     "userLibraryAccessed": false,
     "offlineStructuralCheck": "passed",
-    "geniusSelectedRecheck": "initial timeout; separately rechecked successfully, 3 HTTP200"
+    "selectedRechecks": "Genius passed; Lyrics.ovh still missing expected candidate; separate sanitized search identity diagnostic retained"
   },
   "comparisonEvidence": {
-    "priorLocalMeasuredAt": "2026-11-08T07:05:14.70413Z",
-    "cloudLatestMeasuredAt": "2026-11-08T07:06:31.643467Z",
+    "priorLocalMeasuredAt": "2026-11-09T07:01:32.704791Z",
+    "cloudLatestMeasuredAt": "2026-11-10T07:05:20.180921Z",
     "cloudAndLocalIndependent": true
   },
   "roadblocks": [
     {
-      "tried": "One changed-response selected-source recheck completed healthy with3 HTTP200",
-      "reason": "One scheduled probe timed out after an API response",
-      "affected": "Genius",
+      "action": "None",
+      "tried": "One changed-response selected-source recheck passed",
       "resolved": true,
-      "action": "None"
+      "affected": "Genius",
+      "reason": "Scheduled search did not find the expected candidate"
     },
     {
+      "action": "Investigate publisher search and identity changes; do not substitute a different edition",
+      "tried": "Scheduled search, one selected-source recheck and one sanitized identity diagnostic; search returned a compilation and other editions",
+      "resolved": false,
+      "affected": "Lyrics.ovh",
+      "reason": "Search results did not contain expected original-album candidate"
+    },
+    {
+      "action": "Further identity investigation needed",
       "tried": "Scheduled search without first-match selection",
-      "reason": "Multiple matching candidates prevent unambiguous identity",
+      "resolved": false,
       "affected": "Better Lyrics",
-      "resolved": false,
-      "action": "Further identity investigation needed"
+      "reason": "Multiple matching candidates prevent unambiguous identity"
     },
     {
+      "action": "Upstream recovery or independently validated source identity needed",
       "tried": "Scheduled probes; reused earlier QQ versus Apple identity diagnostics",
-      "reason": "Both canaries returned HTTP530",
+      "resolved": false,
       "affected": "LyricsPlus",
-      "resolved": false,
-      "action": "Upstream recovery or independently validated source identity needed"
+      "reason": "Both canaries returned HTTP530"
     },
     {
+      "action": "Separate permitted import qualification needed",
       "tried": "Scheduled search and extraction canaries passed",
-      "reason": "File import capability remains unverified",
+      "resolved": false,
       "affected": "Chordie and Wikisource",
-      "resolved": false,
-      "action": "Separate permitted import qualification needed"
+      "reason": "File import capability remains unverified"
     },
     {
+      "action": "Native picker qualification remains",
       "tried": "Scheduled source check and separate host import phase",
-      "reason": "Lookup is import-only; native picker coverage is separate",
-      "affected": "Ozbcoz",
       "resolved": false,
-      "action": "Native picker qualification remains"
+      "affected": "Ozbcoz",
+      "reason": "Lookup is import-only; native picker coverage is separate"
     },
     {
+      "action": "Existing integration review remains",
       "tried": "Included in full registry/catalog validation",
-      "reason": "Disabled pending qualification and rights review",
-      "affected": "Pisni and OpenScore Lieder",
       "resolved": false,
-      "action": "Existing integration review remains"
+      "affected": "Pisni and OpenScore Lieder",
+      "reason": "Disabled pending qualification and rights review"
     }
   ]
 }
