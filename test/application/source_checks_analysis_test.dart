@@ -212,6 +212,11 @@ void main() {
           (source) => source.candidate.providerId == 'acousticbrainz',
         );
         expect(acousticResult.matchKind, MatchKind.sameRecording);
+        final pending = ui.state.comparison!.providerChecks.singleWhere(
+          (item) => item.id == 'acousticbrainz',
+        );
+        expect(pending.recordingAnalysis, isNull);
+        await ui.settleComparisonMetadata();
         final comparison = ui.state.comparison!;
         final check = comparison.providerChecks.singleWhere(
           (item) => item.id == 'acousticbrainz',
@@ -242,8 +247,9 @@ void main() {
         );
 
         void refreshProjection() => ui.setSearchFilter('language', '');
-        void expectNoAnalysis(String reason) {
+        Future<void> expectNoAnalysis(String reason) async {
           refreshProjection();
+          await ui.settleComparisonMetadata();
           final current = ui.state.comparison!.providerChecks
               .where((item) => item.id == 'acousticbrainz')
               .toList();
@@ -257,7 +263,9 @@ void main() {
           title: 'Lantern Map',
           artist: 'June Harbor',
         );
-        expectNoAnalysis('analysis from a previous selection must be stale');
+        await expectNoAnalysis(
+          'analysis from a previous selection must be stale',
+        );
         app.selection = originalSelection;
 
         final rawMetadata = Map<String, Object?>.from(
@@ -290,7 +298,9 @@ void main() {
           result: missingAnalysis,
           operations: originalCheck.operations,
         );
-        expectNoAnalysis('missing analyzed MBID must not project estimates');
+        await expectNoAnalysis(
+          'missing analyzed MBID must not project estimates',
+        );
 
         final wrongMetadata = Map<String, Object?>.from(
           originalResult.candidate.metadata,
@@ -327,7 +337,9 @@ void main() {
           result: wrongIdResult,
           operations: originalCheck.operations,
         );
-        expectNoAnalysis('analysis MBID must match the checked recording');
+        await expectNoAnalysis(
+          'analysis MBID must match the checked recording',
+        );
 
         app.results = [
           for (final source in app.results)
@@ -339,7 +351,7 @@ void main() {
           result: originalResult,
           operations: originalCheck.operations,
         );
-        expectNoAnalysis('pending checks must not carry estimates');
+        await expectNoAnalysis('pending checks must not carry estimates');
 
         final rejectedResult = _copyResult(
           originalResult,
@@ -355,7 +367,7 @@ void main() {
           result: rejectedResult,
           operations: originalCheck.operations,
         );
-        expectNoAnalysis('rejected source must not carry estimates');
+        await expectNoAnalysis('rejected source must not carry estimates');
 
         app.results = [
           for (final source in app.results)
@@ -367,7 +379,7 @@ void main() {
           result: originalResult,
           operations: originalCheck.operations,
         );
-        expectNoAnalysis('stale source is not a current projection');
+        await expectNoAnalysis('stale source is not a current projection');
 
         app.results = [...app.results, originalResult];
 
@@ -379,7 +391,7 @@ void main() {
           for (final source in app.results)
             if (source.id == musicBrainzWitness.id) rejectedWitness else source,
         ];
-        expectNoAnalysis('rejected witness must invalidate projection');
+        await expectNoAnalysis('rejected witness must invalidate projection');
 
         final pendingWitnessMetadata = Map<String, dynamic>.from(
           musicBrainzWitness.candidate.metadata,
@@ -401,7 +413,7 @@ void main() {
           for (final source in app.results)
             if (source.id == musicBrainzWitness.id) pendingWitness else source,
         ];
-        expectNoAnalysis('pending witness must invalidate projection');
+        await expectNoAnalysis('pending witness must invalidate projection');
 
         app.results = [
           for (final source in app.results)
@@ -416,13 +428,15 @@ void main() {
           result: musicBrainzWitness,
           operations: originalWitnessCheck.operations,
         );
-        expectNoAnalysis('cancelled witness check must invalidate projection');
+        await expectNoAnalysis(
+          'cancelled witness check must invalidate projection',
+        );
         app.checks['musicbrainz'] = originalWitnessCheck;
 
         app.results = app.results
             .where((source) => source.id != musicBrainzWitness.id)
             .toList();
-        expectNoAnalysis(
+        await expectNoAnalysis(
           'missing live recording witness must invalidate projection',
         );
 
@@ -433,14 +447,16 @@ void main() {
           result: originalResult,
           operations: originalCheck.operations,
         );
-        expectNoAnalysis('cancelled source checks must not carry estimates');
+        await expectNoAnalysis(
+          'cancelled source checks must not carry estimates',
+        );
 
         app.checks['acousticbrainz'] = originalCheck;
         final providerSettings = Map<String, Object?>.from(
           app.settings['providers'] as Map? ?? const {},
         )..['musicbrainz'] = false;
         app.settings = {...app.settings, 'providers': providerSettings};
-        expectNoAnalysis(
+        await expectNoAnalysis(
           'disabled recording witness must invalidate projection',
         );
 
@@ -448,6 +464,7 @@ void main() {
         providerSettings['acousticbrainz'] = false;
         app.settings = {...app.settings, 'providers': providerSettings};
         refreshProjection();
+        await ui.settleComparisonMetadata();
         final disabled = ui.state.comparison!.providerChecks
             .where((item) => item.id == 'acousticbrainz')
             .toList();

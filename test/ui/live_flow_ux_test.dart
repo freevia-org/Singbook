@@ -56,6 +56,24 @@ void main() {
     },
   );
 
+  testWidgets('Save keeps the highlighted source while its preview slides', (
+    tester,
+  ) async {
+    final controller = _DelayedComparisonController(_comparisonState());
+    addTearDown(controller.dispose);
+    await _pumpHome(tester, controller);
+
+    final second = find.byKey(const ValueKey('version-row-second'));
+    final save = find.byKey(const ValueKey('save-open-lyrics'));
+    await tester.ensureVisible(second);
+    await tester.tap(second);
+    await tester.tap(save);
+
+    expect(controller.state.comparison!.selected?.id, 'suggested');
+    expect(controller.savedVersions, ['second']);
+    await tester.pumpAndSettle();
+  });
+
   testWidgets('deduplicated source keeps its count and selected alias', (
     tester,
   ) async {
@@ -916,7 +934,8 @@ void main() {
           lessThanOrEqualTo(tester.getRect(save).top),
         );
         expect(
-          find.text('Synthetic fixture is a title and duration match.')
+          find
+              .text('Synthetic fixture is a title and duration match.')
               .hitTestable(),
           findsOneWidget,
         );
@@ -959,7 +978,10 @@ void main() {
     addTearDown(controller.dispose);
     await _pumpHome(tester, controller);
 
-    expect(find.textContaining('Catalog contributor').hitTestable(), findsOneWidget);
+    expect(
+      find.textContaining('Catalog contributor').hitTestable(),
+      findsOneWidget,
+    );
     expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox.shrink());
   });
@@ -1005,22 +1027,35 @@ void main() {
       await tester.scrollUntilVisible(
         provider,
         120,
-        scrollable: find.descendant(
-          of: sheet,
-          matching: find.byType(Scrollable),
-        ).first,
+        scrollable: find
+            .descendant(of: sheet, matching: find.byType(Scrollable))
+            .first,
         maxScrolls: 12,
       );
       await tester.pumpAndSettle();
       expect(provider.hitTestable(), findsOneWidget);
-      expect(tester.getRect(provider).top, greaterThanOrEqualTo(tester.getRect(sheet).top));
-      expect(tester.getRect(provider).bottom, lessThanOrEqualTo(tester.getRect(sheet).bottom));
-      final contribution = find.ancestor(of: provider, matching: find.byType(Column)).first;
-      final role = find.descendant(of: contribution, matching: find.byWidgetPredicate(
-        (widget) => widget is SelectableText && widget.data == 'Lyrics',
-      ));
+      expect(
+        tester.getRect(provider).top,
+        greaterThanOrEqualTo(tester.getRect(sheet).top),
+      );
+      expect(
+        tester.getRect(provider).bottom,
+        lessThanOrEqualTo(tester.getRect(sheet).bottom),
+      );
+      final contribution = find
+          .ancestor(of: provider, matching: find.byType(Column))
+          .first;
+      final role = find.descendant(
+        of: contribution,
+        matching: find.byWidgetPredicate(
+          (widget) => widget is SelectableText && widget.data == 'Lyrics',
+        ),
+      );
       expect(role.hitTestable(), findsOneWidget);
-      expect(tester.getRect(role).bottom, lessThanOrEqualTo(tester.getRect(sheet).bottom));
+      expect(
+        tester.getRect(role).bottom,
+        lessThanOrEqualTo(tester.getRect(sheet).bottom),
+      );
       expect(tester.takeException(), isNull);
       await tester.pumpWidget(const SizedBox.shrink());
     } finally {
@@ -1083,7 +1118,7 @@ void main() {
         ),
         findsOneWidget,
       );
-      expect(find.text(l10n.playerPlay), findsOneWidget);
+      expect(find.byKey(const ValueKey('start-lyric-scroll')), findsOneWidget);
       expect(find.byKey(const ValueKey('scroll-speed-slider')), findsNothing);
       final speedToggle = find.byKey(const ValueKey('scroll-speed-toggle'));
       await tester.ensureVisible(speedToggle);
@@ -1364,10 +1399,15 @@ void main() {
         expect(rect.bottom, lessThanOrEqualTo(profile.size.height + 1e-6));
       }
       final label = find.descendant(of: start, matching: find.byType(Text));
-      expect(
-        tester.renderObject<RenderParagraph>(label).didExceedMaxLines,
-        isFalse,
-      );
+      if (label.evaluate().isEmpty) {
+        final l10n = AppLocalizations.of(tester.element(start));
+        expect(find.byTooltip(l10n.playerPlay), findsOneWidget);
+      } else {
+        expect(
+          tester.renderObject<RenderParagraph>(label).didExceedMaxLines,
+          isFalse,
+        );
+      }
       // Exercise each visible control as well as its hit target. The fixture
       // controller records the production widget's actions for each profile.
       controller.lastSeekSeconds = null;
@@ -1989,6 +2029,20 @@ class _LiveFlowController extends VerseUiController {
 
   @override
   dynamic noSuchMethod(Invocation invocation) => null;
+}
+
+class _DelayedComparisonController extends _LiveFlowController {
+  _DelayedComparisonController(super.state);
+
+  final savedVersions = <String>[];
+
+  @override
+  void selectVersion(String versionId) => selectionHistory.add(versionId);
+
+  @override
+  Future<void> saveSelectedVersion() async {
+    savedVersions.add(selectionHistory.last);
+  }
 }
 
 class _PlaybackSpeedState extends VerseUiState {

@@ -11,6 +11,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:singbook/domain/search_grouping.dart' show projectCatalog;
 import 'package:singbook/application/app_controller.dart';
 import 'package:singbook/data/library_repository.dart';
 import 'package:singbook/l10n/generated/app_localizations.dart';
@@ -958,7 +959,10 @@ Future<(AppController, AppControllerAdapter)> _createFixtureController(
     '$stage construct controller and adapter',
     () async {
       app = AppController(repository: repository, discovery: discovery);
-      ui = AppControllerAdapter(app);
+      ui = AppControllerAdapter(
+        app,
+        catalogProjector: (input) async => projectCatalog(input),
+      );
     },
   );
   return (app, ui);

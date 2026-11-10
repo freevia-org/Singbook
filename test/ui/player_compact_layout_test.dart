@@ -217,19 +217,20 @@ void main() {
           }
           expect(settings.hitTestable(), findsOneWidget);
           if (mobile) {
-            expect(
-              find.descendant(
-                of: find.byKey(const ValueKey('player-controls-panel')),
-                matching: settings,
-              ),
-              findsOneWidget,
-            );
+            final corner =
+                scenario.$2.width > scenario.$2.height &&
+                    scenario.$2.height < 480
+                ? 'player-controls-panel'
+                : 'tablet-reader-content';
+            final cornerRect = tester.getRect(find.byKey(ValueKey(corner)));
+            final settingsRect = tester.getRect(settings);
+            expect(settingsRect.top, cornerRect.top);
             final timeline = find.byKey(
               const ValueKey('player-mobile-timeline'),
             );
             expect(
               find.descendant(of: timeline, matching: settings),
-              findsOneWidget,
+              findsNothing,
             );
           }
           expect(
@@ -257,7 +258,7 @@ void main() {
     }
   }
   testWidgets(
-    'mobile timeline is shorter without shrinking controls or time labels',
+    'mobile timeline spans the panel symmetrically with settings in the corner',
     (tester) async {
       final controller = _Controller();
       addTearDown(controller.dispose);
@@ -271,11 +272,38 @@ void main() {
       final labelHeight = tester.getSize(duration).height;
       // Previously the time row followed the entire 48 dp slider row.
       expect(tester.getSize(timeline).height, closeTo(48 + labelHeight - 8, 1));
-      expect(
-        tester.getRect(duration).right,
-        lessThanOrEqualTo(tester.getRect(settings).left),
+      final panel = tester.getRect(
+        find.byKey(const ValueKey('player-controls-panel')),
       );
+      expect(tester.getRect(slider).left, closeTo(panel.left, 1));
+      expect(tester.getRect(slider).right, closeTo(panel.right, 1));
+      expect(tester.getRect(settings).bottom, lessThan(panel.top));
       expect(tester.takeException(), isNull);
+    },
+    variant: TargetPlatformVariant({
+      TargetPlatform.android,
+      TargetPlatform.iOS,
+    }),
+  );
+
+  testWidgets(
+    'portrait keeps key and speed alongside centered Play',
+    (tester) async {
+      final controller = _Controller()..speed = 1.25;
+      addTearDown(controller.dispose);
+      await _pump(tester, controller, size: const Size(320, 640), scale: 1.5);
+      final panel = tester.getRect(
+        find.byKey(const ValueKey('player-controls-panel')),
+      );
+      final play = find.byKey(const ValueKey('start-lyric-scroll'));
+      final playCenter = tester.getCenter(play);
+      expect(play.hitTestable(), findsOneWidget);
+      expect(playCenter.dx, closeTo(panel.center.dx, 1));
+      for (final controlKey in ['pitch-key-dropdown', 'scroll-speed-toggle']) {
+        final control = find.byKey(ValueKey(controlKey));
+        expect(control.hitTestable(), findsOneWidget);
+        expect(tester.getCenter(control).dy, closeTo(playCenter.dy, 1));
+      }
     },
     variant: TargetPlatformVariant({
       TargetPlatform.android,
@@ -414,135 +442,137 @@ void main() {
     }
   }
 
-  testWidgets('compact sidebar adapts between fitted and stacked controls', (
-    tester,
-  ) async {
-    // Match native font metrics used by the player's measured fit guards.
-    await tester.runAsync(() async {
-      for (final family in ['Roboto', 'sans-serif']) {
-        await (FontLoader(family)
-              ..addFont(rootBundle.load('assets/fonts/NotoSans-Regular.ttf')))
-            .load();
+  testWidgets(
+    'desktop compact sidebar adapts between fitted and stacked controls',
+    (tester) async {
+      // Match native font metrics used by the player's measured fit guards.
+      await tester.runAsync(() async {
+        for (final family in ['Roboto', 'sans-serif']) {
+          await (FontLoader(family)
+                ..addFont(rootBundle.load('assets/fonts/NotoSans-Regular.ttf')))
+              .load();
+        }
+      });
+      final controller = _Controller()
+        ..songKey = 'D#'
+        ..speed = 1;
+      addTearDown(controller.dispose);
+      await _pump(tester, controller, size: const Size(900, 400));
+      final key = tester.getRect(
+        find.byKey(const ValueKey('pitch-key-dropdown')),
+      );
+      final play = tester.getRect(
+        find.byKey(const ValueKey('start-lyric-scroll')),
+      );
+      final speed = tester.getRect(
+        find.byKey(const ValueKey('scroll-speed-toggle')),
+      );
+      expect(key.right, lessThanOrEqualTo(play.left));
+      expect(play.right, lessThanOrEqualTo(speed.left));
+      expect(key.center.dy, closeTo(play.center.dy, 1));
+      expect(speed.center.dy, closeTo(play.center.dy, 1));
+      expect(
+        find.byKey(const ValueKey('player-transport-horizontal-scroll')),
+        findsNothing,
+      );
+
+      // Preserve the original longer 1.25× ratio at the same 900×400 size.
+      // Its measured minimum exceeds the pane, so every control must stack and
+      // fit initially without requiring a horizontal reveal gesture.
+      controller.speed = 1.25;
+      controller.refresh();
+      await tester.pumpAndSettle();
+      final stackedKey = tester.getRect(
+        find.byKey(const ValueKey('pitch-key-dropdown')),
+      );
+      final stackedPlay = tester.getRect(
+        find.byKey(const ValueKey('start-lyric-scroll')),
+      );
+      final stackedSpeed = tester.getRect(
+        find.byKey(const ValueKey('scroll-speed-toggle')),
+      );
+      final panelRect = tester.getRect(
+        find.byKey(const ValueKey('player-controls-panel')),
+      );
+      expect(stackedKey.right, lessThanOrEqualTo(stackedSpeed.left));
+      expect(stackedKey.center.dy, closeTo(stackedSpeed.center.dy, 1));
+      expect(stackedPlay.top, greaterThanOrEqualTo(stackedKey.bottom - 1));
+      expect(stackedPlay.top, greaterThanOrEqualTo(stackedSpeed.bottom - 1));
+      for (final (name, rect) in [
+        ('key', stackedKey),
+        ('play', stackedPlay),
+        ('speed', stackedSpeed),
+      ]) {
+        final diagnostic = '1.25× $name: control=$rect; panel=$panelRect';
+        expect(
+          rect.left,
+          greaterThanOrEqualTo(panelRect.left - 1),
+          reason: diagnostic,
+        );
+        expect(
+          rect.right,
+          lessThanOrEqualTo(panelRect.right + 1),
+          reason: diagnostic,
+        );
+        expect(
+          rect.top,
+          greaterThanOrEqualTo(panelRect.top - 1),
+          reason: diagnostic,
+        );
+        expect(
+          rect.bottom,
+          lessThanOrEqualTo(panelRect.bottom + 1),
+          reason: diagnostic,
+        );
       }
-    });
-    final controller = _Controller()
-      ..songKey = 'D#'
-      ..speed = 1;
-    addTearDown(controller.dispose);
-    await _pump(tester, controller, size: const Size(900, 400));
-    final key = tester.getRect(
-      find.byKey(const ValueKey('pitch-key-dropdown')),
-    );
-    final play = tester.getRect(
-      find.byKey(const ValueKey('start-lyric-scroll')),
-    );
-    final speed = tester.getRect(
-      find.byKey(const ValueKey('scroll-speed-toggle')),
-    );
-    expect(key.right, lessThanOrEqualTo(play.left));
-    expect(play.right, lessThanOrEqualTo(speed.left));
-    expect(key.center.dy, closeTo(play.center.dy, 1));
-    expect(speed.center.dy, closeTo(play.center.dy, 1));
-    expect(
-      find.byKey(const ValueKey('player-transport-horizontal-scroll')),
-      findsNothing,
-    );
+      expect(
+        find.byKey(const ValueKey('player-transport-horizontal-scroll')),
+        findsNothing,
+      );
+      expect(
+        tester
+            .widget<Text>(find.byKey(const ValueKey('scroll-speed-value')))
+            .data,
+        '1.25×',
+      );
+      expect(
+        find.descendant(
+          of: find.byKey(const ValueKey('pitch-key-dropdown')),
+          matching: find.text('D#'),
+        ),
+        findsOneWidget,
+      );
+      expect(tester.takeException(), isNull);
 
-    // Preserve the original longer 1.25× ratio at the same 900×400 size.
-    // Its measured minimum exceeds the pane, so every control must stack and
-    // fit initially without requiring a horizontal reveal gesture.
-    controller.speed = 1.25;
-    controller.refresh();
-    await tester.pumpAndSettle();
-    final stackedKey = tester.getRect(
-      find.byKey(const ValueKey('pitch-key-dropdown')),
-    );
-    final stackedPlay = tester.getRect(
-      find.byKey(const ValueKey('start-lyric-scroll')),
-    );
-    final stackedSpeed = tester.getRect(
-      find.byKey(const ValueKey('scroll-speed-toggle')),
-    );
-    final panelRect = tester.getRect(
-      find.byKey(const ValueKey('player-controls-panel')),
-    );
-    expect(stackedKey.right, lessThanOrEqualTo(stackedSpeed.left));
-    expect(stackedKey.center.dy, closeTo(stackedSpeed.center.dy, 1));
-    expect(stackedPlay.top, greaterThanOrEqualTo(stackedKey.bottom - 1));
-    expect(stackedPlay.top, greaterThanOrEqualTo(stackedSpeed.bottom - 1));
-    for (final (name, rect) in [
-      ('key', stackedKey),
-      ('play', stackedPlay),
-      ('speed', stackedSpeed),
-    ]) {
-      final diagnostic = '1.25× $name: control=$rect; panel=$panelRect';
+      await _pump(
+        tester,
+        controller,
+        size: const Size(700, 360),
+        scale: 1.5,
+        locale: const Locale('bg'),
+      );
+      final localizedPlay = AppLocalizations.of(
+        tester.element(find.byType(PlayerScreen)),
+      ).playerPlay;
+      final compactPlay = find.byKey(const ValueKey('start-lyric-scroll'));
+      expect(tester.getRect(compactPlay).width, greaterThanOrEqualTo(104));
+      final playLabel = find
+          .descendant(of: compactPlay, matching: find.byType(RichText))
+          .last;
       expect(
-        rect.left,
-        greaterThanOrEqualTo(panelRect.left - 1),
-        reason: diagnostic,
+        tester.renderObject<RenderParagraph>(playLabel).didExceedMaxLines,
+        isFalse,
       );
       expect(
-        rect.right,
-        lessThanOrEqualTo(panelRect.right + 1),
-        reason: diagnostic,
+        find.descendant(of: compactPlay, matching: find.text(localizedPlay)),
+        findsOneWidget,
       );
-      expect(
-        rect.top,
-        greaterThanOrEqualTo(panelRect.top - 1),
-        reason: diagnostic,
-      );
-      expect(
-        rect.bottom,
-        lessThanOrEqualTo(panelRect.bottom + 1),
-        reason: diagnostic,
-      );
-    }
-    expect(
-      find.byKey(const ValueKey('player-transport-horizontal-scroll')),
-      findsNothing,
-    );
-    expect(
-      tester
-          .widget<Text>(find.byKey(const ValueKey('scroll-speed-value')))
-          .data,
-      '1.25×',
-    );
-    expect(
-      find.descendant(
-        of: find.byKey(const ValueKey('pitch-key-dropdown')),
-        matching: find.text('D#'),
-      ),
-      findsOneWidget,
-    );
-    expect(tester.takeException(), isNull);
-
-    await _pump(
-      tester,
-      controller,
-      size: const Size(700, 360),
-      scale: 1.5,
-      locale: const Locale('bg'),
-    );
-    final localizedPlay = AppLocalizations.of(
-      tester.element(find.byType(PlayerScreen)),
-    ).playerPlay;
-    final compactPlay = find.byKey(const ValueKey('start-lyric-scroll'));
-    expect(tester.getRect(compactPlay).width, greaterThanOrEqualTo(104));
-    final playLabel = find
-        .descendant(of: compactPlay, matching: find.byType(RichText))
-        .last;
-    expect(
-      tester.renderObject<RenderParagraph>(playLabel).didExceedMaxLines,
-      isFalse,
-    );
-    expect(
-      find.descendant(of: compactPlay, matching: find.text(localizedPlay)),
-      findsOneWidget,
-    );
-    final layoutError = tester.takeException();
-    if (layoutError != null) debugDumpRenderTree();
-    expect(layoutError, isNull);
-  });
+      final layoutError = tester.takeException();
+      if (layoutError != null) debugDumpRenderTree();
+      expect(layoutError, isNull);
+    },
+    variant: TargetPlatformVariant({TargetPlatform.windows}),
+  );
 
   for (final scenario in [
     (500.0, const Locale('en'), 1.0),
@@ -583,51 +613,23 @@ void main() {
         expect(lyricsRect.top, greaterThanOrEqualTo(headerRect.bottom));
         expect(lyricsRect.bottom, lessThanOrEqualTo(360));
         expect(lyricsRect.height, greaterThan(250));
-        final play = find.byKey(const ValueKey('start-lyric-scroll'));
-        expect(tester.getRect(play).width, greaterThanOrEqualTo(104));
-        final visibleKey = find.descendant(
-          of: find.byKey(const ValueKey('pitch-key-dropdown')),
-          matching: find.text(controller.songKey!),
-        );
-        expect(visibleKey, findsOneWidget);
-        expect(
-          tester.renderObject<RenderParagraph>(visibleKey).didExceedMaxLines,
-          isFalse,
-        );
-        // A narrow pane keeps one row and reveals its larger controls by
-        // horizontal scrolling instead of clipping the key or play label.
-        await Scrollable.ensureVisible(tester.element(play), alignment: .5);
-        await tester.pumpAndSettle();
-        final playRect = tester.getRect(play);
-        final controlsRect = tester.getRect(
+        final panel = tester.getRect(
           find.byKey(const ValueKey('player-controls-panel')),
         );
-        expect(playRect.left, greaterThanOrEqualTo(controlsRect.left - .01));
-        expect(playRect.top, greaterThanOrEqualTo(controlsRect.top - .01));
-        expect(playRect.right, lessThanOrEqualTo(controlsRect.right + .01));
-        expect(playRect.bottom, lessThanOrEqualTo(controlsRect.bottom + .01));
-        expect(playRect.width, lessThan(controlsRect.width));
-        expect(play.hitTestable(), findsOneWidget);
+        final play = find.byKey(const ValueKey('start-lyric-scroll'));
         final key = find.byKey(const ValueKey('pitch-key-dropdown'));
-        await Scrollable.ensureVisible(tester.element(key), alignment: .5);
-        await tester.pumpAndSettle();
-        expect(key.hitTestable(), findsOneWidget);
-        expect(tester.getSize(key).height, greaterThanOrEqualTo(48));
         final speed = find.byKey(const ValueKey('scroll-speed-toggle'));
-        await Scrollable.ensureVisible(tester.element(speed), alignment: .5);
-        await tester.pumpAndSettle();
-        expect(controlsRect.contains(tester.getCenter(speed)), isTrue);
-        expect(speed.hitTestable(), findsOneWidget);
-        expect(tester.getSize(speed).height, greaterThanOrEqualTo(48));
-        await Scrollable.ensureVisible(tester.element(play), alignment: .5);
-        await tester.pumpAndSettle();
-        final playLabel = find
-            .descendant(of: play, matching: find.byType(RichText))
-            .last;
-        expect(
-          tester.renderObject<RenderParagraph>(playLabel).didExceedMaxLines,
-          isFalse,
-        );
+        final playRect = tester.getRect(play);
+        for (final control in [key, play, speed]) {
+          expect(control.hitTestable(), findsOneWidget);
+          final rect = tester.getRect(control);
+          expect(rect.center.dy, closeTo(playRect.center.dy, 1));
+          expect(rect.width, greaterThanOrEqualTo(48));
+          expect(rect.height, greaterThanOrEqualTo(48));
+        }
+        expect(playRect.center.dx, closeTo(panel.center.dx, 1));
+        expect(panel.top, 0);
+        expect(panel.bottom, 360);
         expect(
           find.byKey(const ValueKey('player-enter-fullscreen')),
           findsOneWidget,
@@ -710,7 +712,12 @@ void main() {
         expect(rect.height, greaterThanOrEqualTo(48), reason: diagnostic);
         expect(control.hitTestable(), findsOneWidget, reason: diagnostic);
       }
-      expect(tester.getSize(play).width, greaterThanOrEqualTo(104));
+      expect(
+        tester.getSize(play).width,
+        greaterThanOrEqualTo(
+          defaultTargetPlatform == TargetPlatform.android ? 48 : 104,
+        ),
+      );
       await tester.tap(speed);
       await tester.pumpAndSettle();
       final slider = find.byKey(const ValueKey('scroll-speed-slider'));
@@ -1055,38 +1062,26 @@ void main() {
         expect(listRect.left, lyricsRect.left);
         expect(listRect.right, lyricsRect.right);
         expect(listRect.bottom, lyricsRect.bottom);
-        if (defaultTargetPlatform == TargetPlatform.macOS) {
+        final hasSettings =
+            defaultTargetPlatform == TargetPlatform.macOS || !scenario.$2;
+        if (hasSettings) {
           final settingsRect = tester.getRect(
             find.byKey(const ValueKey('player-settings-button')),
           );
           expect(listRect.top, greaterThanOrEqualTo(settingsRect.bottom));
-        } else {
-          // Mobile settings belongs to the hidden/collapsed playback panel.
-          expect(
-            find.byKey(const ValueKey('player-settings-button')),
-            findsNothing,
-          );
         }
         expect(actionFinder.hitTestable(), findsOneWidget);
         expect(tester.widget<IconButton>(actionFinder).tooltip, isNotEmpty);
         if (direction == TextDirection.rtl) {
           expect(
             action.left,
-            closeTo(
-              lyricsRect.left +
-                  (defaultTargetPlatform == TargetPlatform.macOS ? 48 : 0),
-              1,
-            ),
+            closeTo(lyricsRect.left + (hasSettings ? 48 : 0), 1),
           );
           expect(padding.left, padding.right);
         } else {
           expect(
             action.right,
-            closeTo(
-              lyricsRect.right -
-                  (defaultTargetPlatform == TargetPlatform.macOS ? 48 : 0),
-              1,
-            ),
+            closeTo(lyricsRect.right - (hasSettings ? 48 : 0), 1),
           );
           expect(padding.right, padding.left);
         }

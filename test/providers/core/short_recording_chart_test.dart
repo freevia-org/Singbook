@@ -94,9 +94,32 @@ class _VotingProvider implements LyricsProvider {
 
 void main() {
   test(
+    'large provider bodies publish prepared chord and lyric facts',
+    () async {
+      for (final charts in [false, true]) {
+        final body = List.generate(
+          360,
+          (index) => '${charts ? '[C]' : ''}$_line $index',
+        ).join('\n');
+        expect(body.length, greaterThan(16 * 1024));
+        final checks = <ProviderCheck>[];
+        final sources = await SourceDiscoveryService([
+          _Provider(_selection, body, charts: charts),
+        ]).discover(_selection, onProgress: checks.add);
+        final published = checks.where((check) => check.result?.body == body);
+        expect(published, isNotEmpty);
+        expect(published.map((check) => check.hasChords), everyElement(charts));
+        expect(published.map((check) => check.hasLyrics), everyElement(isTrue));
+        expect(sources.single.body, body);
+      }
+    },
+  );
+
+  test(
     'long unanchored lyrics cannot publish a mismatching short donor',
     () async {
       final published = <SourceResult>[];
+      final lyricPresence = <bool?>[];
       final results =
           await SourceDiscoveryService([
             _Provider(_selection, _reference),
@@ -115,6 +138,11 @@ void main() {
             onProgress: (check) {
               final source = check.result;
               if (source != null &&
+                  !source.hasChords &&
+                  source.matchKind != MatchKind.rejected) {
+                lyricPresence.add(check.hasLyrics);
+              }
+              if (source != null &&
                   source.hasChords &&
                   source.matchKind != MatchKind.rejected) {
                 published.add(source);
@@ -122,6 +150,8 @@ void main() {
             },
           );
       expect(published, isEmpty);
+      expect(lyricPresence, isNotEmpty);
+      expect(lyricPresence.first, isTrue);
       expect(
         results.where((r) => r.hasChords && r.matchKind != MatchKind.rejected),
         isEmpty,

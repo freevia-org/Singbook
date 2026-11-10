@@ -120,6 +120,36 @@ void main() {
     },
   );
 
+  test('live witness checks bind nested values and ignore map order', () async {
+    final details = <String, Object?>{
+      'raw': ['raw evidence', -0.0],
+      'version': 1,
+    };
+    final sources = [
+      _anchor(),
+      _donor(extra: {'details': details}),
+    ];
+    final plan = (await prepareRecordingContext(
+      _original,
+      sources,
+      namespace: 'musicbrainz',
+      eligible: {'genius', 'musicbrainz'},
+    ))!;
+    bool current() =>
+        plan.isCurrent(sources, original: _original, eligible: (_) => true);
+    expect(current(), isTrue);
+
+    final raw = details.remove('raw')! as List<Object?>;
+    details['raw'] = raw;
+    expect(current(), isTrue);
+    raw[1] = 0.0;
+    expect(current(), isFalse);
+    raw[1] = -0.0;
+    expect(current(), isTrue);
+    details['version'] = 1.0;
+    expect(current(), isFalse);
+  });
+
   test('accepts the actual legacy unscoped Genius recording anchor', () {
     final anchor = SourceResult(
       candidate: _candidate(

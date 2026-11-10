@@ -81,7 +81,10 @@ void main() {
     (tester) async {
       await pumpShell(tester, controller);
 
-      expect(find.text('Play'), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('start-lyric-scroll')).hitTestable(),
+        findsOneWidget,
+      );
       expect(find.byKey(const ValueKey('scroll-speed-slider')), findsNothing);
       expect(find.text(l10nOf(tester).playerLyricsOnly), findsNothing);
       await tester.tap(find.byKey(const ValueKey('scroll-speed-toggle')));
@@ -100,7 +103,10 @@ void main() {
             )
             .first,
       );
-      expect(speedSliderTheme.data.trackShape, isA<FineSpeedSliderTrackShape>());
+      expect(
+        speedSliderTheme.data.trackShape,
+        isA<FineSpeedSliderTrackShape>(),
+      );
       expect(
         find.descendant(
           of: find.byKey(const ValueKey('scroll-speed-panel')),

@@ -186,28 +186,34 @@ EvidenceRanking rankEvidenceClaims(
   }
   final scores = <EvidenceClaim, int>{};
   final componentsByClaim = <EvidenceClaim, Map<String, int>>{};
-  for (final field in byField.keys) {
-    for (final claim in byField[field]!) {
-      final components = _components(claim, byField[field]!);
+  final topScores = <String, int>{};
+  for (final entry in byField.entries) {
+    final field = entry.key;
+    final witnesses = _corroborationCounts(entry.value);
+    var bestScore = -10000;
+    for (final claim in entry.value) {
+      final components = _components(
+        claim,
+        witnesses[claim.normalizedValue] ?? 0,
+      );
       final rawScore = components.values.fold<int>(0, (a, b) => a + b);
       final weight = (fieldWeights[field] ?? 1).clamp(1, 8).toInt();
       if (weight > 1) components['fieldImportance'] = rawScore * (weight - 1);
       componentsByClaim[claim] = components;
-      scores[claim] = components.values.fold<int>(0, (a, b) => a + b);
+      final score = scores[claim] = components.values.fold<int>(
+        0,
+        (a, b) => a + b,
+      );
+      if (score > bestScore) bestScore = score;
     }
+    topScores[field] = bestScore;
   }
 
   // Search field combinations globally: a locally weaker claim may make a
   // much stronger combination possible in another field.
   final fields = byField.keys.toList()
     ..sort((a, b) {
-      final aTop = byField[a]!
-          .map((c) => scores[c]!)
-          .fold<int>(-10000, (x, y) => x > y ? x : y);
-      final bTop = byField[b]!
-          .map((c) => scores[c]!)
-          .fold<int>(-10000, (x, y) => x > y ? x : y);
-      final byScore = bTop.compareTo(aTop);
+      final byScore = topScores[b]!.compareTo(topScores[a]!);
       return byScore != 0 ? byScore : a.compareTo(b);
     });
   final budget = beamBudget < 1 ? 1 : beamBudget;
@@ -238,9 +244,9 @@ EvidenceRanking rankEvidenceClaims(
       // A field may remain unset if all its evidence belongs to another
       // identity/setup. This preserves a usable partial result.
       expanded.add(partial);
+      final chosenSoFar = partial.selected.values.toList();
       for (final option in byField[field]!) {
         if (!option.contextCompatible) continue;
-        final chosenSoFar = partial.selected.values.toList();
         if (compatibleWithChosen != null &&
             !compatibleWithChosen(option, chosenSoFar)) {
           continue;
@@ -342,33 +348,37 @@ int _combinationOrder(_Combination a, _Combination b) {
   return score != 0 ? score : a.signature.compareTo(b.signature);
 }
 
-Map<String, int> _components(EvidenceClaim c, List<EvidenceClaim> fieldClaims) {
-  final equivalent = fieldClaims
-      .where(
-        (other) =>
-            other.normalizedValue == c.normalizedValue &&
-            other.contextCompatible &&
-            other.supportsCorroboration &&
-            other.matchQuality != EvidenceMatchQuality.rejected,
-      )
-      .toList();
-  final seenProviders = <String>{};
-  final seenLineages = <String>{};
-  var corroboration = 0;
-  for (final source in equivalent) {
-    final provider = source.providerId.trim();
-    final lineage = source.lineageId?.trim();
-    if (provider.isEmpty ||
-        seenProviders.contains(provider) ||
-        (lineage != null &&
-            lineage.isNotEmpty &&
-            seenLineages.contains(lineage))) {
+Map<String, int> _corroborationCounts(List<EvidenceClaim> claims) {
+  final byValue = <String, ({Set<String> providers, Set<String> lineages})>{};
+  for (final source in claims) {
+    if (!source.contextCompatible ||
+        !source.supportsCorroboration ||
+        source.matchQuality == EvidenceMatchQuality.rejected) {
       continue;
     }
-    seenProviders.add(provider);
-    if (lineage != null && lineage.isNotEmpty) seenLineages.add(lineage);
-    corroboration++;
+    final provider = source.providerId.trim();
+    if (provider.isEmpty) continue;
+    final lineage = source.lineageId?.trim();
+    final seen = byValue.putIfAbsent(
+      source.normalizedValue,
+      () => (providers: {}, lineages: {}),
+    );
+    if (seen.providers.contains(provider) ||
+        (lineage != null &&
+            lineage.isNotEmpty &&
+            seen.lineages.contains(lineage))) {
+      continue;
+    }
+    seen.providers.add(provider);
+    if (lineage != null && lineage.isNotEmpty) seen.lineages.add(lineage);
   }
+  return {
+    for (final entry in byValue.entries)
+      entry.key: entry.value.providers.length,
+  };
+}
+
+Map<String, int> _components(EvidenceClaim c, int corroboration) {
   return {
     'match': switch (c.matchQuality) {
       EvidenceMatchQuality.rejected => -100,

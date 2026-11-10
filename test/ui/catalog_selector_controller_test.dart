@@ -686,7 +686,6 @@ void main() {
 
       expect(h.app.results, hasLength(1));
       expect(h.app.results.single.body, latest.body);
-      expect(h.app.results.single.metadata['year'], 1970);
       expect(
         h.app.combined?.sources.single.metadata.containsKey('year'),
         isFalse,
@@ -698,6 +697,7 @@ void main() {
             h.app.combined?.sources.single.metadata.containsKey('year') == true,
       );
       expect(h.app.combined?.body, latest.body);
+      expect(h.app.results.single.metadata['year'], 1970);
       expect(h.app.combined?.extra['fieldOrigins']['mood'], latest.id);
       expect(h.app.combined?.sources.single.metadata['year'], 1970);
 

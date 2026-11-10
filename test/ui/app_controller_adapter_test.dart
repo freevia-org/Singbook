@@ -5,6 +5,7 @@ import 'package:crypto/crypto.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:singbook/application/app_controller.dart';
+import 'package:singbook/application/combine_runner.dart';
 import 'package:singbook/data/library_repository.dart';
 import 'package:singbook/domain/combine.dart';
 import 'package:singbook/domain/models.dart';
@@ -316,7 +317,10 @@ void main() {
       app.results = [
         SourceResult(
           candidate: candidate,
-          body: '[C]Our original demo words',
+          body:
+              r'{comment: [C] shape}'
+              '\n'
+              r'🎸[C♯m/G♯]Our \[G] original [C♯m/G♯]demo words',
           matchKind: MatchKind.sameRecording,
         ),
       ];
@@ -326,6 +330,13 @@ void main() {
 
       final saved = app.songs.single;
       expect(ui.state.route, VerseRoute.reader);
+      await ui.transpose(2);
+      final line = ui.state.songLines.last;
+      expect(line.text, '🎸Our [G] original demo words');
+      expect(line.chords.map((chord) => chord.symbol), ['D#m/A#', 'D#m/A#']);
+      expect(line.chords.map((chord) => chord.graphemeOffset), [1, 18]);
+      expect(ui.state.songLines.first.chords, isEmpty);
+      await ui.settleRecentRecords();
       expect(app.recent.single.objectKind, 'song');
       expect(app.recent.single.objectId, saved.id);
       await ui.back();
@@ -348,7 +359,7 @@ void main() {
         title: 'Amazing Grace',
         artist: 'Judy Collins',
       ),
-      body: 'Amazing grace, how sweet the sound',
+      body: '{start_of_verse: 1}\nAmazing grace, how sweet the sound',
       metadata: {'durationSeconds': 247},
       matchKind: MatchKind.sameSong,
     );
@@ -364,6 +375,12 @@ void main() {
     expect(ui.state.song?.id, saved.id);
     expect(ui.state.readerDurationEstimated, isFalse);
     expect(ui.state.readerSource, isNotNull);
+    expect(ui.state.estimatedLineStarts, {'line-0': 0.0});
+    final markers = ui.state.playerSections;
+    expect(markers.single.lineId, 'line-0');
+    expect(markers.single.startSeconds, 0);
+    await ui.settleRecentRecords();
+    expect(ui.state.playerSections, same(markers));
     await ui.back();
     await ui.openSong(saved.id);
     expect(ui.state.song?.durationSeconds, 247);
@@ -1190,6 +1207,54 @@ void main() {
     expect(ui.state.currentLineId, 'line-1');
   });
 
+  test('timed seeks keep the first cue at a shared timestamp', () async {
+    final track =
+        _track(
+          extra: {
+            'binding': {
+              'occurrences': [
+                {'source': 'line-0', 'target': 'line-1'},
+                {'source': 'line-0', 'target': 'line-0'},
+                {'source': 'line-1', 'target': 'line-0'},
+              ],
+            },
+          },
+        ).copyWith(
+          cues: const [
+            TimingCue(
+              id: 'first',
+              occurrenceId: 'line-0',
+              text: 'First line',
+              startUs: 1000000,
+            ),
+            TimingCue(
+              id: 'tied',
+              occurrenceId: 'line-1',
+              text: 'Second line',
+              startUs: 1000000,
+            ),
+            TimingCue(
+              id: 'later',
+              occurrenceId: 'line-1',
+              text: 'Second line',
+              startUs: 3000000,
+            ),
+          ],
+        );
+    await app.saveSong(_song(timingTracks: [track]));
+    app.settings['timingMode'] = 'timed';
+    await ui.openSong('song');
+
+    await ui.seek(.5);
+    expect(ui.state.currentLineId, isNull);
+    await ui.seek(1);
+    expect(ui.state.currentLineId, 'line-1');
+    await ui.seek(3);
+    expect(ui.state.currentLineId, 'line-0');
+    await ui.seek(2);
+    expect(ui.state.currentLineId, 'line-1');
+  });
+
   test(
     'reader state reports timing availability and estimated duration',
     () async {
@@ -1216,6 +1281,75 @@ void main() {
     await ui.setPlaybackSpeed(3);
     expect(ui.state.playbackSpeed, 1.5);
   });
+
+  test(
+    'a legacy reader discovers its comparison reference from a large cached source',
+    () async {
+      ui.dispose();
+      app.dispose();
+      app = AppController(
+        repository: repository,
+        discovery: SourceDiscoveryService([]),
+      );
+      await app.initialize();
+      ui = AppControllerAdapter(app);
+      const candidate = SongCandidate(
+        providerId: 'legacy',
+        id: 'cached-song',
+        title: 'Cached song',
+        artist: 'Fixture artist',
+      );
+      final source = SourceResult(
+        candidate: candidate,
+        body: List.generate(
+          500,
+          (i) => 'A long synthetic legacy lyric line numbered $i',
+        ).join('\n'),
+        matchKind: MatchKind.sameRecording,
+      );
+      await app.saveSong(
+        SongDocument(
+          id: 'legacy-song',
+          title: candidate.title,
+          artist: candidate.artist,
+          body: '[C]A small playable chart',
+          sources: [source],
+        ),
+      );
+
+      final ready = Completer<void>();
+      void observe() {
+        if (!ready.isCompleted && ui.state.readerCanCompareVersions) {
+          ready.complete();
+        }
+      }
+
+      ui.addListener(observe);
+      try {
+        await ui.openSong('legacy-song');
+        await ready.future.timeout(const Duration(seconds: 5));
+      } finally {
+        ui.removeListener(observe);
+      }
+      await ui.compareCurrentSongVersions();
+      expect(app.selection?.identity, candidate.identity);
+      expect(app.results.single.body, source.body);
+
+      await app.compareSavedSong('legacy-song', expectedReference: candidate);
+      expect(app.selection?.identity, candidate.identity);
+      expect(app.results.single.body, source.body);
+      await app.compareSavedSong(
+        'legacy-song',
+        expectedReference: SongCandidate.fromJson({
+          ...candidate.toJson(),
+          'metadata': {'differentRecording': true},
+        }),
+      );
+      expect(app.selection, isNull);
+      expect(app.results, isEmpty);
+      expect(app.errorCode, 'invalid_local_data');
+    },
+  );
 
   test(
     'reader can reopen its comparison and return to cached search',
@@ -1353,6 +1487,112 @@ void main() {
       );
     },
   );
+
+  for (final hasFact in [true, false]) {
+    test(
+      'a large source shares preview and lyric checks (known: $hasFact)',
+      () async {
+        ui.dispose();
+        app.dispose();
+        const candidate = SongCandidate(
+          providerId: 'catalog',
+          id: 'large-preview',
+          title: 'Large preview',
+          artist: 'Test artist',
+        );
+        final source = SourceResult(
+          candidate: candidate,
+          body: List.generate(
+            1200,
+            (i) => 'A synthetic lyric line numbered $i',
+          ).join('\n'),
+          matchKind: MatchKind.sameRecording,
+        );
+        final otherSources = [
+          if (!hasFact)
+            for (var i = 0; i < 4; i++)
+              SourceResult(
+                candidate: candidate,
+                arrangementId: 'other-$i',
+                body: 'Alternate source $i\n${source.body}',
+                matchKind: MatchKind.sameRecording,
+              ),
+        ];
+        final discovery = _StreamingDiscovery(
+          candidate,
+          otherSources.firstOrNull ?? source,
+          additionalSources: hasFact ? [] : [...otherSources.skip(1), source],
+          sourceHasLyrics: hasFact ? true : null,
+        );
+        app = AppController(repository: repository, discovery: discovery);
+        final merge = hasFact ? null : Completer<CombineOutcome>();
+        if (merge != null) {
+          app.combineRunner = CombineRunner(compute: (_) => merge.future);
+        }
+        await app.initialize();
+        ui = AppControllerAdapter(app);
+        ui.setHomeListMode(HomeListMode.online);
+        ui.setQuery(candidate.title);
+        await ui.submitSearch();
+        final selecting = ui.selectReference(
+          const SearchReferenceData(
+            id: 'catalog:large-preview',
+            title: 'Large preview',
+            artist: 'Test artist',
+          ),
+        );
+        await discovery.started.future;
+        SourceVersionData? version() => ui.state.comparison?.alternatives
+            .where((item) => item.id == source.id)
+            .firstOrNull;
+        final ready = Completer<SourceVersionData>();
+        List<String>? renderedAlternatives;
+        void observe() {
+          final item = version();
+          if (item != null && item.bodyLines.isNotEmpty && !ready.isCompleted) {
+            renderedAlternatives = [
+              for (final alternative in ui.state.comparison!.alternatives)
+                if (alternative.id != source.id &&
+                    alternative.bodyLines.isNotEmpty)
+                  alternative.id,
+            ];
+            ready.complete(item);
+          }
+        }
+
+        ui.addListener(observe);
+        try {
+          expect(version()?.canSave, hasFact);
+          expect(version()?.isChecking, !hasFact);
+          expect(version()?.bodyLines, isEmpty);
+          expect(
+            ui.state.comparison?.alternatives,
+            hasLength(otherSources.length + 1),
+          );
+          final saving = hasFact ? null : ui.saveVersion(source.id);
+          final rendered = await ready.future.timeout(
+            const Duration(seconds: 5),
+          );
+          expect(rendered.bodyLines, hasLength(1200));
+          expect(
+            rendered.bodyLines.last.text,
+            'A synthetic lyric line numbered 1199',
+          );
+          if (saving != null) {
+            expect(renderedAlternatives, isEmpty);
+            await saving.timeout(const Duration(seconds: 5));
+            await ui.settleRecentRecords();
+            expect(ui.state.route, VerseRoute.reader);
+          }
+        } finally {
+          ui.removeListener(observe);
+          merge?.complete(const CombineOutcome(null));
+          discovery.finished.complete([source, ...otherSources]);
+          await selecting;
+        }
+      },
+    );
+  }
 
   test(
     'malformed chord-shape tokens stay visible without unbounded matching',
@@ -1987,10 +2227,12 @@ class _StreamingDiscovery extends SourceDiscoveryService {
     this.candidate,
     this.source, {
     this.additionalSources = const [],
+    this.sourceHasLyrics,
   }) : super([]);
   final SongCandidate candidate;
   final SourceResult source;
   final List<SourceResult> additionalSources;
+  final bool? sourceHasLyrics;
   final started = Completer<void>();
   final finished = Completer<List<SourceResult>>();
   // Register every provider emitted by this discovery double, including
@@ -2045,6 +2287,7 @@ class _StreamingDiscovery extends SourceDiscoveryService {
           providerId: result.candidate.providerId,
           state: 'found',
           result: result,
+          hasLyrics: identical(result, source) ? sourceHasLyrics : null,
         ),
       );
     }

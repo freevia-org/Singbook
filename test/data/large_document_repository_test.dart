@@ -56,6 +56,145 @@ void main() {
     },
   );
 
+  test(
+    'replacing a large saved song preserves the full old evidence',
+    () async {
+      final repository = await LibraryRepository.open(
+        path: inMemoryDatabasePath,
+        factory: databaseFactoryFfi,
+      );
+      try {
+        const candidate = SongCandidate(
+          providerId: 'provider',
+          id: 'large-song',
+          title: 'Large document',
+          artist: 'Regression fixture',
+        );
+        final oldEvidence = 'older provider observation ' * 250000;
+        final newEvidence = 'newer provider observation ' * 250000;
+        SongDocument version(String body, String evidence) => SongDocument(
+          id: 'large',
+          title: candidate.title,
+          artist: candidate.artist,
+          body: body,
+          selectedRecording: candidate,
+          sources: [
+            SourceResult(
+              candidate: candidate,
+              body: body,
+              extra: {
+                'discoveryEvidence': {'observation': evidence},
+              },
+            ),
+          ],
+        );
+
+        await repository.saveChosenSong(
+          version('Original lyrics', oldEvidence),
+        );
+        await repository.saveChosenSong(
+          version('Replacement lyrics', newEvidence),
+        );
+        final raw = (await repository.getSongRaw('large'))!;
+        expect(raw.document, contains('{x_verse: 1 json-base64url'));
+        final reopened = (await repository.getSong('large'))!;
+        expect(reopened.extensionError, isNull);
+        expect(reopened.body, 'Replacement lyrics');
+        expect(
+          reopened.sources.any(
+            (source) =>
+                source.body == 'Replacement lyrics' &&
+                jsonMap(source.extra['discoveryEvidence'])['observation'] ==
+                    newEvidence,
+          ),
+          isTrue,
+        );
+        final history = reopened.extra['previousSavedVersions'] as List;
+        final archived = SongDocument.fromJson(jsonMap(history.single));
+        expect(archived.body, 'Original lyrics');
+        expect(
+          jsonMap(
+                archived.sources.single.extra['discoveryEvidence'],
+              )['observation'] ==
+              oldEvidence,
+          isTrue,
+        );
+      } finally {
+        await repository.close();
+      }
+    },
+  );
+
+  test('fast Save archives legacy sources even when lyrics match', () async {
+    final repo = await LibraryRepository.open(
+      path: inMemoryDatabasePath,
+      factory: databaseFactoryFfi,
+    );
+    addTearDown(repo.close);
+    const candidate = SongCandidate(
+      providerId: 'catalog',
+      id: 'legacy',
+      title: 'Legacy chart',
+      artist: 'Fixture artist',
+    );
+    const oldCandidate = SongCandidate(
+      providerId: 'old-provider',
+      id: 'archived',
+      title: 'Legacy chart',
+      artist: 'Fixture artist',
+    );
+    final oldEvidence = 'Large older source payload\n' * 90000;
+    final legacy = SongDocument(
+      id: 'legacy',
+      title: candidate.title,
+      artist: candidate.artist,
+      body: '[C]A single chart',
+      selectedRecording: candidate,
+      sources: [SourceResult(candidate: oldCandidate, body: oldEvidence)],
+    );
+    await repo.saveSong(legacy);
+    final prior = (await repo.getPlayableSong(legacy.id))!;
+    final priorHash = (await repo.getSongEditHash(legacy.id))!;
+    expect(prior.sources.single.body, oldEvidence);
+    await repo.beginDiscoverySession(
+      candidateIdentity: candidate.identity,
+      generation: 1,
+    );
+    await repo.stageDiscoverySources(
+      candidateIdentity: candidate.identity,
+      generation: 1,
+      sources: const [
+        SourceResult(candidate: candidate, body: '[C]A single chart'),
+      ],
+    );
+
+    final saved = await repo.saveChosenSongFast(
+      prior,
+      candidateIdentity: candidate.identity,
+      discoveryGeneration: 1,
+      existingSongId: prior.id,
+      expectedExistingHash: priorHash,
+      existingSnapshot: prior,
+    );
+    expect(saved.changed, isTrue);
+    expect(saved.song.body, prior.body);
+    expect(saved.song.sources, isEmpty);
+    expect((await repo.getSongRaw(legacy.id))!.document.length, lessThan(4096));
+
+    final full = (await repo.getSongWithEvidence(legacy.id))!;
+    expect(
+      full.sources
+          .singleWhere(
+            (item) => item.candidate.identity == oldCandidate.identity,
+          )
+          .body,
+      oldEvidence,
+    );
+    final history = full.extra['previousSavedVersions'] as List;
+    final previous = SongDocument.fromJson(jsonMap(history.single));
+    expect(previous.sources.single.body, oldEvidence);
+  });
+
   test('version 2 search backfill reads a large document in chunks', () async {
     final directory = await Directory.systemTemp.createTemp(
       'singbook-large-document-',

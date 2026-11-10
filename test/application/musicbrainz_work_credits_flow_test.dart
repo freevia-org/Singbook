@@ -169,7 +169,8 @@ Future<Map<String, Object?>> qualifyWorkCreditPersistence({
     );
     await app.initialize();
     expect(app.providerEnabled('musicbrainz'), false);
-    expect(app.songs.single.toJson(), savedJson);
+    expect(app.songs.single.sources, isEmpty);
+    expect((await app.loadSong(saved.id))!.toJson(), savedJson);
     expect(
       calls,
       2,

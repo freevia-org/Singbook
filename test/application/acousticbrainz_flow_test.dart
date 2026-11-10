@@ -179,6 +179,12 @@ void main() {
           (s) => s.candidate.providerId == 'acousticbrainz',
         );
         expect(source.matchKind, MatchKind.sameRecording);
+        final pending = ui.state.comparison!.alternatives.singleWhere(
+          (version) => version.providerId == 'acousticbrainz',
+        );
+        expect(pending.sameRecording, false);
+        expect(pending.matchSummary, 'pending');
+        await ui.settleComparisonMetadata();
         final version = ui.state.comparison!.alternatives.singleWhere(
           (s) => s.providerId == 'acousticbrainz',
         );

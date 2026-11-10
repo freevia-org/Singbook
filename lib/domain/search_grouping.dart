@@ -413,37 +413,44 @@ List<SearchRecordingGroup> groupSearchRecordings(
   Iterable<SongCandidate> ranked, {
   String? preferredProviderId,
 }) {
-  final groups = <_Group>[];
+  final byRecording = <String, List<_Group>>{};
+  final standalone = <_Group>[];
   var index = 0;
   for (final row in ranked) {
     final key = _titleKey(row);
-    final group = key == null
-        ? null
-        : groups
-              .where((group) => group.key == key && group.accepts(row))
-              .firstOrNull;
-    if (group != null) {
-      group.add(row, index++);
-    } else {
+    if (key == null) {
+      standalone.add(_Group(null, row, index++));
+      continue;
+    }
+    final groups = byRecording.putIfAbsent(key, () => []);
+    final group = groups.where((group) => group.accepts(row)).firstOrNull;
+    if (group == null) {
       groups.add(_Group(key, row, index++));
+    } else {
+      group.add(row, index++);
     }
   }
-  // Rows can arrive in any order. First join groups with the same labels,
-  // so album-less rows meet their release; then let a known matching album
-  // link labelled and unlabelled groups. Earlier groups absorb later ones.
-  for (final mixLabels in const [false, true]) {
-    for (var i = 0; i < groups.length; i++) {
-      if (groups[i].key == null) continue;
-      for (var j = i + 1; j < groups.length; j++) {
-        if (!groups[i].canMerge(groups[j], mixLabels: mixLabels)) continue;
-        for (final member in groups[j].members) {
-          groups[i].add(member.row, member.index);
+  // Within each recording key, merge matching labels first. A known album
+  // can then link labelled and unlabelled groups. Earlier groups absorb later
+  // ones, so the best ranked member still sets the final group's position.
+  for (final groups in byRecording.values) {
+    for (final mixLabels in const [false, true]) {
+      for (var i = 0; i < groups.length; i++) {
+        for (var j = i + 1; j < groups.length; j++) {
+          if (!groups[i].canMerge(groups[j], mixLabels: mixLabels)) continue;
+          for (final member in groups[j].members) {
+            groups[i].add(member.row, member.index);
+          }
+          groups.removeAt(j);
+          j = i;
         }
-        groups.removeAt(j);
-        j = i;
       }
     }
   }
+  final groups = [
+    ...standalone,
+    for (final bucket in byRecording.values) ...bucket,
+  ];
   return [
     for (final group in groups..sort((a, b) => a.first.compareTo(b.first)))
       () {
@@ -461,6 +468,89 @@ List<SearchRecordingGroup> groupSearchRecordings(
         );
       }(),
   ];
+}
+
+typedef CatalogProjection = ({
+  List<SongCandidate> candidates,
+  String query,
+  String field,
+  String? preferred,
+  String catalogIds,
+});
+
+final _releaseCalendar = RegExp(
+  r'\brelease\s+calendar\b',
+  caseSensitive: false,
+);
+
+/// Catalog-only filtering and ranking. Lyric, chord and timing filters use
+/// resolved source data later, so they cannot discard catalog candidates.
+List<SearchRecordingGroup> projectCatalog(CatalogProjection input) =>
+    projectCatalogWithScores((input: input, scores: const {})).groups;
+
+/// Scores are indexed by the caller's candidate snapshot. Only newly
+/// evaluated scores cross back to the caller for the next provider batch.
+({List<SearchRecordingGroup> groups, Map<int, int> newScores})
+projectCatalogWithScores(
+  ({CatalogProjection input, Map<int, int> scores}) request,
+) {
+  final (:input, :scores) = request;
+  final newScores = <int, int>{};
+  late final tokens = _searchTokens(input.query);
+  final providerIds = input.catalogIds.split('\u0000')..sort();
+  final catalogOrder = <String, int>{};
+  final preferred = input.preferred;
+  if (preferred != null) catalogOrder[preferred] = 0;
+  for (final id in providerIds) {
+    if (id.isNotEmpty) catalogOrder.putIfAbsent(id, () => catalogOrder.length);
+  }
+  final query = input.query.toLowerCase();
+  bool matches(SongCandidate candidate) {
+    if (const {
+          'article',
+          'editorial',
+          'news',
+          'release_calendar',
+        }.contains(candidate.metadata['kind']?.toString().toLowerCase()) ||
+        _releaseCalendar.hasMatch(candidate.title)) {
+      return false;
+    }
+    return switch (input.field) {
+      'title' => candidate.title.toLowerCase().contains(query),
+      'artist' => candidate.artist.toLowerCase().contains(query),
+      _ => true,
+    };
+  }
+
+  final ranked =
+      [
+        for (final entry in input.candidates.asMap().entries)
+          if (matches(entry.value))
+            (
+              candidate: entry.value,
+              index: entry.key,
+              catalog:
+                  catalogOrder[entry.value.providerId] ?? catalogOrder.length,
+              relevance:
+                  scores[entry.key] ??
+                  (newScores[entry.key] = _searchRelevance(
+                    entry.value,
+                    tokens,
+                  )),
+            ),
+      ]..sort((a, b) {
+        final catalog = a.catalog.compareTo(b.catalog);
+        if (catalog != 0) return catalog;
+        final relevance = b.relevance.compareTo(a.relevance);
+        return relevance != 0 ? relevance : a.index.compareTo(b.index);
+      });
+  return (
+    groups: groupSearchRecordings(
+      ranked.map((entry) => entry.candidate),
+      preferredProviderId: preferred,
+    ),
+    newScores: newScores,
+  );
 }
 
 final _searchToken = RegExp(r'[\p{L}\p{N}]+', unicode: true);
@@ -515,8 +605,10 @@ const _artistStopWords = {'the', 'and', 'a'};
 /// page or other performance the query did not ask for ranks well below the
 /// original: "Let It Be (Beatles Instrumental Version)" by another act must
 /// not outrank "Let It Be" by The Beatles for "let it be beatles".
-int searchRelevance(SongCandidate candidate, String query) {
-  final tokens = _searchTokens(query);
+int searchRelevance(SongCandidate candidate, String query) =>
+    _searchRelevance(candidate, _searchTokens(query));
+
+int _searchRelevance(SongCandidate candidate, Set<String> tokens) {
   if (tokens.isEmpty) return 0;
   final title = _searchTokens(candidate.title.replaceAll(_qualifier, ' '));
   final qualifiers = <String>{

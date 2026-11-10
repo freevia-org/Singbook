@@ -38,6 +38,60 @@ SourceResult source(
 );
 
 void main() {
+  test(
+    'compact explicit Save preserves chart facts and timing without ranking diagnostics',
+    () {
+      const lyrics =
+          'Amber lanterns glow\nSilver rain returns\nAcross the sleepy water';
+      final chosen = source(
+        'catalog',
+        lyrics,
+        kind: MatchKind.sameRecording,
+        tracks: [
+          parseLrc(
+            '[00:03]Amber lanterns glow\n[00:07]Silver rain returns\n[00:11]Across the sleepy water',
+            sourceDocumentId: 'catalog:song',
+          ),
+        ],
+      );
+      final alternatives = [
+        chosen,
+        source(
+          'metadata-provider',
+          lyrics,
+          metadata: {
+            'key': 'F#m',
+            'moodTags': ['reflective'],
+          },
+        ),
+        source('chords-provider', '[C]$lyrics'),
+      ];
+      final detailed = combineSources(
+        selected,
+        alternatives,
+        preferredSourceId: chosen.id,
+      );
+      final playable = combineSources(
+        selected,
+        alternatives,
+        preferredSourceId: chosen.id,
+        compactExplicitSave: true,
+      );
+
+      expect(detailed.extra, contains('evidenceRanking'));
+      expect(playable.sources, isEmpty);
+      expect(playable.body, detailed.body);
+      expect(playable.metadata, detailed.metadata);
+      expect(playable.extra, Map.of(detailed.extra)..remove('evidenceRanking'));
+      expect(playable.activeTimingTrackId, detailed.activeTimingTrackId);
+      expect(playable.activeTimingTrackId, isNotNull);
+      expect(
+        playable.timingTracks.map((track) => track.toJson()),
+        detailed.timingTracks.map((track) => track.toJson()),
+      );
+    },
+  );
+
   test('chosen lyrics retain a compatible key from another source', () {
     final selectedLyrics = source(
       'lyrics-provider',
@@ -173,7 +227,10 @@ void main() {
       ]);
 
       expect(song.metadata['mood'], 'reflective');
-      expect(song.extra['evidenceRanking']['ambiguousFields'], contains('metadata.mood'));
+      expect(
+        song.extra['evidenceRanking']['ambiguousFields'],
+        contains('metadata.mood'),
+      );
       expect(song.extra['conflicts']['mood'], [
         {'sourceId': song.extra['selectedSourceId'], 'value': 'reflective'},
         {'sourceId': 'catalog-b:song', 'value': 'wistful'},
@@ -181,51 +238,54 @@ void main() {
     },
   );
 
-  test('nested map conflicts rank consistently across every source ordering', () {
-    const lyrics =
-        'Amber lanterns glow\nSilver rain returns\nAcross the sleepy water';
-    final donors = [
-      source(
-        'catalog-a',
-        lyrics,
-        metadata: const {
-          'externalIdentifiers': {'catalog': 'value-a'},
-        },
-      ),
-      source(
-        'catalog-b',
-        lyrics,
-        metadata: const {
-          'externalIdentifiers': {'catalog': 'value-b'},
-        },
-      ),
-      source(
-        'catalog-c',
-        lyrics,
-        metadata: const {
-          'externalIdentifiers': {'catalog': 'value-c'},
-        },
-      ),
-    ];
+  test(
+    'nested map conflicts rank consistently across every source ordering',
+    () {
+      const lyrics =
+          'Amber lanterns glow\nSilver rain returns\nAcross the sleepy water';
+      final donors = [
+        source(
+          'catalog-a',
+          lyrics,
+          metadata: const {
+            'externalIdentifiers': {'catalog': 'value-a'},
+          },
+        ),
+        source(
+          'catalog-b',
+          lyrics,
+          metadata: const {
+            'externalIdentifiers': {'catalog': 'value-b'},
+          },
+        ),
+        source(
+          'catalog-c',
+          lyrics,
+          metadata: const {
+            'externalIdentifiers': {'catalog': 'value-c'},
+          },
+        ),
+      ];
 
-    for (final orderedDonors in [donors, donors.reversed.toList()]) {
-      final song = combineSources(selected, [
-        source('lyrics', lyrics),
-        ...orderedDonors,
-      ]);
+      for (final orderedDonors in [donors, donors.reversed.toList()]) {
+        final song = combineSources(selected, [
+          source('lyrics', lyrics),
+          ...orderedDonors,
+        ]);
 
-      expect(song.metadata['externalIdentifiers'], {'catalog': 'value-a'});
-      expect(
-        song.extra['fieldContributors'],
-        containsPair('externalIdentifiers', ['catalog-a:song']),
-      );
-      expect(song.extra['conflicts']['externalIdentifiers.catalog'], [
-        {'sourceId': 'catalog-a:song', 'value': 'value-a'},
-        {'sourceId': 'catalog-b:song', 'value': 'value-b'},
-        {'sourceId': 'catalog-c:song', 'value': 'value-c'},
-      ]);
-    }
-  });
+        expect(song.metadata['externalIdentifiers'], {'catalog': 'value-a'});
+        expect(
+          song.extra['fieldContributors'],
+          containsPair('externalIdentifiers', ['catalog-a:song']),
+        );
+        expect(song.extra['conflicts']['externalIdentifiers.catalog'], [
+          {'sourceId': 'catalog-a:song', 'value': 'value-a'},
+          {'sourceId': 'catalog-b:song', 'value': 'value-b'},
+          {'sourceId': 'catalog-c:song', 'value': 'value-c'},
+        ]);
+      }
+    },
+  );
 
   test('explicit selected map values survive provider disagreements', () {
     const lyrics =
@@ -468,7 +528,10 @@ void main() {
       expect(song.body, contains('[C]Amber'));
       expect(song.body, contains('[F]Silver'));
       expect(song.body, isNot(contains('[G]')));
-      expect(song.extra['chordSourceIds'], unorderedEquals(['chart-a:song', 'chart-b:song']));
+      expect(
+        song.extra['chordSourceIds'],
+        unorderedEquals(['chart-a:song', 'chart-b:song']),
+      );
       expect(
         contributingProviderIds(song),
         containsAll(['chart-a', 'chart-b']),
@@ -476,24 +539,18 @@ void main() {
     },
   );
 
-  test(
-    'an unscoped same-song chart cannot fill a line after one overlap',
-    () {
-      const lyrics =
-          '[C]Amber lanterns glow\nSilver rain returns\n'
-          'The morning brings another distant melody';
-      final song = combineSources(selected, [
-        source('base', lyrics),
-        source('donor', '[C]Amber lanterns glow\n[F]Silver rain returns'),
-      ]);
-      expect(
-        song.body,
-        contains('[C]Amber lanterns glow\nSilver rain returns'),
-      );
-      expect(song.body, isNot(contains('[F]Silver rain returns')));
-      expect(song.extra['chordSourceIds'], ['base:song']);
-    },
-  );
+  test('an unscoped same-song chart cannot fill a line after one overlap', () {
+    const lyrics =
+        '[C]Amber lanterns glow\nSilver rain returns\n'
+        'The morning brings another distant melody';
+    final song = combineSources(selected, [
+      source('base', lyrics),
+      source('donor', '[C]Amber lanterns glow\n[F]Silver rain returns'),
+    ]);
+    expect(song.body, contains('[C]Amber lanterns glow\nSilver rain returns'));
+    expect(song.body, isNot(contains('[F]Silver rain returns')));
+    expect(song.extra['chordSourceIds'], ['base:song']);
+  });
 
   test('catalog key is not proof that two unknown chart setups agree', () {
     final song = combineSources(

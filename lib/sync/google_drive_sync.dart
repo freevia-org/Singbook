@@ -770,6 +770,8 @@ class GoogleDriveSyncService {
       final ({String document, String hash})? raw;
       try {
         raw = await repository.getSyncSongRaw(id);
+      } on ChordProSizeException {
+        throw const SyncException('local_file_too_large');
       } on Object {
         throw const SyncException('invalid_local_data');
       }
@@ -1124,6 +1126,17 @@ class GoogleDriveSyncService {
   // ---- actions ---------------------------------------------------------
 
   Future<void> _push(_Run run, _Item it) async {
+    final cloud = it.cloud;
+    if (cloud != null) {
+      // Check Drive metadata before building the upload. The local read below
+      // validates the current bytes and their hash after this network wait.
+      final meta = await _store.getFile(cloud.id);
+      if (meta == null ||
+          meta.version != cloud.version ||
+          meta.hash != cloud.hash) {
+        throw const _Stale();
+      }
+    }
     final local = await _readLocal(it.kind, it.id);
     if (local == null) return; // deleted meanwhile; the next sync decides
     if (local.hash != it.local) throw const _Stale();
@@ -1132,26 +1145,13 @@ class GoogleDriveSyncService {
     }
     final hash = syncHash(local.content);
     final properties = {'kind': it.kind, 'id': it.id, 'hash': hash};
-    final cloud = it.cloud;
     if (cloud == null) {
-      final latest = await _readLocal(it.kind, it.id);
-      if (latest == null || latest.hash != local.hash) throw const _Stale();
       await _store.createFile(
         syncFileName(it.kind, it.id),
         local.content,
         properties,
       );
     } else {
-      // Drive has no If-Match: re-read the metadata right before the write
-      // and start over if another device got there first.
-      final meta = await _store.getFile(cloud.id);
-      if (meta == null ||
-          meta.version != cloud.version ||
-          meta.hash != cloud.hash) {
-        throw const _Stale();
-      }
-      final latest = await _readLocal(it.kind, it.id);
-      if (latest == null || latest.hash != local.hash) throw const _Stale();
       try {
         await _store.updateFile(cloud.id, local.content, properties);
       } on SyncException catch (e) {
@@ -1448,9 +1448,11 @@ class GoogleDriveSyncService {
   /// Uploads a local item that has no cloud file yet (a fresh conflict copy).
   /// A failure is not an error: the item simply uploads on the next sync.
   Future<void> _pushNew(_Run run, String kind, String id) async {
-    final local = await _readLocal(kind, id);
-    if (local == null) return;
-    final it = _Item(kind, id)..local = local.hash;
+    final hash = kind == 'song'
+        ? await repository.getSongHash(id)
+        : await repository.getSetlistHash(id);
+    if (hash == null) return;
+    final it = _Item(kind, id)..local = hash;
     try {
       await _push(run, it);
     } on SyncException catch (e) {

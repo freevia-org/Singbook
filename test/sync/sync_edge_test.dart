@@ -247,6 +247,66 @@ void main() {
   });
 
   group('hostile or broken cloud data', () {
+    test(
+      'oversized local history is retained while other songs sync',
+      () async {
+        const candidate = SongCandidate(
+          providerId: 'catalog',
+          id: 'big',
+          title: 'Big',
+          artist: 'Artist',
+        );
+        await a.repo.beginDiscoverySession(
+          candidateIdentity: candidate.identity,
+          generation: 1,
+        );
+        final largeBody = 'x' * (7 * 1024 * 1024);
+        await a.repo.stageDiscoverySources(
+          candidateIdentity: candidate.identity,
+          generation: 1,
+          sources: [
+            SourceResult(
+              candidate: candidate,
+              arrangementId: 'one',
+              body: largeBody,
+            ),
+            SourceResult(
+              candidate: candidate,
+              arrangementId: 'two',
+              body: largeBody,
+            ),
+          ],
+        );
+        await a.repo.saveChosenSongFast(
+          SongDocument(
+            id: 'big',
+            title: 'Big',
+            artist: 'Artist',
+            body: 'Playable chart',
+            selectedRecording: candidate,
+          ),
+          candidateIdentity: candidate.identity,
+          discoveryGeneration: 1,
+          existingSongId: null,
+          expectedExistingHash: null,
+        );
+        await a.saveSong('ok', 'fine');
+        final before = await a.repo.getSongHash('big');
+
+        final report = await a.sync.sync();
+        expect(report.skipCodes, ['local_file_too_large']);
+        expect(report.uploaded, 1);
+        expect(cloud.has('song-big.cho'), isFalse);
+        expect(cloud.has('song-ok.cho'), isTrue);
+        expect(await a.repo.getSongHash('big'), before);
+        expect((await a.repo.getPlayableSong('big'))!.body, 'Playable chart');
+        expect(
+          (await a.repo.getSongWithEvidence('big'))!.sources,
+          hasLength(2),
+        );
+      },
+    );
+
     test('an oversize remote file is skipped, the rest still syncs', () async {
       await a.saveSong('big', 'x');
       await a.saveSong('ok', 'fine');

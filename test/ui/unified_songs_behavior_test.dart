@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:singbook/domain/search_grouping.dart' show projectCatalog;
 import 'package:singbook/application/app_controller.dart';
 import 'package:singbook/data/library_repository.dart';
 import 'package:singbook/domain/models.dart' show SongDocument;
@@ -62,7 +63,10 @@ void main() {
   Future<void> start() async {
     discovery = _CountingDiscovery();
     app = AppController(repository: repository, discovery: discovery);
-    ui = AppControllerAdapter(app);
+    ui = AppControllerAdapter(
+      app,
+      catalogProjector: (input) async => projectCatalog(input),
+    );
     await ui.initialize();
   }
 

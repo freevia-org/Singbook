@@ -77,13 +77,19 @@ Future<List<SongCandidate>> searchCatalogsTogether(
   var timedOut = false;
   final elapsed = Stopwatch()..start();
 
+  List<SongCandidate>? cachedSnapshot;
+
   List<SongCandidate> snapshot() {
-    final seen = <(String, String)>{};
-    return List.unmodifiable([
-      for (final id in ids)
-        if (providerCancellation[id]?.isCancelled != true)
-          for (final row in rowsById[id] ?? const <SongCandidate>[])
-            if (seen.add((row.providerId, row.id))) row,
+    for (final id in ids) {
+      if (providerCancellation[id]?.isCancelled == true &&
+          rowsById.remove(id) != null) {
+        cachedSnapshot = null;
+      }
+    }
+    // Rows already have unique IDs within their provider. Reuse the last
+    // immutable union when another catalog contributes no rows or closes.
+    return cachedSnapshot ??= List.unmodifiable([
+      for (final id in ids) ...?rowsById[id],
     ]);
   }
 
@@ -164,9 +170,15 @@ Future<List<SongCandidate>> searchCatalogsTogether(
         ]);
         child.throwIfCancelled();
         if (!shouldStop()) {
-          rowsById[id] = rows
-              .where((row) => row.providerId == id)
-              .toList(growable: false);
+          final seen = <String>{};
+          final unique = [
+            for (final row in rows)
+              if (row.providerId == id && seen.add(row.id)) row,
+          ];
+          if (unique.isNotEmpty) {
+            rowsById[id] = unique;
+            cachedSnapshot = null;
+          }
           active.remove(id);
           status(id, 'completed');
           if (!shouldStop()) {

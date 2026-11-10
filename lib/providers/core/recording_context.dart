@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:isolate';
 
 import 'package:crypto/crypto.dart';
 
@@ -23,21 +24,22 @@ class RecordingContextPlan {
     this.donorSourceId,
     this.witnesses,
   ) : originalIdentity = original.identity,
-      _originalHash = _candidateHash(original),
+      _originalSnapshot = jsonDecode(jsonEncode(_canonical(original.toJson()))),
       _selectionJson = jsonEncode(selection.toJson()),
-      _hashes = {
-        for (final witness in witnesses) witness.id: _sourceHash(witness),
+      _witnessSnapshots = {
+        for (final witness in witnesses) witness.id: _witnessSnapshot(witness),
       };
 
   // Each caller gets its own context maps; a receiver cannot mutate the proof.
   SongCandidate get selection =>
       SongCandidate.fromJson(jsonDecode(_selectionJson) as JsonMap);
-  final String _selectionJson, _originalHash;
+  final String _selectionJson;
+  final Object? _originalSnapshot;
   final String originalIdentity;
   final String namespace;
   final String anchorSourceId, donorSourceId;
   final List<SourceResult> witnesses;
-  final Map<String, String> _hashes;
+  final Map<String, ({Object? payload, String sha256})> _witnessSnapshots;
 
   /// Recheck after every asynchronous lookup and synchronous progress callback.
   /// A source toggled off, withdrawn or changed cannot support a late result.
@@ -45,21 +47,24 @@ class RecordingContextPlan {
     Iterable<SourceResult> current, {
     required SongCandidate original,
     required bool Function(String providerId) eligible,
-  }) =>
-      _candidateHash(original) == _originalHash &&
-      witnesses.every(
-        (witness) =>
-            eligible(witness.candidate.providerId) &&
-            current.any((source) => source.id == witness.id) &&
-            current
-                .where((source) => source.id == witness.id)
-                .every(
-                  (source) =>
-                      source.id == witness.id &&
-                      _qualified(source) &&
-                      _sourceHash(source) == _hashes[witness.id],
-                ),
-      );
+  }) {
+    if (!_matchesProofSnapshot(_originalSnapshot, original.toJson()) ||
+        witnesses.any((witness) => !eligible(witness.candidate.providerId))) {
+      return false;
+    }
+    final seen = <String>{};
+    for (final source in current) {
+      final id = source.id;
+      final snapshot = _witnessSnapshots[id];
+      if (snapshot == null) continue;
+      if (!_qualified(source) ||
+          !_matchesProofSnapshot(snapshot.payload, source.toJson())) {
+        return false;
+      }
+      seen.add(id);
+    }
+    return seen.length == _witnessSnapshots.length;
+  }
 
   JsonMap get provenance => {
     'selectedIdentity': originalIdentity,
@@ -72,12 +77,29 @@ class RecordingContextPlan {
         {
           'sourceId': witness.id,
           'providerId': witness.candidate.providerId,
-          'sha256': _hashes[witness.id],
+          'sha256': _witnessSnapshots[witness.id]!.sha256,
           'identitySha256': _recordingWitnessHash(witness),
         },
     ],
   };
 }
+
+/// Plan the dependent lookup from a captured snapshot. The discovery caller
+/// must revalidate the returned witnesses against its live results.
+Future<RecordingContextPlan?> prepareRecordingContext(
+  SongCandidate original,
+  List<SourceResult> sources, {
+  required String namespace,
+  required Set<String> eligible,
+}) => Isolate.run(
+  () => planRecordingContext(
+    original,
+    sources,
+    namespace: namespace,
+    eligible: eligible.contains,
+  ),
+  debugName: 'singbook-recording-context',
+);
 
 /// Derive one bounded receiver lookup from already fetched recording evidence.
 /// Crucially, identity checks happen before adding the requested identifier.
@@ -153,6 +175,7 @@ RecordingContextPlan? planRecordingContext(
   ])) {
     return null;
   }
+  final duplicateHashes = Map<SourceResult, String>.identity();
   for (final first in witnesses) {
     for (final second in witnesses) {
       if (!_compatible(first.candidate, second.candidate) ||
@@ -164,7 +187,13 @@ RecordingContextPlan? planRecordingContext(
             metadata: second.metadata,
             extra: second.extra,
           ) ||
-          first.id == second.id && _sourceHash(first) != _sourceHash(second)) {
+          first.id == second.id &&
+              !identical(first, second) &&
+              duplicateHashes.putIfAbsent(first, () => _sourceHash(first)) !=
+                  duplicateHashes.putIfAbsent(
+                    second,
+                    () => _sourceHash(second),
+                  )) {
         return null;
       }
     }
@@ -285,9 +314,48 @@ String _sourceHash(SourceResult source) => sha256
     .convert(utf8.encode(jsonEncode(_canonical(source.toJson()))))
     .toString();
 
-String _candidateHash(SongCandidate candidate) => sha256
-    .convert(utf8.encode(jsonEncode(_canonical(candidate.toJson()))))
-    .toString();
+({Object? payload, String sha256}) _witnessSnapshot(SourceResult source) {
+  final encoded = jsonEncode(_canonical(source.toJson()));
+  return (
+    payload: jsonDecode(encoded),
+    sha256: sha256.convert(utf8.encode(encoded)).toString(),
+  );
+}
+
+/// Match canonical JSON without sorting keys, encoding large bodies or raw
+/// assets, or recalculating SHA-256 on each synchronous provider callback.
+bool _matchesProofSnapshot(Object? snapshot, Object? live) {
+  if (snapshot is Map && live is Map) {
+    return snapshot.length == live.length &&
+        snapshot.entries.every(
+          (entry) =>
+              live.containsKey(entry.key) &&
+              _matchesProofSnapshot(entry.value, live[entry.key]),
+        );
+  }
+  if (snapshot is List && live is List) {
+    if (snapshot.length != live.length) return false;
+    for (var i = 0; i < snapshot.length; i++) {
+      if (!_matchesProofSnapshot(snapshot[i], live[i])) return false;
+    }
+    return true;
+  }
+  if (live is double) {
+    return snapshot is double &&
+        snapshot == live &&
+        snapshot.isNegative == live.isNegative;
+  }
+  if (live is int) return snapshot is int && snapshot == live;
+  if (live == null ||
+      live is bool ||
+      live is String ||
+      live is List ||
+      live is Map) {
+    return snapshot == live;
+  }
+  // Keep supporting values accepted through Dart's JSON toJson protocol.
+  return _matchesProofSnapshot(snapshot, jsonDecode(jsonEncode(live)));
+}
 
 /// Revalidate retained proof for presentation after controller merges or a
 /// portable round trip. This does not promote estimates into musical truth.

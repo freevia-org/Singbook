@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:singbook/application/combine_runner.dart';
@@ -40,6 +41,191 @@ void main() {
     addTearDown(harness.close);
     return harness;
   }
+
+  test(
+    'queued discovery writes keep successive payloads for one source',
+    () async {
+      final h = await open();
+      final first = _source('lrclib');
+      final replacement = _source('lrclib', body: _full);
+      final locked = Completer<void>();
+      final unlock = Completer<void>();
+      final lock = h.repository.database.transaction((_) async {
+        locked.complete();
+        await unlock.future;
+      });
+      await locked.future;
+      final completion = h.app.selectCandidate(
+        _selected,
+        cachedResults: [first],
+      );
+      try {
+        final discovery = await h.discovery.discoveryAt(0);
+        final applied = Completer<void>();
+        void observe() {
+          if (!applied.isCompleted &&
+              h.app.results.any((source) => source.body == replacement.body)) {
+            applied.complete();
+          }
+        }
+
+        h.app.addListener(observe);
+        try {
+          discovery.publish(replacement);
+          discovery.response.complete([replacement]);
+          await applied.future.timeout(const Duration(seconds: 5));
+        } finally {
+          h.app.removeListener(observe);
+        }
+      } finally {
+        unlock.complete();
+        await lock;
+      }
+      await completion;
+
+      final evidence = await h.repository.database.query(
+        'discovery_evidence',
+        columns: ['payload', 'song_id'],
+        orderBy: 'observed_order',
+      );
+      expect(
+        evidence.map((row) => jsonDecode(row['payload'] as String)['body']),
+        [first.body, replacement.body],
+      );
+      expect(evidence.every((row) => row['song_id'] == null), isTrue);
+
+      final saved = await h.app.saveResult(
+        source: h.app.results.single,
+        includeEvidence: false,
+      );
+      expect(saved.body, replacement.body);
+      expect(saved.sources, isEmpty);
+      final linked = await h.repository.database.query(
+        'discovery_evidence',
+        columns: ['payload'],
+        where: 'song_id = ?',
+        whereArgs: [saved.id],
+        orderBy: 'observed_order',
+      );
+      expect(
+        linked.map((row) => row['payload']),
+        evidence.map((row) => row['payload']),
+      );
+    },
+  );
+
+  test(
+    'a failed evidence batch still lets later evidence and the reader save',
+    () async {
+      final h = await open();
+      final rejectedWrite = _source('lrclib');
+      final laterSource = _source('genius', body: _full);
+      await h.repository.database.execute('''
+        CREATE TRIGGER reject_evidence BEFORE INSERT ON discovery_evidence
+        WHEN NEW.source_id = 'lrclib:song'
+        BEGIN SELECT RAISE(ABORT, 'test evidence failure'); END
+      ''');
+
+      final flow = await h.beginSelection();
+      try {
+        flow.request.publish(rejectedWrite);
+        await expectLater(
+          h.app.saveResult(source: rejectedWrite, includeEvidence: false),
+          throwsA(isA<DatabaseException>()),
+        );
+      } finally {
+        flow.request.publish(laterSource);
+        flow.request.response.complete([]);
+        await flow.completion;
+      }
+
+      expect(h.app.errorCode, 'discovery_failed');
+      final archived = await h.repository.database.query(
+        'discovery_evidence',
+        columns: ['source_id', 'song_id'],
+      );
+      expect(archived, [
+        {'source_id': laterSource.id, 'song_id': null},
+      ]);
+
+      h.ui.selectVersion(laterSource.id);
+      await h.ui.saveSelectedVersion();
+      expect(h.ui.state.route, VerseRoute.reader);
+      final playable = await h.repository.getPlayableSong(h.ui.state.song!.id);
+      expect(playable?.body, laterSource.body);
+      expect(playable?.sources, isEmpty);
+      expect(
+        (await h.repository.database.query(
+          'discovery_sessions',
+        )).single['sealed'],
+        1,
+      );
+      expect(
+        (await h.repository.database.query(
+          'discovery_evidence',
+        )).single['song_id'],
+        playable?.id,
+      );
+    },
+  );
+
+  test(
+    'chart Save preserves concurrent playback preferences and late evidence',
+    () async {
+      final h = await open();
+      final source = _source('genius', body: _full);
+      final replacement = _source('lrclib', body: '[G]$_full');
+      final flow = await h.beginSelection();
+      try {
+        flow.request.publish(source);
+        await h.app.flushCombine();
+        final original = await h.app.saveResult(
+          source: source,
+          includeEvidence: false,
+        );
+
+        h.ui.selectVersion(source.id);
+        final preferences = h.app.savePlayerPreferences(
+          original.id,
+          transpose: 2,
+          playbackSpeed: .8,
+        );
+        final saving = h.ui.saveSelectedVersion();
+        expect(await preferences, isTrue);
+        await saving;
+        expect(h.ui.state.route, VerseRoute.reader);
+        expect(h.ui.state.song?.id, original.id);
+        expect(h.ui.state.readerTranspose, 2);
+        expect(h.ui.state.playbackSpeed, .8);
+        final playable = await h.repository.getPlayableSong(original.id);
+        expect(playable?.metadata['x_verse_player_transpose'], 2);
+        expect(playable?.metadata['x_verse_player_speed'], .8);
+        expect(playable?.body, original.body);
+        expect(playable?.sources, isEmpty);
+        expect(
+          (await h.repository.database.query(
+            'discovery_sessions',
+          )).single['sealed'],
+          0,
+        );
+
+        flow.request.publish(replacement);
+        flow.request.response.complete([]);
+        await flow.completion;
+        final evidence = await h.repository.getSongWithEvidence(original.id);
+        expect(
+          evidence?.sources.map((item) => item.id),
+          contains(replacement.id),
+        );
+      } finally {
+        if (!flow.request.response.isCompleted) {
+          flow.request.response.complete([]);
+          await flow.completion;
+        }
+        await h.ui.settleRecentRecords();
+      }
+    },
+  );
 
   for (final scenario in [
     (
@@ -142,6 +328,7 @@ void main() {
       final secondary = await h.discovery.searchAt('lrclib', _query);
       primary.complete([_selected]);
       await _settle();
+      await h.ui.settleCatalogProjection();
       expect(h.app.searching, isTrue);
       expect(h.app.catalogChecks['genius']?.state, 'completed');
       expect(h.app.catalogChecks['lrclib']?.state, 'pending');
@@ -204,6 +391,7 @@ void main() {
       final secondaryCandidate = _candidate('lrclib');
       secondary.complete([secondaryCandidate]);
       await _settle();
+      await h.ui.settleCatalogProjection();
       final choice = h.ui.selectReference(h.ui.state.autocomplete.single);
       final discovery = await h.discovery.discoveryAt(0);
       final lyrics = _source('lrclib');
@@ -253,8 +441,9 @@ void main() {
     await settle();
     expect(merged, hasLength(1), reason: 'later arrivals wait for the merge');
     gates.removeAt(0).complete();
-    await settle();
-    await settle();
+    for (var i = 0; i < 100 && merged.length < 2; i++) {
+      await Future<void>.delayed(const Duration(milliseconds: 10));
+    }
     expect(merged, hasLength(2), reason: 'then one merge of the latest set');
     expect(merged.last, hasLength(2));
     gates.removeAt(0).complete();
@@ -262,14 +451,92 @@ void main() {
       await Future<void>.delayed(const Duration(milliseconds: 10));
     }
     expect(h.app.combined?.body, _full);
+    expect(h.app.canSavePreparedCombined, isTrue);
     flow.request.response.complete([]);
-    final done = flow.completion;
-    for (var i = 0; i < 100 && gates.isEmpty; i++) {
-      await Future<void>.delayed(const Duration(milliseconds: 10));
-    }
-    gates.removeAt(0).complete();
-    await done;
+    await flow.completion.timeout(const Duration(seconds: 3));
+    expect(
+      merged,
+      hasLength(2),
+      reason: 'closing reuses identical ready inputs',
+    );
+    expect(h.app.canSavePreparedCombined, isTrue);
     expect(h.app.combined?.body, _full);
+  });
+
+  test(
+    'Combined Save waits for a prepared chart with final chord readiness',
+    () async {
+      final h = await open();
+      final chart = _source('lrclib', body: '[G]$_full');
+      final finalMergeStarted = Completer<void>();
+      final releaseFinalMerge = Completer<void>();
+      h.app.combineRunner = CombineRunner(
+        compute: (request) async {
+          if (request.results.any((source) => identical(source, chart))) {
+            finalMergeStarted.complete();
+            await releaseFinalMerge.future;
+          }
+          return computeCombine(request);
+        },
+      );
+      final flow = await h.beginSelection();
+      try {
+        flow.request.publish(_source('genius', body: _full));
+        flow.request.publish(chart);
+        await h.app.flushCombine();
+        expect(h.app.canSavePreparedCombined, isTrue);
+
+        flow.request.response.complete([]);
+        await finalMergeStarted.future.timeout(const Duration(seconds: 3));
+        expect(h.app.canSavePreparedCombined, isFalse);
+        var saveCompleted = false;
+        final save = h.ui.saveSelectedVersion().whenComplete(() {
+          saveCompleted = true;
+        });
+        await Future<void>.delayed(Duration.zero);
+        expect(await h.repository.listSongs(), isEmpty);
+        expect(h.ui.state.route, isNot(VerseRoute.reader));
+        expect(saveCompleted, isFalse);
+        await h.ui.saveSelectedVersion();
+        expect(await h.repository.listSongs(), isEmpty);
+        releaseFinalMerge.complete();
+        await save;
+      } finally {
+        if (!releaseFinalMerge.isCompleted) releaseFinalMerge.complete();
+      }
+      await flow.completion;
+      expect(h.app.canSavePreparedCombined, isTrue);
+      expect(h.ui.state.route, VerseRoute.reader);
+      final savedSongs = await h.repository.listSongs();
+      expect(savedSongs, hasLength(1));
+      expect(savedSongs.single.revision, 1);
+      expect(
+        (await h.repository.getPlayableSong(h.ui.state.song!.id))?.sources,
+        isEmpty,
+      );
+    },
+  );
+
+  test('Combined Save cannot use a pending provider withdrawal', () async {
+    final h = await open();
+    final flow = await h.beginSelection();
+    final source = _source('genius', body: _full);
+    try {
+      flow.request.publish(source);
+      await h.app.flushCombine();
+      expect(h.app.canSavePreparedCombined, isTrue);
+
+      flow.request.publish(
+        _source('genius', body: _full, kind: MatchKind.rejected),
+      );
+      await h.ui.saveSelectedVersion();
+
+      expect(await h.repository.listSongs(), isEmpty);
+      expect(h.ui.state.route, isNot(VerseRoute.reader));
+    } finally {
+      flow.request.response.complete([]);
+      await flow.completion;
+    }
   });
 
   test(
@@ -350,6 +617,128 @@ void main() {
         reason: 'late callbacks cannot silently re-enable a provider',
       );
       expect(await h.repository.listSongs(), isEmpty);
+    },
+  );
+
+  test(
+    'trace bursts publish once while new sources publish immediately',
+    () async {
+      final h = await open();
+      final (completion: completion, request: request) = await h
+          .beginSelection();
+      await h.app.flushCombine();
+      await Future<void>.delayed(Duration.zero);
+      ProviderCheck trace(String provider, int count) => ProviderCheck(
+        providerId: provider,
+        state: 'pending',
+        operations: [
+          for (var i = 0; i < count; i++)
+            ProviderOperation(
+              id: '$provider:$i',
+              phase: 'search',
+              state: 'pending',
+            ),
+        ],
+      );
+      request.onProgress!(trace('genius', 1));
+      request.onProgress!(trace('lrclib', 1));
+      expect(h.ui.state.comparison!.reference.album, isNull);
+      final unchangedOperations = h.ui.state.comparison!.providerChecks
+          .singleWhere((check) => check.id == 'lrclib')
+          .operations;
+      var emissions = 0;
+      void observe() => emissions++;
+      h.app.addListener(observe);
+      try {
+        for (var count = 2; count <= 6; count++) {
+          request.onProgress!(trace('genius', count));
+        }
+        expect(h.app.checks['genius']?.operations, hasLength(6));
+        expect(emissions, 0);
+        await Future<void>.delayed(Duration.zero);
+        expect(emissions, 1);
+        final checks = h.ui.state.comparison!.providerChecks;
+        expect(
+          checks.singleWhere((check) => check.id == 'genius').operations,
+          hasLength(6),
+        );
+        expect(
+          checks.singleWhere((check) => check.id == 'lrclib').operations,
+          same(unchangedOperations),
+        );
+
+        request.onProgress!(trace('genius', 7));
+        final source = _source('lrclib', metadata: {'album': 'Resolved Album'});
+        request.publish(source);
+        expect(emissions, 2);
+        expect(h.app.results.single, same(source));
+        expect(h.ui.state.comparison!.reference.album, 'Resolved Album');
+        expect(h.app.checks['genius']?.operations, hasLength(7));
+      } finally {
+        h.app.removeListener(observe);
+        request.response.complete([]);
+        await completion;
+      }
+    },
+  );
+
+  test(
+    'saved comparison shows the stored chart and sources before refresh or merge finishes',
+    () async {
+      final h = await open();
+      final cached = _source('lrclib', body: _full);
+      await h.app.saveSong(
+        SongDocument(
+          id: 'cached-library-song',
+          title: _query,
+          artist: 'Synthetic Ensemble',
+          body: _full,
+          selectedRecording: _selected,
+          sources: [cached],
+          extra: {
+            'combinedSelection': _selected.identity,
+            'libraryEvidenceIdentity': _selected.identity,
+          },
+        ),
+      );
+      await h.ui.openSong('cached-library-song');
+      final mergeStarted = Completer<CombineRequest>();
+      final releaseMerge = Completer<void>();
+      h.app.combineRunner = CombineRunner(
+        compute: (request) async {
+          if (!mergeStarted.isCompleted) mergeStarted.complete(request);
+          await releaseMerge.future;
+          return computeCombine(request);
+        },
+      );
+
+      final comparison = h.ui.compareCurrentSongVersions();
+      final refresh = await h.discovery.discoveryAt(0);
+      try {
+        final input = await mergeStarted.future;
+        expect(input.knownSourceLyrics, [true]);
+        final preview = h.ui.state.comparison!;
+        expect(preview.discovering, isTrue);
+        expect(preview.suggested?.savedSongId, 'cached-library-song');
+        expect(preview.suggested?.isChecking, isTrue);
+        expect(preview.suggested?.canSave, isFalse);
+        expect(preview.alternatives.single.id, cached.id);
+        expect(preview.alternatives.single.hasLyrics, isTrue);
+        expect(h.app.canSavePreparedCombined, isFalse);
+
+        final saving = h.ui.saveVersion('combined');
+        expect(h.ui.state.route, VerseRoute.main);
+        releaseMerge.complete();
+        await saving.timeout(const Duration(seconds: 5));
+        expect(h.ui.state.route, VerseRoute.reader);
+        expect(h.ui.state.song?.id, 'cached-library-song');
+        expect(refresh.response.isCompleted, isFalse);
+      } finally {
+        if (!releaseMerge.isCompleted) releaseMerge.complete();
+        refresh.response.complete([]);
+        await comparison;
+      }
+      expect(h.app.canSavePreparedCombined, isTrue);
     },
   );
 
@@ -551,6 +940,7 @@ void main() {
           },
         ),
       );
+      await h.app.flushCombine();
       final accepted = h.app.results.single;
       expect(accepted.body, _full);
       expect(accepted.metadata['album'], 'Dawn Collection');
@@ -1005,13 +1395,13 @@ void main() {
       );
       final before = (await h.repository.getSong(saved.id))!.toJson();
       await h.reopenController();
-      expect(h.app.songs.single.toJson(), before);
+      final playable = h.app.songs.single;
+      expect(playable.sources, isEmpty);
+      expect(playable.selectedRecording?.toJson(), _selected.toJson());
+      final restored = (await h.app.loadSong(playable.id))!;
+      expect(restored.toJson(), before);
       expect(
-        h.app.songs.single.selectedRecording?.toJson(),
-        _selected.toJson(),
-      );
-      expect(
-        h.app.songs.single.sources.single.extra['previousSourceVersions'],
+        restored.sources.single.extra['previousSourceVersions'],
         saved.sources.single.extra['previousSourceVersions'],
       );
       expect(

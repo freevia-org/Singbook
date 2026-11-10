@@ -86,7 +86,8 @@ void main() {
         expect(h.ui.state.route, VerseRoute.reader);
         await h.reopen();
         final twiceSaved = (await h.repository.getSong(original.id))!;
-        expect(twiceSaved.revision, greaterThan(restored.revision));
+        expect(twiceSaved.revision, restored.revision);
+        expect(twiceSaved.updatedAt, restored.updatedAt);
         expect(twiceSaved.body, original.body);
         expect(twiceSaved.artist, 'Writer');
         expect(twiceSaved.extra['savedSourceId'], original.sources.single.id);
