@@ -150,6 +150,24 @@ void main() {
     expect(current(), isFalse);
   });
 
+  test('provenance stays bound to the captured proof after a nested edit', () {
+    final details = <String, Object?>{
+      'raw': ['original'],
+    };
+    final sources = [
+      _anchor(),
+      _donor(extra: {'details': details}),
+    ];
+    final plan = _plan(sources)!;
+    final before = plan.provenance;
+    (details['raw']! as List<String>).add('late change');
+    expect(
+      plan.isCurrent(sources, original: _original, eligible: (_) => true),
+      isFalse,
+    );
+    expect(plan.provenance, before);
+  });
+
   test('accepts the actual legacy unscoped Genius recording anchor', () {
     final anchor = SourceResult(
       candidate: _candidate(

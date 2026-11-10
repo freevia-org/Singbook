@@ -26,6 +26,7 @@ class RecordingContextPlan {
   ) : originalIdentity = original.identity,
       _originalSnapshot = jsonDecode(jsonEncode(_canonical(original.toJson()))),
       _selectionJson = jsonEncode(selection.toJson()),
+      _identifier = selection.recordingIds[namespace],
       _witnessSnapshots = {
         for (final witness in witnesses) witness.id: _witnessSnapshot(witness),
       };
@@ -34,12 +35,13 @@ class RecordingContextPlan {
   SongCandidate get selection =>
       SongCandidate.fromJson(jsonDecode(_selectionJson) as JsonMap);
   final String _selectionJson;
+  final String? _identifier;
   final Object? _originalSnapshot;
   final String originalIdentity;
   final String namespace;
   final String anchorSourceId, donorSourceId;
   final List<SourceResult> witnesses;
-  final Map<String, ({Object? payload, String sha256})> _witnessSnapshots;
+  final Map<String, _RecordingWitnessSnapshot> _witnessSnapshots;
 
   /// Recheck after every asynchronous lookup and synchronous progress callback.
   /// A source toggled off, withdrawn or changed cannot support a late result.
@@ -69,7 +71,7 @@ class RecordingContextPlan {
   JsonMap get provenance => {
     'selectedIdentity': originalIdentity,
     'namespace': namespace,
-    'identifier': selection.recordingIds[namespace],
+    'identifier': _identifier,
     'anchorSourceId': anchorSourceId,
     'donorSourceId': donorSourceId,
     'witnesses': [
@@ -78,7 +80,7 @@ class RecordingContextPlan {
           'sourceId': witness.id,
           'providerId': witness.candidate.providerId,
           'sha256': _witnessSnapshots[witness.id]!.sha256,
-          'identitySha256': _recordingWitnessHash(witness),
+          'identitySha256': _witnessSnapshots[witness.id]!.identitySha256,
         },
     ],
   };
@@ -314,11 +316,19 @@ String _sourceHash(SourceResult source) => sha256
     .convert(utf8.encode(jsonEncode(_canonical(source.toJson()))))
     .toString();
 
-({Object? payload, String sha256}) _witnessSnapshot(SourceResult source) {
-  final encoded = jsonEncode(_canonical(source.toJson()));
+typedef _RecordingWitnessSnapshot = ({
+  Object? payload,
+  String sha256,
+  String identitySha256,
+});
+
+_RecordingWitnessSnapshot _witnessSnapshot(SourceResult source) {
+  final snapshot = source.toJson();
+  final encoded = jsonEncode(_canonical(snapshot));
   return (
     payload: jsonDecode(encoded),
     sha256: sha256.convert(utf8.encode(encoded)).toString(),
+    identitySha256: _recordingWitnessHash(source, snapshot),
   );
 }
 
@@ -414,8 +424,8 @@ Map<String, Object?> _contextBinding(Map proof) => {
 // candidate fact in metadata. Normalize those containers only; active facts,
 // source identity, body, raw payloads, editions and conflicts remain bound.
 // Discovery's live mutation guard continues using the full _sourceHash.
-String _recordingWitnessHash(SourceResult source) {
-  final payload = {...source.toJson()};
+String _recordingWitnessHash(SourceResult source, JsonMap snapshot) {
+  final payload = {...snapshot};
   for (final key in [
     'previousSourceVersions',
     'unparsedSourceHistory',
