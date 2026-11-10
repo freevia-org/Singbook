@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:math' as math;
+import 'dart:typed_data';
 import 'package:characters/characters.dart';
 import 'package:crypto/crypto.dart' show sha256;
 import 'models.dart';
@@ -2333,31 +2334,36 @@ Map<int, List<ChordAnchor>> _fuzzyLineChords(
       donors.length * lyrics.length > 40000) {
     return const {};
   }
-  // A context can span up to three adjacent target lines.
-  bool joinable(int l, int span) =>
-      l + span <= lyrics.length &&
-      List.generate(
-        span - 1,
-        (i) => i,
-      ).every((i) => lyrics[l + i + 1].index == lyrics[l + i].index + 1);
-  _Words wordsOf(int l, int span) => [
-    for (var i = 0; i < span; i++) ...lyrics[l + i].words,
-  ];
+  // Build each adjacent lyric window once. Every donor compares against
+  // the same windows, and the alignment traverses those scores repeatedly.
+  final windows = List.generate(lyrics.length, (start) {
+    final spans = <_Words>[lyrics[start].words];
+    for (var end = start + 1; end < lyrics.length && end < start + 3; end++) {
+      if (lyrics[end].index != lyrics[end - 1].index + 1) break;
+      spans.add([...spans.last, ...lyrics[end].words]);
+    }
+    return spans;
+  });
+  bool joinable(int l, int span) => span <= windows[l].length;
+  _Words wordsOf(int l, int span) => windows[l][span - 1];
   final pairsOf = <(int, int, int), List<(int, int)>>{};
   List<(int, int)> pairs(int d, int l, int span) => pairsOf.putIfAbsent((
     d,
     l,
     span,
   ), () => _alignWords(donors[d].words, wordsOf(l, span)));
+  // Cache the thresholded scores, including misses, in a bounded table.
+  final scoreCount = donors.length * lyrics.length * 3;
+  final similarities = Float64List(scoreCount)..fillRange(0, scoreCount, -1);
   double similarity(int d, int l, [int span = 1]) {
-    if (span > 1 && !joinable(l, span)) return 0;
-    if (wordsOf(l, span).length < 3) return 0;
-    final value = _lineSimilarity(
-      donors[d].words,
-      wordsOf(l, span),
-      pairs(d, l, span),
-    );
-    return value >= .8 ? value : 0;
+    if (!joinable(l, span)) return 0;
+    final words = wordsOf(l, span);
+    if (words.length < 3) return 0;
+    final index = (d * lyrics.length + l) * 3 + span - 1;
+    final cached = similarities[index];
+    if (cached >= 0) return cached;
+    final value = _lineSimilarity(donors[d].words, words, pairs(d, l, span));
+    return similarities[index] = value >= .8 ? value : 0;
   }
 
   // A containment match (most of one line inside a longer one) is weaker:
@@ -2416,8 +2422,11 @@ Map<int, List<ChordAnchor>> _fuzzyLineChords(
   // The same lyric text left uncovered elsewhere makes the place where a
   // match lands as arbitrary as an ambiguous chart line.
   final covered = <int>{};
-  String textOf(int l, int span) =>
-      wordsOf(l, span).map((word) => word.word).join(' ');
+  final texts = <(int, int), String>{};
+  String textOf(int l, int span) => texts.putIfAbsent((
+    l,
+    span,
+  ), () => wordsOf(l, span).map((word) => word.word).join(' '));
   bool repeatedElsewhere(int l, int span) {
     final text = textOf(l, span);
     for (var other = 0; other < columns; other++) {
@@ -2609,24 +2618,31 @@ List<(int, int)> _alignWords(
   List<({String word, int start, int end})> a,
   List<({String word, int start, int end})> b,
 ) {
-  final table = List.generate(
-    a.length + 1,
-    (_) => List.filled(b.length + 1, 0),
-  );
-  for (var i = a.length - 1; i >= 0; i--) {
-    for (var j = b.length - 1; j >= 0; j--) {
-      table[i][j] = a[i].word == b[j].word
+  final pairs = <(int, int)>[];
+  var prefix = 0;
+  // The existing traceback always takes equal leading words diagonally.
+  // Leave only the unmatched suffixes for the dynamic program.
+  while (prefix < a.length &&
+      prefix < b.length &&
+      a[prefix].word == b[prefix].word) {
+    pairs.add((prefix, prefix));
+    prefix++;
+  }
+  final rows = a.length - prefix, columns = b.length - prefix;
+  if (rows == 0 || columns == 0) return pairs;
+
+  final table = List.generate(rows + 1, (_) => List.filled(columns + 1, 0));
+  for (var i = rows - 1; i >= 0; i--) {
+    for (var j = columns - 1; j >= 0; j--) {
+      table[i][j] = a[prefix + i].word == b[prefix + j].word
           ? table[i + 1][j + 1] + 1
-          : (table[i + 1][j] > table[i][j + 1]
-                ? table[i + 1][j]
-                : table[i][j + 1]);
+          : math.max(table[i + 1][j], table[i][j + 1]);
     }
   }
-  final pairs = <(int, int)>[];
   var i = 0, j = 0;
-  while (i < a.length && j < b.length) {
-    if (a[i].word == b[j].word) {
-      pairs.add((i, j));
+  while (i < rows && j < columns) {
+    if (a[prefix + i].word == b[prefix + j].word) {
+      pairs.add((prefix + i, prefix + j));
       i++;
       j++;
     } else if (table[i + 1][j] >= table[i][j + 1]) {
