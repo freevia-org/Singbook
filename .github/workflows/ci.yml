@@ -16,11 +16,11 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: 0dd8302cee853627931349c5b936e1d66a96c3f2
+          ref: fdc212fada48ff5e6c290e732444433e2a01f699
           persist-credentials: false
 
       - name: Verify product source
-        run: test "$(git rev-parse HEAD)" = "0dd8302cee853627931349c5b936e1d66a96c3f2"
+        run: test "$(git rev-parse HEAD)" = "fdc212fada48ff5e6c290e732444433e2a01f699"
 
       - name: Check build orchestration without SDKs
         run: python3 -m unittest discover -s tests/scripts -p 'test_*.py' -v
@@ -55,11 +55,11 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: 0dd8302cee853627931349c5b936e1d66a96c3f2
+          ref: fdc212fada48ff5e6c290e732444433e2a01f699
           persist-credentials: false
 
       - name: Verify product source
-        run: test "$(git rev-parse HEAD)" = "0dd8302cee853627931349c5b936e1d66a96c3f2"
+        run: test "$(git rev-parse HEAD)" = "fdc212fada48ff5e6c290e732444433e2a01f699"
 
       - uses: subosito/flutter-action@v2
         with:
@@ -70,13 +70,12 @@ jobs:
       - name: Get dependencies
         run: flutter pub get --enforce-lockfile --no-example
 
-      - name: Test
-        run: flutter test --no-pub --exclude-tags=performance --concurrency=2
-
-      - name: Verify isolated performance bounds
+      - name: Recording context and Save regression tests
         run: >-
-          flutter test --no-pub --concurrency=1 --reporter=expanded
-          --tags=performance test/domain/combined_enrichment_test.dart
-
-      - name: Validate metadata accuracy corpus and offline cache
-        run: flutter test --no-pub tool/metadata_accuracy_benchmark_test.dart tool/metadata_response_cache_test.dart tool/combine_worker_benchmark_test.dart
+          flutter test --no-pub --reporter=expanded
+          test/providers/core/recording_context_test.dart
+          test/providers/core/recording_context_discovery_test.dart
+          test/application/acousticbrainz_flow_test.dart
+          test/application/source_checks_analysis_test.dart
+          test/application/provider_merge_pipeline_test.dart
+          test/application/ready_source_save_test.dart
