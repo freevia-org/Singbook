@@ -400,6 +400,23 @@ void main() {
     },
   );
 
+  test('a fuller chart must retain repeated section directives', () {
+    const previous = '{comment: Repeat}\n$_chart\n{comment: Repeat}';
+    const incoming =
+        '{comment: Repeat}\n'
+        '{start_of_verse}\n'
+        '[C]Amber lanterns cross the silent harbor tonight\n'
+        'One more quiet verse returns before the dawn\n'
+        '[G]Silver windows catch the morning sunlight again\n'
+        '{end_of_verse}';
+    final merged = mergeSourceResult(
+      _source(body: previous),
+      _source(body: incoming),
+    );
+    expect(merged.body, previous);
+    expect(_history(merged).single['body'], incoming);
+  });
+
   test('fuller chart preserving original chords and sections can upgrade', () {
     const fullerChart =
         '{start_of_verse}\n'

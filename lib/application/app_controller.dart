@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:isolate';
 import 'dart:convert';
 import 'dart:io' show FileSystemException;
 import 'package:archive/archive.dart' show ArchiveException;
@@ -7,13 +8,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:xml/xml.dart' show XmlException;
 import '../data/library_repository.dart';
-import '../domain/arrangement.dart' show plainLyrics;
 import '../domain/models.dart';
 import '../domain/chordpro.dart';
 import '../domain/combine.dart';
 import '../domain/metadata_enrichment.dart' show displayMetadataFor;
 import '../domain/search_grouping.dart' show sameSearchRecording;
-import '../domain/source_result_merge.dart';
+import '../domain/song_identity.dart';
 import '../providers/provider.dart';
 import '../providers/core/core_providers.dart';
 import '../providers/extra/extra_providers.dart';
@@ -47,6 +47,13 @@ class AppMessage {
 
 /// The expected and persisted hashes for a successful setlist CAS write.
 typedef SetlistWriteHashes = ({String? expectedHash, String persistedHash});
+
+typedef _MergeSnapshot = ({
+  SongCandidate candidate,
+  List<SourceResult> sources,
+  List<HistoricalCacheUse> historicalUses,
+  bool hasPendingSources,
+});
 
 /// Owns durable application state; navigation and player clock stay in the UI.
 class AppController extends ChangeNotifier {
@@ -113,6 +120,9 @@ class AppController extends ChangeNotifier {
   LibraryRepository get repository => _repository!;
   final SourceDiscoveryService discovery;
   List<SongDocument> songs = [];
+  final _chartTargets = <(_ChartTargetKind, String), Set<SongDocument>>{};
+  List<SongDocument>? _indexedSongs;
+  int _indexedSongCount = 0;
   List<SetlistDocument> setlists = [];
   JsonMap settings = {};
   List<ActivityEntry> recent = [];
@@ -193,6 +203,11 @@ class AppController extends ChangeNotifier {
   Future<bool>? _sourceRefreshFuture;
   String query = '';
   List<SongCandidate> suggestions = [];
+  List<SongCandidate>? _fetchedCatalogRows;
+
+  bool isFetchedCatalogSnapshot(List<SongCandidate> rows) =>
+      identical(rows, _fetchedCatalogRows);
+
   SongCandidate? selection;
   List<SourceResult> results = [];
   SongDocument? combined;
@@ -271,7 +286,13 @@ class AppController extends ChangeNotifier {
   bool _autoSyncPending = false;
   final Map<String, String> _savedSources = {};
   final Map<String, String> _savedCombined = {};
+  List<SongDocument>? _savedIndexedSongs;
+  int _savedIndexedSongCount = 0;
   Map<String, String> _songHashes = {};
+  Map<String, SongDisplayKeys> _songDisplayKeys = {};
+  int _songDisplayKeysRevision = 0;
+  int get songDisplayKeysRevision => _songDisplayKeysRevision;
+  final _displayKeysByDocument = Expando<SongDisplayKeys>();
   Map<String, String> _setlistHashes = {};
   int _writesSinceCompaction = 0;
 
@@ -376,17 +397,29 @@ class AppController extends ChangeNotifier {
     }
   }
 
-  void _emit() {
+  Timer? _discoveryTraceNotification;
+
+  void _emit({bool warmSelection = true}) {
+    _discoveryTraceNotification?.cancel();
+    _discoveryTraceNotification = null;
     if (_disposed) return;
     if (_savedSourceMergePending) {
       _emitHeld = true;
       return;
     }
+    if (warmSelection) _warmSelectedArrangement();
     notifyListeners();
   }
 
-  // Saved sources are shown together with their merge. Listeners are not told
-  // about them while that first background merge is still running.
+  void _emitDiscoveryTraceSoon(int epoch) {
+    _discoveryTraceNotification ??= Timer(Duration.zero, () {
+      _discoveryTraceNotification = null;
+      if (epoch == _discoveryEpoch) _emit(warmSelection: false);
+    });
+  }
+
+  // Direct cached inputs and historical works need their first merge to
+  // establish readiness before publishing a comparison.
   bool _savedSourceMergePending = false, _emitHeld = false;
   int _combinesInFlight = 0;
 
@@ -484,9 +517,13 @@ class AppController extends ChangeNotifier {
   /// Reloads the cached library. Overlapping reloads are sequenced: only the
   /// newest one publishes, so an older snapshot (and its hashes) can never
   /// replace a newer one; an older call waits for the newest to finish.
+  int _snapshotLoadsInFlight = 0;
   Future<void> _reload() {
     final epoch = ++_reloadEpoch;
-    final run = _loadSnapshot(epoch);
+    ++_snapshotLoadsInFlight;
+    final run = _loadSnapshot(
+      epoch,
+    ).whenComplete(() => --_snapshotLoadsInFlight);
     _latestReload = run;
     return run.then((_) => _latestReload ?? run);
   }
@@ -494,9 +531,53 @@ class AppController extends ChangeNotifier {
   Future<void> _loadSnapshot(int epoch) async {
     final snapshot = await repository.librarySnapshot();
     if (_disposed || epoch != _reloadEpoch) return;
+    final displayKeys = <String, SongDisplayKeys>{};
+    final needsScoring = <SongDocument>[];
+    for (final song in snapshot.songs) {
+      final key = song.metadata['key'];
+      if (key is String && key.trim().isNotEmpty) continue;
+      final cached = _songDisplayKeys[song.id];
+      if (cached != null &&
+          _songHashes[song.id] == snapshot.songHashes[song.id]) {
+        displayKeys[song.id] = cached;
+      } else {
+        needsScoring.add(song);
+      }
+    }
+    const batchSize = 16;
+    for (var i = 0; i < needsScoring.length; i += batchSize) {
+      final end = i + batchSize;
+      displayKeys.addAll(
+        await scoreSongDisplayKeys(
+          needsScoring.sublist(i, end.clamp(0, needsScoring.length)),
+        ),
+      );
+      if (_disposed || epoch != _reloadEpoch) return;
+    }
+    final chartTargets = snapshot.songs.isEmpty
+        ? const <(_ChartTargetKind, String), Set<int>>{}
+        : await _prepareChartTargetBuckets([
+            for (final song in snapshot.songs) _chartTargetSeed(song),
+          ]);
+    if (_disposed || epoch != _reloadEpoch) return;
+    for (final song in snapshot.songs) {
+      if (displayKeys[song.id] case final keys?) {
+        _displayKeysByDocument[song] = keys;
+      }
+    }
     songs = snapshot.songs;
+    _chartTargets.clear();
+    for (final entry in chartTargets.entries) {
+      _chartTargets[entry.key] = {
+        for (final index in entry.value) songs[index],
+      };
+    }
+    _indexedSongs = songs;
+    _indexedSongCount = songs.length;
     setlists = snapshot.setlists;
     _songHashes = snapshot.songHashes;
+    _songDisplayKeys = displayKeys;
+    _songDisplayKeysRevision++;
     _setlistHashes = {
       for (final set in snapshot.setlists) set.id: _setlistHash(set),
     };
@@ -509,6 +590,8 @@ class AppController extends ChangeNotifier {
   /// `baseHash` to [saveSong] when an edit session started earlier than the
   /// latest reload, so a background change is detected.
   String? songHash(String id) => _songHashes[id];
+  SongDisplayKeys? displayKeysFor(SongDocument song) =>
+      _displayKeysByDocument[song];
   String? setlistHash(String id) => _setlistHashes[id];
 
   void _indexSaved() {
@@ -520,6 +603,44 @@ class AppController extends ChangeNotifier {
       final key = song.extra['combinedSelection'];
       if (key is String) _savedCombined[key] = song.id;
     }
+    _savedIndexedSongs = songs;
+    _savedIndexedSongCount = songs.length;
+  }
+
+  void _updateSavedIndex(SongDocument song, SongDocument? previous) {
+    final sourceKeys = {
+      if (song.extra['savedSourceId'] case final String key) key,
+      if (previous?.extra['savedSourceId'] case final String key) key,
+    };
+    final combinedKeys = {
+      if (song.extra['combinedSelection'] case final String key) key,
+      if (previous?.extra['combinedSelection'] case final String key) key,
+    };
+    for (final key in sourceKeys) {
+      _savedSources.remove(key);
+    }
+    for (final key in combinedKeys) {
+      _savedCombined.remove(key);
+    }
+    // Full indexing walks forward and keeps the last entry for each key.
+    // Only rescan keys on the old and new chart, in that same priority.
+    for (
+      var index = songs.length - 1;
+      index >= 0 && (sourceKeys.isNotEmpty || combinedKeys.isNotEmpty);
+      index--
+    ) {
+      final stored = songs[index];
+      final source = stored.extra['savedSourceId'];
+      if (source is String && sourceKeys.remove(source)) {
+        _savedSources[source] = stored.id;
+      }
+      final combined = stored.extra['combinedSelection'];
+      if (combined is String && combinedKeys.remove(combined)) {
+        _savedCombined[combined] = stored.id;
+      }
+    }
+    _savedIndexedSongs = songs;
+    _savedIndexedSongCount = songs.length;
   }
 
   /// Cached lookup for synchronous UI code; may lag the database by one
@@ -642,9 +763,11 @@ class AppController extends ChangeNotifier {
       cancelSearch();
     } else if (!enabled) {
       _catalogCancellations[id]?.cancel();
+      final fetchedSnapshot = isFetchedCatalogSnapshot(suggestions);
       suggestions = suggestions
           .where((candidate) => candidate.providerId != id)
           .toList();
+      _fetchedCatalogRows = fetchedSnapshot ? suggestions : null;
     }
     if (!enabled) {
       _providerDiscoveryCancellations[id]?.cancel();
@@ -691,10 +814,12 @@ class AppController extends ChangeNotifier {
       selection = null;
       cancelDiscovery();
       suggestions = [];
+      _fetchedCatalogRows = null;
     }
     query = value;
     if (value.trim().isEmpty) {
       suggestions = [];
+      _fetchedCatalogRows = null;
       searching = false;
       selection = null;
       cancelDiscovery();
@@ -712,6 +837,17 @@ class AppController extends ChangeNotifier {
     _emit();
     final catalog = searchCatalogId;
     final catalogRevision = discovery.catalogClient?.runtime.catalog?.revision;
+    bool updateSuggestions(List<SongCandidate> found) {
+      final eligible = searchCatalogs.map((provider) => provider.id).toSet();
+      final filtered = found.every((row) => eligible.contains(row.providerId))
+          ? found
+          : found.where((row) => eligible.contains(row.providerId)).toList();
+      if (!listEquals(suggestions, filtered)) suggestions = List.of(filtered);
+      final changed = !identical(_fetchedCatalogRows, suggestions);
+      _fetchedCatalogRows = suggestions;
+      return changed;
+    }
+
     try {
       if (catalog == null) {
         throw const ProviderException('not_configured');
@@ -731,13 +867,7 @@ class AppController extends ChangeNotifier {
                   discovery.catalogClient?.runtime.catalog?.revision) {
             return;
           }
-          final eligible = searchCatalogs
-              .map((provider) => provider.id)
-              .toSet();
-          suggestions = found
-              .where((row) => eligible.contains(row.providerId))
-              .toList();
-          _emit();
+          if (updateSuggestions(found)) _emit();
         },
         onStatus: (id, state, code) {
           if (epoch != _searchEpoch ||
@@ -762,10 +892,7 @@ class AppController extends ChangeNotifier {
               discovery.catalogClient?.runtime.catalog?.revision) {
         return;
       }
-      final eligible = searchCatalogs.map((provider) => provider.id).toSet();
-      suggestions = found
-          .where((row) => eligible.contains(row.providerId))
-          .toList();
+      updateSuggestions(found);
     } catch (error) {
       if (epoch != _searchEpoch ||
           _disposed ||
@@ -880,15 +1007,27 @@ class AppController extends ChangeNotifier {
     _searchProviderId = null;
     searching = false;
     suggestions = [];
+    _fetchedCatalogRows = null;
     selection = null;
     cancelDiscovery();
     _emit();
   }
 
   void cancelDiscovery() {
+    _discoveryTraceNotification?.cancel();
+    _discoveryTraceNotification = null;
     ++_discoveryEpoch;
     ++_combineGeneration;
+    combineRunner.discard();
     _discoveryCancel?.cancel();
+    _sealDiscoveryStage(_discoveryStage);
+    _discoveryStage = null;
+    _preparedMerge = null;
+    _combiningForSave = null;
+    _savedSourceMergePending = false;
+    _emitHeld = false;
+    _preferredSourceForSave = null;
+    preferredArrangementPreparer.clear();
     for (final token in _providerDiscoveryCancellations.values) {
       token.cancel();
     }
@@ -897,10 +1036,57 @@ class AppController extends ChangeNotifier {
     discovering = false;
     results = [];
     combined = null;
+    _usableChordOnly = const {};
+    _sourceUpdatesInFlight = null;
+    _pendingDiscoveryWithdrawals.clear();
     checks.clear();
     _cachedDiscoverySourceIds = const {};
+    _preparedChordPresence.clear();
     _historicalCacheUses = const [];
   }
+
+  _DiscoveryStage? _discoveryStage;
+  // A new session for the same song must let the previous evidence batch
+  // finish before replacing its generation token.
+  final _closingDiscoveryStages = <String, Future<void>>{};
+
+  void _sealDiscoveryStage(_DiscoveryStage? stage) {
+    if (stage == null) return;
+    final completion = stage.seal();
+    if (completion == null) return;
+    final identity = stage.identity;
+    _closingDiscoveryStages[identity] = completion;
+    void forget() {
+      if (identical(_closingDiscoveryStages[identity], completion)) {
+        _closingDiscoveryStages.remove(identity);
+      }
+    }
+
+    unawaited(
+      completion.then<void>((_) => forget(), onError: (Object _) => forget()),
+    );
+  }
+
+  int _lastStageGeneration = 0;
+  ({_MergeSnapshot snapshot, SongDocument? document})? _preparedMerge;
+  final _preparedChordPresence = <String, bool>{};
+
+  bool sourceHasChords(SourceResult source) =>
+      _preparedChordPresence[source.body] ?? source.hasChords;
+
+  bool documentHasChords(SongDocument document) =>
+      _preparedChordPresence[document.body] ?? document.hasChords;
+
+  final _preparedLyricPresence = Expando<bool>();
+  final _preparedDocumentUsability = Expando<bool>();
+
+  bool? preparedHasLyrics(Object sourceOrDocument) =>
+      _preparedLyricPresence[sourceOrDocument];
+
+  bool? preparedDocumentUsable(SongDocument document) =>
+      _preparedDocumentUsability[document];
+  ({_MergeSnapshot snapshot, Future<CombineOutcome?> product})?
+  _combiningForSave;
 
   Set<String> _cachedDiscoverySourceIds = const {};
   List<HistoricalCacheUse> _historicalCacheUses = const [];
@@ -919,7 +1105,7 @@ class AppController extends ChangeNotifier {
     cancelDiscovery();
     final epoch = _discoveryEpoch;
     try {
-      final loaded = await loadSong(songId);
+      final loaded = await repository.getSongForComparison(songId);
       if (_disposed ||
           epoch != _discoveryEpoch ||
           searchEpoch != _searchEpoch) {
@@ -928,31 +1114,16 @@ class AppController extends ChangeNotifier {
       if (loaded == null || loaded.extensionError != null) {
         throw const FormatException('invalid_local_data');
       }
-      final stored = SongDocument.fromJson(_snapshotJsonMap(loaded.toJson()));
-      final reference =
-          stored.selectedRecording ??
-          stored.sources
-              .where((source) => source.id == stored.extra['selectedSourceId'])
-              .firstOrNull
-              ?.candidate ??
-          stored.sources
-              .where(
-                (source) =>
-                    source.matchKind != MatchKind.rejected &&
-                    plainLyrics(source.body).trim().isNotEmpty,
-              )
-              .firstOrNull
-              ?.candidate;
-      if (reference == null ||
-          _comparisonKey(reference.toJson()) !=
-              _comparisonKey(expectedReference.toJson())) {
-        throw const FormatException('invalid_local_data');
+      final prepared = await prepareSavedComparison(loaded, expectedReference);
+      if (_disposed ||
+          epoch != _discoveryEpoch ||
+          searchEpoch != _searchEpoch) {
+        return;
       }
       await _selectCandidate(
-        reference,
+        prepared.reference,
         searchQuery: searchQuery,
-        cachedResults: stored.sources,
-        storedComparison: stored,
+        preparedComparison: prepared,
       );
     } catch (_) {
       if (!_disposed &&
@@ -964,54 +1135,12 @@ class AppController extends ChangeNotifier {
     }
   }
 
-  String _comparisonKey(Object? value) {
-    Object? ordered(Object? item) {
-      if (item is Map) {
-        final keys = item.keys.cast<String>().toList()..sort();
-        return {for (final key in keys) key: ordered(item[key])};
-      }
-      if (item is List) return item.map(ordered).toList();
-      return item;
-    }
-
-    return jsonEncode(ordered(value));
-  }
-
-  List<SourceResult> _mergeDiscoveryResults(
-    SongCandidate selected,
-    List<SourceResult> existing,
-    Iterable<SourceResult> incoming,
-  ) {
-    final merged = {for (final source in existing) source.id: source};
-    for (final source in incoming) {
-      final previous = merged[source.id];
-      final cachedHistorical =
-          previous != null &&
-          _historicalCacheUses.any((use) => use.allows(selected, previous));
-      if (cachedHistorical &&
-          !explicitHistoricalWorkMatches(selected, source)) {
-        // Keep diagnostics in checks, but do not discard a usable saved page
-        // because a fresh response for the same ID failed its own validation.
-        continue;
-      }
-      if (cachedHistorical) {
-        _historicalCacheUses = _historicalCacheUses
-            .where((use) => !use.allows(selected, previous))
-            .toList();
-      }
-      merged[source.id] = previous == null
-          ? source
-          : mergeSourceResult(previous, source);
-    }
-    return merged.values.toList();
-  }
-
   /// Chord arrangements receive a final lyric-agreement check after providers
   /// finish. Plain lyrics and previously saved sources can be opened sooner.
   bool isSourceReady(SourceResult source) =>
       !discovering ||
-      !source.hasChords ||
-      _cachedDiscoverySourceIds.contains(source.id);
+      _cachedDiscoverySourceIds.contains(source.id) ||
+      !sourceHasChords(source);
 
   Future<void> selectCandidate(
     SongCandidate candidate, {
@@ -1027,7 +1156,7 @@ class AppController extends ChangeNotifier {
     SongCandidate candidate, {
     String? searchQuery,
     List<SourceResult> cachedResults = const [],
-    SongDocument? storedComparison,
+    PreparedSavedComparison? preparedComparison,
   }) async {
     ++_searchEpoch;
     _cancelCatalogSearch();
@@ -1045,36 +1174,165 @@ class AppController extends ChangeNotifier {
     final youtubeCancellation = _youtubeDiscoveryCancel =
         providerCancellations['youtubemusic'] ?? CancellationToken();
     selection = candidate;
+    final now = DateTime.now().microsecondsSinceEpoch;
+    _lastStageGeneration = now > _lastStageGeneration
+        ? now
+        : _lastStageGeneration + 1;
+    final stage = _repository == null
+        ? null
+        : _DiscoveryStage(
+            repository,
+            candidate.identity,
+            _lastStageGeneration,
+            after: _closingDiscoveryStages[candidate.identity],
+          );
+    _discoveryStage = stage;
     if (searchQuery != null) query = searchQuery;
     // Saved provenance remains available during refresh, including offline.
     // Fresh results replace matching cached identities; a saved historical
     // version additionally requires the replacement's own fresh page proof.
-    final cached = {
-      for (final source in cachedResults) source.id: _snapshotSource(source),
-    }.values.toList();
-    if (storedComparison != null) {
-      final uses = <HistoricalCacheUse>[];
-      for (final source in cached) {
-        final use = HistoricalCacheUse.fromLibrarySnapshot(
-          storedComparison,
-          candidate,
-          source,
-        );
-        if (use != null) uses.add(use);
-      }
-      _historicalCacheUses = uses;
-    }
+    final cached =
+        preparedComparison?.sources ??
+        {for (final source in cachedResults) source.id: source}.values.toList();
+    _historicalCacheUses = preparedComparison?.uses ?? const [];
     _cachedDiscoverySourceIds = cached.map((source) => source.id).toSet();
     results = cached;
+    if (preparedComparison == null && cached.isNotEmpty) stage?.add(cached);
     discovering = true;
     errorCode = null;
-    if (results.isEmpty) {
+    if (preparedComparison != null) {
+      for (final (index, source) in cached.indexed) {
+        final facts = preparedComparison.facts[index];
+        _preparedLyricPresence[source] = facts.hasLyrics;
+        _preparedChordPresence[source.body] = facts.hasChords;
+      }
+      final saved = preparedComparison.savedCombined;
+      final facts = preparedComparison.combinedFacts;
+      if (saved != null && facts != null) {
+        // This is a display snapshot. Only the worker's fresh result can
+        // authorize a new combined Save for the current inputs.
+        combined = saved;
+        _preparedLyricPresence[saved] = facts.hasLyrics;
+        _preparedDocumentUsability[saved] = facts.usable;
+        _preparedChordPresence[saved.body] = facts.hasChords;
+      }
+    }
+    if (cached.isEmpty ||
+        preparedComparison != null && candidate.providerId != 'wikisource') {
       _combineInBackground(candidate);
       _emit();
     } else {
       _savedSourceMergePending = true;
       unawaited(_combine(candidate).then((_) {}, onError: (Object _) {}));
     }
+    if (_disposed || epoch != _discoveryEpoch) return;
+    final pendingSources = <SourceResult>[];
+    final lastProgress = <String, SourceResult>{};
+    Future<void>? sourceBatch;
+    bool current() => epoch == _discoveryEpoch && !_disposed;
+    bool eligible(SourceResult source) =>
+        providerCancellations[source.candidate.providerId]?.isCancelled ==
+            false &&
+        providerEnabled(source.candidate.providerId);
+
+    Future<bool> applySourceUpdates(List<SourceResult> incoming) async {
+      final inputs = incoming.where(eligible).toList();
+      if (inputs.isEmpty || !current()) return false;
+      final uses = _historicalCacheUses;
+      final affectedIds = inputs.map((source) => source.id).toSet();
+      final existing = {
+        for (final source in results)
+          if (affectedIds.contains(source.id)) source.id: source,
+      };
+      if (existing.isEmpty && affectedIds.length == inputs.length) {
+        results = [...results, ...inputs];
+        stage?.add(inputs);
+        return true;
+      }
+      final outcome = await mergeSourceUpdates(
+        candidate,
+        existing,
+        inputs,
+        uses,
+      );
+      if (!current()) return false;
+      final replacements = Map.of(outcome.replacements)
+        ..removeWhere((_, source) => !eligible(source));
+      if (replacements.isEmpty) return false;
+      for (final entry in replacements.entries) {
+        _preparedLyricPresence[entry.value] = outcome.lyricPresence[entry.key];
+        _preparedChordPresence[entry.value.body] =
+            outcome.chordPresence[entry.key]!;
+      }
+      _historicalCacheUses = [
+        for (var i = 0; i < uses.length; i++)
+          if (!replacements.containsKey(outcome.revokedUses[i])) uses[i],
+      ];
+      results = {
+        for (final source in results) source.id: source,
+        ...replacements,
+      }.values.toList();
+      stage?.add(replacements.values);
+      return true;
+    }
+
+    Future<void> drainSourceUpdates() async {
+      // Collect callbacks arriving in the same turn into one worker message.
+      await Future<void>.value();
+      try {
+        while (current() && pendingSources.isNotEmpty) {
+          // Publish withdrawals before a later replacement becomes visible.
+          final withdrawal = pendingSources.indexWhere(
+            (source) => source.matchKind == MatchKind.rejected,
+          );
+          final end = withdrawal < 0 ? pendingSources.length : withdrawal + 1;
+          final batch = pendingSources.sublist(0, end);
+          pendingSources.removeRange(0, end);
+          final changed = await applySourceUpdates(batch);
+          if (changed && current()) {
+            _combineInBackground(candidate);
+            _emit();
+          }
+        }
+      } catch (_) {
+        if (current()) {
+          lastProgress.clear();
+          errorCode = 'discovery_failed';
+          _emit();
+        }
+      } finally {
+        sourceBatch = null;
+        if (current()) {
+          _sourceUpdatesInFlight = null;
+          if (_pendingDiscoveryWithdrawals.isNotEmpty) {
+            _pendingDiscoveryWithdrawals.clear();
+            _emit();
+          }
+        }
+      }
+    }
+
+    void updateSource(SourceResult source) {
+      if (identical(lastProgress[source.id], source)) return;
+      lastProgress[source.id] = source;
+      if (sourceBatch == null && results.any((old) => identical(old, source))) {
+        return;
+      }
+      // Keep the first result available immediately. The provider usually
+      // supplies its lyric fact from the same worker that checked the match.
+      if (sourceBatch == null && !results.any((old) => old.id == source.id)) {
+        results = [...results, source];
+        stage?.add([source]);
+        _combineInBackground(candidate);
+        return;
+      }
+      pendingSources.add(source);
+      if (source.matchKind == MatchKind.rejected) {
+        _pendingDiscoveryWithdrawals.add(source.id);
+      }
+      _sourceUpdatesInFlight = sourceBatch ??= drainSourceUpdates();
+    }
+
     var discoveryClosed = false;
     try {
       final found = await discovery.discover(
@@ -1099,7 +1357,16 @@ class AppController extends ChangeNotifier {
             return;
           }
           final result = check.result;
-          checks[check.providerId] =
+          if (result != null) {
+            if (check.hasLyrics case final hasLyrics?) {
+              _preparedLyricPresence[result] = hasLyrics;
+            }
+            if (check.hasChords case final hasChords?) {
+              _preparedChordPresence[result.body] = hasChords;
+            }
+          }
+          final previous = checks[check.providerId];
+          final next =
               result != null &&
                   result.candidate.providerId == 'wikisource' &&
                   result.matchKind != MatchKind.rejected &&
@@ -1109,47 +1376,67 @@ class AppController extends ChangeNotifier {
                   state: 'failed',
                   code: 'validation_rejected',
                   result: result,
+                  hasLyrics: check.hasLyrics,
+                  hasChords: check.hasChords,
                   operations: check.operations,
                 )
               : check;
-          if (result != null &&
-              !identical(
-                results.where((item) => item.id == result.id).firstOrNull,
-                result,
-              ) &&
-              !(result.hasChords &&
-                  _cachedDiscoverySourceIds.contains(result.id))) {
-            results = _mergeDiscoveryResults(candidate, results, [result]);
-            _combineInBackground(candidate);
+          checks[check.providerId] = next;
+          final hasNewResult =
+              result != null &&
+              !identical(lastProgress[result.id], result) &&
+              !(_cachedDiscoverySourceIds.contains(result.id) &&
+                  sourceHasChords(result));
+          if (hasNewResult) updateSource(result);
+          if (!hasNewResult &&
+              previous != null &&
+              identical(previous.result, next.result) &&
+              previous.state == next.state &&
+              previous.code == next.code &&
+              previous.hasLyrics == next.hasLyrics &&
+              previous.hasChords == next.hasChords) {
+            if (!listEquals(previous.operations, next.operations)) {
+              _emitDiscoveryTraceSoon(epoch);
+            }
+            return;
           }
           _emit();
         },
       );
-      if (epoch != _discoveryEpoch || _disposed) return;
-      results = _mergeDiscoveryResults(candidate, results, [
+      discoveryClosed = true;
+      await sourceBatch;
+      if (!current()) return;
+      await applySourceUpdates([
         for (final source in found)
-          if (providerCancellations.containsKey(source.candidate.providerId) &&
-              !providerCancellations[source.candidate.providerId]!
-                  .isCancelled &&
-              providerEnabled(source.candidate.providerId))
-            source,
+          if (!identical(lastProgress[source.id], source)) source,
       ]);
     } catch (error) {
       if (epoch != _discoveryEpoch || _disposed) return;
       errorCode = error is ProviderException ? error.code : 'discovery_failed';
     } finally {
       discoveryClosed = true;
-      if (epoch == _discoveryEpoch) {
+      await sourceBatch;
+      if (current()) {
         _providerDiscoveryCancellations = {};
         discovering = false;
         try {
-          // The only merge after the last provider: readiness depends on
-          // discovery having closed.
-          await _combine(candidate);
+          final finalMerge = _combine(candidate);
+          if (combined != null && !canSavePreparedCombined) _emit();
+          await finalMerge;
+          if (current()) _emit();
+          await stage?.pending;
+          await stage?.diagnosticsFor(combined);
+        } catch (error) {
+          if (epoch == _discoveryEpoch && !_disposed) {
+            errorCode = error is ProviderException
+                ? error.code
+                : 'discovery_failed';
+            _emit();
+          }
         } finally {
+          _sealDiscoveryStage(stage);
           if (epoch == _discoveryEpoch) combineRunner.release();
         }
-        _emit();
       }
     }
   }
@@ -1162,36 +1449,151 @@ class AppController extends ChangeNotifier {
   /// Bumped when pending merge results must no longer be shown: discovery was
   /// reset or the set of enabled sources shrank.
   int _combineGeneration = 0;
+  int? _scheduledCombineGeneration;
+  Future<void>? _sourceUpdatesInFlight;
+  final _pendingDiscoveryWithdrawals = <String>{};
+  Map<String, SourceResult> _usableChordOnly = const {};
+
+  bool isUsableChordOnlySource(SourceResult source) =>
+      identical(_usableChordOnly[source.id], source) && isSourceReady(source);
+
+  _MergeSnapshot _mergeSnapshot(SongCandidate candidate) => (
+    candidate: candidate,
+    sources: results,
+    historicalUses: _historicalCacheUses,
+    hasPendingSources:
+        discovering && results.any((source) => !isSourceReady(source)),
+  );
+
+  /// A stale preview can stay visible while the worker prepares the next one.
+  /// Save must only offer the chart represented by the current source inputs.
+  bool get canSavePreparedCombined {
+    final candidate = selection;
+    if (candidate == null ||
+        combined == null ||
+        _pendingDiscoveryWithdrawals.isNotEmpty) {
+      return false;
+    }
+    if (_discoveryStage == null) return true;
+    final prepared = _preparedMerge;
+    return prepared != null &&
+        identical(prepared.document, combined) &&
+        prepared.snapshot == _mergeSnapshot(candidate);
+  }
+
+  /// Waits for an already queued or running background merge of the current
+  /// discovery. This never starts a merge; a changed selection or source
+  /// snapshot invalidates the pending Save instead of saving a stale chart.
+  Future<bool> waitForPreparedCombined() async {
+    final candidate = selection;
+    if (candidate == null) return false;
+    final discoveryEpoch = _discoveryEpoch;
+    final stage = _discoveryStage;
+    bool sameDiscovery() =>
+        !_disposed &&
+        discoveryEpoch == _discoveryEpoch &&
+        identical(selection, candidate) &&
+        identical(_discoveryStage, stage);
+
+    while (sameDiscovery()) {
+      final withdrawal = _sourceUpdatesInFlight;
+      if (_pendingDiscoveryWithdrawals.isNotEmpty && withdrawal != null) {
+        await withdrawal;
+        continue;
+      }
+      final snapshot = _mergeSnapshot(candidate);
+      if (canSavePreparedCombined) return true;
+
+      // Background progress schedules a microtask before it enters _combine.
+      // Yield only if work is already queued; this method never submits work.
+      if (_scheduledCombineGeneration == _combineGeneration) {
+        await Future<void>.delayed(Duration.zero);
+        continue;
+      }
+
+      final running = _combiningForSave;
+      if (running == null || running.snapshot != snapshot) return false;
+      try {
+        await running.product;
+      } catch (_) {
+        return false;
+      }
+    }
+    return false;
+  }
 
   /// Merges the current [results]. Completes once [combined] reflects them, or
   /// immediately when a newer request replaced this one or discovery was
   /// reset. Progress updates use [_combineInBackground] instead.
   Future<void> _combine(SongCandidate candidate) async {
-    final available = results
-        .map(
-          (source) => isSourceReady(source)
-              ? source
-              : source.copyWith(
-                  timingTracks: const [],
-                  extra: {...source.extra, 'pendingMatchCheck': true},
-                ),
-        )
-        .toList();
+    _scheduledCombineGeneration = null;
+    final snapshot = _mergeSnapshot(candidate);
+    final prepared = _preparedMerge;
+    if (prepared?.snapshot == snapshot &&
+        identical(combined, prepared?.document)) {
+      return;
+    }
     final generation = _combineGeneration;
+    final running = _combiningForSave;
+    final product = running != null && running.snapshot == snapshot
+        ? running.product
+        : combineRunner.submit(
+            CombineRequest(
+              candidate: candidate,
+              results: snapshot.hasPendingSources
+                  ? [
+                      for (final source in snapshot.sources)
+                        if (isSourceReady(source))
+                          source
+                        else
+                          source.copyWith(
+                            timingTracks: const [],
+                            extra: {...source.extra, 'pendingMatchCheck': true},
+                          ),
+                    ]
+                  : snapshot.sources,
+              historicalCacheUses: snapshot.historicalUses,
+              knownSourceLyrics: [
+                for (final source in snapshot.sources)
+                  _preparedLyricPresence[source],
+              ],
+            ),
+          );
     _combinesInFlight++;
+    _combiningForSave = (snapshot: snapshot, product: product);
     try {
-      final outcome = await combineRunner.submit(
-        CombineRequest(
-          candidate: candidate,
-          results: available,
-          historicalCacheUses: _historicalCacheUses,
-        ),
-      );
+      final outcome = await product;
       if (outcome == null || _disposed || generation != _combineGeneration) {
         return;
       }
       combined = outcome.document;
+      _preparedMerge = (snapshot: snapshot, document: outcome.document);
+      if (outcome.sourceHasLyrics case final lyricPresence?) {
+        for (final (index, source) in snapshot.sources.indexed) {
+          _preparedLyricPresence[source] = lyricPresence[index];
+        }
+      }
+      final document = outcome.document;
+      if (document != null && snapshot == _mergeSnapshot(candidate)) {
+        _discoveryStage?.prepareDiagnostics(document);
+      }
+      final content = outcome.documentContent;
+      final hasChords = outcome.documentHasChords;
+      if (document != null && hasChords != null) {
+        _preparedChordPresence[document.body] = hasChords;
+      }
+      if (document != null && content != null) {
+        _preparedLyricPresence[document] = content.hasLyrics;
+        _preparedDocumentUsability[document] = content.usable;
+      }
+      _usableChordOnly = {
+        for (final source in snapshot.sources)
+          if (outcome.usableChordOnlyIds.contains(source.id)) source.id: source,
+      };
     } finally {
+      if (identical(_combiningForSave?.product, product)) {
+        _combiningForSave = null;
+      }
       if (--_combinesInFlight == 0 && _savedSourceMergePending) {
         _savedSourceMergePending = false;
         if (_emitHeld) {
@@ -1208,21 +1610,31 @@ class AppController extends ChangeNotifier {
   Future<void> flushCombine() async {
     final candidate = selection;
     if (candidate == null) return;
+    final epoch = _discoveryEpoch;
+    await _sourceUpdatesInFlight;
+    if (_disposed || epoch != _discoveryEpoch) return;
     await _combine(candidate);
     _emit();
   }
 
   void _combineInBackground(SongCandidate candidate) {
-    unawaited(
-      _combine(candidate).then(
-        (_) {
-          if (!_disposed) _emit();
-        },
-        // The closing merge of discovery awaits its own result and reports
-        // failures; an intermediate one must not escape as an unhandled error.
-        onError: (Object _) {},
-      ),
-    );
+    final generation = _combineGeneration;
+    if (_scheduledCombineGeneration == generation) return;
+    _scheduledCombineGeneration = generation;
+    scheduleMicrotask(() {
+      if (_scheduledCombineGeneration != generation) return;
+      _scheduledCombineGeneration = null;
+      if (_disposed || generation != _combineGeneration) return;
+      unawaited(
+        _combine(candidate).then(
+          (_) {
+            if (!_disposed && generation == _combineGeneration) _emit();
+          },
+          // The closing merge reports failures. Intermediate work is disposable.
+          onError: (Object _) {},
+        ),
+      );
+    });
   }
 
   String? savedResultId({SourceResult? source}) => source != null
@@ -1230,75 +1642,190 @@ class AppController extends ChangeNotifier {
       : selection == null
       ? null
       : _savedCombined[selection!.identity];
+
+  ({String id, bool allowRejected})? _preferredSourceForSave;
+
+  @visibleForTesting
+  PreferredArrangementPreparer preferredArrangementPreparer =
+      PreferredArrangementPreparer();
+
+  /// Selection starts preparation. Provider updates only replace the latest
+  /// speculative request when the chosen arrangement still exists.
+  void prepareVersionForSave(
+    String versionId, {
+    bool allowRejectedSource = false,
+  }) {
+    final next = versionId == 'combined'
+        ? null
+        : (id: versionId, allowRejected: allowRejectedSource);
+    if (_preferredSourceForSave != next) {
+      preferredArrangementPreparer.discardSpeculation(interruptRunning: true);
+    }
+    _preferredSourceForSave = next;
+    if (next != null) _warmSelectedArrangement();
+  }
+
+  void _warmSelectedArrangement() {
+    final selected = selection;
+    final preferred = _preferredSourceForSave;
+    if (_disposed ||
+        selected == null ||
+        preferred == null ||
+        _historicalCacheUses.isNotEmpty) {
+      return;
+    }
+    final source = results.where((item) => item.id == preferred.id).firstOrNull;
+    if (source == null ||
+        (!preferred.allowRejected && source.matchKind == MatchKind.rejected) ||
+        source.body.trim().isEmpty) {
+      preferredArrangementPreparer.discardSpeculation();
+      return;
+    }
+    final stage = _discoveryStage;
+    preferredArrangementPreparer.warm(
+      CombineRequest(
+        candidate: selected,
+        results: results,
+        historicalCacheUses: _historicalCacheUses,
+      ),
+      sourceId: preferred.id,
+      compact: _discoveryStage != null,
+      allowRejectedPreferredSource: preferred.allowRejected,
+      onPrepared: stage?.prepareDiagnostics,
+    );
+  }
+
+  Future<void> _chartWriteTail = Future<void>.value();
+
+  Future<T> _queueChartWrite<T>(Future<T> Function() write) {
+    final result = _chartWriteTail.then((_) => write());
+    _chartWriteTail = result.then<void>((_) {}, onError: (Object _) {});
+    return result;
+  }
+
   Future<SongDocument> saveResult({
     SourceResult? source,
     bool allowRejectedSource = false,
+    bool includeEvidence = true,
+    void Function(SongDocument)? onChartPrepared,
   }) {
-    // Capture the complete decision synchronously. Discovery may publish more
-    // sources, or the user may select another candidate, while the tracked
-    // save is waiting to write to the library.
-    final selectedSnapshot = selection == null
-        ? null
-        : _snapshotCandidate(selection!);
-    final fallbackCombinedSourceId =
+    final selected = selection;
+    if (selected == null) {
+      return _tracked('save', () async => throw StateError('no_result'));
+    }
+    final withdrawal = _sourceUpdatesInFlight;
+    if (withdrawal != null &&
+        (source == null
+            ? _pendingDiscoveryWithdrawals.isNotEmpty
+            : !allowRejectedSource &&
+                  _pendingDiscoveryWithdrawals.contains(source.id))) {
+      final epoch = _discoveryEpoch;
+      return withdrawal.then((_) async {
+        if (_disposed || epoch != _discoveryEpoch) {
+          throw StateError('no_result');
+        }
+        if (source == null && !await waitForPreparedCombined()) {
+          throw StateError('no_result');
+        }
+        return saveResult(
+          source: source,
+          allowRejectedSource: allowRejectedSource,
+          includeEvidence: includeEvidence,
+          onChartPrepared: onChartPrepared,
+        );
+      });
+    }
+    // Dispatch the snapshot before waiting for an earlier write. Isolate.run
+    // copies its input graph, including the repository-issued capabilities.
+    final resultSnapshots = List<SourceResult>.of(results);
+    final historicalUses = _historicalCacheUses;
+    final stage = _discoveryStage?.identity == selected.identity
+        ? _discoveryStage
+        : null;
+    // Capture the writes for evidence already visible at the tap. Providers
+    // that have yet to respond can continue independently of this Save.
+    final evidenceReady = stage?.pendingFor(
+      sourceId: includeEvidence ? null : source?.id,
+    );
+    final fallbackSource =
         source == null && combined?.extra['combinedFallbackSource'] == true
         ? combined?.extra['selectedSourceId'] as String?
         : null;
-    final requestedSourceId = source?.id ?? fallbackCombinedSourceId;
-    final historicalSaveUses = <HistoricalCacheUse>[];
-    final resultSnapshots = results
-        .map((item) {
-          final snapshot = _snapshotSource(item);
-          if (selectedSnapshot != null) {
-            for (final use in _historicalCacheUses) {
-              final captured = use.capture(selectedSnapshot, item, snapshot);
-              if (captured != null) historicalSaveUses.add(captured);
-            }
-          }
-          if (source == null && !isSourceReady(item)) {
-            return snapshot.copyWith(
-              timingTracks: const [],
-              extra: {...snapshot.extra, 'pendingMatchCheck': true},
-            );
-          }
-          return snapshot;
-        })
-        .toList(growable: false);
+    // Historical permissions bind to the complete current payload. Recheck
+    // them in the save worker in case nested cached metadata has changed.
+    final mergeSnapshot =
+        source == null && fallbackSource == null && historicalUses.isEmpty
+        ? _mergeSnapshot(selected)
+        : null;
+    final preparedMerge = _preparedMerge;
+    final reusable =
+        mergeSnapshot != null &&
+            preparedMerge?.snapshot == mergeSnapshot &&
+            identical(combined, preparedMerge?.document)
+        ? preparedMerge?.document
+        : null;
+    final saveRequest = CombineRequest(
+      candidate: selected,
+      results: resultSnapshots,
+      historicalCacheUses: historicalUses,
+    );
+    final preparedProduct =
+        historicalUses.isEmpty &&
+            source != null &&
+            (allowRejectedSource || source.matchKind != MatchKind.rejected)
+        ? preferredArrangementPreparer.claim(
+            saveRequest,
+            sourceId: source.id,
+            compact: stage != null,
+            allowRejectedPreferredSource: allowRejectedSource,
+          )
+        : null;
+    _preferredSourceForSave = null;
+    // Keep the work Save claimed, and stop any older speculative merge
+    // that could delay it or duplicate the captured fallback.
+    preferredArrangementPreparer.discardSpeculation(interruptRunning: true);
+    final pending = _combiningForSave;
+    final pendingProduct =
+        mergeSnapshot != null && pending?.snapshot == mergeSnapshot
+        ? pending?.product
+        : null;
+    final pendingSources = {
+      if (source == null && mergeSnapshot?.hasPendingSources != false)
+        for (var index = 0; index < resultSnapshots.length; index++)
+          if (!isSourceReady(resultSnapshots[index])) index,
+    };
+    Future<SongDocument> composeCaptured() => combineForSave(
+      saveRequest,
+      preferredSourceId: source?.id ?? fallbackSource,
+      allowRejectedPreferredSource:
+          allowRejectedSource || fallbackSource != null,
+      pendingSources: pendingSources,
+      compactExplicitSave: stage != null,
+    );
+    final capturedProduct =
+        preparedProduct ??
+        (reusable != null
+            ? Future<SongDocument>.value(reusable)
+            : pendingProduct == null
+            ? composeCaptured()
+            : pendingProduct.then<SongDocument>(
+                (outcome) => outcome?.document ?? composeCaptured(),
+              ));
+    final composition = stage == null
+        ? capturedProduct
+        : capturedProduct.then((document) {
+            // A Save can claim an in-flight merge or require a fresh capture.
+            // Stage its diagnostics as soon as that background work completes.
+            stage.prepareDiagnostics(document);
+            return document;
+          });
+    // A fast composition error may arrive while an earlier save still owns
+    // the write queue. Install an error handler now, then propagate it there.
+    unawaited(composition.then<void>((_) {}, onError: (Object _) {}));
 
-    return _tracked('save', () async {
-      final selected = selectedSnapshot;
-      if (selected == null) throw StateError('no_result');
-      SourceResult? selectedSource;
-      if (requestedSourceId != null) {
-        for (final result in resultSnapshots) {
-          if (result.id == requestedSourceId) {
-            selectedSource = result;
-            break;
-          }
-        }
-        if (selectedSource == null ||
-            (selectedSource.matchKind == MatchKind.rejected &&
-                !allowRejectedSource &&
-                fallbackCombinedSourceId == null) ||
-            selectedSource.body.trim().isEmpty) {
-          throw StateError('invalid_source');
-        }
-      }
-      // combineSources also checks song identity and arrangement usability.
-      // For a source save this allows a ready result even while other provider
-      // checks are still running.
-      final document = combineSources(
-        selected,
-        resultSnapshots,
-        preferredSourceId: selectedSource?.id ?? fallbackCombinedSourceId,
-        allowRejectedPreferredSource:
-            allowRejectedSource || fallbackCombinedSourceId != null,
-        historicalCacheUses: historicalSaveUses,
-      );
-      // A combined save may still choose the exact old source that the person
-      // explicitly saved. Keep that decision only while its repository-issued
-      // cache capability still authorizes this unchanged captured payload.
-      final retainedExplicitSource = source == null
+    Future<SongDocument> persist() => _tracked('save', () async {
+      final document = await composition;
+      final retainedExplicitSource = source == null && historicalUses.isNotEmpty
           ? resultSnapshots
                 .where(
                   (result) =>
@@ -1307,9 +1834,7 @@ class AppController extends ChangeNotifier {
                       result.matchReason == 'identity_mismatch' &&
                       selected.artist.trim().isEmpty &&
                       result.candidate.artist.trim().isNotEmpty &&
-                      historicalSaveUses.any(
-                        (use) => use.allows(selected, result),
-                      ),
+                      historicalUses.any((use) => use.allows(selected, result)),
                 )
                 .firstOrNull
           : null;
@@ -1323,40 +1848,184 @@ class AppController extends ChangeNotifier {
         },
         revision: 1,
       );
-      final saved = await repository.saveChosenSong(song);
-      await _afterWrite();
-      return saved;
+      if (stage == null) {
+        final saved = await repository.saveChosenSong(song);
+        await _afterWrite();
+        return saved;
+      }
+      final stagedDiagnosticsHash = await stage.diagnosticsFor(document);
+      final existing = _existingSongFor(selected);
+      final receipt = await repository.saveChosenSongFast(
+        song,
+        candidateIdentity: selected.identity,
+        discoveryGeneration: stage.generation,
+        existingSongId: existing?.id,
+        existingSnapshot: existing,
+        stagedDiagnosticsHash: stagedDiagnosticsHash,
+        evidenceReady: evidenceReady,
+        onChartPrepared: onChartPrepared,
+        expectedExistingHash: existing == null
+            ? null
+            : _songHashes[existing.id],
+      );
+      if (!identical(existing, receipt.song)) {
+        _publishChosenSong(receipt.song, receipt.contentHash);
+      } else if (receipt.changed) {
+        _scheduleAutoSync();
+      }
+      return includeEvidence
+          ? await repository.getSongWithEvidence(receipt.song.id) ??
+                receipt.song
+          : receipt.song;
     });
+    return _queueChartWrite(persist);
   }
 
-  SongCandidate _snapshotCandidate(SongCandidate candidate) =>
-      SongCandidate.fromJson(_snapshotJsonMap(candidate.toJson()));
+  static Iterable<(_ChartTargetKind, String)> _chartTargetKeys(
+    SongDocument song,
+  ) => _chartTargetKeysForSeed(_chartTargetSeed(song));
 
-  SourceResult _snapshotSource(SourceResult source) =>
-      SourceResult.fromJson(_snapshotJsonMap(source.toJson()));
+  bool get _chartTargetsAreCurrent =>
+      identical(songs, _indexedSongs) && songs.length == _indexedSongCount;
 
-  JsonMap _snapshotJsonMap(Map<String, dynamic> value) => {
-    for (final entry in value.entries)
-      entry.key: _snapshotJsonValue(entry.value),
-  };
-
-  Object? _snapshotJsonValue(Object? value) {
-    if (value is Map<String, dynamic>) return _snapshotJsonMap(value);
-    if (value is Map) {
-      return {
-        for (final entry in value.entries)
-          entry.key as String: _snapshotJsonValue(entry.value),
-      };
+  void _rebuildChartTargets() {
+    _chartTargets.clear();
+    for (final song in songs) {
+      for (final key in _chartTargetKeys(song)) {
+        (_chartTargets[key] ??= {}).add(song);
+      }
     }
-    if (value is List) {
-      return [for (final item in value) _snapshotJsonValue(item)];
+    _indexedSongs = songs;
+    _indexedSongCount = songs.length;
+  }
+
+  void _replaceIndexedSong(
+    List<SongDocument> next,
+    SongDocument song, {
+    required SongDocument? previous,
+  }) {
+    final wasIndexed = _chartTargetsAreCurrent;
+    songs = next;
+    if (!wasIndexed) return;
+    if (previous != null) {
+      for (final key in _chartTargetKeys(previous)) {
+        final candidates = _chartTargets[key];
+        candidates?.remove(previous);
+        if (candidates?.isEmpty == true) _chartTargets.remove(key);
+      }
     }
-    return value;
+    for (final key in _chartTargetKeys(song)) {
+      (_chartTargets[key] ??= {}).add(song);
+    }
+    _indexedSongs = songs;
+    _indexedSongCount = songs.length;
+  }
+
+  SongDocument? _existingSongFor(SongCandidate selection) {
+    // A normal library snapshot builds the index before the user taps Save.
+    // Keep direct replacements of the public list coherent as well.
+    if (!_chartTargetsAreCurrent) _rebuildChartTargets();
+    SongDocument? earliest(Set<SongDocument>? candidates) {
+      if (candidates == null) return null;
+      SongDocument? best;
+      for (final song in candidates) {
+        if (best == null ||
+            song.createdAt.isBefore(best.createdAt) ||
+            (song.createdAt == best.createdAt &&
+                song.id.compareTo(best.id) < 0)) {
+          best = song;
+        }
+      }
+      return best;
+    }
+
+    if (selection.providerId.trim().isNotEmpty &&
+        selection.id.trim().isNotEmpty) {
+      final exact = earliest(
+        _chartTargets[(_ChartTargetKind.reference, selection.identity)],
+      );
+      if (exact != null) return exact;
+    }
+    final name = librarySongIdentity(selection.title, selection.artist);
+    return name == null
+        ? null
+        : earliest(_chartTargets[(_ChartTargetKind.name, name)]);
+  }
+
+  void _publishChosenSong(SongDocument song, String hash) {
+    if (_disposed) return;
+    final wasReloading = _snapshotLoadsInFlight > 0;
+    ++_reloadEpoch;
+    final savedIndexCurrent =
+        identical(songs, _savedIndexedSongs) &&
+        songs.length == _savedIndexedSongCount;
+    int byRecency(SongDocument a, SongDocument b) {
+      final updated = b.updatedAt.compareTo(a.updatedAt);
+      return updated == 0 ? a.id.compareTo(b.id) : updated;
+    }
+
+    SongDocument? previous;
+    SongDocument? last;
+    var ordered = true;
+    var inserted = false;
+    final next = <SongDocument>[];
+    for (final prior in songs) {
+      if (prior.id == song.id) {
+        previous = prior;
+        continue;
+      }
+      if (last != null && byRecency(last, prior) > 0) ordered = false;
+      last = prior;
+      if (!inserted && byRecency(song, prior) <= 0) {
+        next.add(song);
+        inserted = true;
+      }
+      next.add(prior);
+    }
+    if (!inserted) next.add(song);
+    if (!ordered) next.sort(byRecency);
+    _replaceIndexedSong(next, song, previous: previous);
+    _songHashes[song.id] = hash;
+    _songDisplayKeys.remove(song.id);
+    if (savedIndexCurrent && ordered) {
+      _updateSavedIndex(song, previous);
+    } else {
+      _indexSaved();
+    }
+    _notifyWrite(songsChanged: true);
+    _scorePublishedSong(song);
+    if (wasReloading) {
+      unawaited(_reload().then<void>((_) => _emit(), onError: (Object _) {}));
+    }
+  }
+
+  void _scorePublishedSong(SongDocument song) {
+    final key = song.metadata['key'];
+    if (key is! String || key.trim().isEmpty) {
+      unawaited(
+        scoreSongDisplayKeys([song]).then<void>((scored) {
+          final keys = scored[song.id];
+          if (_disposed ||
+              keys == null ||
+              !identical(findSong(song.id), song)) {
+            return;
+          }
+          _displayKeysByDocument[song] = keys;
+          _songDisplayKeys[song.id] = keys;
+          _songDisplayKeysRevision++;
+          _emit();
+        }, onError: (Object _) {}),
+      );
+    }
   }
 
   Future<void> _afterWrite({bool songsChanged = true}) async {
     await _reload();
     if (songsChanged) _indexSaved();
+    _notifyWrite(songsChanged: songsChanged);
+  }
+
+  void _notifyWrite({required bool songsChanged}) {
     _emit();
     if (++_writesSinceCompaction >= 50) {
       _writesSinceCompaction = 0;
@@ -1432,31 +2101,58 @@ class AppController extends ChangeNotifier {
     String id, {
     required int transpose,
     required double playbackSpeed,
-  }) => _tracked('save', () async {
-    for (var attempt = 0; attempt < 4; attempt++) {
-      final hash = await repository.getSongHash(id);
-      final current = await repository.getSong(id);
-      if (hash == null || current == null) return false;
-      final saved = await repository.saveSongIfUnchanged(
-        current.copyWith(
+  }) => _queueChartWrite(
+    () => _tracked('save', () async {
+      for (var attempt = 0; attempt < 4; attempt++) {
+        final cached = attempt == 0 ? findSong(id) : null;
+        final cachedHash = cached == null ? null : _songHashes[id];
+        final hash = cachedHash ?? await repository.getSongEditHash(id);
+        final current = cachedHash == null
+            ? await repository.getPlayableSong(id)
+            : cached;
+        if (hash == null || current == null) return false;
+        final updated = current.copyWith(
           metadata: {
             ...current.metadata,
             'x_verse_player_transpose': transpose,
             'x_verse_player_speed': playbackSpeed,
           },
-        ),
-        hash,
-        mustExist: true,
-      );
-      if (saved) {
-        // Playback preferences do not change searchable song content and do
-        // not start cloud work. The local outbox retains the change for sync.
-        await _afterWrite(songsChanged: false);
+        );
+        final saved = await repository.savePlaybackPreferencesIfUnchanged(
+          updated,
+          hash,
+        );
+        if (saved == null) continue;
+        if (_disposed) return true;
+        if (identical(findSong(id), current) && _songHashes[id] == hash) {
+          final snapshot = updated.copyWith(favorite: saved.favorite);
+          final wasReloading = _snapshotLoadsInFlight > 0;
+          ++_reloadEpoch;
+          _replaceIndexedSong(
+            [for (final song in songs) song.id == id ? snapshot : song],
+            snapshot,
+            previous: current,
+          );
+          _songHashes = {..._songHashes, id: saved.hash};
+          if (_songDisplayKeys[id] case final keys?) {
+            _displayKeysByDocument[snapshot] = keys;
+          } else {
+            _scorePublishedSong(snapshot);
+          }
+          _notifyWrite(songsChanged: false);
+          if (wasReloading) {
+            unawaited(
+              _reload().then<void>((_) => _emit(), onError: (Object _) {}),
+            );
+          }
+        } else {
+          await _afterWrite(songsChanged: false);
+        }
         return true;
       }
-    }
-    throw StateError('save_conflict');
-  });
+      throw StateError('save_conflict');
+    }),
+  );
 
   /// Toggles relative to the stored song, so a concurrent background change is
   /// not overwritten with a stale snapshot.
@@ -1465,8 +2161,8 @@ class AppController extends ChangeNotifier {
     // between makes it retry on the newer stored song instead of overwriting.
     var saved = false;
     for (var attempt = 0; attempt < 4 && !saved; attempt++) {
-      final hash = await repository.getSongHash(song.id);
-      final current = await repository.getSong(song.id);
+      final hash = await repository.getSongEditHash(song.id);
+      final current = await repository.getPlayableSong(song.id);
       if (current == null) {
         await _reload();
         _indexSaved();
@@ -2204,7 +2900,10 @@ class AppController extends ChangeNotifier {
   @override
   void dispose() {
     _disposed = true;
-    combineRunner.release();
+    _discoveryTraceNotification?.cancel();
+    preferredArrangementPreparer.clear();
+    _sealDiscoveryStage(_discoveryStage);
+    combineRunner.discard();
     _historicalCacheUses = const [];
     _autoSyncTimer?.cancel();
     for (final service in {..._syncProviders.values, ?_sync}) {
@@ -2248,17 +2947,183 @@ class AppController extends ChangeNotifier {
       );
     }
     if (_ownsRepository && _repository != null) {
-      // Only a database this controller opened is closed by it, and only after
-      // an in-flight sync has finished with it.
+      // Let in-flight background database work finish before closing a
+      // repository owned by this controller.
       final owned = _repository!;
       unawaited(
-        (_activeSyncAction ?? Future<void>.value())
-            .catchError((Object _) {})
-            .then<void>((_) => owned.close())
-            .catchError((Object _) {}),
+        Future.wait<void>([
+          _recentQueue,
+          _chartWriteTail,
+          if (_activeSyncAction != null)
+            _activeSyncAction!.then<void>((_) {}, onError: (Object _) {}),
+          for (final completion in _closingDiscoveryStages.values)
+            completion.then<void>((_) {}, onError: (Object _) {}),
+        ]).then<void>((_) => owned.close()).catchError((Object _) {}),
       );
     }
     messages.dispose();
     super.dispose();
+  }
+}
+
+enum _ChartTargetKind { reference, name }
+
+typedef _ChartTargetSeed = ({
+  List<String> references,
+  (String, String) display,
+  (String, String)? reference,
+});
+
+// Transfer only identity fields so indexing never copies chart or source bodies.
+_ChartTargetSeed? _chartTargetSeed(SongDocument song) {
+  if (song.extra['syncConflict'] != null) return null;
+  final reference = song.selectedRecording;
+  return (
+    references: librarySongReferenceKeys(song).toList(),
+    display: (song.title, song.artist),
+    reference: reference == null ? null : (reference.title, reference.artist),
+  );
+}
+
+Iterable<(_ChartTargetKind, String)> _chartTargetKeysForSeed(
+  _ChartTargetSeed? seed,
+) sync* {
+  if (seed == null) return;
+  for (final key in seed.references) {
+    yield (_ChartTargetKind.reference, key);
+  }
+  for (final key in librarySongNames(seed.display, seed.reference)) {
+    yield (_ChartTargetKind.name, key);
+  }
+}
+
+Future<Map<(_ChartTargetKind, String), Set<int>>> _prepareChartTargetBuckets(
+  List<_ChartTargetSeed?> seeds,
+) => Isolate.run(() {
+  final buckets = <(_ChartTargetKind, String), Set<int>>{};
+  for (var index = 0; index < seeds.length; index++) {
+    for (final key in _chartTargetKeysForSeed(seeds[index])) {
+      (buckets[key] ??= {}).add(index);
+    }
+  }
+  return buckets;
+}, debugName: 'singbook-library-chart-index');
+
+/// Batches newly accepted provider evidence independently of the preview and
+/// UI. A closed discovery keeps already accepted data and ignores later input.
+class _DiscoveryStage {
+  _DiscoveryStage(
+    this.repository,
+    this.identity,
+    this.generation, {
+    Future<void>? after,
+  }) : _tail =
+           after?.then<void>((_) {}, onError: (Object _) {}) ??
+           Future<void>.value() {
+    started = _append(
+      () => repository.beginDiscoverySession(
+        candidateIdentity: identity,
+        generation: generation,
+      ),
+    );
+  }
+
+  final LibraryRepository repository;
+  final String identity;
+  final int generation;
+  late final Future<void> started;
+  var _batch = <SourceResult>[];
+  Future<void> _tail;
+  ({Object error, StackTrace stack})? _writeFailure;
+  final _sourceWriteFailures = <String, ({Object error, StackTrace stack})>{};
+  bool _batchQueued = false;
+  bool _sealed = false;
+
+  final _diagnostics = Expando<Future<String?>>();
+
+  void prepareDiagnostics(SongDocument document) {
+    _diagnostics[document] ??= repository
+        .stageMergeDiagnostics(
+          document,
+          candidateIdentity: identity,
+          generation: generation,
+        )
+        .then<String?>((hash) => hash, onError: (Object _) => null);
+  }
+
+  Future<String?>? diagnosticsFor(SongDocument? document) =>
+      document == null ? null : _diagnostics[document];
+
+  Future<void> get pending => pendingFor();
+
+  Future<void> pendingFor({String? sourceId}) {
+    final completion = _tail.then((_) {
+      // An explicit lightweight Save can recover a durably staged version
+      // when a different source failed. A combined Save needs all its inputs.
+      final failure =
+          _writeFailure ??
+          (sourceId == null
+              ? _sourceWriteFailures.values.firstOrNull
+              : _sourceWriteFailures[sourceId]);
+      if (failure != null) {
+        Error.throwWithStackTrace(failure.error, failure.stack);
+      }
+    });
+    // Save may capture this barrier while it waits for its own write turn.
+    unawaited(completion.then<void>((_) {}, onError: (Object _) {}));
+    return completion;
+  }
+
+  Future<void> _append(Future<void> Function() write) {
+    final attempt = _tail.then((_) => write());
+    // Report incomplete evidence through pending, but allow later batches
+    // and session sealing to proceed after a failed transaction.
+    _tail = attempt.then<void>(
+      (_) {},
+      onError: (Object error, StackTrace stack) {
+        _writeFailure ??= (error: error, stack: stack);
+      },
+    );
+    return attempt;
+  }
+
+  void add(Iterable<SourceResult> sources) {
+    if (_sealed) return;
+    // A provider can replace an accepted payload while a write is queued.
+    // Keep both observations in order. The repository deduplicates content.
+    _batch.addAll(sources);
+    if (_batchQueued) return;
+    _batchQueued = true;
+    _append(() async {
+      _batchQueued = false;
+      final inputs = _batch;
+      _batch = [];
+      await started;
+      try {
+        await repository.stageDiscoverySources(
+          candidateIdentity: identity,
+          generation: generation,
+          sources: inputs,
+        );
+      } catch (error, stack) {
+        // The staging transaction is atomic, so each input in the failed
+        // batch may be missing from history even if later batches succeed.
+        for (final source in inputs) {
+          _sourceWriteFailures[source.id] ??= (error: error, stack: stack);
+        }
+      }
+    });
+  }
+
+  Future<void>? seal() {
+    if (_sealed) return null;
+    _sealed = true;
+    return _append(() async {
+      await started;
+      await repository.sealDiscoverySession(
+        candidateIdentity: identity,
+        generation: generation,
+      );
+    });
   }
 }

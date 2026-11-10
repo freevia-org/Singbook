@@ -9,45 +9,61 @@ import 'models.dart';
 
 const _historyKey = 'previousSourceVersions';
 
-Object? _ordered(Object? value) {
+Object? _ordered(Object? value, {bool omitSourceFetchTime = false}) {
   if (value is Map) {
     final keys = value.keys.cast<String>().toList()..sort();
-    return {for (final key in keys) key: _ordered(value[key])};
+    final source = value['candidate'] is Map && value['matchKind'] is String;
+    return {
+      for (final key in keys)
+        if (!omitSourceFetchTime || !source || key != 'retrievedAt')
+          key: _ordered(value[key], omitSourceFetchTime: omitSourceFetchTime),
+    };
   }
-  if (value is List) return value.map(_ordered).toList();
+  if (value is List) {
+    return [
+      for (final item in value)
+        _ordered(item, omitSourceFetchTime: omitSourceFetchTime),
+    ];
+  }
   return value;
 }
 
 String _json(Object? value) => jsonEncode(_ordered(value));
 
-JsonMap _timingPayload(TimingTrack track) =>
-    {
-        ...track.toJson(),
-        'id': track.extra['archivedOriginalTrackId'] ?? track.id,
-      }
+JsonMap _timingPayload(JsonMap track) =>
+    {...track, 'id': track['archivedOriginalTrackId'] ?? track['id']}
       ..remove('archivedOriginalTrackId')
       ..remove('status')
       ..remove('binding');
 
-String timingPayloadFingerprint(TimingTrack track) =>
-    sha256.convert(utf8.encode(_json(_timingPayload(track)))).toString();
+String timingPayloadFingerprint(TimingTrack track) => sha256
+    .convert(utf8.encode(_json(_timingPayload(track.toJson()))))
+    .toString();
 
 /// Content identity includes metadata and raw timing, not only lyric text.
 /// Archiving a timing track must not create a new historical payload on every
 /// subsequent save. Retrieval timestamps and the history container are not
 /// changes to the source's actual facts.
-String sourcePayloadFingerprint(SourceResult source) {
-  final payload = {...source.toJson()}
-    ..remove(_historyKey)
-    ..remove('unparsedSourceHistory')
+String sourcePayloadFingerprint(SourceResult source) =>
+    _fingerprintSnapshot(_historyPayload(source));
+
+String _fingerprintSnapshot(JsonMap snapshot) {
+  final payload = {...snapshot}
     ..remove('metadataPayloadOrigins')
-    ..remove('retrievedAt')
-    ..remove('retainedPreviousPayload');
+    ..remove('retrievedAt');
   payload['timingTracks'] = [
-    for (final track in source.timingTracks) _timingPayload(track),
+    for (final track in snapshot['timingTracks'] as List<JsonMap>)
+      _timingPayload(track),
   ];
-  return sha256.convert(utf8.encode(_json(payload))).toString();
+  return sourceArchiveFingerprint(payload);
 }
+
+/// Stable identity for an archived snapshot, including nested provider payloads.
+String sourceArchiveFingerprint(JsonMap payload) => sha256
+    .convert(
+      utf8.encode(jsonEncode(_ordered(payload, omitSourceFetchTime: true))),
+    )
+    .toString();
 
 bool _present(Object? value) =>
     value != null &&
@@ -164,9 +180,10 @@ bool _preservesArrangement(SourceResult previous, SourceResult incoming) {
   for (final line in oldLines.where(
     (line) => !line.directive && line.text.trim().isNotEmpty,
   )) {
+    final identity = _identity(line.text);
     while (cursor < newLines.length &&
         (newLines[cursor].directive ||
-            _identity(newLines[cursor].text) != _identity(line.text))) {
+            _identity(newLines[cursor].text) != identity)) {
       cursor++;
     }
     if (cursor == newLines.length) return false;
@@ -179,12 +196,14 @@ bool _preservesArrangement(SourceResult previous, SourceResult incoming) {
     }
     cursor++;
   }
-  final sections = newLines
-      .where((line) => line.directive)
-      .map((line) => line.text)
-      .toList();
+  final sections = <String, int>{};
+  for (final line in newLines.where((line) => line.directive)) {
+    sections.update(line.text, (count) => count + 1, ifAbsent: () => 1);
+  }
   for (final section in oldLines.where((line) => line.directive)) {
-    if (!sections.remove(section.text)) return false;
+    final count = sections[section.text] ?? 0;
+    if (count == 0) return false;
+    sections[section.text] = count - 1;
   }
   return true;
 }
@@ -223,7 +242,7 @@ int _authority(SourceResult source) => source.hasPendingMatchCheck
         MatchKind.rejected => -1,
       };
 
-JsonMap _historyPayload(SourceResult source) => {...source.toJson()}
+JsonMap _historyPayload(SourceResult source) => source.toJson()
   ..remove(_historyKey)
   ..remove('unparsedSourceHistory')
   ..remove('retainedPreviousPayload');
@@ -234,6 +253,12 @@ JsonMap _historyPayload(SourceResult source) => {...source.toJson()}
 /// remain recoverable without granting archived data active timing authority.
 SourceResult mergeSourceResult(SourceResult previous, SourceResult incoming) {
   if (previous.id != incoming.id) return incoming;
+  late final previousSnapshot = _historyPayload(previous);
+  late final incomingSnapshot = _historyPayload(incoming);
+  late final previousFingerprint = _fingerprintSnapshot(previousSnapshot);
+  late final incomingFingerprint = _fingerprintSnapshot(incomingSnapshot);
+  String inputFingerprint(SourceResult source) =>
+      identical(source, previous) ? previousFingerprint : incomingFingerprint;
   final sameEvidence = _sameEvidence(previous, incoming);
   SourceResult chosen = incoming;
   if (sameEvidence && incoming.matchKind != MatchKind.rejected) {
@@ -244,17 +269,18 @@ SourceResult mergeSourceResult(SourceResult previous, SourceResult incoming) {
             incoming.body.trim().isEmpty)) {
       chosen = previous;
     } else if (oldRank >= 1 && newRank == oldRank) {
-      final fuller = preferCompatibleLyrics(previous.body, [incoming.body]);
-      // Different, non-corroborated lyric text remains an alternative. Newer
-      // arrival and raw length alone do not establish a better arrangement.
-      if ((previous.body == incoming.body &&
+      final sameBody = previous.body == incoming.body;
+      // Metadata-only refreshes can keep the chart without reparsing it.
+      // Different text must preserve the arrangement before it can replace it.
+      if (_conflictingSetup(previous, incoming) ||
+          (sameBody &&
               previous.timingTracks.isNotEmpty &&
               incoming.timingTracks.isEmpty) ||
-          _conflictingSetup(previous, incoming) ||
-          !_preservesArrangement(previous, incoming) ||
-          (fuller != incoming.body &&
-              previous.body != incoming.body &&
-              !_addsCompatibleArrangement(previous, incoming))) {
+          (!sameBody &&
+              (!_preservesArrangement(previous, incoming) ||
+                  (preferCompatibleLyrics(previous.body, [incoming.body]) !=
+                          incoming.body &&
+                      !_addsCompatibleArrangement(previous, incoming))))) {
         chosen = previous;
       }
     }
@@ -329,7 +355,7 @@ SourceResult mergeSourceResult(SourceResult previous, SourceResult incoming) {
         facts[entry.key] = entry.value;
         payloadOrigins[entry.key] =
             jsonMap(other.extra['metadataPayloadOrigins'])[entry.key] ??
-            sourcePayloadFingerprint(other);
+            inputFingerprint(other);
       } else if (!const {
             'key',
             'capo',
@@ -393,8 +419,8 @@ SourceResult mergeSourceResult(SourceResult previous, SourceResult incoming) {
       }
     }
     history.putIfAbsent(
-      sourcePayloadFingerprint(source),
-      () => _historyPayload(source),
+      inputFingerprint(source),
+      () => identical(source, previous) ? previousSnapshot : incomingSnapshot,
     );
   }
   final result = SourceResult(
@@ -412,8 +438,7 @@ SourceResult mergeSourceResult(SourceResult previous, SourceResult incoming) {
       if (conflicts.isNotEmpty) 'metadataConflicts': conflicts,
       if (payloadOrigins.isNotEmpty) 'metadataPayloadOrigins': payloadOrigins,
       if (identical(chosen, previous) &&
-          sourcePayloadFingerprint(previous) !=
-              sourcePayloadFingerprint(incoming))
+          previousFingerprint != incomingFingerprint)
         'retainedPreviousPayload': true,
     },
   );

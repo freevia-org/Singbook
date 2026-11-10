@@ -87,6 +87,32 @@ void main() {
     expect(ui.state.recent.first.playCount, 3);
   });
 
+  test(
+    'Save uses the filtered fallback without a rendered comparison',
+    () async {
+      ui.setSearchFilter('language', 'en');
+      const matching = SourceResult(
+        candidate: SongCandidate(
+          providerId: 'fixture',
+          id: 'english',
+          title: 'Signal Song',
+          artist: 'The Signals',
+        ),
+        body: '[C]The English chart',
+        metadata: {'language': 'EN'},
+        matchKind: MatchKind.sameSong,
+      );
+      await app.selectCandidate(_reference);
+      app.results = [_savedSource, matching];
+
+      await ui.saveSelectedVersion();
+
+      expect(ui.state.route, VerseRoute.reader);
+      expect(app.songs.single.body, matching.body);
+      expect(app.songs.single.extra['savedSourceId'], matching.id);
+    },
+  );
+
   test('a ready version opens while discovery is still running', () async {
     ui.dispose();
     app.dispose();
@@ -155,7 +181,11 @@ void main() {
       expect(ui.state.route, VerseRoute.reader);
       expect(app.songs.single.body, pendingChart.body);
       expect(app.songs.single.extra['savedSourceId'], pendingChart.id);
-      expect(app.songs.single.sources.single.body, pendingChart.body);
+      expect(app.songs.single.sources, isEmpty);
+      expect(
+        (await repository.getSong(app.songs.single.id))?.body,
+        pendingChart.body,
+      );
     },
   );
 
@@ -509,6 +539,9 @@ class _ReadyController extends VerseUiController {
       ],
     ),
   );
+  @override
+  void selectVersion(String versionId) => expect(versionId, 'ready');
+
   @override
   Future<void> saveSelectedVersion() async {
     opened = true;

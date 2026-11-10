@@ -386,6 +386,29 @@ class DisplayMetadata {
       album != null && durationSeconds != null && artworkUrl != null;
 }
 
+/// Projects display facts for one comparison, preserving donor arrival order.
+List<DisplayMetadata> comparisonDisplayMetadata({
+  required List<({SongCandidate record, bool rejected})> targets,
+  required Iterable<SongCandidate> donors,
+}) {
+  (String, String) identity(SongCandidate candidate) =>
+      (_identity(candidate.title), _identity(candidate.artist));
+
+  final bySong = <(String, String), List<SongCandidate>>{};
+  for (final donor in donors) {
+    (bySong[identity(donor)] ??= []).add(donor);
+  }
+  return [
+    for (final target in targets)
+      displayMetadataFor(
+        target.record,
+        target.rejected
+            ? const []
+            : bySong[identity(target.record)] ?? const [],
+      ),
+  ];
+}
+
 /// Fills one row's missing display facts from other rows of the same song,
 /// such as another catalog's hit in the same search. Like
 /// [enrichCombinedDisplayMetadata] this is display only: candidates, their
@@ -422,8 +445,17 @@ DisplayMetadata displayMetadataFor(
       excludedScopes.contains(candidate.metadata['identityScope']) ||
       excludedScopes.contains(candidate.extra['identityScope']) ||
       candidate.hasPendingMatchCheck;
+  if (donors.isEmpty ||
+      (album != null && duration != null && artwork != null) ||
+      excluded(target)) {
+    return DisplayMetadata(
+      album: album,
+      durationSeconds: duration,
+      artworkUrl: artwork,
+    );
+  }
   final title = _identity(target.title), artist = _identity(target.artist);
-  if (title.isEmpty || artist.isEmpty || excluded(target)) {
+  if (title.isEmpty || artist.isEmpty) {
     return DisplayMetadata(
       album: album,
       durationSeconds: duration,
@@ -431,21 +463,21 @@ DisplayMetadata displayMetadataFor(
     );
   }
   final targetAlbum = album == null ? null : _identity(album);
-  final ordered = donors.toList().asMap().entries.toList()
-    ..sort((a, b) {
-      int rank(SongCandidate candidate) {
-        final found = _album(candidate);
-        return targetAlbum != null &&
-                found != null &&
-                _identity(found) == targetAlbum
-            ? 0
-            : 1;
+  var ordered = donors;
+  if (targetAlbum != null) {
+    final sameAlbum = <SongCandidate>[];
+    final remaining = <SongCandidate>[];
+    for (final donor in donors) {
+      final found = _album(donor);
+      if (found != null && _identity(found) == targetAlbum) {
+        sameAlbum.add(donor);
+      } else {
+        remaining.add(donor);
       }
-
-      final score = rank(a.value).compareTo(rank(b.value));
-      return score != 0 ? score : a.key.compareTo(b.key);
-    });
-  for (final donor in ordered.map((entry) => entry.value)) {
+    }
+    ordered = sameAlbum.followedBy(remaining);
+  }
+  for (final donor in ordered) {
     if (album != null && duration != null && artwork != null) break;
     if (excluded(donor) ||
         title != _identity(donor.title) ||

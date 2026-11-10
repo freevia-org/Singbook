@@ -1,12 +1,15 @@
 import 'models.dart';
 
+final _apostrophes = RegExp("['‘’]");
+final _nameSeparators = RegExp(r'[^\p{L}\p{N}]+', unicode: true);
+
 /// A conservative library key: punctuation/case can vary between providers,
 /// but artist names and edition words (live, remix, acoustic, etc.) stay intact.
 String? librarySongIdentity(String title, String artist) {
   String normalize(String text) => text
       .toLowerCase()
-      .replaceAll(RegExp("['‘’]"), '')
-      .replaceAll(RegExp(r'[^\p{L}\p{N}]+', unicode: true), ' ')
+      .replaceAll(_apostrophes, '')
+      .replaceAll(_nameSeparators, ' ')
       .trim();
   final name = normalize(title), performer = normalize(artist);
   return name.isEmpty || performer.isEmpty ? null : '$performer\u0000$name';
@@ -14,20 +17,47 @@ String? librarySongIdentity(String title, String artist) {
 
 /// An exact persisted search reference outranks display-name matching. Conflict
 /// copies remain independent documents and are never replacement targets.
-int librarySongMatchPriority(SongDocument song, SongCandidate selected) {
-  if (song.extra['syncConflict'] != null) return 0;
+bool librarySongHasReference(SongDocument song, String identity) =>
+    librarySongReferenceKeys(song).contains(identity);
+
+Iterable<String> librarySongReferenceKeys(SongDocument song) sync* {
+  if (song.extra['syncConflict'] != null) return;
+  if (song.selectedRecording?.identity case final reference?) yield reference;
+  if (song.extra['combinedSelection'] case final String combined) {
+    yield combined;
+  }
+}
+
+bool librarySongHasName(SongDocument song, String identity) =>
+    librarySongNameKeys(song).contains(identity);
+
+Iterable<String> librarySongNameKeys(SongDocument song) sync* {
+  if (song.extra['syncConflict'] != null) return;
   final reference = song.selectedRecording;
+  yield* librarySongNames(
+    (song.title, song.artist),
+    reference == null ? null : (reference.title, reference.artist),
+  );
+}
+
+Iterable<String> librarySongNames(
+  (String, String) display,
+  (String, String)? reference,
+) sync* {
+  final name = librarySongIdentity(display.$1, display.$2);
+  if (name != null) yield name;
+  if (reference != null && reference != display) {
+    final referenceName = librarySongIdentity(reference.$1, reference.$2);
+    if (referenceName != null && referenceName != name) yield referenceName;
+  }
+}
+
+int librarySongMatchPriority(SongDocument song, SongCandidate selected) {
   if (selected.providerId.trim().isNotEmpty &&
       selected.id.trim().isNotEmpty &&
-      (reference?.identity == selected.identity ||
-          song.extra['combinedSelection'] == selected.identity)) {
+      librarySongHasReference(song, selected.identity)) {
     return 2;
   }
   final identity = librarySongIdentity(selected.title, selected.artist);
-  if (identity == null) return 0;
-  return librarySongIdentity(song.title, song.artist) == identity ||
-          reference != null &&
-              librarySongIdentity(reference.title, reference.artist) == identity
-      ? 1
-      : 0;
+  return identity != null && librarySongHasName(song, identity) ? 1 : 0;
 }

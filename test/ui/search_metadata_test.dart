@@ -158,6 +158,65 @@ void main() {
       expect(version.artworkUrl, isNull);
     }
   });
+
+  test(
+    'large comparisons expose sources before background enrichment',
+    () async {
+      await start([
+        _CatalogProvider('genius', [
+          const SongCandidate(
+            providerId: 'genius',
+            id: '1',
+            title: 'Sample Song',
+            artist: 'Test Artist',
+            metadata: {'artworkUrl': _art},
+          ),
+          for (var index = 0; index < 40; index++)
+            SongCandidate(
+              providerId: 'genius',
+              id: 'unrelated-$index',
+              title: 'Unrelated song $index',
+              artist: 'Other Artist',
+            ),
+        ], body: 'Genius line one\nTwo'),
+        _CatalogProvider(
+          'other',
+          const [
+            SongCandidate(
+              providerId: 'other',
+              id: '7',
+              title: 'Sample Song',
+              artist: 'Test Artist',
+              album: 'Demo Album',
+              durationSeconds: 200,
+            ),
+          ],
+          catalog: false,
+          body: 'Other line one\nTwo',
+        ),
+      ]);
+      await search();
+      await ui.selectReference(
+        ui.state.autocomplete.firstWhere((item) => item.id == 'genius:1'),
+      );
+
+      final pending = ui.state.comparison!;
+      expect(pending.reference.album, isNull);
+      expect(pending.reference.artworkUrl, _art);
+      expect(
+        pending.alternatives.map((row) => row.providerId),
+        contains('other'),
+      );
+
+      await ui.settleComparisonMetadata();
+
+      final ready = ui.state.comparison!;
+      expect(ready.reference.album, 'Demo Album');
+      expect(ready.reference.durationSeconds, 200);
+      expect(ready.reference.artworkUrl, _art);
+      expect(ready.selectedVersionId, pending.selectedVersionId);
+    },
+  );
 }
 
 class _CatalogProvider implements LyricsProvider {

@@ -5,6 +5,7 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:singbook/application/app_controller.dart';
 import 'package:singbook/data/library_repository.dart';
 import 'package:singbook/domain/models.dart';
+import 'package:singbook/domain/search_grouping.dart';
 import 'package:singbook/providers/core/service.dart';
 import 'package:singbook/providers/provider.dart';
 import 'package:singbook/ui/app_controller_adapter.dart';
@@ -18,6 +19,45 @@ const _definitions = [
 
 void main() {
   sqfliteFfiInit();
+
+  test(
+    'catalog projection skips obsolete filters and publishes only the latest',
+    () async {
+      final firstStarted = Completer<void>();
+      final releaseFirst = Completer<void>();
+      final fields = <String>[];
+      final h = await _Harness.open(
+        catalogProjector: (input) async {
+          fields.add(input.field);
+          if (fields.length == 1) {
+            firstStarted.complete();
+            await releaseFirst.future;
+          }
+          return projectCatalog(input);
+        },
+      );
+      addTearDown(h.close);
+      h.ui.setHomeListMode(HomeListMode.online);
+      h.ui.setQuery(_query);
+      final search = h.ui.submitSearch();
+      final genius = await h.discovery.searchAt('genius');
+      final lrclib = await h.discovery.searchAt('lrclib');
+      try {
+        genius.complete([_candidate('genius', 'primary', _query)]);
+        await firstStarted.future.timeout(const Duration(seconds: 3));
+        h.ui.setSearchFilter('field', 'title');
+        h.ui.setSearchFilter('field', 'artist');
+        lrclib.complete([]);
+        expect(h.ui.state.autocomplete, isEmpty);
+      } finally {
+        releaseFirst.complete();
+      }
+      await search;
+      expect(fields, ['all', 'artist']);
+      expect(h.ui.state.autocomplete, isEmpty);
+      expect(h.ui.state.searchState, LoadState.loaded);
+    },
+  );
 
   test(
     'streamed catalog batches keep the preferred artwork row first',
@@ -40,6 +80,7 @@ void main() {
 
       genius.complete([artwork]);
       await _settle();
+      await h.ui.settleCatalogProjection();
       expect(h.app.searching, isTrue);
       expect(h.ui.state.searchState, LoadState.loaded);
       expect(h.ui.state.autocomplete.single.id, 'genius:333411');
@@ -117,6 +158,7 @@ void main() {
 
       lrclib.complete([_candidate('lrclib', 'secondary', _query)]);
       await _settle();
+      await h.ui.settleCatalogProjection();
       expect(h.ui.state.autocomplete.single.providerId, 'lrclib');
       genius.complete([
         _candidate(
@@ -167,7 +209,10 @@ class _Harness {
   final AppController app;
   final AppControllerAdapter ui;
 
-  static Future<_Harness> open() async {
+  static Future<_Harness> open({
+    Future<List<SearchRecordingGroup>> Function(CatalogProjection)?
+    catalogProjector,
+  }) async {
     final repository = await LibraryRepository.open(
       path: inMemoryDatabasePath,
       factory: databaseFactoryFfi,
@@ -175,7 +220,12 @@ class _Harness {
     final discovery = _ControlledDiscovery();
     final app = AppController(repository: repository, discovery: discovery);
     await app.initialize();
-    return _Harness(repository, discovery, app, AppControllerAdapter(app));
+    return _Harness(
+      repository,
+      discovery,
+      app,
+      AppControllerAdapter(app, catalogProjector: catalogProjector),
+    );
   }
 
   Future<void> close() async {

@@ -4,6 +4,7 @@ import android.content.ClipData
 import android.content.ClipDescription
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.res.Configuration
 import android.content.Intent
 import android.accounts.Account
 import androidx.core.view.WindowCompat
@@ -19,8 +20,9 @@ import io.flutter.embedding.android.FlutterActivity
 import io.flutter.plugin.common.MethodChannel
 
 class MainActivity : FlutterActivity() {
-    private var playerFullScreen = false
-    private var playerFullScreenApplied = false
+    private var playerUiMode = "inactive"
+    private var appliedPlayerUiMode: String? = null
+    private var appliedPlayerBarTypes = 0
     private var playerActivityResumed = false
     private var previousSystemBarsBehavior: Int? = null
     private var clipboardWriteReceipt: Map<String, Any?>? = null
@@ -34,21 +36,29 @@ class MainActivity : FlutterActivity() {
             flutterEngine.dartExecutor.binaryMessenger,
             "org.freevia.singbook/fullscreen"
         ).setMethodCallHandler { call, result ->
-            if (call.method != "setEnabled") {
-                result.notImplemented()
+            val mode = when (call.method) {
+                "setMode" -> call.arguments as? String
+                // Retain the old method channel contract for older Flutter
+                // engines during a hot restart or app upgrade.
+                "setEnabled" -> when (call.arguments as? Boolean) {
+                    true -> "fullscreen"
+                    false -> "inactive"
+                    null -> null
+                }
+                else -> {
+                    result.notImplemented()
+                    return@setMethodCallHandler
+                }
+            }
+            if (mode == null || mode !in setOf("inactive", "reader", "fullscreen")) {
+                result.error("invalid_fullscreen", "Expected a player UI mode", null)
                 return@setMethodCallHandler
             }
-            val enabled = call.arguments as? Boolean
-            if (enabled == null) {
-                result.error("invalid_fullscreen", "Expected a boolean", null)
-                return@setMethodCallHandler
-            }
-            val wasFullScreen = playerFullScreen
-            playerFullScreen = enabled
-            if (enabled) {
-                if (playerActivityResumed) applyPlayerFullScreen(true)
-            } else if (wasFullScreen || previousSystemBarsBehavior != null) {
-                applyPlayerFullScreen(false)
+            playerUiMode = mode
+            if (playerUiMode == "inactive") {
+                restorePlayerSystemBars()
+            } else if (playerActivityResumed && hasWindowFocus()) {
+                applyPlayerUiMode(playerUiMode)
             }
             result.success(null)
         }
@@ -219,53 +229,81 @@ class MainActivity : FlutterActivity() {
             }
     }
 
-    private fun applyPlayerFullScreen(enabled: Boolean) {
-        // Hiding/showing bars may itself change window focus. A focus callback
-        // must not start the same transition again while it is already applied.
-        if (playerFullScreenApplied == enabled) return
-        playerFullScreenApplied = enabled
-        val controller = WindowCompat.getInsetsController(window, window.decorView)
-        if (enabled) {
-            if (previousSystemBarsBehavior == null) {
-                previousSystemBarsBehavior = controller.systemBarsBehavior
-            }
-            controller.systemBarsBehavior =
-                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-            controller.hide(WindowInsetsCompat.Type.systemBars())
-        } else {
-            controller.show(WindowInsetsCompat.Type.systemBars())
-            previousSystemBarsBehavior?.let { controller.systemBarsBehavior = it }
-            previousSystemBarsBehavior = null
+    private fun applyPlayerUiMode(mode: String) {
+        if (mode == "inactive") {
+            restorePlayerSystemBars()
+            return
         }
+        val desiredBarTypes = when (mode) {
+            "fullscreen" -> WindowInsetsCompat.Type.systemBars()
+            "reader" -> {
+                val navigation = WindowInsetsCompat.Type.navigationBars()
+                if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    navigation or WindowInsetsCompat.Type.statusBars()
+                } else {
+                    navigation
+                }
+            }
+            else -> return
+        }
+        // Android can transiently reveal bars on swipe. Repeated reader-state
+        // notifications must not immediately hide those bars again.
+        if (appliedPlayerUiMode == mode && appliedPlayerBarTypes == desiredBarTypes) return
+        val controller = WindowCompat.getInsetsController(window, window.decorView)
+        if (previousSystemBarsBehavior == null) {
+            previousSystemBarsBehavior = controller.systemBarsBehavior
+        }
+        controller.systemBarsBehavior =
+            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        val barsToRestore = appliedPlayerBarTypes and desiredBarTypes.inv()
+        if (barsToRestore != 0) controller.show(barsToRestore)
+        controller.hide(desiredBarTypes)
+        appliedPlayerUiMode = mode
+        appliedPlayerBarTypes = desiredBarTypes
+    }
+
+    private fun restorePlayerSystemBars() {
+        if (appliedPlayerUiMode == null && previousSystemBarsBehavior == null) return
+        val controller = WindowCompat.getInsetsController(window, window.decorView)
+        controller.show(WindowInsetsCompat.Type.systemBars())
+        previousSystemBarsBehavior?.let { controller.systemBarsBehavior = it }
+        previousSystemBarsBehavior = null
+        appliedPlayerUiMode = null
+        appliedPlayerBarTypes = 0
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
-        if (hasFocus && playerActivityResumed && playerFullScreen) {
-            applyPlayerFullScreen(true)
+        if (hasFocus && playerActivityResumed && playerUiMode != "inactive") {
+            applyPlayerUiMode(playerUiMode)
         }
     }
 
     override fun onResume() {
         super.onResume()
         playerActivityResumed = true
-        if (hasWindowFocus() && playerFullScreen) applyPlayerFullScreen(true)
+        if (hasWindowFocus() && playerUiMode != "inactive") {
+            applyPlayerUiMode(playerUiMode)
+        }
     }
 
     override fun onPause() {
         playerActivityResumed = false
-        if (playerFullScreen || previousSystemBarsBehavior != null) {
-            applyPlayerFullScreen(false)
-        }
+        restorePlayerSystemBars()
         super.onPause()
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        if (playerActivityResumed && hasWindowFocus() && playerUiMode != "inactive") {
+            applyPlayerUiMode(playerUiMode)
+        }
     }
 
     override fun onDestroy() {
         playerActivityResumed = false
-        if (playerFullScreen || previousSystemBarsBehavior != null) {
-            applyPlayerFullScreen(false)
-        }
-        playerFullScreen = false
+        restorePlayerSystemBars()
+        playerUiMode = "inactive"
         super.onDestroy()
     }
 

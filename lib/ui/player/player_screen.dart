@@ -672,7 +672,8 @@ class _PlayerScreenState extends State<PlayerScreen>
       _pointsTimingMode = state.timingMode;
       _pointsDuration = duration;
       final estimated = state.timingMode == 'estimated'
-          ? estimatedLineStartTimes(lines, duration)
+          ? state.estimatedLineStarts ??
+                estimatedLineStartTimes(lines, duration)
           : const <String, double>{};
       _sectionPoints =
           state.timingMode == 'estimated'
@@ -864,7 +865,7 @@ class _PlayerScreenState extends State<PlayerScreen>
       onPressed: () => showPlayerSettings(context, controller),
       icon: const Icon(Icons.settings_outlined, size: 20),
     );
-    Widget lyrics() => Listener(
+    Widget lyrics({bool settingsInSidePanel = false}) => Listener(
       onPointerSignal: (event) {
         if (event is PointerScrollEvent) {
           _seekShortChartEndpoint(event.scrollDelta.dy);
@@ -1002,7 +1003,9 @@ class _PlayerScreenState extends State<PlayerScreen>
                               : Icons.open_in_full_rounded,
                         ),
                       ),
-                    if (!mobilePlaybackControls) playerSettingsButton(),
+                    if (!settingsInSidePanel &&
+                        (!mobilePlaybackControls || !widget.fullScreen))
+                      playerSettingsButton(),
                   ],
                 ),
               ),
@@ -1040,7 +1043,7 @@ class _PlayerScreenState extends State<PlayerScreen>
               : l10n.searchChordsUnavailable,
         );
         final speedSize = labelSize(_formatPlaybackSpeed(state.playbackSpeed));
-        final sideWidth = math.max(
+        final preferredSideWidth = math.max(
           64.0,
           math.max(keySize.width, speedSize.width) + 36,
         );
@@ -1071,10 +1074,24 @@ class _PlayerScreenState extends State<PlayerScreen>
           ),
         );
         playPainter.dispose();
+        final navigationWidth = hasNavigation
+            ? (mobilePlaybackControls ? 96.0 : 80.0)
+            : 0.0;
+        final availableWidth = controlConstraints.maxWidth;
+        final iconOnly =
+            mobilePlaybackControls &&
+            preferredSideWidth * 2 + navigationWidth + playWidth + 8 >
+                availableWidth;
+        final sideWidth = iconOnly
+            ? math.min(
+                preferredSideWidth,
+                math.max(48.0, (availableWidth - navigationWidth - 56) / 2),
+              )
+            : preferredSideWidth;
         final minimumWidth =
-            sideWidth * 2 + (hasNavigation ? 80 : 0) + playWidth + 8;
+            sideWidth * 2 + navigationWidth + (iconOnly ? 48 : playWidth) + 8;
         final stackActions =
-            compact && minimumWidth > controlConstraints.maxWidth;
+            !mobilePlaybackControls && compact && minimumWidth > availableWidth;
         final stackedMinimumWidth =
             math.max(sideWidth * 2, (hasNavigation ? 96.0 : 0.0) + playWidth) +
             8;
@@ -1090,11 +1107,11 @@ class _PlayerScreenState extends State<PlayerScreen>
             l10n,
             state,
             inlineChords: song.hasChords,
-            showSpeed: true,
+            iconOnly: iconOnly,
+            mobile: mobilePlaybackControls,
             stackActions: stackActions,
             rowHeight: rowHeight,
             sideSlotWidth: sideWidth,
-            chordSlotWidth: sideWidth,
           ),
         );
         final content = Column(
@@ -1108,9 +1125,7 @@ class _PlayerScreenState extends State<PlayerScreen>
                 state,
                 position,
                 duration,
-                trailingAction: mobilePlaybackControls
-                    ? playerSettingsButton()
-                    : null,
+                compactTimes: mobilePlaybackControls,
               ),
             ),
             // Stack narrow landscape controls before using horizontal scroll
@@ -1146,8 +1161,17 @@ class _PlayerScreenState extends State<PlayerScreen>
           SafeArea(
             top: false,
             child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [if (compact) Flexible(child: body) else body],
+              mainAxisSize: compact && mobilePlaybackControls
+                  ? MainAxisSize.max
+                  : MainAxisSize.min,
+              children: [
+                if (compact && mobilePlaybackControls)
+                  Align(
+                    alignment: AlignmentDirectional.centerEnd,
+                    child: playerSettingsButton(),
+                  ),
+                if (compact) Flexible(child: body) else body,
+              ],
             ),
           ),
           header: false,
@@ -1298,9 +1322,18 @@ class _PlayerScreenState extends State<PlayerScreen>
         final shortPortrait =
             constraints.maxHeight < 600 &&
             constraints.maxWidth <= constraints.maxHeight;
+        final fullHeightSide = mobilePlaybackControls && compactLandscape;
+        final sideWidth = compactLandscape
+            ? fullHeightSide
+                  ? (constraints.maxWidth * .48).clamp(
+                      math.min(248.0, constraints.maxWidth / 2),
+                      420.0,
+                    )
+                  : (constraints.maxWidth * .4).clamp(200.0, 360.0)
+            : null;
         return Column(
           children: [
-            if (!widget.fullScreen)
+            if (!widget.fullScreen && !fullHeightSide)
               if (compactLandscape) landscapeHeader() else songHeader(),
             Expanded(
               child: PlayerControlsPanel(
@@ -1311,16 +1344,23 @@ class _PlayerScreenState extends State<PlayerScreen>
                 collapseLabel: l10n.playerCollapseControls,
                 side: compactLandscape,
                 sideHeader: null,
-                sideWidth: compactLandscape
-                    ? (constraints.maxWidth * .4).clamp(200.0, 360.0).toDouble()
-                    : null,
+                sideWidth: sideWidth?.toDouble(),
                 collapsedAction: null,
-                lyrics: lyrics(),
-                controls: compactLandscape
+                lyrics: fullHeightSide && !widget.fullScreen
+                    ? Column(
+                        children: [
+                          landscapeHeader(),
+                          Expanded(
+                            child: lyrics(
+                              settingsInSidePanel: state.playerControlsExpanded,
+                            ),
+                          ),
+                        ],
+                      )
+                    : lyrics(),
+                controls: sideWidth != null
                     ? SizedBox(
-                        width: (constraints.maxWidth * .4)
-                            .clamp(200.0, 360.0)
-                            .toDouble(),
+                        width: sideWidth.toDouble(),
                         child: controls(compact: true),
                       )
                     : controls(
@@ -1416,7 +1456,7 @@ class _PlayerScreenState extends State<PlayerScreen>
     VerseUiState state,
     PlayerPosition position,
     double duration, {
-    Widget? trailingAction,
+    required bool compactTimes,
   }) {
     final speed = state.playbackSpeed;
     final displayDuration = duration / speed;
@@ -1441,7 +1481,7 @@ class _PlayerScreenState extends State<PlayerScreen>
         builder: (context, constraints) {
           final desktopTimeline =
               constraints.maxWidth >= 560 &&
-              (trailingAction == null || displaySections.isNotEmpty);
+              (!compactTimes || displaySections.isNotEmpty);
           final compactDesktopTimeline =
               desktopTimeline &&
               (defaultTargetPlatform == TargetPlatform.macOS ||
@@ -1540,55 +1580,45 @@ class _PlayerScreenState extends State<PlayerScreen>
         },
       ),
     );
-    if (trailingAction == null) {
+    if (!compactTimes) {
       return Column(
         mainAxisSize: MainAxisSize.min,
         children: [timeline, times],
       );
     }
-    return Row(
+    return LayoutBuilder(
       key: const ValueKey('player-mobile-timeline'),
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final wideMarkers =
-                  constraints.maxWidth >= 560 && displaySections.isNotEmpty;
-              final timelineHeight = wideMarkers ? 64.0 : 48.0;
-              final labelPainter = TextPainter(
-                text: TextSpan(
-                  text: formatDuration(displayDuration),
-                  style: DefaultTextStyle.of(context).style,
-                ),
-                textDirection: Directionality.of(context),
-                textScaler: MediaQuery.textScalerOf(context),
-                locale: Localizations.localeOf(context),
-              )..layout();
-              final labelHeight = labelPainter.height.ceilToDouble();
-              labelPainter.dispose();
-              // The slider keeps its full 48 dp touch target. Reuse only its
-              // blank lower tail for the labels, leaving thumb/text clearance.
-              final timesTop = timelineHeight - 8;
-              return SizedBox(
-                height: timesTop + labelHeight,
-                child: Stack(
-                  children: [
-                    Positioned(top: 0, left: 0, right: 0, child: timeline),
-                    Positioned(
-                      top: timesTop,
-                      left: 0,
-                      right: 0,
-                      child: IgnorePointer(child: times),
-                    ),
-                  ],
-                ),
-              );
-            },
+      builder: (context, constraints) {
+        final timelineHeight =
+            constraints.maxWidth >= 560 && displaySections.isNotEmpty ? 64 : 48;
+        final labelPainter = TextPainter(
+          text: TextSpan(
+            text: formatDuration(displayDuration),
+            style: DefaultTextStyle.of(context).style,
           ),
-        ),
-        trailingAction,
-      ],
+          textDirection: Directionality.of(context),
+          textScaler: MediaQuery.textScalerOf(context),
+          locale: Localizations.localeOf(context),
+        )..layout();
+        final labelHeight = labelPainter.height.ceilToDouble();
+        labelPainter.dispose();
+        // Keep the slider's touch target while reusing its blank lower edge.
+        final timesTop = timelineHeight - 8.0;
+        return SizedBox(
+          height: timesTop + labelHeight,
+          child: Stack(
+            children: [
+              Positioned(top: 0, left: 0, right: 0, child: timeline),
+              Positioned(
+                top: timesTop,
+                left: 0,
+                right: 0,
+                child: IgnorePointer(child: times),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -1918,12 +1948,11 @@ class _PlayerScreenState extends State<PlayerScreen>
     AppLocalizations l10n,
     VerseUiState state, {
     required bool inlineChords,
-    required bool showSpeed,
+    required bool iconOnly,
+    required bool mobile,
     required bool stackActions,
     required double rowHeight,
     required double sideSlotWidth,
-    required double chordSlotWidth,
-    Widget? trailingAction,
   }) => Padding(
     padding: const EdgeInsets.symmetric(horizontal: 4),
     child: LayoutBuilder(
@@ -1932,7 +1961,6 @@ class _PlayerScreenState extends State<PlayerScreen>
         final isRtl = direction == TextDirection.rtl;
         final hasNavigation =
             state.playerSections.isNotEmpty || state.activeSetlist != null;
-        final hasActionSlot = showSpeed || trailingAction != null;
         final centerWidth = stackActions
             ? constraints.maxWidth
             : constraints.maxWidth - (sideSlotWidth * 2);
@@ -1948,44 +1976,59 @@ class _PlayerScreenState extends State<PlayerScreen>
           textScaler: MediaQuery.textScalerOf(context),
           locale: Localizations.localeOf(context),
         )..layout();
-        final navigationWidth = stackActions ? 96.0 : 80.0;
+        final navigationWidth = stackActions || mobile ? 96.0 : 80.0;
         final playWidth = centerWidth - (hasNavigation ? navigationWidth : 0);
         final playHorizontalPadding =
             ((playWidth - 32 - playLabelPainter.width) / 2)
                 .clamp(4.0, 12.0)
                 .toDouble();
         playLabelPainter.dispose();
-        final start = FilledButton.icon(
-          key: const ValueKey('start-lyric-scroll'),
-          style: FilledButton.styleFrom(
-            padding: EdgeInsets.symmetric(
-              horizontal: playHorizontalPadding,
-              vertical: 4,
-            ),
-            minimumSize: Size(104, rowHeight),
-            visualDensity: stackActions ? VisualDensity.standard : null,
-          ),
-          onPressed: _togglePlayback,
-          icon: Icon(
-            state.isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
-          ),
-          label: Text(
-            playLabel,
-            // Natural metrics preserve tall fallback-script glyphs.
-            style: const TextStyle(height: kTextHeightNone),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.center,
-          ),
+        final playIcon = Icon(
+          state.isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
         );
+        final start = iconOnly
+            ? Tooltip(
+                message: playLabel,
+                child: FilledButton(
+                  key: const ValueKey('start-lyric-scroll'),
+                  style: FilledButton.styleFrom(
+                    padding: EdgeInsets.zero,
+                    minimumSize: Size(48, rowHeight),
+                    visualDensity: VisualDensity.standard,
+                  ),
+                  onPressed: _togglePlayback,
+                  child: playIcon,
+                ),
+              )
+            : FilledButton.icon(
+                key: const ValueKey('start-lyric-scroll'),
+                style: FilledButton.styleFrom(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: playHorizontalPadding,
+                    vertical: 4,
+                  ),
+                  minimumSize: Size(104, rowHeight),
+                  visualDensity: stackActions ? VisualDensity.standard : null,
+                ),
+                onPressed: _togglePlayback,
+                icon: playIcon,
+                label: Text(
+                  playLabel,
+                  // Natural metrics preserve tall fallback-script glyphs.
+                  style: const TextStyle(height: kTextHeightNone),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                ),
+              );
         final controls = <Widget>[
           if (state.playerSections.isNotEmpty || state.activeSetlist != null)
             IconButton(
-              visualDensity: stackActions
+              visualDensity: stackActions || mobile
                   ? VisualDensity.standard
                   : VisualDensity.compact,
-              constraints: stackActions
-                  ? const BoxConstraints(minWidth: 48, minHeight: 48)
+              constraints: stackActions || mobile
+                  ? const BoxConstraints.tightFor(width: 48, height: 48)
                   : null,
               tooltip: _shortcutHint(
                 state.activeSetlist == null
@@ -2019,11 +2062,11 @@ class _PlayerScreenState extends State<PlayerScreen>
           ),
           if (state.playerSections.isNotEmpty || state.activeSetlist != null)
             IconButton(
-              visualDensity: stackActions
+              visualDensity: stackActions || mobile
                   ? VisualDensity.standard
                   : VisualDensity.compact,
-              constraints: stackActions
-                  ? const BoxConstraints(minWidth: 48, minHeight: 48)
+              constraints: stackActions || mobile
+                  ? const BoxConstraints.tightFor(width: 48, height: 48)
                   : null,
               tooltip: _shortcutHint(
                 state.activeSetlist == null
@@ -2046,7 +2089,7 @@ class _PlayerScreenState extends State<PlayerScreen>
           width: stackActions
               ? math
                     .min(
-                      chordSlotWidth,
+                      sideSlotWidth,
                       math.max(48.0, constraints.maxWidth - sideSlotWidth),
                     )
                     .toDouble()
@@ -2067,13 +2110,9 @@ class _PlayerScreenState extends State<PlayerScreen>
         );
         final actionSlot = SizedBox(
           width: sideSlotWidth,
-          child: Row(
-            textDirection: TextDirection.ltr,
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              if (showSpeed) Flexible(child: _speedControl(l10n, state)),
-              ?trailingAction,
-            ],
+          child: Align(
+            alignment: AlignmentDirectional.centerEnd,
+            child: _speedControl(l10n, state),
           ),
         );
         final transportRow = Row(
@@ -2085,30 +2124,18 @@ class _PlayerScreenState extends State<PlayerScreen>
           return Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              if (inlineChords || hasActionSlot)
-                SizedBox(
-                  height: rowHeight,
-                  child: Row(
-                    textDirection: TextDirection.ltr,
-                    children: isRtl
-                        ? [
-                            if (hasActionSlot) actionSlot,
-                            const Spacer(),
-                            if (inlineChords) chordSlot,
-                          ]
-                        : [
-                            if (inlineChords) chordSlot,
-                            const Spacer(),
-                            if (hasActionSlot) actionSlot,
-                          ],
-                  ),
+              SizedBox(
+                height: rowHeight,
+                child: Row(
+                  textDirection: TextDirection.ltr,
+                  children: isRtl
+                      ? [actionSlot, const Spacer(), chordSlot]
+                      : [chordSlot, const Spacer(), actionSlot],
                 ),
+              ),
               SizedBox(height: rowHeight, child: transportRow),
             ],
           );
-        }
-        if (!inlineChords && !hasActionSlot) {
-          return SizedBox(height: rowHeight, child: transportRow);
         }
         return Row(
           textDirection: TextDirection.ltr,
@@ -2271,11 +2298,12 @@ class _PlayerScreenState extends State<PlayerScreen>
           constraints: const BoxConstraints(minHeight: 48, minWidth: 48),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Flexible(
-                  child: Text(
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
                     displayedKey,
                     style: const TextStyle(
                       fontSize: 20,
@@ -2284,9 +2312,9 @@ class _PlayerScreenState extends State<PlayerScreen>
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                ),
-                _playerDropdownArrow,
-              ],
+                  _playerDropdownArrow,
+                ],
+              ),
             ),
           ),
         ),

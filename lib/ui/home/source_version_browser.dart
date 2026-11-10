@@ -235,17 +235,11 @@ class _SourceVersionBrowserState extends State<_SourceVersionPages> {
             version.savedSongId == null)) {
       return;
     }
-    // Save stays available while previews slide. Align a pending selection
-    // with the highlighted provider, retaining an already selected combination.
-    final selected = widget.controller.state.comparison?.selected;
-    if (selected == null || versionSelectionId(selected) != _visibleId) {
-      _pinVisible();
-      final pinned = widget.controller.state.comparison?.selected;
-      if (pinned == null || versionSelectionId(pinned) != _visibleId) return;
-    }
+    // The highlighted version is the Save target even while its page slides
+    // into view or the projected comparison is catching up.
     setState(() => _saving = true);
     try {
-      await widget.controller.saveSelectedVersion();
+      await widget.controller.saveVersion(versionSelectionId(version));
       if (mounted && widget.controller.state.route == VerseRoute.reader) {
         widget.onOpened?.call();
       }

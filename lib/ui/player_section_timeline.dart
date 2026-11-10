@@ -92,30 +92,41 @@ List<LyricLineData> estimatedTimelineLines(List<LyricLineData> lines) {
   return List.unmodifiable(lines.where((line) => ids.contains(line.id)));
 }
 
-/// Unknown lengths remain a rough chart estimate, with additional allowance
-/// for instrumental phrases. Catalog/recording evidence should take priority.
-double estimateChartDuration(List<LyricLineData> lines) {
-  final events = _estimatedEvents(lines);
-  final total = events.fold<double>(0, (sum, event) => sum + event.weight);
-  return (total * 3.4).clamp(90, 600).toDouble();
+/// Shared weighted events for duration estimation and timeline positions.
+class EstimatedChartTimeline {
+  EstimatedChartTimeline(List<LyricLineData> lines)
+    : _events = _estimatedEvents(lines);
+
+  final List<({String id, double weight})> _events;
+  late final double _total = _events.fold<double>(
+    0,
+    (sum, event) => sum + event.weight,
+  );
+
+  /// Unknown lengths remain a rough chart estimate. Recording evidence wins.
+  double get durationEstimate => (_total * 3.4).clamp(90, 600).toDouble();
+
+  Map<String, double> lineStarts(double durationSeconds) {
+    if (_events.isEmpty || !durationSeconds.isFinite || durationSeconds <= 0) {
+      return const {};
+    }
+    var elapsed = 0.0;
+    final starts = <String, double>{};
+    for (final event in _events) {
+      starts[event.id] = durationSeconds * elapsed / _total;
+      elapsed += event.weight;
+    }
+    return Map.unmodifiable(starts);
+  }
 }
+
+double estimateChartDuration(List<LyricLineData> lines) =>
+    EstimatedChartTimeline(lines).durationEstimate;
 
 Map<String, double> estimatedLineStartTimes(
   List<LyricLineData> lines,
   double durationSeconds,
-) {
-  if (!durationSeconds.isFinite || durationSeconds <= 0) return const {};
-  final events = _estimatedEvents(lines);
-  if (events.isEmpty) return const {};
-  final total = events.fold<double>(0, (sum, event) => sum + event.weight);
-  var elapsed = 0.0;
-  final starts = <String, double>{};
-  for (final event in events) {
-    starts[event.id] = durationSeconds * elapsed / total;
-    elapsed += event.weight;
-  }
-  return Map.unmodifiable(starts);
-}
+) => EstimatedChartTimeline(lines).lineStarts(durationSeconds);
 
 /// Returns the estimated start time used for [lineId], including headings for
 /// lyric-free sections, or null when it is not in the timeline.
@@ -162,14 +173,18 @@ List<PlayerSectionMarker> buildPlayerSectionMarkers({
   required double durationSeconds,
   Map<String, double> timedLineStarts = const {},
   bool useEstimatedFallback = true,
+  Map<String, double>? estimatedLineStarts,
 }) {
   if (lines.isEmpty || !durationSeconds.isFinite || durationSeconds <= 0) {
     return const [];
   }
 
-  final estimatedPositions = estimatedLineStartTimes(lines, durationSeconds);
+  final estimatedPositions = useEstimatedFallback
+      ? estimatedLineStarts ?? estimatedLineStartTimes(lines, durationSeconds)
+      : const <String, double>{};
 
   final markers = <PlayerSectionMarker>[];
+  final usedStarts = <double>{};
   for (var index = 0; index < lines.length; index++) {
     final heading = lines[index];
     final name = heading.section?.trim();
@@ -199,7 +214,7 @@ List<PlayerSectionMarker> buildPlayerSectionMarkers({
     if (start == null || !start.isFinite) continue;
 
     // Repeated headings can share a start when a chart has no intervening line.
-    if (markers.any((marker) => marker.startSeconds == start)) continue;
+    if (!usedStarts.add(start)) continue;
     markers.add(
       PlayerSectionMarker(name: name, startSeconds: start, lineId: lineId),
     );

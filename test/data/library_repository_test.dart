@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
@@ -31,6 +32,808 @@ void main() {
     timingTracks: tracks,
     extra: {'selectedSourceId': 'source:1'},
   );
+  test('the final playable chart is available before Save commits', () async {
+    const selection = SongCandidate(
+      providerId: 'provider',
+      id: 'song',
+      title: 'Title',
+      artist: 'Artist',
+    );
+    final ready = Completer<SongDocument>();
+    final evidenceReady = Completer<void>();
+    final saving = repo.saveChosenSongFast(
+      SongDocument(
+        id: 'song',
+        title: selection.title,
+        artist: selection.artist,
+        body: '[G]A lyric',
+        selectedRecording: selection,
+        sources: [SourceResult(candidate: selection, body: 'Source history')],
+      ),
+      candidateIdentity: selection.identity,
+      discoveryGeneration: 1,
+      existingSongId: null,
+      expectedExistingHash: null,
+      evidenceReady: evidenceReady.future,
+      onChartPrepared: ready.complete,
+    );
+    final SongDocument prepared;
+    try {
+      prepared = await ready.future.timeout(const Duration(seconds: 5));
+      expect(prepared.body, '[G]A lyric');
+      expect(prepared.sources, isEmpty);
+      expect(await repo.getPlayableSong(prepared.id), isNull);
+    } finally {
+      evidenceReady.complete();
+    }
+    final committed = await saving;
+    expect(committed.song, same(prepared));
+    expect((await repo.getPlayableSong(prepared.id))?.body, prepared.body);
+  });
+
+  test(
+    'merge diagnostics stay in history and travel through sync and backup',
+    () async {
+      const selection = SongCandidate(
+        providerId: 'source',
+        id: 'diagnostics',
+        title: 'A title',
+        artist: 'Artist',
+      );
+      final conflicts = {
+        'durationSeconds': [
+          {'sourceId': 'provider:other', 'value': 245},
+        ],
+      };
+      final contributors = {
+        'durationSeconds': ['source:diagnostics', 'provider:other'],
+      };
+      final chart = SongDocument(
+        id: 'diagnostics',
+        title: selection.title,
+        artist: selection.artist,
+        body: '[G]One playable chart',
+        selectedRecording: selection,
+        extra: {'conflicts': conflicts, 'fieldContributors': contributors},
+      );
+      await repo.beginDiscoverySession(
+        candidateIdentity: selection.identity,
+        generation: 1,
+      );
+      Future<SongDocument> save(
+        SongDocument song, [
+        SongDocument? prior,
+      ]) async {
+        final saved = await repo.saveChosenSongFast(
+          song,
+          candidateIdentity: selection.identity,
+          discoveryGeneration: 1,
+          existingSongId: prior?.id,
+          existingSnapshot: prior,
+          expectedExistingHash: prior == null
+              ? null
+              : await repo.getSongEditHash(prior.id),
+        );
+        return saved.song;
+      }
+
+      final first = await save(chart);
+      expect(first.extra, isNot(contains('conflicts')));
+      expect(first.extra, isNot(contains('fieldContributors')));
+      final raw = ChordProCodec().decode(
+        (await repo.getSongRaw(first.id))!.document,
+      );
+      expect(raw.body, chart.body);
+      expect(raw.extra, isNot(contains('conflicts')));
+      final repeated = await save(chart, first);
+      expect(repeated.revision, first.revision);
+      final wire = ChordProCodec().decode(
+        (await repo.getSyncSongRaw(first.id))!.document,
+      );
+      expect(wire.extra['conflicts'], conflicts);
+      expect(wire.extra['fieldContributors'], contributors);
+      expect(wire.extra, isNot(contains('libraryMergeDiagnosticsHash')));
+
+      await repo.replaceLibrary([raw], []);
+      final portableChart = (await repo.getSongWithEvidence(first.id))!;
+      expect(portableChart.body, chart.body);
+      expect(
+        portableChart.extra,
+        isNot(contains('libraryMergeDiagnosticsHash')),
+      );
+
+      await repo.replaceLibrary([wire], []);
+      final restored = (await repo.getPlayableSong(first.id))!;
+      expect(restored.extra, isNot(contains('conflicts')));
+      expect(
+        (await repo.getSongWithEvidence(first.id))!.extra['conflicts'],
+        conflicts,
+      );
+
+      final second = await save(
+        chart.copyWith(
+          body: '[D]A different chart',
+          extra: {
+            'conflicts': {
+              'tempo': [
+                {'value': 99},
+              ],
+            },
+          },
+        ),
+        restored,
+      );
+      final complete = (await repo.backupSnapshot()).songs.single;
+      expect(complete.id, second.id);
+      expect(complete.extra['conflicts'], {
+        'tempo': [
+          {'value': 99},
+        ],
+      });
+      final archived = SongDocument.fromJson(
+        jsonMap((complete.extra['previousSavedVersions'] as List).single),
+      );
+      expect(archived.extra['conflicts'], conflicts);
+      expect(archived.extra['fieldContributors'], contributors);
+    },
+  );
+
+  test(
+    'linked evidence stays out of the playable file and travels with sync',
+    () async {
+      const selection = SongCandidate(
+        providerId: 'source',
+        id: '1',
+        title: 'A title',
+        artist: 'Artist',
+      );
+      const discovery = SourceResult(
+        candidate: selection,
+        body: '[G]One selected lyric',
+        matchKind: MatchKind.sameRecording,
+      );
+      await repo.beginDiscoverySession(
+        candidateIdentity: selection.identity,
+        generation: 1,
+      );
+      await repo.stageDiscoverySources(
+        candidateIdentity: selection.identity,
+        generation: 1,
+        sources: [discovery],
+      );
+      expect(await repo.listSongs(), isEmpty);
+
+      final saved = await repo.saveChosenSongFast(
+        SongDocument(
+          id: 'chosen',
+          title: selection.title,
+          artist: selection.artist,
+          body: discovery.body,
+          selectedRecording: selection,
+          sources: [discovery],
+          extra: const {'selectedSourceId': 'source:1'},
+        ),
+        candidateIdentity: selection.identity,
+        discoveryGeneration: 1,
+        existingSongId: null,
+        expectedExistingHash: null,
+      );
+      final active = (await repo.getSongRaw(saved.song.id))!;
+      expect(ChordProCodec().decode(active.document).sources, isEmpty);
+      final sync = (await repo.getSyncSongRaw(saved.song.id))!;
+      final synced = ChordProCodec().decode(sync.document);
+      expect(synced.body, discovery.body);
+      expect(synced.sources.single.toJson(), discovery.toJson());
+      expect(sync.hash, active.hash);
+      expect(sync.hash, await repo.getSongHash(saved.song.id));
+      expect(saved.contentHash, await repo.getSongEditHash(saved.song.id));
+      expect(saved.contentHash, isNot(sync.hash));
+      expect(
+        (await repo.backupSnapshot()).songs.single.sources.single.id,
+        discovery.id,
+      );
+
+      await repo.beginDiscoverySession(
+        candidateIdentity: selection.identity,
+        generation: 2,
+      );
+      await repo.stageDiscoverySources(
+        candidateIdentity: selection.identity,
+        generation: 2,
+        sources: [
+          const SourceResult(
+            candidate: selection,
+            body: 'A newer discovery awaiting Save',
+            matchKind: MatchKind.sameRecording,
+          ),
+        ],
+      );
+      expect(await repo.getSongHash(saved.song.id), sync.hash);
+      expect(
+        (await repo.getSong(saved.song.id))!.sources.single.body,
+        discovery.body,
+      );
+      await repo.saveChosenSongFast(
+        saved.song,
+        candidateIdentity: selection.identity,
+        discoveryGeneration: 1,
+        existingSongId: saved.song.id,
+        existingSnapshot: saved.song,
+        expectedExistingHash: saved.contentHash,
+      );
+      expect(
+        (await repo.getSong(saved.song.id))!.sources.single.body,
+        discovery.body,
+      );
+    },
+  );
+
+  test(
+    'upgrading duplicate diagnostic storage preserves saved and staged history',
+    () async {
+      final directory = await Directory.systemTemp.createTemp('singbook-v10-');
+      addTearDown(() => directory.delete(recursive: true));
+      final path = '${directory.path}${Platform.pathSeparator}library.db';
+      Future<LibraryRepository> open() =>
+          LibraryRepository.open(path: path, factory: databaseFactoryFfi);
+      const selected = SongCandidate(
+        providerId: 'source',
+        id: 'old-diagnostics',
+        title: 'A title',
+        artist: 'Artist',
+      );
+      final document = SongDocument(
+        id: 'chart',
+        title: selected.title,
+        artist: selected.artist,
+        body: '[G]A playable chart',
+        selectedRecording: selected,
+        extra: {
+          'fieldContributors': {
+            'key': [selected.identity],
+          },
+        },
+      );
+      final old = await open();
+      final ({String document, String hash}) wire;
+      final String? stagedHash;
+      try {
+        await old.beginDiscoverySession(
+          candidateIdentity: selected.identity,
+          generation: 1,
+        );
+        stagedHash = await old.stageMergeDiagnostics(
+          document,
+          candidateIdentity: selected.identity,
+          generation: 1,
+        );
+        await old.saveChosenSongFast(
+          document,
+          candidateIdentity: selected.identity,
+          discoveryGeneration: 1,
+          existingSongId: null,
+          expectedExistingHash: null,
+          stagedDiagnosticsHash: stagedHash,
+        );
+        wire = (await old.getSyncSongRaw(document.id))!;
+
+        // Recreate the layout used in v10, when each reference held its own
+        // payload text. Keep the saved document and its hashes byte-identical.
+        await old.database.transaction((txn) async {
+          await txn.execute(
+            'DROP TRIGGER song_merge_diagnostics_collect_payload',
+          );
+          await txn.execute(
+            'DROP TRIGGER discovery_merge_diagnostics_collect_payload',
+          );
+          for (final table in [
+            'song_merge_diagnostics',
+            'discovery_merge_diagnostics',
+          ]) {
+            await txn.execute(
+              'CREATE TABLE ${table}_v10 AS SELECT ref.*, blob.payload '
+              'FROM $table AS ref JOIN merge_diagnostic_payloads AS blob '
+              'ON ref.payload_hash = blob.payload_hash',
+            );
+            await txn.execute('DROP TABLE $table');
+            await txn.execute('ALTER TABLE ${table}_v10 RENAME TO $table');
+          }
+          await txn.execute('DROP TABLE merge_diagnostic_payloads');
+          await txn.execute('PRAGMA user_version = 10');
+        });
+      } finally {
+        await old.close();
+      }
+
+      final upgraded = await open();
+      addTearDown(upgraded.close);
+      expect(
+        await upgraded.database.query('merge_diagnostic_payloads'),
+        hasLength(1),
+      );
+      expect(
+        (await upgraded.database.query(
+          'discovery_merge_diagnostics',
+        )).single['payload_hash'],
+        stagedHash,
+      );
+      expect(await upgraded.getSyncSongRaw(document.id), wire);
+      await upgraded.database.delete('discovery_merge_diagnostics');
+      expect(await upgraded.getSyncSongRaw(document.id), wire);
+      await upgraded.deleteSong(document.id);
+      expect(
+        await upgraded.database.query('merge_diagnostic_payloads'),
+        isEmpty,
+      );
+    },
+  );
+
+  test(
+    'upgrading the source index preserves chart and observation order',
+    () async {
+      final directory = await Directory.systemTemp.createTemp('singbook-v7-');
+      addTearDown(() => directory.delete(recursive: true));
+      final path = '${directory.path}${Platform.pathSeparator}library.db';
+      Future<LibraryRepository> open() =>
+          LibraryRepository.open(path: path, factory: databaseFactoryFfi);
+      const selected = SongCandidate(
+        providerId: 'catalog',
+        id: 'old',
+        title: 'Title',
+        artist: 'Artist',
+      );
+      const earlier = SourceResult(candidate: selected, body: 'Earlier source');
+      const latest = SourceResult(candidate: selected, body: 'Latest source');
+      final old = await open();
+      final String? hash;
+      final List<Map<String, Object?>> rows;
+      try {
+        await old.beginDiscoverySession(
+          candidateIdentity: selected.identity,
+          generation: 1,
+        );
+        await old.stageDiscoverySources(
+          candidateIdentity: selected.identity,
+          generation: 1,
+          sources: const [earlier, latest],
+        );
+        await old.saveChosenSongFast(
+          SongDocument(
+            id: 'chart',
+            title: selected.title,
+            artist: selected.artist,
+            body: '[C]Playable chart',
+            selectedRecording: selected,
+          ),
+          candidateIdentity: selected.identity,
+          discoveryGeneration: 1,
+          existingSongId: null,
+          expectedExistingHash: null,
+        );
+        hash = await old.getSongHash('chart');
+        rows = await old.database.query('discovery_evidence', orderBy: 'rowid');
+        await old.database.execute('DROP INDEX discovery_evidence_song');
+        await old.database.execute(
+          'CREATE INDEX discovery_evidence_song ON discovery_evidence(song_id)',
+        );
+        await old.database.setVersion(7);
+      } finally {
+        await old.close();
+      }
+
+      final upgraded = await open();
+      addTearDown(upgraded.close);
+      expect(await upgraded.database.getVersion(), 11);
+      expect(
+        (await upgraded.database.rawQuery(
+          'PRAGMA index_info(discovery_evidence_song)',
+        )).map((row) => row['name']),
+        ['song_id', 'source_id'],
+      );
+      expect(await upgraded.getSongHash('chart'), hash);
+      expect(
+        await upgraded.database.query('discovery_evidence', orderBy: 'rowid'),
+        rows,
+      );
+      expect(
+        (await upgraded.getSongForComparison('chart'))!.sources.single.body,
+        latest.body,
+      );
+    },
+  );
+
+  test('saving an unchanged chart does not create another revision', () async {
+    const candidate = SongCandidate(
+      providerId: 'catalog',
+      id: 'song',
+      title: 'Title',
+      artist: 'Artist',
+    );
+    await repo.beginDiscoverySession(
+      candidateIdentity: candidate.identity,
+      generation: 1,
+    );
+    final fresh = SongDocument(
+      id: 'song',
+      title: candidate.title,
+      artist: candidate.artist,
+      body: '[C]A playable chart',
+      selectedRecording: candidate,
+      metadata: const {'tempo': '88'},
+    );
+    final first = await repo.saveChosenSongFast(
+      fresh,
+      candidateIdentity: candidate.identity,
+      discoveryGeneration: 1,
+      existingSongId: null,
+      expectedExistingHash: null,
+    );
+    final outbox = await repo.outboxMark();
+    final before = (await repo.getPlayableSong('song'))!;
+    expect(before.metadata['tempo'], 88);
+    final second = await repo.saveChosenSongFast(
+      fresh,
+      candidateIdentity: candidate.identity,
+      discoveryGeneration: 1,
+      existingSongId: before.id,
+      existingSnapshot: before,
+      expectedExistingHash: first.contentHash,
+    );
+
+    expect(second.contentHash, first.contentHash);
+    expect(second.song.revision, before.revision);
+    expect(await repo.outboxMark(), outbox);
+    expect(await repo.database.query('song_versions'), isEmpty);
+    expect(second.changed, isFalse);
+
+    await repo.beginDiscoverySession(
+      candidateIdentity: candidate.identity,
+      generation: 2,
+    );
+    const evidence = SourceResult(candidate: candidate, body: 'New history');
+    await repo.stageDiscoverySources(
+      candidateIdentity: candidate.identity,
+      generation: 2,
+      sources: [evidence],
+    );
+    final third = await repo.saveChosenSongFast(
+      before,
+      candidateIdentity: candidate.identity,
+      discoveryGeneration: 2,
+      existingSongId: before.id,
+      existingSnapshot: before,
+      expectedExistingHash: first.contentHash,
+    );
+    expect(third.changed, isTrue);
+    expect(third.contentHash, first.contentHash);
+    expect(third.song.revision, before.revision);
+    expect(await repo.outboxMark(), outbox + 1);
+    expect(await repo.database.query('song_versions'), isEmpty);
+    expect(
+      (await repo.getSongWithEvidence('song'))!.sources.single.body,
+      evidence.body,
+    );
+  });
+
+  test(
+    'sync and backup restore keep archived evidence off the chart',
+    () async {
+      const candidate = SongCandidate(
+        providerId: 'catalog',
+        id: 'recording',
+        title: 'Title',
+        artist: 'Artist',
+      );
+      const source = SourceResult(candidate: candidate, body: 'Provider words');
+      final prior = SongDocument(
+        id: 'song',
+        title: candidate.title,
+        artist: candidate.artist,
+        body: 'Earlier playable chart',
+        selectedRecording: candidate,
+      );
+      final transferred = prior.copyWith(
+        body: 'Current playable chart',
+        sources: [source],
+        extra: {
+          'libraryEvidenceIdentity': candidate.identity,
+          'previousSavedVersions': [prior.toJson()],
+        },
+      );
+
+      Future<void> verify({bool hasLocalHistory = false}) async {
+        final playable = (await repo.getPlayableSong('song'))!;
+        expect(playable.body, transferred.body);
+        expect(playable.sources, isEmpty);
+        expect(playable.extra, isNot(contains('previousSavedVersions')));
+        final complete = (await repo.getSongWithEvidence('song'))!;
+        expect(complete.sources.single.toJson(), source.toJson());
+        final comparison = (await repo.getSongForComparison('song'))!;
+        expect(comparison.sources.single.toJson(), source.toJson());
+        expect(comparison.extra, isNot(contains('previousSavedVersions')));
+        final versions = complete.extra['previousSavedVersions'] as List;
+        expect(versions, hasLength(hasLocalHistory ? 2 : 1));
+        expect(versions, contains(equals(prior.toJson())));
+        final wire = ChordProCodec().decode(
+          (await repo.getSyncSongRaw('song'))!.document,
+        );
+        expect(wire.sources.single.toJson(), source.toJson());
+        expect(wire.extra['previousSavedVersions'], versions);
+      }
+
+      await repo.applySyncChanges(
+        [transferred],
+        [],
+        expectedSongHashes: {'song': null},
+        expectedSetlistHashes: {},
+      );
+      await verify();
+      expect(await repo.outboxMark(), 0);
+
+      final raw = (await repo.getSongRaw('song'))!;
+      final imported = await repo.saveImportedSong(
+        ChordProCodec().decode(raw.document),
+      );
+      expect(imported.id, 'song');
+      expect(await repo.listSongs(), hasLength(1));
+      expect(await repo.outboxMark(), 0);
+
+      await repo.beginDiscoverySession(
+        candidateIdentity: candidate.identity,
+        generation: 1,
+      );
+      final playable = (await repo.getPlayableSong('song'))!;
+      await repo.saveChosenSongFast(
+        playable.copyWith(body: 'Locally changed chart'),
+        candidateIdentity: candidate.identity,
+        discoveryGeneration: 1,
+        existingSongId: 'song',
+        existingSnapshot: playable,
+        expectedExistingHash: await repo.getSongEditHash('song'),
+      );
+      await repo.applySyncChanges(
+        [transferred],
+        [],
+        expectedSongHashes: {'song': await repo.getSongHash('song')},
+        expectedSetlistHashes: {},
+      );
+      await verify(hasLocalHistory: true);
+
+      final backup = await repo.backupSnapshot();
+      await repo.replaceLibrary(backup.songs, backup.setlists);
+      await verify(hasLocalHistory: true);
+    },
+  );
+
+  test('staging a repeated payload keeps the original song history', () async {
+    const candidate = SongCandidate(
+      providerId: 'catalog',
+      id: 'recording',
+      title: 'Title',
+      artist: 'Artist',
+    );
+    const source = SourceResult(candidate: candidate, body: 'Provider words');
+
+    Future<void> begin(int generation) => repo.beginDiscoverySession(
+      candidateIdentity: candidate.identity,
+      generation: generation,
+    );
+    Future<String?> stage(int generation) => repo.stageDiscoverySources(
+      candidateIdentity: candidate.identity,
+      generation: generation,
+      sources: [source],
+    );
+    Future<void> save(String id, int generation) async {
+      await repo.saveChosenSongFast(
+        SongDocument(
+          id: id,
+          title: candidate.title,
+          artist: candidate.artist,
+          body: 'Saved chart',
+          selectedRecording: candidate,
+        ),
+        candidateIdentity: candidate.identity,
+        discoveryGeneration: generation,
+        existingSongId: null,
+        expectedExistingHash: null,
+      );
+    }
+
+    await begin(1);
+    await stage(1);
+    await save('first', 1);
+    final before = await repo.getSyncSongRaw('first');
+    await begin(2);
+    await save('second', 2);
+    await stage(2);
+
+    expect(await repo.getSyncSongRaw('first'), before);
+    expect(
+      (await repo.getSongWithEvidence('first'))!.sources.single.id,
+      source.id,
+    );
+    expect((await repo.getSongWithEvidence('second'))!.sources, isEmpty);
+  });
+
+  test(
+    'a provider can return to an archived version without duplicating it',
+    () async {
+      const candidate = SongCandidate(
+        providerId: 'catalog',
+        id: 'recording',
+        title: 'Title',
+        artist: 'Artist',
+      );
+      const a = SourceResult(candidate: candidate, body: 'First chart');
+      const b = SourceResult(candidate: candidate, body: 'Second chart');
+      Future<void> stage(int generation, List<SourceResult> sources) async {
+        await repo.stageDiscoverySources(
+          candidateIdentity: candidate.identity,
+          generation: generation,
+          sources: sources,
+        );
+      }
+
+      await repo.beginDiscoverySession(
+        candidateIdentity: candidate.identity,
+        generation: 1,
+      );
+      await stage(1, [a]);
+      await repo.saveChosenSongFast(
+        SongDocument(
+          id: 'song',
+          title: candidate.title,
+          artist: candidate.artist,
+          body: '[C]Playable chart',
+          selectedRecording: candidate,
+        ),
+        candidateIdentity: candidate.identity,
+        discoveryGeneration: 1,
+        existingSongId: null,
+        expectedExistingHash: null,
+      );
+      await stage(1, [b]);
+      final wire = await repo.getSyncSongRaw('song');
+      final outbox = await repo.outboxMark();
+      expect(
+        (await repo.getSongForComparison('song'))!.sources.single.body,
+        b.body,
+      );
+
+      await repo.database.execute(
+        'CREATE TABLE observed_updates (payload_hash TEXT PRIMARY KEY)',
+      );
+      await repo.database.execute('''
+        CREATE TRIGGER record_observed_update
+        AFTER UPDATE OF observed_order ON discovery_evidence
+        BEGIN INSERT INTO observed_updates VALUES (NEW.payload_hash); END
+      ''');
+      try {
+        await stage(1, [b, a, b, a, a]);
+        expect(await repo.database.query('observed_updates'), hasLength(2));
+        final order = await repo.database.query(
+          'discovery_evidence',
+          columns: ['observed_order'],
+          orderBy: 'observed_order',
+        );
+        expect(order.map((row) => row['observed_order']), [5, 7]);
+      } finally {
+        await repo.database.execute('DROP TRIGGER record_observed_update');
+      }
+      expect(
+        (await repo.getSongForComparison('song'))!.sources.single.body,
+        a.body,
+      );
+      expect((await repo.database.query('discovery_evidence')), hasLength(2));
+      expect(await repo.getSyncSongRaw('song'), wire);
+      expect(await repo.outboxMark(), outbox);
+
+      await repo.beginDiscoverySession(
+        candidateIdentity: candidate.identity,
+        generation: 2,
+      );
+      await stage(2, [b]);
+      expect(
+        (await repo.getSongForComparison('song'))!.sources.single.body,
+        b.body,
+      );
+      expect(await repo.getSyncSongRaw('song'), wire);
+    },
+  );
+
+  test(
+    'repeat discovery deduplicates retrieval timestamps in nested evidence',
+    () async {
+      const selection = SongCandidate(
+        providerId: 'provider',
+        id: 'song',
+        title: 'Title',
+        artist: 'Artist',
+      );
+      SourceResult fetched(int day) {
+        final result = SourceResult(
+          candidate: selection,
+          body: 'Lyrics',
+          retrievedAt: DateTime.utc(2026, 1, day),
+        );
+        return result.copyWith(
+          extra: {
+            'discoveryEvidence': {
+              'acceptedPayloads': [result.toJson()],
+            },
+          },
+        );
+      }
+
+      for (final generation in [1, 2]) {
+        await repo.beginDiscoverySession(
+          candidateIdentity: selection.identity,
+          generation: generation,
+        );
+        await repo.stageDiscoverySources(
+          candidateIdentity: selection.identity,
+          generation: generation,
+          sources: [fetched(generation), fetched(3)],
+        );
+      }
+      expect((await repo.database.query('discovery_evidence')).length, 1);
+      final saved = await repo.saveChosenSongFast(
+        SongDocument(
+          id: 'song',
+          title: selection.title,
+          artist: selection.artist,
+          body: 'Lyrics',
+          selectedRecording: selection,
+        ),
+        candidateIdentity: selection.identity,
+        discoveryGeneration: 2,
+        existingSongId: null,
+        expectedExistingHash: null,
+      );
+      final comparison = (await repo.getSongForComparison(saved.song.id))!;
+      expect(comparison.sources.single.body, 'Lyrics');
+      expect(
+        comparison.sources.single.extra,
+        isNot(contains('discoveryEvidence')),
+      );
+      final archive = (await repo.getSongWithEvidence(saved.song.id))!;
+      expect(archive.sources.single.toJson(), fetched(1).toJson());
+
+      final beforeDuplicate = await repo.outboxMark();
+      await repo.database.execute('''
+        CREATE TRIGGER reject_repeated_insert BEFORE INSERT ON discovery_evidence
+        BEGIN SELECT RAISE(ABORT, 'a replay must not try to insert'); END
+      ''');
+      final String? unchangedHash;
+      try {
+        unchangedHash = await repo.stageDiscoverySources(
+          candidateIdentity: selection.identity,
+          generation: 2,
+          sources: [fetched(3)],
+        );
+      } finally {
+        await repo.database.execute('DROP TRIGGER reject_repeated_insert');
+      }
+      expect(unchangedHash, await repo.getSongHash(saved.song.id));
+      expect(await repo.outboxMark(), beforeDuplicate);
+      expect((await repo.database.query('discovery_evidence')).length, 1);
+
+      const newEvidence = SourceResult(
+        candidate: selection,
+        body: 'An alternative arrangement',
+      );
+      final changedHash = await repo.stageDiscoverySources(
+        candidateIdentity: selection.identity,
+        generation: 2,
+        sources: [newEvidence],
+      );
+      expect(changedHash, isNot(unchangedHash));
+      expect(changedHash, await repo.getSongHash(saved.song.id));
+      expect(await repo.outboxMark(), beforeDuplicate + 1);
+      expect((await repo.getPlayableSong(saved.song.id))?.body, 'Lyrics');
+    },
+  );
+
   test(
     'starts empty and stores complete documents and safe settings',
     () async {
@@ -664,7 +1467,7 @@ void main() {
       (await upgraded.database.rawQuery(
         'PRAGMA user_version',
       )).single.values.single,
-      4,
+      11,
     );
     await upgraded.close();
     await directory.delete(recursive: true);

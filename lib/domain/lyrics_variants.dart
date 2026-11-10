@@ -21,6 +21,7 @@ String preferCompatibleLyrics(String primary, Iterable<String> alternatives) {
   var bestLines = baseLines;
   var bestWords = baseWords;
   for (final alternative in alternatives) {
+    if (alternative == bestText) continue;
     final candidateLines = _normalizedLines(alternative);
     final candidateWords = candidateLines.fold<int>(
       0,
@@ -42,14 +43,14 @@ String preferCompatibleLyrics(String primary, Iterable<String> alternatives) {
 
 List<String> _normalizedLines(String body) => [
   for (final line in lyricLines(body))
-    if (_normalize(line).isNotEmpty) _normalize(line),
+    if (_normalize(line) case final normalized when normalized.isNotEmpty)
+      normalized,
 ];
 
-String _normalize(String line) => line
-    .toLowerCase()
-    .replaceAll(RegExp(r'[^\p{L}\p{N}]+', unicode: true), ' ')
-    .trim()
-    .replaceAll(RegExp(r'\s+'), ' ');
+final _wordSeparators = RegExp(r'[^\p{L}\p{N}]+', unicode: true);
+
+String _normalize(String line) =>
+    line.toLowerCase().replaceAll(_wordSeparators, ' ').trim();
 
 int _words(String line) =>
     line.split(' ').where((word) => word.isNotEmpty).length;

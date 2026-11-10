@@ -9,36 +9,45 @@ import 'models.dart';
 final chordPattern = RegExp(
   r'(?<!\\)\[((?:[A-G](?:#|b|♯|♭){0,2}(?:(?:maj|min|dim|aug|sus|add|omit|no|M|m|Δ|ø|°)|\d{1,2}(?!\d)|[#b♯♭+−-]\d{0,2}(?!\d)|\/(?:9|11|13)|\([A-Za-z0-9#b♯♭,+−-]{1,20}\))*(?:\/[A-G](?:#|b|♯|♭){0,2})?|N\.?C\.?))\]',
 );
+final _chordProEscape = RegExp(r'\\([\\\[\]{}#])');
+final _lyricWhitespace = RegExp(r'\s+');
+final _lyricChorusStart = RegExp(
+  r'^\s*\{(?:start_of_chorus|soc)(?::[^}]*)?\}\s*$',
+  caseSensitive: false,
+);
+final _lyricChorusEnd = RegExp(
+  r'^\s*\{(?:end_of_chorus|eoc)\}\s*$',
+  caseSensitive: false,
+);
+final _lyricChorusReference = RegExp(
+  r'^\s*\{chorus(?::[^}]*)?\}\s*$',
+  caseSensitive: false,
+);
+final _nonLyricLine = RegExp(
+  r'^\s*(?:\{.*\}|#.*|\[(?:verse|chorus|bridge|intro|outro|instrumental)[^\]]*\])\s*$',
+  caseSensitive: false,
+);
 String unescapeChordPro(String text) =>
-    text.replaceAllMapped(RegExp(r'\\([\\\[\]{}#])'), (m) => m[1]!);
-bool containsChords(String body) => chordPattern.hasMatch(body);
-String plainLyrics(String body) =>
-    _plainLyricsCache.get(body) ??
-    _plainLyricsCache.put(body, lyricLines(body).join('\n'));
+    text.replaceAllMapped(_chordProEscape, (m) => m[1]!);
+bool containsChords(String body) =>
+    _containsChordsCache.get(body) ??
+    _containsChordsCache.put(body, chordPattern.hasMatch(body));
+String plainLyrics(String body) => _analyzeLyrics(body).plain;
 List<String> lyricLines(String body) {
   final result = <String>[];
   var chorus = <String>[];
   var inChorus = false;
   for (final line in body.replaceAll('\r\n', '\n').split('\n')) {
-    if (RegExp(
-      r'^\s*\{(?:start_of_chorus|soc)(?::[^}]*)?\}\s*$',
-      caseSensitive: false,
-    ).hasMatch(line)) {
+    if (_lyricChorusStart.hasMatch(line)) {
       inChorus = true;
       chorus = [];
       continue;
     }
-    if (RegExp(
-      r'^\s*\{(?:end_of_chorus|eoc)\}\s*$',
-      caseSensitive: false,
-    ).hasMatch(line)) {
+    if (_lyricChorusEnd.hasMatch(line)) {
       inChorus = false;
       continue;
     }
-    if (RegExp(
-      r'^\s*\{chorus(?::[^}]*)?\}\s*$',
-      caseSensitive: false,
-    ).hasMatch(line)) {
+    if (_lyricChorusReference.hasMatch(line)) {
       if (chorus.isEmpty) {
         result.add('[unresolved chorus]');
       } else {
@@ -46,15 +55,12 @@ List<String> lyricLines(String body) {
       }
       continue;
     }
-    if (RegExp(
-      r'^\s*(?:\{.*\}|#.*|\[(?:verse|chorus|bridge|intro|outro|instrumental)[^\]]*\])\s*$',
-      caseSensitive: false,
-    ).hasMatch(line)) {
+    if (_nonLyricLine.hasMatch(line)) {
       continue;
     }
     final text = unescapeChordPro(
       line.replaceAll(chordPattern, ''),
-    ).replaceAll(RegExp(r'\s+'), ' ').trim();
+    ).replaceAll(_lyricWhitespace, ' ').trim();
     if (text.isEmpty) continue;
     result.add(text);
     if (inChorus) chorus.add(text);
@@ -62,8 +68,43 @@ List<String> lyricLines(String body) {
   return result;
 }
 
-String lyricOrderHash(String body) =>
-    sha256.convert(utf8.encode(jsonEncode(lyricLines(body)))).toString();
+String lyricOrderHash(String body) => _analyzeLyrics(body).orderHash;
+
+class _LyricAnalysis {
+  _LyricAnalysis(String body) : _lines = lyricLines(body);
+
+  List<String>? _lines;
+  String? _plain;
+  String? _orderHash;
+
+  String get plain {
+    final value = _plain ??= _lines!.join('\n');
+    if (_orderHash != null) _lines = null;
+    return value;
+  }
+
+  String get orderHash {
+    final value = _orderHash ??= sha256
+        .convert(utf8.encode(jsonEncode(_lines!)))
+        .toString();
+    if (_plain != null) _lines = null;
+    return value;
+  }
+}
+
+_LyricAnalysis _analyzeLyrics(String body) {
+  // The codec and the SQLite row use both facts in succession. Keep one
+  // large chart available without retaining a library of oversized bodies.
+  if (body.length > 64 * 1024) {
+    final previous = _lastLargeLyricAnalysis;
+    if (previous != null && previous.body == body) return previous.analysis;
+    final analysis = _LyricAnalysis(body);
+    _lastLargeLyricAnalysis = (body: body, analysis: analysis);
+    return analysis;
+  }
+  return _lyricAnalysisCache.get(body) ??
+      _lyricAnalysisCache.put(body, _LyricAnalysis(body));
+}
 
 class ChordAnchor {
   final int offset;
@@ -151,7 +192,9 @@ List<ArrangementLine> parseArrangement(String body) {
 }
 
 final _arrangementCache = _BodyCache<List<ArrangementLine>>();
-final _plainLyricsCache = _BodyCache<String>();
+final _lyricAnalysisCache = _BodyCache<_LyricAnalysis>();
+({String body, _LyricAnalysis analysis})? _lastLargeLyricAnalysis;
+final _containsChordsCache = _BodyCache<bool>();
 
 /// Small least-recently-used map keyed by a body's text. Bodies are only
 /// retained while they keep being used, so memory stays bounded.

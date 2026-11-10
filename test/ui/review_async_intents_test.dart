@@ -3,8 +3,10 @@ import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:singbook/application/app_controller.dart';
+import 'package:singbook/application/combine_runner.dart';
 import 'package:singbook/data/library_repository.dart';
 import 'package:singbook/domain/models.dart';
+import 'package:singbook/providers/core/service.dart';
 import 'package:singbook/ui/app_controller_adapter.dart';
 import 'package:singbook/ui/verse_ui_state.dart';
 
@@ -29,7 +31,10 @@ void main() {
       path: inMemoryDatabasePath,
       factory: databaseFactoryFfi,
     );
-    app = AppController(repository: repository);
+    app = AppController(
+      repository: repository,
+      discovery: SourceDiscoveryService([]),
+    );
     await app.initialize();
     ui = AppControllerAdapter(app);
     uiDisposed = false;
@@ -180,6 +185,186 @@ void main() {
     final saved = (await repository.getSong('a'))!;
     expect(saved.metadata['x_verse_player_transpose'], 2);
     expect(ui.state.song?.id, 'b');
+  });
+
+  test(
+    'saving a discovered chart opens while unrelated player preferences are pending',
+    () async {
+      final gate = gatePreferences();
+      await ui.openSong('a');
+      await ui.transpose(2);
+      final pendingPreferences = ui.settlePlayerPreferences();
+      await gate.started.future;
+      try {
+        await ui.back();
+        const candidate = SongCandidate(
+          providerId: 'fixture',
+          id: 'new-song',
+          title: 'New song',
+          artist: 'Artist',
+        );
+        const result = SourceResult(
+          candidate: candidate,
+          body: '[G]Discovered words',
+          matchKind: MatchKind.sameRecording,
+        );
+        await app.selectCandidate(candidate);
+        app.results = [result];
+        ui.selectVersion(result.id);
+
+        await ui.saveSelectedVersion().timeout(const Duration(seconds: 5));
+        expect(ui.state.route, VerseRoute.reader);
+        expect(ui.state.song?.title, 'New song');
+      } finally {
+        gate.release();
+        await pendingPreferences;
+      }
+      final previous = await repository.getPlayableSong('a');
+      expect(previous?.metadata['x_verse_player_transpose'], 2);
+    },
+  );
+
+  test(
+    'resaving a chart opens with pending preferences before Recent is written',
+    () async {
+      final gate = gatePreferences();
+      await ui.openSong('a');
+      await ui.transpose(2);
+      await ui.setPlaybackSpeed(.8);
+      final pendingPreferences = ui.settlePlayerPreferences();
+      await gate.started.future;
+
+      Future<void>? recentLock;
+      final releaseRecent = Completer<void>();
+      void blockRecentAfterNavigation() {
+        if (ui.state.route != VerseRoute.reader || recentLock != null) return;
+        recentLock = repository.database.transaction(
+          (_) => releaseRecent.future,
+        );
+      }
+
+      try {
+        await ui.back();
+        const candidate = SongCandidate(
+          providerId: 'fixture',
+          id: 'a',
+          title: 'Song a',
+          artist: 'Artist',
+        );
+        const result = SourceResult(
+          candidate: candidate,
+          body: '[G]Discovered words',
+          matchKind: MatchKind.sameRecording,
+        );
+        await app.selectCandidate(candidate, cachedResults: [result]);
+        ui.selectVersion(result.id);
+        ui.addListener(blockRecentAfterNavigation);
+
+        await ui.saveSelectedVersion().timeout(const Duration(seconds: 5));
+        expect(recentLock, isNotNull);
+        expect(ui.state.route, VerseRoute.reader);
+        expect(ui.state.song?.id, 'a');
+        expect(ui.state.readerTranspose, 2);
+        expect(ui.state.playbackSpeed, .8);
+        final rendered = ui.state.songLines.singleWhere(
+          (line) => line.text == 'Discovered words',
+        );
+        expect(rendered.chords.single.symbol, 'A');
+      } finally {
+        ui.removeListener(blockRecentAfterNavigation);
+        releaseRecent.complete();
+        gate.release();
+        await recentLock;
+        await pendingPreferences;
+        await ui.settleRecentRecords();
+      }
+      final stored = await repository.getPlayableSong('a');
+      expect(stored?.body, '[G]Discovered words');
+      expect(stored?.metadata['x_verse_player_transpose'], 2);
+      expect(stored?.metadata['x_verse_player_speed'], .8);
+      expect(app.recent.first.objectId, 'a');
+      expect(app.recent.first.openCount, 2);
+    },
+  );
+
+  test('Save opens the reader with its active timing projection', () async {
+    const candidate = SongCandidate(
+      providerId: 'fixture',
+      id: 'timed',
+      title: 'Timed song',
+      artist: 'Artist',
+    );
+    final result = SourceResult(
+      candidate: candidate,
+      body: [
+        '[G]First line',
+        'Second line',
+        for (var i = 0; i < 40; i++) 'A lyric line numbered $i',
+      ].join('\n'),
+      matchKind: MatchKind.sameRecording,
+    );
+    app.preferredArrangementPreparer = PreferredArrangementPreparer(
+      compute:
+          (
+            request, {
+            required sourceId,
+            required compact,
+            required allowRejectedPreferredSource,
+          }) async => SongDocument(
+            id: 'timed',
+            title: candidate.title,
+            artist: candidate.artist,
+            body: result.body,
+            selectedRecording: candidate,
+            activeTimingTrackId: 'track',
+            timingTracks: const [
+              TimingTrack(
+                id: 'track',
+                sourceDocumentId: 'fixture',
+                sourceLyrics: 'First line\nSecond line',
+                format: 'lrc',
+                status: TimingStatus.usable,
+                cues: [
+                  TimingCue(
+                    id: 'cue',
+                    occurrenceId: 'line-1',
+                    text: 'Second line',
+                    startUs: 0,
+                  ),
+                ],
+              ),
+            ],
+          ),
+    );
+    app.settings['timingMode'] = 'timed';
+    await app.selectCandidate(candidate, cachedResults: [result]);
+    ui.selectVersion(result.id);
+    final durationsBeforeOpen = <double?>[];
+    void inspectPublishedCard() {
+      final state = ui.state;
+      if (state.route != VerseRoute.main) return;
+      for (final card in state.songs.where((song) => song.id == 'timed')) {
+        durationsBeforeOpen.add(card.durationSeconds);
+      }
+    }
+
+    ui.addListener(inspectPublishedCard);
+    try {
+      await ui.saveSelectedVersion();
+    } finally {
+      ui.removeListener(inspectPublishedCard);
+    }
+    await ui.settleRecentRecords();
+    expect(durationsBeforeOpen, isNotEmpty);
+    expect(durationsBeforeOpen, everyElement(isNull));
+    expect(ui.state.route, VerseRoute.reader);
+    expect(ui.state.currentLineId, 'line-1');
+    expect(ui.state.song?.durationSeconds, closeTo(142.8, .001));
+    expect(
+      ui.state.songs.singleWhere((song) => song.id == 'timed').durationSeconds,
+      closeTo(142.8, .001),
+    );
+    expect(ui.state.readerDurationEstimated, isTrue);
   });
 
   test('a completed old editor save leaves a newer draft intact', () async {

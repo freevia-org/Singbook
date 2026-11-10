@@ -7,6 +7,7 @@ import 'package:singbook/sync/google_drive_sync.dart';
 import 'package:singbook/ui/app_controller_adapter.dart';
 import 'package:singbook/ui/verse_ui_state.dart';
 import '../sync/support.dart';
+import 'support/fake_controller.dart' show pumpShell;
 
 void main() {
   sqfliteFfiInit();
@@ -50,9 +51,22 @@ void main() {
       ui.toggleSearchFilters();
       final changed = ui.state;
       expect(changed.searchFiltersExpanded, isTrue);
+      expect(changed.songs, same(first.songs));
       expect(ui.stateBuildCount, builds + 1);
       expect(identical(ui.state, changed), isTrue);
       expect(ui.stateBuildCount, builds + 1);
+    });
+
+    test('library cards refresh their play count after opening a song', () async {
+      await saveTwoSongs();
+      final first = ui.state.songs;
+      expect(first.first.playCount, 0);
+      await ui.openSong('a');
+      final visited = ui.state.songs;
+      expect(visited.first.playCount, 1);
+      expect(visited.last.playCount, 0);
+      ui.toggleSearchFilters();
+      expect(ui.state.songs, same(visited));
     });
 
     test('a controller change invalidates the cached state', () async {
@@ -62,6 +76,58 @@ void main() {
       await app.saveSong(_song('c', 'Gamma'));
       expect(ui.state.songs.length, before + 1);
       expect(ui.stateBuildCount, greaterThan(builds));
+    });
+
+    testWidgets('the app shell defers rebuilding search state until a frame', (
+      tester,
+    ) async {
+      await pumpShell(tester, ui);
+      final builds = ui.stateBuildCount;
+
+      for (var i = 0; i < 5; i++) {
+        ui.toggleSearchFilters();
+      }
+      expect(ui.stateBuildCount, builds);
+
+      await tester.pump();
+      expect(ui.stateBuildCount, builds + 1);
+    });
+
+    test('appearance settings can be read before a state rebuild', () async {
+      final builds = ui.stateBuildCount;
+      await ui.setThemeMode(AppThemeMode.dark);
+      await ui.setPalette('sand');
+      await ui.setFontFamily('system');
+      await ui.setLanguage('uk');
+
+      final appearance = ui.appearance;
+      expect(ui.stateBuildCount, builds);
+      expect(appearance.themeMode, AppThemeMode.dark);
+      expect(appearance.palette, 'sand');
+      expect(appearance.languageCode, 'uk');
+      final state = ui.state;
+      expect(state.darkTheme, appearance.themeMode);
+      expect(state.palette, appearance.palette);
+      expect(state.fontFamily, appearance.fontFamily);
+      expect(state.languageCode, appearance.languageCode);
+    });
+
+    test('reader notifications defer unrelated screen projections', () async {
+      await app.saveSong(_song('a', 'Alpha', body: _longBody));
+      await ui.openSong('a');
+      final first = ui.state;
+      final builds = ui.stateBuildCount;
+
+      for (var i = 0; i < 5; i++) {
+        ui.toggleSearchFilters();
+      }
+      expect(ui.stateBuildCount, builds);
+
+      final updated = ui.state;
+      expect(updated.searchFiltersExpanded, isTrue);
+      expect(ui.stateBuildCount, builds + 1);
+      expect(identical(updated.songLines, first.songLines), isTrue);
+      expect(updated.currentLineId, first.currentLineId);
     });
 
     test('playback ticks and seeks do not notify or rebuild state', () async {
@@ -92,8 +158,9 @@ void main() {
       ui.advancePlayerBy(3);
       ui.advancePlayerBy(3);
       expect(notifications, 0);
-      expect(ui.stateBuildCount, builds + 1, reason: 'only play toggled');
+      expect(ui.stateBuildCount, builds, reason: 'state remains lazy');
       expect(ui.state.progressSeconds, 46);
+      expect(ui.stateBuildCount, builds + 1, reason: 'only play toggled');
       await ui.playPause();
       expect(ui.state.isPlaying, isFalse);
     });

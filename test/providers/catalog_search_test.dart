@@ -86,6 +86,51 @@ void main() {
     },
   );
 
+  test('empty catalog batches reuse the latest immutable snapshot', () async {
+    final snapshots = <List<SongCandidate>>[];
+    final result = await searchCatalogsTogether(
+      'query',
+      definitions: [_definition('primary'), _definition('secondary')],
+      primaryProviderId: 'primary',
+      enabledIds: {'primary', 'secondary'},
+      concurrency: 1,
+      search: (id, _) async => id == 'primary' ? [_row(id, '1')] : [],
+      onProgress: snapshots.add,
+    );
+
+    expect(snapshots, hasLength(2));
+    expect(snapshots.first, same(snapshots.last));
+    expect(result, same(snapshots.last));
+    expect(() => result.clear(), throwsUnsupportedError);
+  });
+
+  test(
+    'cancelling a published catalog invalidates the final snapshot',
+    () async {
+      final secondary = CancellationToken();
+      final snapshots = <List<SongCandidate>>[];
+      final result = await searchCatalogsTogether(
+        'query',
+        definitions: [_definition('primary'), _definition('secondary')],
+        primaryProviderId: 'primary',
+        enabledIds: {'primary', 'secondary'},
+        providerCancellation: {'secondary': secondary},
+        concurrency: 1,
+        search: (id, _) async => [_row(id, '1')],
+        onProgress: (rows) {
+          snapshots.add(rows);
+          if (rows.length == 2) secondary.cancel();
+        },
+      );
+
+      expect(snapshots.last.map((row) => row.providerId), [
+        'primary',
+        'secondary',
+      ]);
+      expect(result.map((row) => row.providerId), ['primary']);
+    },
+  );
+
   test('Genius failure returns usable secondary catalog results', () async {
     final fallback = _row('lrclib', '2');
     final result = await searchCatalogsTogether(

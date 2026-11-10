@@ -78,9 +78,12 @@ TimingTrack bindImportedTiming(TimingTrack track, String body) {
   );
 }
 
-List<JsonMap> timingOccurrenceMap(TimingTrack track, String body) {
+List<JsonMap> timingOccurrenceMap(TimingTrack track, String body) =>
+    timingOccurrenceMapForLyrics(track.sourceLyrics);
+
+List<JsonMap> timingOccurrenceMapForLyrics(String lyrics) {
   final result = <JsonMap>[];
-  final sourceLines = track.sourceLyrics.split('\n');
+  final sourceLines = lyrics.split('\n');
   var target = 0;
   for (var source = 0; source < sourceLines.length; source++) {
     if (lyricLines(sourceLines[source]).isEmpty) continue;

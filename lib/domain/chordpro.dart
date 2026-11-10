@@ -1,9 +1,15 @@
 import 'dart:convert';
 import 'dart:math';
+import 'package:archive/archive.dart';
 import 'package:characters/characters.dart';
 import 'package:crypto/crypto.dart';
 import 'models.dart';
 import 'arrangement.dart';
+
+/// A valid song whose encoded representation exceeds a ChordPro size limit.
+class ChordProSizeException extends FormatException {
+  const ChordProSizeException(super.message);
+}
 
 class ChordProCodec {
   static const chunkSize = 4096;
@@ -12,6 +18,14 @@ class ChordProCodec {
   static const maxDocument = 24 * 1024 * 1024;
   // Total characters of raw timing text that rawRef resolution may produce.
   static const _maxExpanded = 32 * 1024 * 1024;
+  static const _archiveKey = 'singbookArchivedEvidenceGzip';
+  static const _archiveFields = {
+    'previousSavedVersions',
+    'previousSourceVersions',
+    'sourceEvidenceSnapshots',
+    'discoveryEvidence',
+    'providerAlternatives',
+  };
   static const _meta = {
     'album': 'album',
     'key': 'key',
@@ -121,16 +135,22 @@ class ChordProCodec {
       } else {
         data.remove('rawAssets');
       }
-      final bytes = utf8.encode(jsonEncode(data));
+      var bytes = utf8.encode(jsonEncode(data));
       if (bytes.length > maxDecoded) {
-        throw const FormatException(
+        _compactEvidence(data);
+        bytes = utf8.encode(jsonEncode(data));
+      }
+      if (bytes.length > maxDecoded) {
+        throw const ChordProSizeException(
           'Song timing exceeds the 12 MiB file limit.',
         );
       }
       final encoded = base64Url.encode(bytes).replaceAll('=', '');
       final count = (encoded.length / chunkSize).ceil();
       if (count > 4096 || encoded.length > maxEncoded) {
-        throw const FormatException('Song extension exceeds the file limit.');
+        throw const ChordProSizeException(
+          'Song extension exceeds the file limit.',
+        );
       }
       headers.add('{x_verse: 1 json-base64url $count}');
       for (var i = 0; i < count; i++) {
@@ -143,7 +163,7 @@ class ChordProCodec {
     final document = '${headers.join('\n')}\n\n${song.body}';
     // decode() refuses larger documents, so never write what cannot be read.
     if (document.length > maxDocument) {
-      throw const FormatException('Song file exceeds the 24 MiB limit.');
+      throw const ChordProSizeException('Song file exceeds the 24 MiB limit.');
     }
     return document;
   }
@@ -351,6 +371,40 @@ class ChordProCodec {
     );
   }
 
+  /// Keep the v1 extension and its active fields readable by older apps.
+  /// Only archive evidence when the ordinary representation would exceed v1.
+  void _compactEvidence(JsonMap data) {
+    var remaining = _maxExpanded;
+    void compact(JsonMap map) {
+      if (map.containsKey(_archiveKey)) return;
+      final candidates = {
+        for (final key in _archiveFields)
+          if (map[key] case final List<Object?> value when value.isNotEmpty)
+            key: value
+          else if (map[key] case final Map<String, dynamic> value
+              when value.isNotEmpty)
+            key: value,
+      };
+      if (candidates.isEmpty) return;
+      final bytes = utf8.encode(jsonEncode(candidates));
+      if (bytes.length < 4096 || bytes.length > remaining) return;
+      final compressed = base64.encode(
+        const GZipEncoder().encodeBytes(bytes, level: 1),
+      );
+      if (compressed.length + _archiveKey.length + 8 >= bytes.length) return;
+      remaining -= bytes.length;
+      map.removeWhere((key, _) => candidates.containsKey(key));
+      map[_archiveKey] = compressed;
+    }
+
+    compact(data);
+    if (data['sources'] case final List<dynamic> sources) {
+      for (final source in sources.whereType<JsonMap>()) {
+        compact(source);
+      }
+    }
+  }
+
   JsonMap _decodeExtension(List<String> lines) {
     final heads = lines
         .where(
@@ -428,15 +482,41 @@ class ChordProCodec {
     // references cannot expand a small payload into gigabytes.
     final decodedAssets = <String, String>{};
     var expanded = 0;
+    var archiveBytesLeft = _maxExpanded;
     dynamic unpack(dynamic value, int depth) {
       if (depth > 64) {
         throw const FormatException('Singbook data is nested too deeply.');
       }
       if (value is List) return value.map((v) => unpack(v, depth + 1)).toList();
       if (value is Map) {
-        final result = value.map(
-          (k, v) => MapEntry(k as String, unpack(v, depth + 1)),
-        );
+        final archive = value[_archiveKey];
+        Map<dynamic, dynamic> fields = value;
+        if (archive is String) {
+          fields = jsonMap(value)..remove(_archiveKey);
+          final output = OutputMemoryStream();
+          final decoded = const GZipDecoder().decodeStream(
+            InputMemoryStream(base64.decode(archive)),
+            output,
+            verify: true,
+            maxOutputSize: archiveBytesLeft,
+          );
+          if (!decoded) {
+            throw const FormatException('Invalid archived source evidence.');
+          }
+          archiveBytesLeft -= output.length;
+          final evidence = jsonDecode(utf8.decode(output.getBytes()));
+          if (evidence is! Map<String, dynamic> ||
+              evidence.keys.any(
+                (key) =>
+                    !_archiveFields.contains(key) || fields.containsKey(key),
+              )) {
+            throw const FormatException('Invalid archived source evidence.');
+          }
+          fields.addAll(evidence);
+        } else if (value.containsKey(_archiveKey)) {
+          throw const FormatException('Invalid archived source evidence.');
+        }
+        final result = fields.map((k, v) => MapEntry(k, unpack(v, depth + 1)));
         if (result.containsKey('rawRef')) {
           final ref = result['rawRef'];
           final asset = jsonMap(assets[ref]);

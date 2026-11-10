@@ -60,7 +60,7 @@ class _VerseAppState extends State<VerseApp> {
   // change neither do not rebuild three ThemeData objects.
   (String, String)? _themeKey;
   late ThemeData _light, _dark;
-  late _AppAppearance _appearance;
+  late AppAppearance _appearance;
 
   @override
   void initState() {
@@ -86,7 +86,7 @@ class _VerseAppState extends State<VerseApp> {
       onImport: _importSongs,
       onImportSetlist: _importSetlist,
     );
-    _appearance = _AppAppearance.of(_controller.state);
+    _appearance = _controller.appearance;
     _updateThemes();
     _controller.addListener(_onControllerChanged);
     // Paint the local loading shell before opening storage or loading config.
@@ -98,7 +98,7 @@ class _VerseAppState extends State<VerseApp> {
 
   /// Rebuilds the MaterialApp only when something it renders from changed.
   void _onControllerChanged() {
-    final next = _AppAppearance.of(_controller.state);
+    final next = _controller.appearance;
     if (next == _appearance) return;
     setState(() {
       _appearance = next;
@@ -291,37 +291,6 @@ Locale resolveAppLocale(Locale? locale, Iterable<Locale> supported) {
   return const Locale('en');
 }
 
-/// The parts of [VerseUiState] the MaterialApp itself renders from.
-@immutable
-class _AppAppearance {
-  const _AppAppearance(
-    this.palette,
-    this.fontFamily,
-    this.themeMode,
-    this.languageCode,
-  );
-  factory _AppAppearance.of(VerseUiState state) => _AppAppearance(
-    state.palette,
-    state.fontFamily,
-    state.darkTheme,
-    state.languageCode,
-  );
-  final String palette, fontFamily;
-  final AppThemeMode themeMode;
-  final String? languageCode;
-
-  @override
-  bool operator ==(Object other) =>
-      other is _AppAppearance &&
-      other.palette == palette &&
-      other.fontFamily == fontFamily &&
-      other.themeMode == themeMode &&
-      other.languageCode == languageCode;
-
-  @override
-  int get hashCode => Object.hash(palette, fontFamily, themeMode, languageCode);
-}
-
 class _StartupError extends StatelessWidget {
   const _StartupError({required this.onRetry});
   final VoidCallback onRetry;
@@ -408,7 +377,7 @@ class _VerseAppShellState extends State<VerseAppShell>
       });
     }
     _playerSystemBars.listenForNativeToggle(() {
-      if (mounted && widget.controller.state.route == VerseRoute.reader) {
+      if (mounted && widget.controller.route == VerseRoute.reader) {
         _setPlayerFullScreen(!_playerFullScreen);
       }
     }, onExit: () => _setPlayerFullScreen(false));
@@ -442,7 +411,7 @@ class _VerseAppShellState extends State<VerseAppShell>
       _confirmDesktopExit().whenComplete(() => _exitRequest = null);
 
   Future<AppExitResponse> _confirmDesktopExit() async {
-    if (widget.controller.state.route != VerseRoute.editor ||
+    if (widget.controller.route != VerseRoute.editor ||
         !widget.controller.state.editorDirty) {
       return AppExitResponse.exit;
     }
@@ -470,16 +439,24 @@ class _VerseAppShellState extends State<VerseAppShell>
   }
 
   void _syncPlayerFullScreen() {
-    if (widget.controller.state.route != VerseRoute.reader) {
+    if (widget.controller.route != VerseRoute.reader) {
       _setPlayerFullScreen(false);
     }
+    _syncPlayerSystemUi();
   }
 
   void _setPlayerFullScreen(bool enabled) {
-    if (enabled && widget.controller.state.route != VerseRoute.reader) return;
+    if (enabled && widget.controller.route != VerseRoute.reader) return;
     if (_playerFullScreen == enabled || !mounted) return;
     setState(() => _playerFullScreen = enabled);
-    _playerSystemBars.setEnabled(enabled);
+    _syncPlayerSystemUi();
+  }
+
+  void _syncPlayerSystemUi() {
+    _playerSystemBars.setReaderState(
+      active: widget.controller.route == VerseRoute.reader,
+      fullScreen: _playerFullScreen,
+    );
   }
 
   @override
@@ -496,7 +473,7 @@ class _VerseAppShellState extends State<VerseAppShell>
   void _showNotice(UiNotice notice) {
     if (!mounted) return;
     if (notice == UiNotice.songSaved &&
-        widget.controller.state.route == VerseRoute.reader) {
+        widget.controller.route == VerseRoute.reader) {
       return;
     }
     final messenger = ScaffoldMessenger.maybeOf(context);

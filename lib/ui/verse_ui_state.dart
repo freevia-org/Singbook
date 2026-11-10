@@ -526,6 +526,7 @@ class VerseUiState {
     this.isPlaying = false,
     this.progressSeconds = 0,
     this.playerSections = const [],
+    this.estimatedLineStarts,
     this.currentLineId,
     this.activeSetlist,
     this.editing = false,
@@ -605,6 +606,7 @@ class VerseUiState {
       songLines = o.songLines,
       isPlaying = o.isPlaying,
       playerSections = o.playerSections,
+      estimatedLineStarts = o.estimatedLineStarts,
       activeSetlist = o.activeSetlist,
       editing = o.editing,
       editingSetlist = o.editingSetlist,
@@ -694,6 +696,7 @@ class VerseUiState {
   final bool isPlaying, editing, editingSetlist, editorDirty;
   final double progressSeconds;
   final List<PlayerSectionMarker> playerSections;
+  final Map<String, double>? estimatedLineStarts;
   final String? currentLineId;
   final SetlistCardData? activeSetlist;
   final SongEditorData? editor;
@@ -711,6 +714,7 @@ class VerseUiState {
 /// UI boundary deliberately keeps widgets independent of SQLite and provider types.
 abstract class VerseUiController extends ChangeNotifier {
   VerseUiState get state;
+  VerseRoute get route => state.route;
 
   /// Playback position; ticks here do not notify the controller's listeners.
   ValueListenable<PlayerPosition> get playerPosition => _fallbackPosition ??=
@@ -739,6 +743,11 @@ abstract class VerseUiController extends ChangeNotifier {
   Future<void> retrySelectedSongDiscovery() async {}
   void selectVersion(String versionId);
   Future<void> saveSelectedVersion();
+  Future<void> saveVersion(String versionId) {
+    selectVersion(versionId);
+    return saveSelectedVersion();
+  }
+
   Future<void> compareCurrentSongVersions() async {}
   Future<void> openSong(String id);
   Future<void> openSetlist(String id);

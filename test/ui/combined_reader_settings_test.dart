@@ -191,7 +191,15 @@ void main() {
         find.byKey(const ValueKey('player-controls-panel')),
       );
       expect(lyrics.width, greaterThanOrEqualTo(350));
-      expect(controls.top, greaterThanOrEqualTo(header.bottom));
+      final mobile =
+          !kIsWeb &&
+          (defaultTargetPlatform == TargetPlatform.android ||
+              defaultTargetPlatform == TargetPlatform.iOS);
+      if (mobile) {
+        expect(controls.top, closeTo(0, 1));
+      } else {
+        expect(controls.top, greaterThanOrEqualTo(header.bottom));
+      }
       expect(controls.bottom, lessThanOrEqualTo(360));
       expect(controls.left, greaterThanOrEqualTo(lyrics.right));
       expect(find.byKey(const ValueKey('start-lyric-scroll')), findsOneWidget);
@@ -355,10 +363,12 @@ void main() {
   testWidgets(
     'native fullscreen survives focus changes without replaying requests',
     (tester) async {
-      final calls = <bool>[];
+      final android = defaultTargetPlatform == TargetPlatform.android;
+      final calls = <Object?>[];
       tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
         _bars,
-        (call) async => calls.add(call.arguments as bool),
+        (call) async =>
+            calls.add(android ? (call.method, call.arguments) : call.arguments),
       );
       addTearDown(
         () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
@@ -369,9 +379,13 @@ void main() {
       final controller = FakeUiController((_) => _reader());
       addTearDown(controller.dispose);
       await pumpShell(tester, controller);
+      expect(calls, android ? [('setMode', 'reader')] : isEmpty);
       await tester.tap(find.byKey(const ValueKey('player-enter-fullscreen')));
       await tester.pumpAndSettle();
-      expect(calls, [true]);
+      expect(
+        calls,
+        android ? [('setMode', 'reader'), ('setMode', 'fullscreen')] : [true],
+      );
       for (var i = 0; i < 3; i++) {
         for (final state in [
           AppLifecycleState.inactive,
@@ -383,10 +397,22 @@ void main() {
           await tester.pumpAndSettle();
         }
       }
-      expect(calls, [true]);
+      expect(
+        calls,
+        android ? [('setMode', 'reader'), ('setMode', 'fullscreen')] : [true],
+      );
       await tester.tap(find.byKey(const ValueKey('player-exit-fullscreen')));
       await tester.pumpAndSettle();
-      expect(calls, [true, false]);
+      expect(
+        calls,
+        android
+            ? [
+                ('setMode', 'reader'),
+                ('setMode', 'fullscreen'),
+                ('setMode', 'reader'),
+              ]
+            : [true, false],
+      );
     },
     variant: TargetPlatformVariant({
       TargetPlatform.android,
@@ -473,10 +499,12 @@ void main() {
   testWidgets(
     'route changes and disposal restore Android system bars',
     (tester) async {
-      final calls = <bool>[];
+      final android = defaultTargetPlatform == TargetPlatform.android;
+      final calls = <Object?>[];
       tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
         _bars,
-        (call) async => calls.add(call.arguments as bool),
+        (call) async =>
+            calls.add(android ? (call.method, call.arguments) : call.arguments),
       );
       addTearDown(
         () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
@@ -488,26 +516,28 @@ void main() {
       final controller = FakeUiController((_) => _reader(route: route));
       addTearDown(controller.dispose);
       await pumpShell(tester, controller);
+      if (android) expect(calls, [('setMode', 'reader')]);
       await tester.tap(find.byKey(const ValueKey('player-enter-fullscreen')));
       await tester.pumpAndSettle();
-      expect(calls.last, isTrue);
+      expect(calls.last, android ? ('setMode', 'fullscreen') : isTrue);
       route = VerseRoute.main;
       controller.refresh();
       await tester.pumpAndSettle();
-      expect(calls.last, isFalse);
+      expect(calls.last, android ? ('setMode', 'inactive') : isFalse);
       route = VerseRoute.reader;
       controller.refresh();
       await tester.pumpAndSettle();
+      if (android) expect(calls.last, ('setMode', 'reader'));
       expect(
         find.byKey(const ValueKey('player-enter-fullscreen')),
         findsOneWidget,
       );
       await tester.tap(find.byKey(const ValueKey('player-enter-fullscreen')));
       await tester.pumpAndSettle();
-      expect(calls.last, isTrue);
+      expect(calls.last, android ? ('setMode', 'fullscreen') : isTrue);
       await tester.pumpWidget(const SizedBox());
       await tester.pump();
-      expect(calls.last, isFalse);
+      expect(calls.last, android ? ('setEnabled', false) : isFalse);
     },
     variant: TargetPlatformVariant({
       TargetPlatform.android,

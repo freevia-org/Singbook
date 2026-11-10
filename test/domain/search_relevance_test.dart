@@ -22,6 +22,41 @@ List<String> _ranked(String query, List<SongCandidate> rows) {
 }
 
 void main() {
+  test(
+    'streamed catalog rows reuse scores while preserving the final rank',
+    () {
+      final original = _row('Harbor Lights', 'The Mariners');
+      final unrelated = _row('Harbor Inn', 'The Crew');
+      final arriving = _row('Harbor Lights Karaoke', 'Karaoke Kings');
+      final input = (
+        candidates: [original, unrelated],
+        query: 'harbor lights mariners',
+        field: 'all',
+        preferred: 'genius',
+        catalogIds: 'genius',
+      );
+      final first = projectCatalogWithScores((input: input, scores: const {}));
+      expect(first.newScores.keys, [0, 1]);
+
+      final next = (
+        candidates: [arriving, unrelated, original],
+        query: input.query,
+        field: input.field,
+        preferred: input.preferred,
+        catalogIds: input.catalogIds,
+      );
+      final partial = projectCatalogWithScores((
+        input: next,
+        scores: {1: first.newScores[1]!, 2: first.newScores[0]!},
+      ));
+      expect(partial.newScores.keys, [0]);
+      expect(
+        partial.groups.map((group) => group.representative.identity),
+        projectCatalog(next).map((group) => group.representative.identity),
+      );
+    },
+  );
+
   test('the original outranks an instrumental naming the artist', () {
     expect(
       _ranked('harbor lights mariners', [

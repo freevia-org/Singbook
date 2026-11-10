@@ -2,6 +2,7 @@ import 'dart:async';
 import '../domain/acousticbrainz_analysis.dart';
 import '../providers/core/recording_context.dart';
 import '../providers/core/diagnostics.dart';
+import '../providers/core/service.dart' show ProviderCheck;
 
 import 'package:flutter/foundation.dart';
 
@@ -9,25 +10,167 @@ import '../application/app_controller.dart';
 import '../sync/sync_provider.dart';
 import '../domain/arrangement.dart' as arrangement;
 import '../domain/chordpro.dart';
-import '../domain/chord_key_estimate.dart' show estimateChordKey;
-import '../domain/combine.dart'
-    show
-        checkedChordKeyEstimate,
-        combineSources,
-        rankedChordKeyEstimate,
-        rankedKeyNeedsReview,
-        recordingCompatible,
-        sourcedArrangementKey;
-import '../domain/metadata_enrichment.dart' show displayMetadataFor;
+import '../domain/combine.dart' show rankedKeyNeedsReview, recordingCompatible;
+import '../domain/metadata_enrichment.dart'
+    show DisplayMetadata, comparisonDisplayMetadata, displayMetadataFor;
 import '../domain/models.dart';
 import '../domain/search_grouping.dart';
-import '../domain/timing.dart' show timingOccurrenceMap;
+import '../domain/timing.dart' show timingOccurrenceMapForLyrics;
 import '../domain/source_contributions.dart';
 import 'format.dart';
 import 'library/collation.dart' show foldForSearch;
 import 'player_section_timeline.dart';
 import 'player_duration.dart';
 import 'verse_ui_state.dart';
+
+typedef AppAppearance = ({
+  String palette,
+  String fontFamily,
+  AppThemeMode themeMode,
+  String? languageCode,
+});
+
+typedef _ReaderTimingInput = ({
+  String sourceLyrics,
+  Object? occurrences,
+  List<TimingCue> cues,
+});
+
+typedef _ReaderChartInput = ({String body, int transpose});
+
+typedef _ReaderProjection = ({
+  List<LyricLineData> lines,
+  _ReaderTiming? timing,
+  double? estimate,
+  Map<String, double>? estimatedStarts,
+});
+
+typedef _SavedReaderWork = ({
+  SongDocument song,
+  _ReaderChartInput chart,
+  TimingTrack? track,
+  PlayerDuration duration,
+  List<LyricLineData>? cachedLines,
+  Future<_ReaderProjection> projection,
+});
+
+class _ReaderTiming {
+  _ReaderTiming({required this.lineStarts, required this.cueTargets})
+    : cueTimes = (cueTargets.keys.toList()..sort());
+
+  final Map<String, double> lineStarts;
+  final Map<int, String?> cueTargets;
+  final List<int> cueTimes;
+
+  String? lineAt(int elapsedUs) {
+    var start = 0;
+    var end = cueTimes.length;
+    while (start < end) {
+      final middle = (start + end) ~/ 2;
+      if (cueTimes[middle] <= elapsedUs) {
+        start = middle + 1;
+      } else {
+        end = middle;
+      }
+    }
+    return start == 0 ? null : cueTargets[cueTimes[start - 1]];
+  }
+}
+
+typedef _ComparisonTarget = ({SongCandidate record, bool rejected});
+
+typedef _ComparisonMetadataInput = ({
+  SongCandidate selection,
+  List<_ComparisonTarget> targets,
+  List<SongCandidate> suggestions,
+});
+
+List<DisplayMetadata> _enrichComparison(_ComparisonMetadataInput input) =>
+    comparisonDisplayMetadata(
+      targets: [(record: input.selection, rejected: false), ...input.targets],
+      donors: [
+        input.selection,
+        for (final target in input.targets)
+          if (!target.rejected) target.record,
+        ...input.suggestions,
+      ],
+    );
+
+typedef _RecordingProofInput = ({
+  SongCandidate selection,
+  List<SourceResult> sources,
+  Set<String> enabled,
+  Set<String> confirmed,
+});
+
+typedef _ComparisonProjection = ({
+  List<DisplayMetadata> display,
+  Set<int> verified,
+  Set<String> confirmedAnalysis,
+});
+
+_ComparisonProjection _projectComparison(
+  ({_ComparisonMetadataInput metadata, _RecordingProofInput? proof}) input,
+) {
+  final verified = <int>{};
+  final confirmedAnalysis = <String>{};
+  if (input.proof case final proof?) {
+    final allConfirmed = setEquals(proof.enabled, proof.confirmed);
+    for (final (index, source) in proof.sources.indexed) {
+      if (source.extra['recordingContext'] is! Map) continue;
+      final compatible = recordingContextCompatible(
+        proof.selection,
+        source,
+        proof.sources,
+        eligible: proof.enabled.contains,
+      );
+      if (compatible) verified.add(index);
+      if (source.candidate.providerId == 'acousticbrainz' &&
+          (allConfirmed
+              ? compatible
+              : recordingContextCompatible(
+                  proof.selection,
+                  source,
+                  proof.sources,
+                  eligible: proof.confirmed.contains,
+                ))) {
+        confirmedAnalysis.add(source.id);
+      }
+    }
+  }
+  return (
+    display: _enrichComparison(input.metadata),
+    verified: verified,
+    confirmedAnalysis: confirmedAnalysis,
+  );
+}
+
+class _ComparisonMetadata {
+  _ComparisonMetadata(
+    this.selection,
+    this.sources,
+    this.suggestions,
+    this.input,
+    this.proof,
+  );
+
+  final SongCandidate selection;
+  final List<SourceResult> sources;
+  final List<SongCandidate> suggestions;
+  final _ComparisonMetadataInput input;
+  final _RecordingProofInput? proof;
+  _ComparisonProjection? projection;
+  bool attempted = false;
+
+  late final _localReference = displayMetadataFor(input.selection);
+  late final _localVersions = [
+    for (final target in input.targets) displayMetadataFor(target.record),
+  ];
+
+  DisplayMetadata get reference => projection?.display.first ?? _localReference;
+  DisplayMetadata versionAt(int index) =>
+      projection?.display[index + 1] ?? _localVersions[index];
+}
 
 double? _validDuration(Object? value) {
   if (value is! num) return null;
@@ -70,6 +213,7 @@ class AppControllerAdapter extends VerseUiController {
     this.onSignIn,
     this.onSignOut,
     this.onSavePlayerPreferences,
+    this.catalogProjector,
   }) {
     _observedSearchCatalogId = app.searchCatalogId;
     _observedSourceCatalogRevision =
@@ -94,6 +238,10 @@ class AppControllerAdapter extends VerseUiController {
   /// Optional persistence boundary for hosts and deterministic failure tests.
   final Future<void> Function(String id, int transpose, double playbackSpeed)?
   onSavePlayerPreferences;
+
+  @visibleForTesting
+  final Future<List<SearchRecordingGroup>> Function(CatalogProjection)?
+  catalogProjector;
 
   VerseTab _tab = VerseTab.home;
   VerseRoute _route = VerseRoute.main;
@@ -170,12 +318,16 @@ class AppControllerAdapter extends VerseUiController {
   @override
   void notifyListeners() {
     if (_disposed) return;
+    _queueCatalogProjection();
     _revision++;
     _refreshPosition();
     super.notifyListeners();
   }
 
   void _onAppChanged() {
+    if (!identical(_comparisonMetadata?.selection, app.selection)) {
+      _comparisonMetadata = null;
+    }
     final catalogId = app.searchCatalogId;
     final revision = app.discovery.catalogClient?.runtime.catalog?.revision;
     if (_observedSearchCatalogId != catalogId ||
@@ -273,6 +425,16 @@ class AppControllerAdapter extends VerseUiController {
       _setlistId == null ? null : _setlistById(_setlistId!);
 
   @override
+  VerseRoute get route => _route;
+
+  AppAppearance get appearance => (
+    palette: app.settings['palette'] as String? ?? 'navy',
+    fontFamily: app.settings['fontFamily'] as String? ?? 'system',
+    themeMode: _themeMode(app.settings['themeMode']),
+    languageCode: app.settings['locale'] as String?,
+  );
+
+  @override
   VerseUiState get state {
     final base = _baseState();
     final position = _position.value;
@@ -297,29 +459,93 @@ class AppControllerAdapter extends VerseUiController {
     final cached = _base;
     if (cached != null && _builtRevision == _revision) return cached;
     _builtRevision = _revision;
-    // Index the library once for this rebuild instead of scanning it for every
-    // recent event and setlist entry.
-    final index = <String, SongDocument>{};
-    for (final song in app.songs) {
-      index.putIfAbsent(song.id, () => song);
+    if (!_songIndexIsCurrent) {
+      // Search, player and navigation changes usually share the same library.
+      final index = <String, SongDocument>{};
+      for (final song in app.songs) {
+        index.putIfAbsent(song.id, () => song);
+      }
+      _indexedSongs = app.songs;
+      _indexedSongCount = app.songs.length;
+      _songIndex = index;
+      _orderedSongs = null;
+      _libraryCards = null;
+      _setlistCards = Expando<SetlistCardData>();
     }
-    _songIndex = index;
-    try {
-      return _base = _buildState();
-    } finally {
-      _songIndex = null;
-    }
+    return _base = _buildState();
   }
 
-  Map<String, SongDocument>? _songIndex;
+  List<SongDocument>? _indexedSongs;
+  int _indexedSongCount = 0;
+  Map<String, SongDocument> _songIndex = const {};
+  bool get _songIndexIsCurrent =>
+      identical(_indexedSongs, app.songs) &&
+      _indexedSongCount == app.songs.length;
 
-  SongDocument? _lookupSong(String id) {
-    final index = _songIndex;
-    return index == null ? app.findSong(id) : index[id];
+  SongDocument? _lookupSong(String id) =>
+      _songIndexIsCurrent ? _songIndex[id] : app.findSong(id);
+
+  ({String body, int transpose, List<LyricLineData> lines})? _readerChart;
+
+  List<LyricLineData> _readerLines(SongDocument song) {
+    final transpose = _effectiveTranspose(song);
+    final cached = _readerChart;
+    if (cached != null &&
+        cached.body == song.body &&
+        cached.transpose == transpose) {
+      return cached.lines;
+    }
+    final lines = _renderReaderChart((body: song.body, transpose: transpose));
+    _readerChart = (body: song.body, transpose: transpose, lines: lines);
+    return lines;
   }
 
-  /// Publishes the playback position for the current progress and song.
+  static List<LyricLineData> _renderReaderChart(
+    ({String body, int transpose}) input,
+  ) => _renderLines(
+    arrangement.parseArrangement(input.body),
+    transpose: input.transpose,
+  );
+
+  static _ReaderProjection _prepareReaderProjection(
+    ({
+      _ReaderChartInput chart,
+      List<LyricLineData>? cachedLines,
+      _ReaderTimingInput? timing,
+      double durationSeconds,
+      bool estimateDuration,
+      bool prepareEstimatedStarts,
+    })
+    input,
+  ) {
+    final lines = input.cachedLines ?? _renderReaderChart(input.chart);
+    final timeline = input.estimateDuration || input.prepareEstimatedStarts
+        ? EstimatedChartTimeline(lines)
+        : null;
+    final estimate = input.estimateDuration ? timeline!.durationEstimate : null;
+    final seconds = estimate != null && estimate > input.durationSeconds
+        ? estimate
+        : input.durationSeconds;
+    final timing = input.timing;
+    return (
+      lines: lines,
+      estimate: estimate,
+      estimatedStarts: input.prepareEstimatedStarts
+          ? timeline!.lineStarts(seconds)
+          : null,
+      timing: timing == null
+          ? null
+          : _buildReaderTiming(timing, lines.map((line) => line.id)),
+    );
+  }
+
+  int _savedChartTranspose(SongDocument song) =>
+      _pendingPlayerPreferences[song.id]?.transpose ??
+      _storedTranspose(song).toInt();
+
+  /// Publishes the position without rebuilding unrelated screen projections.
   void _refreshPosition() {
+    if (_savingSelectedVersion && _route == VerseRoute.main) return;
     final song = currentSong;
     if (song == null) {
       _position.value = PlayerPosition.zero;
@@ -327,7 +553,7 @@ class AppControllerAdapter extends VerseUiController {
     }
     _position.value = PlayerPosition(
       _progress,
-      _currentLineId(_baseState().songLines, song),
+      _currentLineId(_readerLines(song), song),
     );
   }
 
@@ -344,9 +570,7 @@ class AppControllerAdapter extends VerseUiController {
     final setlist = currentSetlist;
     final trustedReaderKey = displayedKey;
     final estimatedReaderKey = trustedReaderKey == null && song != null
-        ? rankedChordKeyEstimate(song) ??
-              estimateChordKey(song.body)?.key ??
-              checkedChordKeyEstimate(song)
+        ? app.displayKeysFor(song)?.estimate
         : null;
     final readerKey =
         trustedReaderKey ??
@@ -357,15 +581,17 @@ class AppControllerAdapter extends VerseUiController {
                 _transpose.toInt(),
               ));
     final timingMode = app.settings['timingMode'] as String? ?? 'estimated';
-    final data = song == null
+    final readerDeferred = _savingSelectedVersion && _route == VerseRoute.main;
+    final data = song == null || readerDeferred
         ? const <LyricLineData>[]
-        : _lines(
-            arrangement.transposeBody(song.body, _effectiveTranspose(song)),
-          );
-    final playerDuration = song == null
-        ? 0.0
-        : _durationForSong(song, lines: data).seconds;
-    final timedLineStarts = song == null
+        : _readerLines(song);
+    final duration = song == null
+        ? null
+        : readerDeferred
+        ? _libraryDurationForSong(song)
+        : _durationForSong(song, lines: data);
+    final playerDuration = duration?.seconds ?? 0.0;
+    final timedLineStarts = song == null || readerDeferred
         ? const <String, double>{}
         : _timedLineStarts(data, song, timingMode);
     final activeTimingTrackId = song?.activeTimingTrackId;
@@ -378,14 +604,16 @@ class AppControllerAdapter extends VerseUiController {
                   track.cues.isNotEmpty,
             ) ==
             true;
-    final playerSections = song == null
-        ? const <PlayerSectionMarker>[]
-        : buildPlayerSectionMarkers(
-            lines: data,
-            durationSeconds: playerDuration,
-            timedLineStarts: timedLineStarts,
-            useEstimatedFallback: !hasActiveTimedCues,
-          );
+    final estimatedStarts =
+        data.isNotEmpty && (timingMode == 'estimated' || !hasActiveTimedCues)
+        ? _estimatedStartsFor(data, playerDuration)
+        : null;
+    final playerSections = _playerSectionsFor(
+      lines: data,
+      duration: playerDuration,
+      timedStarts: timedLineStarts,
+      estimatedStarts: hasActiveTimedCues ? null : estimatedStarts,
+    );
     final recent = <RecentItemData>[];
     for (final event in app.recent) {
       if (event.objectKind == 'song') {
@@ -424,48 +652,28 @@ class AppControllerAdapter extends VerseUiController {
         }
       }
     }
-    final comparison = _comparison();
-    final autocompleteCandidates = app.suggestions.isNotEmpty
-        ? app.suggestions
-        : _cachedAutocomplete;
-    final preferredCatalog = app.searchCatalogId;
-    final catalogOrder = <String, int>{};
-    if (preferredCatalog != null) catalogOrder[preferredCatalog] = 0;
-    final otherCatalogs =
-        app.searchCatalogs
-            .map((provider) => provider.id)
-            .where((id) => id != preferredCatalog)
-            .toList()
-          ..sort();
-    for (final id in otherCatalogs) {
-      catalogOrder.putIfAbsent(id, () => catalogOrder.length);
-    }
-    final rankedAutocomplete =
-        autocompleteCandidates
-            .asMap()
-            .entries
-            .where((entry) => _matchesFilters(entry.value))
-            .toList()
-          ..sort((a, b) {
-            final providerOrder =
-                (catalogOrder[a.value.providerId] ?? catalogOrder.length)
-                    .compareTo(
-                      catalogOrder[b.value.providerId] ?? catalogOrder.length,
-                    );
-            if (providerOrder != 0) return providerOrder;
-            final relevance = searchRelevance(
-              b.value,
-              _query,
-            ).compareTo(searchRelevance(a.value, _query));
-            return relevance != 0 ? relevance : a.key.compareTo(b.key);
-          });
+    final comparison = _route == VerseRoute.main ? _comparison() : null;
+    final catalog = _catalogProjection();
+    final groups = _catalogGroups(catalog);
+    final catalogPreparing =
+        catalog != null &&
+        app.isFetchedCatalogSnapshot(catalog.candidates) &&
+        _preparedCatalog?.input != catalog &&
+        groups.isEmpty;
     final tuning = song?.metadata['tuning'];
     final tempo = song?.metadata['tempo'];
     final selectedSourceId = song?.extra['selectedSourceId'];
     final selectedSource = song?.sources
         .where((source) => source.id == selectedSourceId)
         .firstOrNull;
-    final sourceProviderId = selectedSource?.candidate.providerId;
+    final sourceSeparator = selectedSourceId is String
+        ? selectedSourceId.indexOf(':')
+        : -1;
+    final sourceProviderId =
+        selectedSource?.candidate.providerId ??
+        (sourceSeparator > 0
+            ? (selectedSourceId as String).substring(0, sourceSeparator)
+            : null);
     final readerSource = sourceProviderId == null
         ? null
         : app.providers
@@ -474,10 +682,13 @@ class AppControllerAdapter extends VerseUiController {
                   ?.name ??
               sourceProviderId;
     final readerTimingAvailable =
-        song != null && _timedLineStarts(data, song, 'timed').isNotEmpty;
+        song != null &&
+        !readerDeferred &&
+        _timedLineStarts(data, song, 'timed').isNotEmpty;
     final readerHasTiming = timingMode == 'timed' && readerTimingAvailable;
     final readerCanCompareVersions =
         song != null && _comparisonReference(song) != null;
+    final currentAppearance = appearance;
     return VerseUiState(
       route: _route,
       activeTab: _tab,
@@ -485,14 +696,12 @@ class AppControllerAdapter extends VerseUiController {
       favoritesOnly: _favoritesOnly,
       startupSongsView: _startupSongsView(app.settings['startupSongsView']),
       query: _query,
-      autocomplete: _query.trim() == app.query.trim()
-          ? _searchRows(rankedAutocomplete.map((entry) => entry.value))
-          : const [],
+      autocomplete: _searchRows(groups),
       searchState: comparison != null
           ? LoadState.loaded
           : _query.trim().length >= 2 && _query != app.query
           ? LoadState.loading
-          : app.searching && app.suggestions.isEmpty
+          : catalogPreparing || app.searching && app.suggestions.isEmpty
           ? LoadState.loading
           : app.errorCode != null
           ? LoadState.failed
@@ -547,9 +756,9 @@ class AppControllerAdapter extends VerseUiController {
       syncSuspiciousDeletionCount: app.syncSuspiciousDeletionCount,
       autoSyncEnabled: _autoSyncEnabled,
       songsConflictFilter: _conflictFilter,
-      darkTheme: _themeMode(app.settings['themeMode']),
-      palette: app.settings['palette'] as String? ?? 'navy',
-      fontFamily: app.settings['fontFamily'] as String? ?? 'system',
+      darkTheme: currentAppearance.themeMode,
+      palette: currentAppearance.palette,
+      fontFamily: currentAppearance.fontFamily,
       lyricsFontSize:
           (app.settings['readerFontSize'] as num?)?.toDouble() ?? 24,
       lyricHighlightStyle: _lyricHighlightStyle(
@@ -564,12 +773,13 @@ class AppControllerAdapter extends VerseUiController {
           timingMode != 'manual',
       autoscrollPreference: app.settings['autoscroll'] as bool? ?? true,
       timingMode: timingMode,
-      languageCode: app.settings['locale'] as String?,
+      languageCode: currentAppearance.languageCode,
       song: song == null ? null : _songCard(song),
       songLines: data,
       isPlaying: _playing,
       playbackSpeed: _playbackSpeed,
       playerSections: playerSections,
+      estimatedLineStarts: timingMode == 'estimated' ? estimatedStarts : null,
       activeSetlist: setlist == null ? null : _setlistCard(setlist),
       editing: _editing,
       editingSetlist: _editingSetlist,
@@ -590,21 +800,36 @@ class AppControllerAdapter extends VerseUiController {
       readerTuning: tuning?.toString(),
       readerTempo: tempo?.toString(),
       readerHasTiming: readerHasTiming,
-      readerDurationEstimated: song != null && _durationForSong(song).estimated,
+      readerDurationEstimated: duration?.estimated ?? false,
       readerSource: readerSource,
       readerTimingAvailable: readerTimingAvailable,
       readerCanCompareVersions: readerCanCompareVersions,
     );
   }
 
-  /// Song cards in title order; the lower-case sort key is computed once per
-  /// song rather than inside every comparison.
+  List<SongDocument>? _orderedSongs;
+  ({List<SongCardData> cards, Map<String, int> opens, int keysRevision})?
+  _libraryCards;
+
   List<SongCardData> _sortedSongCards() {
+    final keysRevision = app.songDisplayKeysRevision;
+    final cached = _libraryCards;
+    if (cached != null &&
+        cached.keysRevision == keysRevision &&
+        mapEquals(cached.opens, _opens)) {
+      return cached.cards;
+    }
+    final ordered = _orderedSongs ??= _songsInTitleOrder();
+    final cards = List<SongCardData>.unmodifiable(ordered.map(_songCard));
+    _libraryCards = (cards: cards, opens: _opens, keysRevision: keysRevision);
+    return cards;
+  }
+
+  List<SongDocument> _songsInTitleOrder() {
     final keyed = [
-      for (final song in app.songs)
-        (key: song.title.toLowerCase(), card: _songCard(song)),
+      for (final song in app.songs) (key: song.title.toLowerCase(), song: song),
     ]..sort((a, b) => a.key.compareTo(b.key));
-    return [for (final entry in keyed) entry.card];
+    return [for (final entry in keyed) entry.song];
   }
 
   bool _isUsableResult(SourceResult result, {bool allowRejected = false}) {
@@ -617,6 +842,7 @@ class AppControllerAdapter extends VerseUiController {
     String state,
     SourceResult? checked,
     List<SourceVersionData> versions,
+    Set<String> confirmedAnalysis,
   ) {
     if (providerId != 'acousticbrainz' ||
         state != 'found' ||
@@ -669,89 +895,230 @@ class AppControllerAdapter extends VerseUiController {
         (selection.providerId == 'musicbrainz' ? selection.id : null);
     if (selectedId != null) {
       if (selectedId.toLowerCase() != id) return null;
-    } else if (!recordingContextCompatible(
-      selection,
-      source,
-      app.results,
-      eligible: (provider) =>
-          app.providerEnabled(provider) &&
-          const {'found', 'completed'}.contains(app.checks[provider]?.state),
-    )) {
+    } else if (!confirmedAnalysis.contains(source.id)) {
       return null;
     }
     return analysis;
   }
 
-  bool _hasLyrics(SourceResult result) =>
-      arrangement.plainLyrics(result.body).trim().isNotEmpty;
+  final _sourceLyrics = Expando<bool>();
+  final _sourceLines = Expando<List<LyricLineData>>();
+  final _sourceChartChords = Expando<bool>();
+  final _sourceLineJobs =
+      <String, ({Set<Object> owners, Completer<void> completion})>{};
+  bool _renderingSourceLines = false;
+  String? _sourceSavePriority;
+  static const _inlinePreviewLimit = 16 * 1024;
 
-  final _chordArrangementUsability =
-      Expando<({SongCandidate selection, bool usable})>();
+  bool? _knownSourceLyrics(Object owner) =>
+      app.preparedHasLyrics(owner) ?? _sourceLyrics[owner];
 
-  bool _hasUsableBody(SourceResult result) {
-    if (_hasLyrics(result)) return true;
-    final selected = app.selection;
-    if (selected == null ||
-        selected.identity != result.candidate.identity ||
-        result.candidate.metadata['identityScope'] != 'arrangement' ||
-        !_hasChordRows(result.body) ||
-        result.hasPendingMatchCheck ||
-        !app.isSourceReady(result) ||
-        !const {
-          MatchKind.sameSong,
-          MatchKind.sameRecording,
-        }.contains(result.matchKind)) {
+  bool _sourceHasLyrics(Object owner, String body) {
+    final known = _knownSourceLyrics(owner);
+    if (known != null) return known;
+    if (body.length > _inlinePreviewLimit) {
+      _queueSourceLines(owner, body);
       return false;
     }
-    final cached = _chordArrangementUsability[result];
-    if (cached != null && identical(cached.selection, selected)) {
-      return cached.usable;
-    }
-    // The domain permits an explicitly selected, verified own arrangement
-    // without a lyric line. Reuse its identity/edition rules rather than
-    // promoting arbitrary chord-only responses in the presentation layer.
-    var usable = false;
-    try {
-      usable = combineSources(selected, [
-        result,
-      ], preferredSourceId: result.id).hasChords;
-    } on FormatException {
-      // A chart that cannot be saved must not appear ready to open.
-    }
-    _chordArrangementUsability[result] = (selection: selected, usable: usable);
-    return usable;
+    return _sourceLyrics[owner] = arrangement
+        .plainLyrics(body)
+        .trim()
+        .isNotEmpty;
   }
 
-  bool _hasUsableDocument(SongDocument document) =>
-      arrangement.plainLyrics(document.body).trim().isNotEmpty ||
-      _hasChordRows(document.body);
+  List<LyricLineData> _sourceBodyLines(Object owner, String body) {
+    final cached = _sourceLines[owner];
+    if (cached != null) return cached;
+    if (body.length <= _inlinePreviewLimit) {
+      return _sourceLines[owner] = _lines(body);
+    }
+    _queueSourceLines(owner, body);
+    return const [];
+  }
 
-  bool _hasChordRows(String body) => arrangement
-      .parseArrangement(body)
-      .any((line) => !line.directive && line.chords.isNotEmpty);
+  Future<void> _queueSourceLines(Object owner, String body) {
+    final job = _sourceLineJobs[body] ??= (
+      owners: Set<Object>.identity(),
+      completion: Completer<void>(),
+    );
+    job.owners.add(owner);
+    if (!_renderingSourceLines) {
+      _renderingSourceLines = true;
+      scheduleMicrotask(_renderSourceLines);
+    }
+    return job.completion.future;
+  }
+
+  Future<void> _waitForSourceLyrics(SourceResult source) async {
+    final workerFact = Completer<void>();
+    void checkWorkerFact() {
+      if (!workerFact.isCompleted &&
+          (_knownSourceLyrics(source) != null ||
+              !app.results.any((current) => identical(current, source)))) {
+        workerFact.complete();
+      }
+    }
+
+    _sourceSavePriority = source.body;
+    app.addListener(checkWorkerFact);
+    try {
+      checkWorkerFact();
+      await Future.any([
+        _queueSourceLines(source, source.body),
+        workerFact.future,
+      ]);
+    } finally {
+      app.removeListener(checkWorkerFact);
+      _sourceSavePriority = null;
+    }
+  }
+
+  static List<
+    ({List<LyricLineData> lines, bool hasLyrics, bool hasChartChords})
+  >
+  _renderSourceLineBatch(List<({String body, bool? hasLyrics})> inputs) {
+    return inputs.map((input) {
+      final parsed = arrangement.parseArrangement(input.body);
+      return (
+        lines: _renderLines(parsed),
+        hasLyrics:
+            input.hasLyrics ??
+            arrangement.plainLyrics(input.body).trim().isNotEmpty,
+        hasChartChords: parsed.any(
+          (line) => !line.directive && line.chords.isNotEmpty,
+        ),
+      );
+    }).toList();
+  }
+
+  Future<void> _renderSourceLines() async {
+    bool isCurrent(Object owner) =>
+        identical(owner, app.combined) ||
+        app.results.any((source) => identical(owner, source)) ||
+        (_route == VerseRoute.reader &&
+            (currentSong?.sources.any((source) => identical(owner, source)) ??
+                false));
+    try {
+      while (!_disposed && _sourceLineJobs.isNotEmpty) {
+        _sourceLineJobs.removeWhere((_, job) {
+          if (job.owners.any(isCurrent)) return false;
+          job.completion.complete();
+          return true;
+        });
+        if (_sourceLineJobs.isEmpty) break;
+        final priority = _sourceSavePriority;
+        final bodies = priority != null && _sourceLineJobs.containsKey(priority)
+            ? [priority]
+            : _sourceLineJobs.keys.take(4).toList();
+        final rendered =
+            await compute(_renderSourceLineBatch, [
+              for (final body in bodies)
+                (
+                  body: body,
+                  hasLyrics: _sourceLineJobs[body]!.owners
+                      .map(_knownSourceLyrics)
+                      .whereType<bool>()
+                      .firstOrNull,
+                ),
+            ], debugLabel: 'singbook-source-lines').onError(
+              (_, _) => [
+                for (final _ in bodies)
+                  (
+                    lines: const <LyricLineData>[],
+                    hasLyrics: false,
+                    hasChartChords: false,
+                  ),
+              ],
+            );
+        if (_disposed) break;
+        var changed = false;
+        for (final (index, body) in bodies.indexed) {
+          final job = _sourceLineJobs.remove(body)!;
+          for (final owner in job.owners) {
+            if (!isCurrent(owner)) continue;
+            _sourceLines[owner] = rendered[index].lines;
+            _sourceLyrics[owner] = rendered[index].hasLyrics;
+            _sourceChartChords[owner] = rendered[index].hasChartChords;
+            changed = true;
+          }
+          job.completion.complete();
+        }
+        if (changed) notifyListeners();
+      }
+    } finally {
+      _renderingSourceLines = false;
+      for (final job in _sourceLineJobs.values) {
+        job.completion.complete();
+      }
+      _sourceLineJobs.clear();
+    }
+  }
+
+  bool _hasUsableBody(SourceResult result) =>
+      _sourceHasLyrics(result, result.body) ||
+      app.isUsableChordOnlySource(result);
+
+  bool _hasUsableDocument(SongDocument document) =>
+      app.preparedDocumentUsable(document) ??
+      (_sourceHasLyrics(document, document.body) ||
+          (document.body.length > _inlinePreviewLimit
+              ? _sourceChartChords[document] == true
+              : arrangement
+                    .parseArrangement(document.body)
+                    .any((line) => !line.directive && line.chords.isNotEmpty)));
 
   bool _hasUsableTiming(Iterable<TimingTrack> tracks) => tracks.any(
     (track) => track.status == TimingStatus.usable && track.cues.isNotEmpty,
   );
 
-  final _songKeys = Expando<({String? key})>();
   final _playbackDurations = Expando<PlayerDuration>();
+  var _pendingLibraryEstimates = Expando<PlayerDuration>();
+  bool _libraryEstimateDeferred = false;
+
+  PlayerDuration _durationWithoutChartEstimate(SongDocument song) =>
+      _playbackDurations[song] ??
+      (_pendingLibraryEstimates[song] ??= resolvePlayerDuration(
+        song,
+        estimate: () => 90,
+      ));
+
+  PlayerDuration? _libraryDurationForSong(SongDocument song) {
+    if (!_savingSelectedVersion) return _durationForSong(song);
+    final cached = _playbackDurations[song];
+    if (cached != null) return cached;
+    final duration = _durationWithoutChartEstimate(song);
+    if (duration.kind != PlayerDurationKind.chartEstimate) {
+      return _playbackDurations[song] = duration;
+    }
+    _libraryEstimateDeferred = true;
+    return null;
+  }
+
+  bool _invalidateDeferredLibraryEstimates() {
+    if (!_libraryEstimateDeferred) return false;
+    _libraryEstimateDeferred = false;
+    _libraryCards = null;
+    _setlistCards = Expando<SetlistCardData>();
+    return true;
+  }
 
   PlayerDuration _durationForSong(
     SongDocument song, {
     List<LyricLineData>? lines,
   }) => _playbackDurations[song] ??= resolvePlayerDuration(
     song,
-    estimate: () => estimateChartDuration(lines ?? _lines(song.body)),
+    estimate: () {
+      final prepared = _readerChart;
+      return estimateChartDuration(
+        lines ??
+            (prepared != null && prepared.body == song.body
+                ? prepared.lines
+                : _lines(song.body)),
+      );
+    },
   );
-  String? _songKey(SongDocument song) {
-    final cached = _songKeys[song];
-    if (cached != null) return cached.key;
-    final explicit = _metaString(song.metadata['key']);
-    final key = explicit ?? sourcedArrangementKey(song)?.key;
-    _songKeys[song] = (key: key);
-    return key;
-  }
+  String? _songKey(SongDocument song) =>
+      _metaString(song.metadata['key']) ?? app.displayKeysFor(song)?.sourceKey;
 
   SongCardData _songCard(SongDocument song) => SongCardData(
     id: song.id,
@@ -759,7 +1126,7 @@ class AppControllerAdapter extends VerseUiController {
     artist: song.artist,
     album: _metaString(song.metadata['album']),
     artworkUrl: _metaString(song.metadata['artworkUrl']),
-    durationSeconds: _durationForSong(song).seconds,
+    durationSeconds: _libraryDurationForSong(song)?.seconds,
     key: _songKey(song),
     favorite: song.favorite,
     modifiedAt: song.updatedAt,
@@ -770,7 +1137,12 @@ class AppControllerAdapter extends VerseUiController {
         song.id.startsWith('conflict-') || song.extra['syncConflict'] != null,
   );
 
-  SetlistCardData _setlistCard(SetlistDocument value) {
+  var _setlistCards = Expando<SetlistCardData>();
+
+  SetlistCardData _setlistCard(SetlistDocument value) =>
+      _setlistCards[value] ??= _buildSetlistCard(value);
+
+  SetlistCardData _buildSetlistCard(SetlistDocument value) {
     final entries = [for (final entry in value.entries) _entryData(entry)];
     var durationSeconds = 0.0;
     var durationEstimated = false;
@@ -781,7 +1153,11 @@ class AppControllerAdapter extends VerseUiController {
         durationPartial = true;
         continue;
       }
-      final duration = _durationForSong(song);
+      final duration = _libraryDurationForSong(song);
+      if (duration == null) {
+        durationPartial = true;
+        continue;
+      }
       durationSeconds += duration.seconds;
       durationEstimated |= duration.estimated;
     }
@@ -823,49 +1199,170 @@ class AppControllerAdapter extends VerseUiController {
   List<SongCandidate> get _suggestionDonors =>
       app.suggestions.isNotEmpty ? app.suggestions : _cachedAutocomplete;
 
-  /// Records that may fill display gaps on the selected song's version cards:
-  /// the selection, every discovered record that was not rejected, and the
-  /// search rows. [displayMetadataFor] decides which of them match.
-  List<SongCandidate> _versionDonors() => [
-    ?app.selection,
-    for (final result in app.results)
-      if (result.matchKind != MatchKind.rejected) _resultRecord(result),
-    ..._suggestionDonors,
-  ];
+  static const _inlineComparisonDonorLimit = 32;
+  _ComparisonMetadata? _comparisonMetadata;
+  Future<void>? _comparisonMetadataTask;
 
-  /// [result]'s catalog record with the album, duration and artwork its
-  /// resolved page added, keeping the record's own values first.
-  SongCandidate _resultRecord(SourceResult result) {
-    final candidate = result.candidate;
+  bool _confirmedRecordingProvider(String id) =>
+      const {'found', 'completed'}.contains(app.checks[id]?.state);
+
+  bool _comparisonMetadataIsCurrent(_ComparisonMetadata snapshot) =>
+      identical(snapshot.selection, app.selection) &&
+      listEquals(snapshot.sources, app.results) &&
+      listEquals(snapshot.suggestions, _suggestionDonors) &&
+      (snapshot.proof == null ||
+          snapshot.sources.every((source) {
+            final id = source.candidate.providerId;
+            final enabled = app.providerEnabled(id);
+            return snapshot.proof!.enabled.contains(id) == enabled &&
+                snapshot.proof!.confirmed.contains(id) ==
+                    (enabled && _confirmedRecordingProvider(id));
+          }));
+
+  void _prepareComparisonMetadata(SongCandidate selection) {
+    final previous = _comparisonMetadata;
+    if (previous != null && _comparisonMetadataIsCurrent(previous)) return;
+
+    final sources = List.of(app.results);
+    final suggestions = List.of(_suggestionDonors);
+    final hasContext = sources.any(
+      (source) => source.extra['recordingContext'] is Map,
+    );
+    final providerIds = {
+      if (hasContext)
+        for (final source in sources)
+          if (app.providerEnabled(source.candidate.providerId))
+            source.candidate.providerId,
+    };
+    final proof = !hasContext
+        ? null
+        : (
+            selection: selection,
+            sources: sources,
+            enabled: providerIds,
+            confirmed: providerIds.where(_confirmedRecordingProvider).toSet(),
+          );
+    final snapshot = _ComparisonMetadata(selection, sources, suggestions, (
+      selection: _displayRecord(selection),
+      targets: [
+        for (final source in sources)
+          (
+            record: _displayRecord(source.candidate, source: source),
+            rejected: source.matchKind == MatchKind.rejected,
+          ),
+      ],
+      suggestions: suggestions.map(_displayRecord).toList(),
+    ), proof);
+    _comparisonMetadata = snapshot;
+    if (proof == null &&
+        sources.length + suggestions.length + 1 <=
+            _inlineComparisonDonorLimit) {
+      snapshot.projection = _projectComparison((
+        metadata: snapshot.input,
+        proof: null,
+      ));
+      snapshot.attempted = true;
+      return;
+    }
+    _comparisonMetadataTask ??= Future<void>.microtask(
+      _projectComparisons,
+    ).whenComplete(() => _comparisonMetadataTask = null);
+  }
+
+  Future<void> _projectComparisons() async {
+    while (!_disposed && _selectedQuery == _query.trim()) {
+      final snapshot = _comparisonMetadata;
+      if (snapshot == null ||
+          snapshot.attempted ||
+          !_comparisonMetadataIsCurrent(snapshot)) {
+        return;
+      }
+      snapshot.attempted = true;
+      try {
+        final output = await compute(_projectComparison, (
+          metadata: snapshot.input,
+          proof: snapshot.proof,
+        ), debugLabel: 'singbook-comparison-projection');
+        if (_disposed ||
+            _selectedQuery != _query.trim() ||
+            !identical(snapshot, _comparisonMetadata) ||
+            !_comparisonMetadataIsCurrent(snapshot)) {
+          if (identical(snapshot, _comparisonMetadata)) {
+            _comparisonMetadata = null;
+          }
+          continue;
+        }
+        snapshot.projection = output;
+        notifyListeners();
+      } catch (error) {
+        if (identical(snapshot, _comparisonMetadata) && !_disposed) {
+          snapshot.projection = (
+            display: [snapshot.reference, ...snapshot._localVersions],
+            verified: const {},
+            confirmedAnalysis: const {},
+          );
+          notifyListeners();
+        }
+        debugPrint('Comparison projection failed: ${error.runtimeType}');
+      }
+    }
+  }
+
+  @visibleForTesting
+  Future<void> settleComparisonMetadata() async {
+    await _comparisonMetadataTask;
+  }
+
+  /// Copies only the facts and identity evidence used by display enrichment.
+  /// Source bodies and the rest of the provider payload stay out of the worker.
+  SongCandidate _displayRecord(
+    SongCandidate candidate, {
+    SourceResult? source,
+  }) {
+    const identityKeys = [
+      'identityScope',
+      'pendingMatchCheck',
+      'version',
+      'edition',
+      'disambiguation',
+      'recording',
+    ];
+    final metadata = candidate.metadata;
+    final extra = candidate.extra;
+    final sourceMetadata = source?.metadata ?? const {};
+    final sourceExtra = source?.extra ?? const {};
     final artwork =
-        _metaString(candidate.metadata['artworkUrl']) ??
-        _metaString(result.metadata['artworkUrl']);
+        _metaString(metadata['artworkUrl']) ??
+        _metaString(sourceMetadata['artworkUrl']);
     return SongCandidate(
       providerId: candidate.providerId,
       id: candidate.id,
       title: candidate.title,
       artist: candidate.artist,
-      album: candidate.album ?? _metaString(result.metadata['album']),
+      album: candidate.album ?? _metaString(sourceMetadata['album']),
       durationSeconds:
           _validDuration(candidate.durationSeconds) ??
-          _validDuration(result.metadata['durationSeconds']) ??
-          _validDuration(candidate.metadata['durationSeconds']),
-      url: candidate.url,
+          _validDuration(sourceMetadata['durationSeconds']) ??
+          _validDuration(metadata['durationSeconds']),
       metadata: {
-        ...result.metadata,
-        ...candidate.metadata,
+        for (final key in [
+          ...identityKeys,
+          'album',
+          'durationSeconds',
+          'duration',
+        ])
+          key: metadata.containsKey(key) ? metadata[key] : sourceMetadata[key],
         'artworkUrl': ?artwork,
       },
       recordingIds: candidate.recordingIds,
-      extra: {...result.extra, ...candidate.extra},
+      extra: {
+        for (final key in identityKeys)
+          key: extra.containsKey(key) ? extra[key] : sourceExtra[key],
+      },
     );
   }
 
-  SearchReferenceData _reference(
-    SongCandidate value, [
-    List<SongCandidate>? donors,
-  ]) {
-    final display = displayMetadataFor(value, donors ?? _suggestionDonors);
+  SearchReferenceData _reference(SongCandidate value, DisplayMetadata display) {
     return SearchReferenceData(
       id: value.identity,
       providerId: value.providerId,
@@ -879,13 +1376,116 @@ class AppControllerAdapter extends VerseUiController {
     );
   }
 
-  /// Groups search results by recording and asks for artwork for the first
-  /// rows that still have none; lookups arrive later through [AppController].
-  List<SearchReferenceData> _searchRows(Iterable<SongCandidate> ranked) {
-    final groups = groupSearchRecordings(
-      ranked,
-      preferredProviderId: app.searchCatalogId,
+  CatalogProjection? _wantedCatalog;
+  ({CatalogProjection input, List<SearchRecordingGroup> groups})?
+  _preparedCatalog;
+  Future<void>? _catalogProjectionTask;
+  String? _catalogScoreQuery;
+  var _catalogScores = Expando<int>();
+
+  CatalogProjection? _catalogProjection() {
+    final query = _query.trim();
+    if (query != app.query.trim()) return null;
+    final candidates = app.suggestions.isEmpty
+        ? _cachedAutocomplete
+        : app.suggestions;
+    if (candidates.isEmpty) return null;
+    return (
+      candidates: candidates,
+      query: query,
+      field: _filters.field,
+      preferred: app.searchCatalogId,
+      catalogIds: app.searchCatalogs
+          .map((provider) => provider.id)
+          .join('\u0000'),
     );
+  }
+
+  void _queueCatalogProjection() {
+    final input = _catalogProjection();
+    _wantedCatalog =
+        input != null && app.isFetchedCatalogSnapshot(input.candidates)
+        ? input
+        : null;
+    if (_wantedCatalog == null || _preparedCatalog?.input == _wantedCatalog) {
+      return;
+    }
+    _catalogProjectionTask ??= Future<void>.microtask(_projectCatalogs)
+        .whenComplete(() {
+          _catalogProjectionTask = null;
+          if (!_disposed) _queueCatalogProjection();
+        });
+  }
+
+  @visibleForTesting
+  Future<void> settleCatalogProjection() async {
+    await _catalogProjectionTask;
+  }
+
+  Future<void> _projectCatalogs() async {
+    while (!_disposed) {
+      final input = _wantedCatalog;
+      if (input == null || _preparedCatalog?.input == input) return;
+      List<SearchRecordingGroup> groups;
+      try {
+        final projector = catalogProjector;
+        if (projector != null) {
+          groups = await projector(input);
+        } else {
+          final query = input.query.toLowerCase();
+          if (_catalogScoreQuery != query) {
+            _catalogScoreQuery = query;
+            _catalogScores = Expando<int>();
+          }
+          final scores = _catalogScores;
+          final projected = await compute(projectCatalogWithScores, (
+            input: input,
+            scores: {
+              for (final entry in input.candidates.asMap().entries)
+                entry.key: ?scores[entry.value],
+            },
+          ), debugLabel: 'singbook-catalog-projection');
+          for (final entry in projected.newScores.entries) {
+            scores[input.candidates[entry.key]] = entry.value;
+          }
+          groups = projected.groups;
+        }
+      } catch (error) {
+        debugPrint('Catalog projection failed: ${error.runtimeType}');
+        groups = const [];
+      }
+      if (_disposed || _wantedCatalog != input) continue;
+      _preparedCatalog = (input: input, groups: groups);
+      notifyListeners();
+    }
+  }
+
+  List<SearchRecordingGroup> _catalogGroups(CatalogProjection? input) {
+    if (input == null) return const [];
+    final prepared = _preparedCatalog;
+    if (prepared?.input == input) return prepared!.groups;
+    if (!app.isFetchedCatalogSnapshot(input.candidates)) {
+      // A locally constructed reference can be shown immediately.
+      return projectCatalog(input);
+    }
+    if (prepared != null &&
+        prepared.input.query == input.query &&
+        prepared.input.field == input.field &&
+        prepared.input.preferred == input.preferred &&
+        prepared.input.catalogIds == input.catalogIds) {
+      final available = input.candidates.map((row) => row.identity).toSet();
+      return prepared.groups
+          .where(
+            (group) =>
+                group.members.every((row) => available.contains(row.identity)),
+          )
+          .toList();
+    }
+    return const [];
+  }
+
+  /// Requests artwork for the leading groups after their worker result arrives.
+  List<SearchReferenceData> _searchRows(List<SearchRecordingGroup> groups) {
     final missing = [
       for (final group in groups)
         if (group.artworkUrl == null &&
@@ -937,46 +1537,43 @@ class AppControllerAdapter extends VerseUiController {
         catalogs.where((provider) => !isolated(provider)).length > 1;
   }
 
-  bool _matchesFilters(SongCandidate candidate) {
-    if (_isEditorialCandidate(candidate)) return false;
-    if (_filters.field == 'title' && !_contains(candidate.title, _query)) {
-      return false;
-    }
-    if (_filters.field == 'artist' && !_contains(candidate.artist, _query)) {
-      return false;
-    }
-    // Catalog candidates do not reliably carry language, chord, or timing
-    // metadata. Those filters apply after discovery, when provider results can
-    // be evaluated from their actual lyric bodies and timing tracks.
-    return true;
-  }
+  final _providerOperationCards = Expando<List<SearchProviderOperationData>>();
 
-  bool _contains(String value, String query) =>
-      value.toLowerCase().contains(query.trim().toLowerCase());
-
-  bool _isEditorialCandidate(SongCandidate candidate) {
-    final kind = candidate.metadata['kind']?.toString().toLowerCase();
-    if (const {
-      'article',
-      'editorial',
-      'news',
-      'release_calendar',
-    }.contains(kind)) {
-      return true;
-    }
-    return RegExp(
-      r'\brelease\s+calendar\b',
-      caseSensitive: false,
-    ).hasMatch(candidate.title);
-  }
+  List<SearchProviderOperationData> _operationsFor(ProviderCheck check) =>
+      _providerOperationCards[check] ??= List.unmodifiable([
+        for (final operation in check.operations)
+          SearchProviderOperationData(
+            id: operation.id,
+            phase: operation.phase,
+            state: operation.state,
+            code: operation.code,
+            query: operation.query,
+            title: operation.title,
+            artist: operation.artist,
+            sourceUrl: safeDiagnosticUrl(operation.sourceUrl),
+            resultCount: operation.resultCount,
+            elapsedMilliseconds: operation.elapsedMilliseconds,
+          ),
+      ]);
 
   SearchComparisonData? _comparison() {
     final candidate = app.selection;
     if (candidate == null || _selectedQuery != _query.trim()) return null;
     _rememberVersionArrivalOrder(candidate.identity, app.results);
-    final donors = _versionDonors();
+    _prepareComparisonMetadata(candidate);
+    final metadata = _comparisonMetadata!;
     final knownResults =
-        app.results.map((result) => _version(result, donors)).toList()..sort(
+        [
+          for (var index = 0; index < metadata.sources.length; index++)
+            _version(
+              metadata.sources[index],
+              metadata.versionAt(index),
+              contextualMatch:
+                  metadata.projection?.verified.contains(index) ?? false,
+              proofPending:
+                  metadata.proof != null && metadata.projection == null,
+            ),
+        ]..sort(
           (a, b) => _versionArrivalOrder[a.id]!.compareTo(
             _versionArrivalOrder[b.id]!,
           ),
@@ -986,6 +1583,7 @@ class AppControllerAdapter extends VerseUiController {
         .toList(growable: true);
     final combined = app.combined;
     final combinedMatchesFilters = _combinedMatchesFilters(combined);
+    final combinedReady = app.canSavePreparedCombined;
     final chosenSourceId = combined?.extra['selectedSourceId'];
     final contributorCount = combined == null
         ? 0
@@ -1055,9 +1653,9 @@ class AppControllerAdapter extends VerseUiController {
               combined.metadata['durationSeconds'],
             ),
             artworkUrl: _metaString(combined.metadata['artworkUrl']),
-            hasLyrics: arrangement.plainLyrics(combined.body).trim().isNotEmpty,
+            hasLyrics: _sourceHasLyrics(combined, combined.body),
             isUsableVersion: _hasUsableDocument(combined),
-            hasChords: combined.hasChords,
+            hasChords: app.documentHasChords(combined),
             hasTiming: _hasUsableTiming(combined.timingTracks),
             sameRecording:
                 chosenSource?.matchKind == MatchKind.sameRecording &&
@@ -1072,10 +1670,14 @@ class AppControllerAdapter extends VerseUiController {
                 : contributorCount > 1
                 ? 'combined_sources'
                 : 'best_available',
-            bodyPreview: _previewLines(_lines(combined.body)),
-            bodyLines: _lines(combined.body),
+            bodyPreview: _previewLines(
+              _sourceBodyLines(combined, combined.body),
+            ),
+            bodyLines: _sourceBodyLines(combined, combined.body),
             contributions: _combinedContributions(combined),
+            isChecking: !combinedReady,
             canSave:
+                combinedReady &&
                 combinedMatchesFilters &&
                 combined.body.trim().isNotEmpty &&
                 app.savedResultId() == null,
@@ -1120,34 +1722,28 @@ class AppControllerAdapter extends VerseUiController {
               check.state,
               check.result,
               knownResults,
+              metadata.projection?.confirmedAnalysis ?? const {},
             ),
-            operations: List.unmodifiable([
-              for (final operation in check.operations)
-                SearchProviderOperationData(
-                  id: operation.id,
-                  phase: operation.phase,
-                  state: operation.state,
-                  code: operation.code,
-                  query: operation.query,
-                  title: operation.title,
-                  artist: operation.artist,
-                  sourceUrl: safeDiagnosticUrl(operation.sourceUrl),
-                  resultCount: operation.resultCount,
-                  elapsedMilliseconds: operation.elapsedMilliseconds,
-                ),
-            ]),
+            operations: _operationsFor(check),
           ),
         )
         .toList();
     return SearchComparisonData(
-      reference: _reference(candidate, donors),
+      reference: _reference(candidate, metadata.reference),
       suggested: suggested,
       alternatives: alternatives,
       selectedVersionId: chosenId,
       error: app.errorCode,
       discoveryError: app.errorCode,
       discovering: app.discovering,
-      noUsableLyrics: !app.discovering && !app.results.any(_hasUsableBody),
+      noUsableLyrics:
+          !app.discovering &&
+          !app.results.any(
+            (source) =>
+                (source.body.length > _inlinePreviewLimit &&
+                    _knownSourceLyrics(source) == null) ||
+                _hasUsableBody(source),
+          ),
       providerChecks: checks,
     );
   }
@@ -1192,7 +1788,7 @@ class AppControllerAdapter extends VerseUiController {
     final origins = jsonMap(song.extra['fieldOrigins']);
     if (selectedSourceId is String) {
       add(selectedSourceId, 'lyrics');
-      if (song.hasChords) {
+      if (app.documentHasChords(song)) {
         final chordSources = song.extra['chordSourceIds'];
         if (chordSources is List) {
           for (final sourceId in chordSources.whereType<String>()) {
@@ -1267,14 +1863,7 @@ class AppControllerAdapter extends VerseUiController {
     String? suggestedId,
     List<SourceVersionData> alternatives,
   ) {
-    final selectedAlternative = alternatives
-        .where((item) => item.id == _selectedVersionId)
-        .firstOrNull;
-    if (_selectedVersionId == 'combined') {
-      return 'combined';
-    }
     return _selectedVersionId ??
-        selectedAlternative?.id ??
         suggestedId ??
         alternatives
             .where(
@@ -1310,9 +1899,16 @@ class AppControllerAdapter extends VerseUiController {
                   .toLowerCase() ==
               _filters.language.toLowerCase());
 
+  bool _sourceMatchesFilters(SourceResult source) =>
+      (!_filters.chordsOnly || app.sourceHasChords(source)) &&
+      (!_filters.timedOnly || _hasUsableTiming(source.timingTracks)) &&
+      (_filters.language.isEmpty ||
+          source.metadata['language']?.toString().toLowerCase() ==
+              _filters.language.toLowerCase());
+
   bool _combinedMatchesFilters(SongDocument? combined) {
     if (combined == null ||
-        (_filters.chordsOnly && !combined.hasChords) ||
+        (_filters.chordsOnly && !app.documentHasChords(combined)) ||
         (_filters.timedOnly && !_hasUsableTiming(combined.timingTracks))) {
       return false;
     }
@@ -1325,37 +1921,33 @@ class AppControllerAdapter extends VerseUiController {
   }
 
   SourceVersionData _version(
-    SourceResult result, [
-    List<SongCandidate>? donors,
-  ]) {
+    SourceResult result,
+    DisplayMetadata display, {
+    required bool contextualMatch,
+    required bool proofPending,
+  }) {
     final candidate = result.candidate;
-    // A rejected record may be another song or recording, so it shows only
-    // its own facts.
-    final display = displayMetadataFor(
-      _resultRecord(result),
-      result.matchKind == MatchKind.rejected
-          ? const []
-          : donors ?? _versionDonors(),
-    );
     final check = app.checks[candidate.providerId];
     final savedId = app.savedResultId(source: result);
-    final lines = _lines(result.body);
+    final hasLyrics = _sourceHasLyrics(result, result.body);
+    final lines = _sourceBodyLines(result, result.body);
+    final usable = hasLyrics || app.isUsableChordOnlySource(result);
     final isChecking =
+        (result.body.length > _inlinePreviewLimit &&
+            _knownSourceLyrics(result) == null) ||
         check?.state == 'pending' ||
         app.discovering && !app.isSourceReady(result);
-    final pendingVerification =
-        isChecking && result.matchKind == MatchKind.sameRecording;
     final sameRecording =
         !isChecking &&
         result.matchKind == MatchKind.sameRecording &&
         app.selection != null &&
-        (recordingCompatible(app.selection!, result) ||
-            recordingContextCompatible(
-              app.selection!,
-              result,
-              app.results,
-              eligible: app.providerEnabled,
-            ));
+        (contextualMatch || recordingCompatible(app.selection!, result));
+    final pendingVerification =
+        result.matchKind == MatchKind.sameRecording &&
+        (isChecking ||
+            (!sameRecording &&
+                proofPending &&
+                result.extra['recordingContext'] is Map));
     return SourceVersionData(
       id: result.id,
       providerId: candidate.providerId,
@@ -1377,9 +1969,9 @@ class AppControllerAdapter extends VerseUiController {
       artworkUrl: display.artworkUrl,
       rating: _metaDouble(result.metadata['rating']),
       ratingCount: _metaInt(result.metadata['ratingCount']),
-      hasLyrics: arrangement.plainLyrics(result.body).trim().isNotEmpty,
-      isUsableVersion: _hasUsableBody(result),
-      hasChords: result.hasChords,
+      hasLyrics: hasLyrics,
+      isUsableVersion: usable,
+      hasChords: app.sourceHasChords(result),
       hasTiming: _hasUsableTiming(result.timingTracks),
       sameRecording: sameRecording,
       matchSummary: pendingVerification
@@ -1396,15 +1988,15 @@ class AppControllerAdapter extends VerseUiController {
       bodyLines: lines,
       contributions: _sourceContributions(result),
       isChecking: isChecking,
-      canSave: _hasUsableBody(result) && savedId == null,
+      canSave: usable && savedId == null,
       savedSongId: savedId,
     );
   }
 
   List<SourceContributionData> _sourceContributions(SourceResult result) {
     final roles = <String>[
-      if (arrangement.plainLyrics(result.body).trim().isNotEmpty) 'lyrics',
-      if (result.hasChords) 'chords',
+      if (_sourceHasLyrics(result, result.body)) 'lyrics',
+      if (app.sourceHasChords(result)) 'chords',
       if (result.timingTracks.any(
         (track) => track.status == TimingStatus.usable && track.cues.isNotEmpty,
       ))
@@ -1496,17 +2088,31 @@ class AppControllerAdapter extends VerseUiController {
     caseSensitive: false,
   );
 
-  static List<LyricLineData> _lines(String body) {
+  static List<LyricLineData> _lines(String body) =>
+      _renderLines(arrangement.parseArrangement(body));
+
+  static List<LyricLineData> _renderLines(
+    List<arrangement.ArrangementLine> parsed, {
+    int? transpose,
+  }) {
+    final transposed = <String, String>{};
     var lyricIndex = 0;
-    return arrangement.parseArrangement(body).asMap().entries.map((entry) {
+    return parsed.asMap().entries.map((entry) {
       final line = entry.value;
       final section =
           arrangement.sectionLabelForLine(line) ??
           _sectionPattern.firstMatch(line.text)?.group(1)?.trim();
       final chords = line.chords
           .map(
-            (chord) =>
-                LyricChord(graphemeOffset: chord.offset, symbol: chord.chord),
+            (chord) => LyricChord(
+              graphemeOffset: chord.offset,
+              symbol: transpose == null
+                  ? chord.chord
+                  : transposed.putIfAbsent(
+                      chord.chord,
+                      () => arrangement.transposeChord(chord.chord, transpose),
+                    ),
+            ),
           )
           .toList();
       final hasLyrics = line.text.trim().isNotEmpty;
@@ -1538,8 +2144,19 @@ class AppControllerAdapter extends VerseUiController {
     List<LyricLineData> lines,
     SongDocument song,
     String timingMode,
-  ) {
-    if (timingMode != 'timed') return const {};
+  ) => timingMode == 'timed'
+      ? _readerTiming(lines, song)?.lineStarts ?? const {}
+      : const {};
+
+  ({
+    String body,
+    List<LyricLineData> lines,
+    TimingTrack track,
+    _ReaderTiming data,
+  })?
+  _cachedReaderTiming;
+
+  static TimingTrack? _activeReaderTimingTrack(SongDocument song) {
     final track = song.timingTracks
         .where(
           (item) =>
@@ -1547,88 +2164,149 @@ class AppControllerAdapter extends VerseUiController {
               item.status == TimingStatus.usable,
         )
         .firstOrNull;
-    if (track == null || track.cues.isEmpty) return const {};
+    return track == null || track.cues.isEmpty ? null : track;
+  }
 
-    final binding = jsonMap(track.extra['binding']);
-    final rawOccurrences = binding['occurrences'];
+  static _ReaderTimingInput _readerTimingInput(TimingTrack track) => (
+    sourceLyrics: track.sourceLyrics,
+    occurrences: jsonMap(track.extra['binding'])['occurrences'],
+    cues: track.cues,
+  );
+
+  _ReaderTiming? _cachedTimingFor(
+    String body,
+    List<LyricLineData> lines,
+    TimingTrack track,
+  ) {
+    final cached = _cachedReaderTiming;
+    if (cached != null &&
+        identical(cached.lines, lines) &&
+        identical(cached.track, track) &&
+        cached.body == body) {
+      return cached.data;
+    }
+    return null;
+  }
+
+  _ReaderTiming? _readerTiming(List<LyricLineData> lines, SongDocument song) {
+    final track = _activeReaderTimingTrack(song);
+    if (track == null) return null;
+    final cached = _cachedTimingFor(song.body, lines, track);
+    if (cached != null) return cached;
+    final data = _buildReaderTiming(
+      _readerTimingInput(track),
+      lines.map((line) => line.id),
+    );
+    _cachedReaderTiming = (
+      body: song.body,
+      lines: lines,
+      track: track,
+      data: data,
+    );
+    return data;
+  }
+
+  static _ReaderTiming _buildReaderTiming(
+    _ReaderTimingInput input,
+    Iterable<String> readerLineIds,
+  ) {
+    final rawOccurrences = input.occurrences;
     final occurrences = rawOccurrences is List
-        ? rawOccurrences.whereType<Map>().toList()
-        : timingOccurrenceMap(track, song.body);
-    final lineIds = lines.map((line) => line.id).toSet();
+        ? rawOccurrences.whereType<Map>()
+        : timingOccurrenceMapForLyrics(input.sourceLyrics);
+    final targets = <String, String?>{};
+    for (final mapping in occurrences) {
+      final source = mapping['source'];
+      final target = mapping['target'];
+      if (source is String) {
+        targets.putIfAbsent(source, () => target is String ? target : null);
+      }
+    }
+    final lineIds = readerLineIds.toSet();
     final starts = <String, double>{};
-    for (final cue in track.cues) {
-      final mapping = occurrences
-          .where((item) => item['source'] == cue.occurrenceId)
-          .firstOrNull;
-      final target = mapping?['target'] is String
-          ? mapping!['target'] as String
-          : cue.occurrenceId;
-      if (!lineIds.contains(target)) continue;
+    final cueTargets = <int, String?>{};
+    for (final cue in input.cues) {
+      final target = targets[cue.occurrenceId] ?? cue.occurrenceId;
+      final valid = lineIds.contains(target);
+      // Equal start times previously used the first cue, even if its target
+      // is absent. Keep that tie rule for the playback lookup.
+      cueTargets.putIfAbsent(cue.startUs, () => valid ? target : null);
+      if (!valid) continue;
       final seconds = cue.startUs / 1000000;
       final previous = starts[target];
       if (previous == null || seconds < previous) starts[target] = seconds;
     }
-    return starts;
+    return _ReaderTiming(lineStarts: starts, cueTargets: cueTargets);
+  }
+
+  ({
+    ({
+      List<LyricLineData> lines,
+      double duration,
+      Map<String, double> timedStarts,
+      Map<String, double>? estimatedStarts,
+    })
+    input,
+    List<PlayerSectionMarker> markers,
+  })?
+  _sectionMarkers;
+
+  List<PlayerSectionMarker> _playerSectionsFor({
+    required List<LyricLineData> lines,
+    required double duration,
+    required Map<String, double> timedStarts,
+    required Map<String, double>? estimatedStarts,
+  }) {
+    if (lines.isEmpty) return const [];
+    final input = (
+      lines: lines,
+      duration: duration,
+      timedStarts: timedStarts,
+      estimatedStarts: estimatedStarts,
+    );
+    final cached = _sectionMarkers;
+    if (cached?.input == input) return cached!.markers;
+    final markers = buildPlayerSectionMarkers(
+      lines: lines,
+      durationSeconds: duration,
+      timedLineStarts: timedStarts,
+      useEstimatedFallback: estimatedStarts != null,
+      estimatedLineStarts: estimatedStarts,
+    );
+    _sectionMarkers = (input: input, markers: markers);
+    return markers;
   }
 
   List<LyricLineData>? _estimatedPositionLines;
   double? _estimatedPositionDuration;
   Map<String, double> _estimatedPositionStarts = const {};
 
-  String? _currentLineId(List<LyricLineData> lines, SongDocument? song) {
-    if (song == null || lines.isEmpty) return null;
-    final timingMode = app.settings['timingMode'] as String? ?? 'estimated';
-    if (timingMode == 'manual') return null;
-    final activeTrack = timingMode == 'timed'
-        ? song.timingTracks
-              .where(
-                (track) =>
-                    track.id == song.activeTimingTrackId &&
-                    track.status == TimingStatus.usable,
-              )
-              .firstOrNull
-        : null;
-    if (activeTrack != null && activeTrack.cues.isNotEmpty) {
-      final elapsedUs = (_progress * 1000000).round();
-      final cue = activeTrack.cues
-          .where((item) => item.startUs <= elapsedUs)
-          .fold<TimingCue?>(
-            null,
-            (latest, item) =>
-                latest == null || item.startUs > latest.startUs ? item : latest,
-          );
-      if (cue != null) {
-        final binding = jsonMap(activeTrack.extra['binding']);
-        final rawOccurrences = binding['occurrences'];
-        final occurrences = rawOccurrences is List
-            ? rawOccurrences.whereType<Map>().toList()
-            : timingOccurrenceMap(activeTrack, song.body);
-        var target = cue.occurrenceId;
-        if (occurrences.isNotEmpty) {
-          final mapping = occurrences
-              .where((item) => item['source'] == cue.occurrenceId)
-              .firstOrNull;
-          if (mapping?['target'] is String) {
-            target = mapping!['target'] as String;
-          }
-        }
-        final targetLine = lines.where((line) => line.id == target).firstOrNull;
-        if (targetLine != null) return targetLine.id;
-      }
-    }
-    if (timingMode == 'timed') return null;
-    final duration = _durationForSong(song, lines: lines).seconds;
+  Map<String, double> _estimatedStartsFor(
+    List<LyricLineData> lines,
+    double duration,
+  ) {
     if (!identical(_estimatedPositionLines, lines) ||
         _estimatedPositionDuration != duration) {
       _estimatedPositionLines = lines;
       _estimatedPositionDuration = duration;
       _estimatedPositionStarts = estimatedLineStartTimes(lines, duration);
     }
+    return _estimatedPositionStarts;
+  }
+
+  String? _currentLineId(List<LyricLineData> lines, SongDocument? song) {
+    if (song == null || lines.isEmpty) return null;
+    final timingMode = app.settings['timingMode'] as String? ?? 'estimated';
+    if (timingMode == 'manual') return null;
+    if (timingMode == 'timed') {
+      return _readerTiming(lines, song)?.lineAt((_progress * 1000000).round());
+    }
+    final duration = _durationForSong(song, lines: lines).seconds;
     return estimatedLineIdAtPosition(
       lines,
       progressSeconds: _progress,
       durationSeconds: duration,
-      lineStartTimes: _estimatedPositionStarts,
+      lineStartTimes: _estimatedStartsFor(lines, duration),
     );
   }
 
@@ -1896,6 +2574,7 @@ class AppControllerAdapter extends VerseUiController {
     }
     _cachedAutocomplete = app.suggestions;
     notifyListeners();
+    await _catalogProjectionTask;
   }
 
   @override
@@ -1924,7 +2603,7 @@ class AppControllerAdapter extends VerseUiController {
       final source = app.results
           .where((item) => item.id == selectedId)
           .firstOrNull;
-      if (source != null && !_versionMatchesFilters(_version(source))) {
+      if (source != null && !_sourceMatchesFilters(source)) {
         _selectedVersionId = null;
       }
     }
@@ -1932,6 +2611,10 @@ class AppControllerAdapter extends VerseUiController {
     if (effectiveSelection != null || _selectedVersionId != null) {
       _selectedVersionId = effectiveSelection;
     }
+    app.prepareVersionForSave(
+      _selectedVersionId ?? 'combined',
+      allowRejectedSource: true,
+    );
     notifyListeners();
   }
 
@@ -2008,42 +2691,91 @@ class AppControllerAdapter extends VerseUiController {
     // Discovery completion must never replace an explicit choice, including a
     // version whose final validation failed. Keep it selected and explain why
     // it cannot be saved, until the person chooses another version.
-    if (_selectedVersionId != null) return;
+    if (_selectedVersionId case final selectedId?) {
+      app.prepareVersionForSave(selectedId, allowRejectedSource: true);
+      return;
+    }
     final combined = app.combined;
     final combinedMatchesFilters = _combinedMatchesFilters(combined);
     _selectedVersionId = combinedMatchesFilters
         ? null
         : app.results
-              .map(_version)
-              .where(_versionMatchesFilters)
-              .where((item) => item.canSave)
+              .where(_sourceMatchesFilters)
+              .where(
+                (source) =>
+                    app.savedResultId(source: source) == null &&
+                    _isUsableResult(source, allowRejected: true),
+              )
               .firstOrNull
               ?.id;
+    app.prepareVersionForSave(
+      _selectedVersionId ?? 'combined',
+      allowRejectedSource: true,
+    );
   }
 
   @override
   void selectVersion(String versionId) {
     _selectedVersionId = versionId;
+    app.prepareVersionForSave(versionId, allowRejectedSource: true);
     notifyListeners();
+  }
+
+  bool _savingSelectedVersion = false;
+
+  @override
+  Future<void> saveVersion(String versionId) {
+    if (_savingSelectedVersion) return Future<void>.value();
+    if (_selectedVersionId != versionId) selectVersion(versionId);
+    return saveSelectedVersion();
   }
 
   @override
   Future<void> saveSelectedVersion() async {
-    final comparison = _comparison();
-    final availableAlternatives = comparison == null
-        ? app.results.map(_version).where(_versionMatchesFilters).toList()
-        : comparison.alternatives;
-    final selectedId =
-        comparison?.selectedVersionId ??
-        _effectiveSelectionId(
-          _combinedMatchesFilters(app.combined) ? 'combined' : null,
-          availableAlternatives,
-        );
+    if (_savingSelectedVersion) return;
+    _savingSelectedVersion = true;
+    try {
+      await _saveSelectedVersion();
+    } finally {
+      _savingSelectedVersion = false;
+      _pendingLibraryEstimates = Expando<PlayerDuration>();
+      if (_invalidateDeferredLibraryEstimates()) notifyListeners();
+    }
+  }
+
+  /// Resolves the same default as the comparison without building the library,
+  /// diagnostic metadata or previews in response to a Save tap.
+  String? _versionIdForSave() {
+    if (_selectedVersionId case final selectedId?) return selectedId;
+    if (_combinedMatchesFilters(app.combined)) return 'combined';
+    final candidate = app.selection;
+    final hasComparison = candidate != null && _selectedQuery == _query.trim();
+    if (hasComparison) {
+      _rememberVersionArrivalOrder(candidate.identity, app.results);
+    }
+    SourceResult? earliest;
+    for (final result in app.results) {
+      if (!_sourceMatchesFilters(result) ||
+          !_isUsableResult(result, allowRejected: true)) {
+        continue;
+      }
+      if (!hasComparison) return result.id;
+      if (earliest == null ||
+          _versionArrivalOrder[result.id]! <
+              _versionArrivalOrder[earliest.id]!) {
+        earliest = result;
+      }
+    }
+    return earliest?.id;
+  }
+
+  Future<void> _saveSelectedVersion() async {
+    final selectedId = _versionIdForSave();
     if (selectedId == null) {
       postNotice(UiNotice.songSaveFailed);
       return;
     }
-    final version = selectedId == 'combined'
+    var version = selectedId == 'combined'
         ? null
         : app.results.where((item) => item.id == selectedId).firstOrNull;
     if (version != null && !app.isSourceReady(version)) {
@@ -2055,6 +2787,29 @@ class AppControllerAdapter extends VerseUiController {
           navigationIntent: navigationIntent,
           returnToRecent: true,
         );
+        return;
+      }
+    }
+    final navigationIntent = _beginNavigationIntent();
+    while (version != null &&
+        version.body.length > _inlinePreviewLimit &&
+        _knownSourceLyrics(version) == null &&
+        !app.isUsableChordOnlySource(version)) {
+      await _waitForSourceLyrics(version);
+      if (!_isCurrentNavigationIntent(navigationIntent) ||
+          (_selectedVersionId != null && _selectedVersionId != selectedId)) {
+        return;
+      }
+      version = app.results.where((item) => item.id == selectedId).firstOrNull;
+    }
+    if (selectedId == 'combined' && !app.canSavePreparedCombined) {
+      final prepared = await app.waitForPreparedCombined();
+      if (!_isCurrentNavigationIntent(navigationIntent) ||
+          (_selectedVersionId != null && _selectedVersionId != selectedId)) {
+        return;
+      }
+      if (!prepared) {
+        postNotice(UiNotice.songSaveFailed);
         return;
       }
     }
@@ -2070,12 +2825,18 @@ class AppControllerAdapter extends VerseUiController {
       postNotice(UiNotice.songSaveFailed);
       return;
     }
-    final navigationIntent = _beginNavigationIntent();
     final SongDocument song;
+    _SavedReaderWork? preparedReader;
     try {
       song = await app.saveResult(
         source: version,
         allowRejectedSource: version != null,
+        includeEvidence: false,
+        onChartPrepared: (chart) {
+          if (_isCurrentNavigationIntent(navigationIntent)) {
+            preparedReader = _startSavedReaderWork(chart);
+          }
+        },
       );
     } catch (_) {
       postNotice(UiNotice.songSaveFailed);
@@ -2086,6 +2847,8 @@ class AppControllerAdapter extends VerseUiController {
         song.id,
         navigationIntent: navigationIntent,
         returnToRecent: true,
+        savedChart: true,
+        preparedReader: preparedReader,
       );
     }
     postNotice(UiNotice.songSaved);
@@ -2125,7 +2888,9 @@ class AppControllerAdapter extends VerseUiController {
       ].where((part) => part.trim().isNotEmpty).join(' ');
       _selectedQuery = _query.trim();
       _cachedAutocomplete = [reference];
-      final refresh = reference.providerId == 'wikisource'
+      final refresh =
+          reference.providerId == 'wikisource' ||
+              song.extra.containsKey('libraryEvidenceIdentity')
           ? app.compareSavedSong(
               song.id,
               expectedReference: reference,
@@ -2143,6 +2908,10 @@ class AppControllerAdapter extends VerseUiController {
       return;
     }
     _selectedQuery = app.query.trim();
+    app.prepareVersionForSave(
+      _selectedVersionId ?? 'combined',
+      allowRejectedSource: true,
+    );
     notifyListeners();
   }
 
@@ -2171,18 +2940,136 @@ class AppControllerAdapter extends VerseUiController {
     );
   }
 
+  _SavedReaderWork? _startSavedReaderWork(SongDocument song) {
+    final chart = (body: song.body, transpose: _savedChartTranspose(song));
+    final cached = _readerChart;
+    final cachedLines =
+        cached != null &&
+            cached.body == chart.body &&
+            cached.transpose == chart.transpose
+        ? cached.lines
+        : null;
+    final track = _activeReaderTimingTrack(song);
+    final needsTiming =
+        track != null &&
+        (cachedLines == null ||
+            _cachedTimingFor(chart.body, cachedLines, track) == null);
+    final duration = _durationWithoutChartEstimate(song);
+    final needsEstimate =
+        _playbackDurations[song] == null &&
+        duration.kind == PlayerDurationKind.chartEstimate;
+    final needsEstimatedStarts =
+        needsEstimate ||
+        cachedLines == null ||
+        !identical(_estimatedPositionLines, cachedLines) ||
+        _estimatedPositionDuration != duration.seconds;
+    if (!needsTiming && !needsEstimatedStarts) return null;
+
+    final projection = compute(_prepareReaderProjection, (
+      chart: chart,
+      cachedLines: cachedLines,
+      timing: needsTiming ? _readerTimingInput(track) : null,
+      durationSeconds: duration.seconds,
+      estimateDuration: needsEstimate,
+      prepareEstimatedStarts: needsEstimatedStarts,
+    ), debugLabel: 'singbook-reader-chart');
+    // Save can fail or the user can leave before claiming the projection.
+    unawaited(projection.then<void>((_) {}, onError: (Object _) {}));
+    return (
+      song: song,
+      chart: chart,
+      track: track,
+      duration: duration,
+      cachedLines: cachedLines,
+      projection: projection,
+    );
+  }
+
   Future<void> _openSong(
     String id, {
     int? navigationIntent,
     String? setlistId,
     String? setlistEntryId,
     bool returnToRecent = false,
+    bool savedChart = false,
+    _SavedReaderWork? preparedReader,
   }) async {
     final intent = navigationIntent ?? _beginNavigationIntent();
     _playerPreferenceDebounce?.cancel();
-    await _savePlayerPreferences();
-    if (!_isCurrentNavigationIntent(intent) || app.findSong(id) == null) {
-      return;
+    final preferences = _savePlayerPreferences();
+    if (savedChart) {
+      unawaited(preferences);
+    } else {
+      await preferences;
+    }
+    if (!_isCurrentNavigationIntent(intent)) return;
+    final initialSong = app.findSong(id);
+    if (initialSong == null) return;
+    var song = initialSong;
+    while (savedChart) {
+      final prepared = preparedReader;
+      preparedReader = null;
+      final work =
+          prepared != null &&
+              identical(song, prepared.song) &&
+              _savedChartTranspose(song) == prepared.chart.transpose
+          ? prepared
+          : _startSavedReaderWork(song);
+      if (work == null) {
+        _playbackDurations[song] ??= _durationWithoutChartEstimate(song);
+        break;
+      }
+      final (
+        chart: input,
+        :duration,
+        :track,
+        :cachedLines,
+        song: projectedSong,
+        projection: pendingProjection,
+      ) = work;
+      final projection = await pendingProjection;
+      if (!_isCurrentNavigationIntent(intent)) return;
+      final current = app.findSong(id);
+      if (current == null) return;
+      song = current;
+      if (song.body == input.body &&
+          _savedChartTranspose(song) == input.transpose) {
+        final lines = cachedLines ?? projection.lines;
+        if (identical(song, projectedSong)) {
+          _playbackDurations[song] ??= duration;
+        }
+        var projectedSeconds = duration.seconds;
+        if (projection.estimate case final estimate?) {
+          if (estimate > projectedSeconds) projectedSeconds = estimate;
+          _playbackDurations[song] = identical(song, projectedSong)
+              ? PlayerDuration(projectedSeconds, duration.kind)
+              : resolvePlayerDuration(song, estimate: () => estimate);
+          _invalidateDeferredLibraryEstimates();
+        }
+        _readerChart = (
+          body: input.body,
+          transpose: input.transpose,
+          lines: lines,
+        );
+        if (projection.estimatedStarts case final starts?) {
+          _estimatedPositionLines = lines;
+          _estimatedPositionDuration = projectedSeconds;
+          _estimatedPositionStarts = starts;
+        }
+        if (identical(_activeReaderTimingTrack(song), track)) {
+          if (projection.timing case final timing? when track != null) {
+            _cachedReaderTiming = (
+              body: input.body,
+              lines: lines,
+              track: track,
+              data: timing,
+            );
+          }
+          if (_playbackDurations[song]?.seconds == _estimatedPositionDuration) {
+            break;
+          }
+        }
+      }
     }
     _setlistId = setlistId;
     _setlistEntryId = setlistEntryId;
@@ -2191,11 +3078,13 @@ class AppControllerAdapter extends VerseUiController {
     _route = VerseRoute.reader;
     _stopPlayer();
     _progress = 0;
-    final song = app.findSong(id);
-    _transpose = _storedTranspose(song);
-    _playbackSpeed = _storedPlaybackSpeed(song);
-    await _guard(() => app.recordUse('song', id));
+    // A reopened chart can use the current values while their write finishes.
+    final pending = savedChart ? _pendingPlayerPreferences[id] : null;
+    _transpose = pending?.transpose.toDouble() ?? _storedTranspose(song);
+    _playbackSpeed = pending?.speed ?? _storedPlaybackSpeed(song);
     notifyListeners();
+    final record = _recordRecentSong(id);
+    if (!savedChart) await record;
   }
 
   @override
@@ -2598,18 +3487,19 @@ class AppControllerAdapter extends VerseUiController {
     // The song was opened from the setlist: it belongs in Recent too. Recorded
     // after navigating so the player never waits for the database.
     final opened = _songId;
-    if (opened != null) {
-      final record = _guard(() => app.recordUse('song', opened));
-      _pendingRecentRecords.add(record);
-      unawaited(
-        record.whenComplete(() => _pendingRecentRecords.remove(record)),
-      );
-    }
+    if (opened != null) unawaited(_recordRecentSong(opened));
   }
 
   final Set<Future<bool>> _pendingRecentRecords = {};
 
-  /// Completes when the Recent entries recorded by Next/Previous are stored
+  Future<bool> _recordRecentSong(String id) {
+    final record = _guard(() => app.recordUse('song', id));
+    _pendingRecentRecords.add(record);
+    unawaited(record.whenComplete(() => _pendingRecentRecords.remove(record)));
+    return record;
+  }
+
+  /// Completes when outstanding reader visits are stored in Recent
   /// (for tests, which must await real database work in `runAsync`).
   @visibleForTesting
   Future<void> settleRecentRecords() async {

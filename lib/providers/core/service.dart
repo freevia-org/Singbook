@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:isolate';
 import 'diagnostics.dart';
 import 'dart:math' as math;
-import '../../domain/arrangement.dart' show transposeBody, transposeChord;
+import '../../domain/arrangement.dart'
+    show containsChords, plainLyrics, transposeBody, transposeChord;
 import '../../domain/chord_key_estimate.dart' show estimateChordKey;
 import '../../domain/combine.dart'
     show
@@ -87,11 +89,14 @@ class ProviderCheck {
     required this.state,
     this.code,
     this.result,
+    this.hasLyrics,
+    this.hasChords,
     this.operations = const [],
   });
   final String providerId, state;
   final String? code;
   final SourceResult? result;
+  final bool? hasLyrics, hasChords;
   final List<ProviderOperation> operations;
 }
 
@@ -257,6 +262,24 @@ SourceResult _matched(
   extra: {...result.extra, ...extra},
 );
 
+Future<int> _preferredProviderAlternative(
+  List<({String body, MatchKind kind})> alternatives,
+) => Isolate.run(() {
+  var bestIndex = 0;
+  for (var index = 1; index < alternatives.length; index++) {
+    final best = alternatives[bestIndex];
+    final next = alternatives[index];
+    if ((next.kind == MatchKind.sameRecording &&
+            best.kind != MatchKind.sameRecording) ||
+        (next.kind == best.kind &&
+            next.body != best.body &&
+            preferCompatibleLyrics(best.body, [next.body]) == next.body)) {
+      bestIndex = index;
+    }
+  }
+  return bestIndex;
+}, debugName: 'singbook-provider-alternatives');
+
 Future<SourceResult> findMatchingSource(
   LyricsProvider provider,
   SongCandidate selection, {
@@ -265,10 +288,10 @@ Future<SourceResult> findMatchingSource(
   Set<String> exclude = const {},
   // Extra acceptance test (for example lyrics corroboration). A result that
   // fails it is skipped so the next candidate can be tried.
-  bool Function(SourceResult result)? accept,
+  FutureOr<bool> Function(SourceResult result)? accept,
   void Function(ProviderOperation operation)? onOperation,
   void Function(SourceResult result)? onAlternative,
-  void Function(SourceResult result)? onCandidate,
+  FutureOr<void> Function(SourceResult result)? onCandidate,
   // Only deliberate internal corroboration may explore alternatives to the
   // selected provider's exact row. Ordinary selection never substitutes one.
   bool allowSelectedProviderAlternatives = false,
@@ -350,10 +373,10 @@ Future<SourceResult> findMatchingSource(
             extra: extra,
           ) !=
           null;
-  void observeCandidate(SourceResult result) {
-    if (cancel?.isCancelled == true) return;
+  Future<void> observeCandidate(SourceResult result) async {
+    if (cancel?.isCancelled == true || onCandidate == null) return;
     try {
-      onCandidate?.call(result);
+      await onCandidate(result);
     } catch (_) {
       // Observation cannot invalidate an already validated provider payload.
     }
@@ -519,7 +542,7 @@ Future<SourceResult> findMatchingSource(
       exact ? 'same_recording' : 'same_song',
     );
     acceptedEvidence.add(evidenceSnapshot(matched));
-    observeCandidate(matched);
+    if (onCandidate != null) await observeCandidate(matched);
     return withEvidence(matched);
   }
   var attempts = 0;
@@ -756,7 +779,10 @@ Future<SourceResult> findMatchingSource(
         },
       },
     );
-    if (accept != null && !accept(matched)) {
+    final acceptance = accept?.call(matched);
+    final accepted = acceptance is Future<bool> ? await acceptance : acceptance;
+    cancel?.throwIfCancelled();
+    if (accepted == false) {
       rejectedEvidence.add({
         'reason': operationPrefix == 'corroboration'
             ? 'incomplete_or_different_lyrics'
@@ -775,7 +801,7 @@ Future<SourceResult> findMatchingSource(
     }
     report('validate', 'completed', candidate: song);
     acceptedEvidence.add(evidenceSnapshot(matched));
-    observeCandidate(matched);
+    if (onCandidate != null) await observeCandidate(matched);
     return matched;
   }
 
@@ -979,28 +1005,26 @@ Future<SourceResult> findMatchingSource(
       }
     }
   }
-  final candidates =
-      results
-          .take(100)
-          .where(
-            (s) =>
-                s.providerId == provider.definition.id &&
-                (matchesSelectedSong(selection, s) || arrangementMatches(s)),
-          )
-          .toList()
-        ..sort((a, b) {
-          // Composer/work context broadens discovery, but must not displace
-          // charts credited to the selected performer within the attempt cap.
-          final aPerformer =
-              matchesSelectedSong(selection, a) ||
-              sameArrangement(selection, a, provider);
-          final bPerformer =
-              matchesSelectedSong(selection, b) ||
-              sameArrangement(selection, b, provider);
-          if (aPerformer != bPerformer) return aPerformer ? -1 : 1;
-          final rank = _rank(selection, b).compareTo(_rank(selection, a));
-          return rank != 0 ? rank : a.id.compareTo(b.id);
-        });
+  final rankedCandidates =
+      <({SongCandidate candidate, bool performer, double rank})>[];
+  for (final candidate in results.take(100)) {
+    if (candidate.providerId != provider.definition.id) continue;
+    final selectedSong = matchesSelectedSong(selection, candidate);
+    if (!selectedSong && !arrangementMatches(candidate)) continue;
+    rankedCandidates.add((
+      candidate: candidate,
+      performer:
+          selectedSong || sameArrangement(selection, candidate, provider),
+      rank: _rank(selection, candidate),
+    ));
+  }
+  // Preserve the selected performer's charts within the provider attempt cap.
+  rankedCandidates.sort((a, b) {
+    if (a.performer != b.performer) return a.performer ? -1 : 1;
+    final rank = b.rank.compareTo(a.rank);
+    return rank != 0 ? rank : a.candidate.id.compareTo(b.candidate.id);
+  });
+  final candidates = rankedCandidates.map((entry) => entry.candidate).toList();
   for (final evidence in searchEvidence) {
     final raw = evidence['candidate'];
     if (raw is Map &&
@@ -1032,7 +1056,6 @@ Future<SourceResult> findMatchingSource(
       elapsedMilliseconds: searchWatch.elapsedMilliseconds,
     );
   }
-  SourceResult? best;
   final alternatives = <SourceResult>[];
   String? alternativeFailure;
   for (final candidate in candidates) {
@@ -1049,12 +1072,12 @@ Future<SourceResult> findMatchingSource(
       result = await attempt(candidate);
     } on ProviderException catch (error) {
       cancel?.throwIfCancelled();
-      if (best == null) rethrow;
+      if (alternatives.isEmpty) rethrow;
       alternativeFailure = _safeDiagnosticCode(error.code);
       break;
     } catch (_) {
       cancel?.throwIfCancelled();
-      if (best == null) rethrow;
+      if (alternatives.isEmpty) rethrow;
       alternativeFailure = 'invalid_response';
       break;
     }
@@ -1072,20 +1095,20 @@ Future<SourceResult> findMatchingSource(
       cancel?.throwIfCancelled();
       return withEvidence(result);
     }
-    if (best == null ||
-        (result.matchKind == MatchKind.sameRecording &&
-            best.matchKind != MatchKind.sameRecording) ||
-        (result.matchKind == best.matchKind &&
-            preferCompatibleLyrics(best.body, [result.body]) == result.body &&
-            best.body != result.body)) {
-      best = result;
-    }
   }
   if (attempts >= maxAttempts) {
     for (final evidence in searchEvidence) {
       if (evidence['state'] == 'eligible') evidence['reason'] = 'attempt_limit';
     }
   }
+  final best = alternatives.isEmpty
+      ? null
+      : alternatives.length == 1
+      ? alternatives.single
+      : alternatives[await _preferredProviderAlternative([
+          for (final result in alternatives)
+            (body: result.body, kind: result.matchKind),
+        ])];
   if (best != null) {
     cancel?.throwIfCancelled();
     for (final alternative in alternatives) {
@@ -1206,10 +1229,17 @@ class SourceDiscoveryService {
     final corroborationOperationIds = <String, String>{};
     final searchedByProvider = <String, List<SongCandidate>>{};
     final lookupCancellation = <String, CancellationToken>{};
-    final wordCounts = <SourceResult, int>{};
-    final agreementCache = <SourceResult, Map<SourceResult, bool>>{};
+    const inlineChordScanLimit = 16 * 1024;
+    final referenceFacts = <String, _LyricReferenceFacts>{};
+    final preparingReferences = <String, Future<void>>{};
+    final lyricScores = <_LyricPair, _LyricScore>{};
+    final scoring = <_LyricPair, Future<void>>{};
     final deferredRecordingReceivers = <String, String>{};
     final recordingContextPlans = <String, RecordingContextPlan>{};
+    final recordingMatches = Expando<bool>();
+    bool matchesSelectedRecording(SourceResult result) =>
+        recordingMatches[result] ??= recordingCompatible(selection, result);
+
     bool contextProviderEligible(String id) =>
         (enabledIds?.contains(id) ?? true) &&
         providerCancellation[id]?.isCancelled != true &&
@@ -1221,44 +1251,71 @@ class SourceDiscoveryService {
           eligible: contextProviderEligible,
         ) ??
         true;
-    bool agreesWithReference(SourceResult chart, SourceResult reference) =>
-        _agreement(
-          chart.body,
-          reference.body,
-          allowShortRecordingReference:
-              reference.matchKind == MatchKind.sameRecording &&
-              recordingCompatible(selection, reference),
-        ) ||
-        publishedLyricScriptAlternative(
-          reference.candidate,
-          chart.candidate,
-          reference.body,
-          chart.body,
-        ) ||
-        chart.extra['alternatePerformerChart'] == true &&
-            contextualChartLyricsMatch(
-              chart.body,
-              reference.body,
-              allowPartial: true,
-            );
-    SourceResult markPartialLyricSupport(
+    _LyricPair lyricPair(SourceResult chart, SourceResult reference) => (
+      chart: chart.candidate,
+      reference: reference.candidate,
+      chartBody: chart.body,
+      referenceBody: reference.body,
+      alternatePerformer: chart.extra['alternatePerformerChart'] == true,
+      shortRecording:
+          reference.matchKind == MatchKind.sameRecording &&
+          matchesSelectedRecording(reference),
+    );
+
+    Future<void> warmLyricScores(Iterable<_LyricPair> pairs) async {
+      final pending = pairs.toSet().where(
+        (pair) => !lyricScores.containsKey(pair),
+      );
+      final needed = <_LyricPair>[];
+      final waiting = <Future<void>>{};
+      for (final pair in pending) {
+        final running = scoring[pair];
+        if (running == null) {
+          needed.add(pair);
+        } else {
+          waiting.add(running);
+        }
+      }
+      if (needed.isNotEmpty) {
+        final batch = _scoreLyricPairs(needed)
+            .then((scores) {
+              for (var i = 0; i < needed.length; i++) {
+                lyricScores[needed[i]] = scores[i];
+              }
+            })
+            .whenComplete(() {
+              for (final pair in needed) {
+                scoring.remove(pair);
+              }
+            });
+        for (final pair in needed) {
+          scoring[pair] = batch;
+        }
+        waiting.add(batch);
+      }
+      if (waiting.isNotEmpty) await Future.wait(waiting);
+    }
+
+    Future<_LyricScore> scoreLyrics(
       SourceResult chart,
       SourceResult reference,
-    ) {
-      final strict = _agreement(
-        chart.body,
-        reference.body,
-        allowShortRecordingReference:
-            reference.matchKind == MatchKind.sameRecording &&
-            recordingCompatible(selection, reference),
-      );
+    ) async {
+      final pair = lyricPair(chart, reference);
+      if (!lyricScores.containsKey(pair)) await warmLyricScores([pair]);
+      return lyricScores[pair]!;
+    }
+
+    bool needsLyricProof(SourceResult source) =>
+        source.matchKind != MatchKind.rejected &&
+        (source.extra['requiresLyricsAgreement'] == true ||
+            source.extra['requiresRecordingLyricsAgreement'] == true);
+
+    Future<SourceResult> markPartialLyricSupport(
+      SourceResult chart,
+      SourceResult reference,
+    ) async {
       if (chart.extra['alternatePerformerChart'] != true ||
-          strict ||
-          !contextualChartLyricsMatch(
-            chart.body,
-            reference.body,
-            allowPartial: true,
-          )) {
+          !(await scoreLyrics(chart, reference)).contextualPartial) {
         return chart;
       }
       return chart.copyWith(
@@ -1266,8 +1323,10 @@ class SourceDiscoveryService {
       );
     }
 
-    bool liveReference(SourceResult reference) =>
-        !reference.hasChords &&
+    bool hasChords(SourceResult source) =>
+        referenceFacts[source.body]?.hasChords ?? source.hasChords;
+
+    bool referenceCandidate(SourceResult reference) =>
         const {
           MatchKind.sameSong,
           MatchKind.sameRecording,
@@ -1276,58 +1335,92 @@ class SourceDiscoveryService {
         reference.extra['requiresRecordingLyricsAgreement'] != true &&
         providerCancellation[reference.candidate.providerId]?.isCancelled !=
             true &&
-        (wordCounts.putIfAbsent(
-                  reference,
-                  () => _words(reference.body).toSet().length,
-                ) >=
-                12 ||
-            reference.matchKind == MatchKind.sameRecording &&
-                recordingCompatible(selection, reference) &&
-                isShortRecordingLyricBody(reference.body));
+        !hasChords(reference);
+
+    Future<void> prepareBody(SourceResult source) async {
+      final body = source.body;
+      if (referenceFacts.containsKey(body)) return;
+      // Bounded small charts use the ordinary chord cache. Large charts and
+      // lyric references share a worker pass for the facts used by discovery.
+      if (body.length <= inlineChordScanLimit && !referenceCandidate(source)) {
+        return;
+      }
+      await preparingReferences.putIfAbsent(
+        body,
+        () => _scoreLyricReference(body)
+            .then((facts) {
+              referenceFacts[body] = facts;
+            })
+            .whenComplete(() {
+              preparingReferences.remove(body);
+            }),
+      );
+    }
+
+    Future<bool> preparedHasChords(SourceResult source) async {
+      if (source.body.length > inlineChordScanLimit) await prepareBody(source);
+      return hasChords(source);
+    }
+
+    bool shortRecordingReference(SourceResult reference) =>
+        referenceFacts[reference.body]?.short == true &&
+        reference.matchKind == MatchKind.sameRecording &&
+        matchesSelectedRecording(reference);
+
+    bool liveReference(SourceResult reference) =>
+        referenceCandidate(reference) &&
+        ((referenceFacts[reference.body]?.words ?? 0) >= 12 ||
+            shortRecordingReference(reference));
     bool liveDependencyFor(SourceResult chart) {
       if (providerCancellation[chart.candidate.providerId]?.isCancelled ==
           true) {
         return false;
       }
-      final references = results.where(liveReference).toList();
-      final shortAnchors = references
-          .where(
-            (reference) =>
-                reference.matchKind == MatchKind.sameRecording &&
-                recordingCompatible(selection, reference) &&
-                isShortRecordingLyricBody(reference.body),
-          )
-          .toList();
-      // A longer unanchored performance cannot bypass a short recording's
-      // ordered-sequence evidence during progressive publication either.
-      final donors = shortAnchors.isEmpty ? references : shortAnchors;
-      return donors.any((reference) {
-        if (!liveReference(reference)) return false;
-        final contextual =
-            chart.extra['requiresRecordingLyricsAgreement'] == true;
+      final contextual =
+          chart.extra['requiresRecordingLyricsAgreement'] == true;
+      var hasShortAnchor = false;
+      var longAgreement = false;
+      for (final reference in results) {
+        if (!referenceCandidate(reference)) continue;
+        final shortAnchor = shortRecordingReference(reference);
+        if (shortAnchor) {
+          hasShortAnchor = true;
+        } else if (hasShortAnchor ||
+            longAgreement ||
+            (referenceFacts[reference.body]?.words ?? 0) < 12) {
+          continue;
+        }
+        final score = lyricScores[lyricPair(chart, reference)];
+        if (score == null || !(score.agrees || !contextual && score.loose)) {
+          continue;
+        }
         if (contextual &&
             (lookupCancellation[reference.candidate.providerId]?.isCancelled ==
                     true ||
-                !recordingCompatible(selection, reference) ||
+                !matchesSelectedRecording(reference) ||
                 !contextualArrangementCandidate(
                   reference.candidate,
                   chart.candidate,
                   allowAlternatePerformers:
                       chart.extra['alternatePerformerChart'] == true,
                 ))) {
-          return false;
+          continue;
         }
-        return agreementCache
-            .putIfAbsent(chart, () => {})
-            .putIfAbsent(
-              reference,
-              () =>
-                  agreesWithReference(chart, reference) ||
-                  !contextual &&
-                      (_partialAgreement(chart.body, reference.body) ||
-                          _noisyAgreement(chart.body, reference.body)),
-            );
-      });
+        if (shortAnchor) return true;
+        longAgreement = true;
+      }
+      // A longer unanchored performance cannot bypass a short recording's
+      // ordered-sequence evidence during progressive publication.
+      return !hasShortAnchor && longAgreement;
+    }
+
+    Future<void> warmDependencyScores(Iterable<SourceResult> charts) async {
+      await Future.wait(results.map(prepareBody));
+      final references = results.where(liveReference).toList();
+      await warmLyricScores([
+        for (final chart in charts.where(needsLyricProof))
+          for (final reference in references) lyricPair(chart, reference),
+      ]);
     }
 
     var index = 0;
@@ -1365,6 +1458,12 @@ class SourceDiscoveryService {
               ? null
               : _safeDiagnosticCode(providerCodes[providerId]),
           result: result,
+          hasLyrics: result == null
+              ? null
+              : referenceFacts[result.body]?.hasLyrics,
+          hasChords: result == null
+              ? null
+              : referenceFacts[result.body]?.hasChords,
           operations: List.unmodifiable(
             operationsByProvider[providerId] ?? const [],
           ),
@@ -1589,14 +1688,29 @@ class SourceDiscoveryService {
           deferredRecordingReceivers[provider.definition.id] = namespace;
           continue;
         }
-        void retainCandidate(SourceResult result) {
+        Future<void> retainCandidate(SourceResult result) async {
           if (local.isCancelled || cancel?.isCancelled == true) return;
+          if (result.body.length > inlineChordScanLimit) {
+            await prepareBody(result);
+            if (local.isCancelled || cancel?.isCancelled == true) return;
+          }
           final previous = results.indexWhere((item) => item.id == result.id);
           if (previous < 0) {
             results.add(result);
           } else {
             results[previous] = result;
           }
+          if (needsLyricProof(result)) {
+            await warmDependencyScores([result]);
+          } else if (referenceCandidate(result)) {
+            await prepareBody(result);
+            await warmLyricScores([
+              if (liveReference(result))
+                for (final chart in results.where(needsLyricProof))
+                  lyricPair(chart, result),
+            ]);
+          }
+          if (local.isCancelled || cancel?.isCancelled == true) return;
           final state = result.matchKind == MatchKind.rejected
               ? 'unavailable'
               : 'found';
@@ -1648,9 +1762,9 @@ class SourceDiscoveryService {
           cancel?.throwIfCancelled();
           preferredResultIds[provider.definition.id] = result.id;
           for (final alternative in alternatives) {
-            retainCandidate(alternative);
+            await retainCandidate(alternative);
           }
-          retainCandidate(result);
+          await retainCandidate(result);
           final state = result.matchKind == MatchKind.rejected
               ? 'unavailable'
               : 'found';
@@ -1697,17 +1811,17 @@ class SourceDiscoveryService {
         // A longer same-song transcription may be a remix or another
         // performance. Corroborate charts against the selected recording
         // before falling back to unanchored same-song references.
-        final recording = (recordingCompatible(selection, b) ? 1 : 0).compareTo(
-          recordingCompatible(selection, a) ? 1 : 0,
+        final recording = (matchesSelectedRecording(b) ? 1 : 0).compareTo(
+          matchesSelectedRecording(a) ? 1 : 0,
         );
         if (recording != 0) return recording;
-        final words = _words(
-          b.body,
-        ).toSet().length.compareTo(_words(a.body).toSet().length);
+        final words = referenceFacts[b.body]!.words.compareTo(
+          referenceFacts[a.body]!.words,
+        );
         return words != 0 ? words : a.id.compareTo(b.id);
       });
     final recordingReference = references
-        .where((reference) => recordingCompatible(selection, reference))
+        .where((reference) => matchesSelectedRecording(reference))
         .firstOrNull;
     if (recordingReference != null) {
       // A catalog hit may omit the album/featured credits subsequently supplied
@@ -1800,6 +1914,10 @@ class SourceDiscoveryService {
                 },
               },
             );
+            if (enriched.body.length > inlineChordScanLimit) {
+              await prepareBody(enriched);
+              checkContext();
+            }
             final existing = results.indexWhere((old) => old.id == enriched.id);
             if (existing < 0) {
               results.add(enriched);
@@ -1863,7 +1981,7 @@ class SourceDiscoveryService {
             results.any(
               (r) =>
                   r.candidate.providerId == id &&
-                  r.hasChords &&
+                  hasChords(r) &&
                   r.matchKind != MatchKind.rejected,
             )) {
           continue;
@@ -1911,9 +2029,9 @@ class SourceDiscoveryService {
                     recordOperation(id, operation);
                   }
                 },
-                accept: (result) =>
-                    result.hasChords &&
-                    agreesWithReference(result, recordingReference),
+                accept: (result) async =>
+                    await preparedHasChords(result) &&
+                    (await scoreLyrics(result, recordingReference)).agrees,
               ).timeout(
                 alternativeTimeout,
                 onTimeout: () {
@@ -1927,15 +2045,15 @@ class SourceDiscoveryService {
           referenceCancel?.throwIfCancelled();
           referenceLookupCancel?.throwIfCancelled();
           contextualCancel.throwIfCancelled();
-          if (result.matchKind == MatchKind.rejected || !result.hasChords) {
+          if (result.matchKind == MatchKind.rejected || !hasChords(result)) {
             throw const ProviderException('unavailable');
           }
-          final acceptedResult = markPartialLyricSupport(
+          final acceptedResult = await markPartialLyricSupport(
             result,
             recordingReference,
           );
           for (final rawAccepted in [...alternatives, acceptedResult]) {
-            final accepted = markPartialLyricSupport(
+            final accepted = await markPartialLyricSupport(
               rawAccepted,
               recordingReference,
             );
@@ -1946,6 +2064,8 @@ class SourceDiscoveryService {
               results[existing] = accepted;
             }
           }
+          await warmDependencyScores([acceptedResult, ...alternatives]);
+          contextualCancel.throwIfCancelled();
           preferredResultIds[id] = acceptedResult.id;
           providerResults[id] = acceptedResult;
           providerChecksState[id] = 'found';
@@ -1985,11 +2105,20 @@ class SourceDiscoveryService {
         }
       }
     }
+    if (references.isNotEmpty) {
+      await warmLyricScores([
+        for (final chart in results)
+          if (hasChords(chart) && chart.matchKind != MatchKind.rejected)
+            lyricPair(chart, references.first),
+      ]);
+    }
     for (var i = 0; i < results.length; i++) {
       final result = results[i];
       final providerCancel = providerCancellation[result.candidate.providerId];
       if (providerCancel?.isCancelled == true) continue;
-      if (!result.hasChords || result.matchKind == MatchKind.rejected) continue;
+      if (!hasChords(result) || result.matchKind == MatchKind.rejected) {
+        continue;
+      }
       if (cancel?.isCancelled == true) {
         finalizeCancelledChecks();
         cancel!.throwIfCancelled();
@@ -2010,7 +2139,8 @@ class SourceDiscoveryService {
         }
       } else {
         recordCorroboration(result.candidate.providerId, 'pending');
-        if (!agreesWithReference(result, references.first)) {
+        final score = await scoreLyrics(result, references.first);
+        if (!score.agrees) {
           // The first chart may be a truncated or different-lyrics version: try
           // the provider's other candidates against the same reference.
           SourceResult? alternative;
@@ -2081,8 +2211,9 @@ class SourceDiscoveryService {
                         recordOperation(owners.first.definition.id, operation);
                       }
                     },
-                    accept: (r) =>
-                        r.hasChords && agreesWithReference(r, references.first),
+                    accept: (r) async =>
+                        await preparedHasChords(r) &&
+                        (await scoreLyrics(r, references.first)).agrees,
                   ).timeout(
                     alternativeTimeout,
                     onTimeout: () {
@@ -2098,7 +2229,7 @@ class SourceDiscoveryService {
                 contextReferenceLookupCancel?.throwIfCancelled();
               }
               if (alternative.matchKind == MatchKind.rejected ||
-                  !alternative.hasChords) {
+                  !hasChords(alternative)) {
                 alternative = null;
               }
             } on ProviderException catch (e) {
@@ -2143,10 +2274,13 @@ class SourceDiscoveryService {
             }
           }
           if (alternative != null) {
-            alternative = markPartialLyricSupport(
+            alternative = await markPartialLyricSupport(
               alternative,
               references.first,
             );
+            await warmDependencyScores([alternative]);
+            cancel?.throwIfCancelled();
+            if (providerCancel?.isCancelled == true) continue;
             // Withdraw the chart already emitted as a tentative result before
             // publishing its corroborated alternative under that source's ID.
             // Replacing the list slot alone leaves progressive consumers with
@@ -2180,8 +2314,7 @@ class SourceDiscoveryService {
             );
             recordCorroboration(alternative.candidate.providerId, 'completed');
             continue;
-          } else if (_partialAgreement(result.body, references.first.body) ||
-              _noisyAgreement(result.body, references.first.body)) {
+          } else if (score.loose) {
             recordCorroboration(result.candidate.providerId, 'pending');
             // A chart can omit repeated choruses or ad-libs yet supply accurate
             // chords. Keep it as a donor; combineSources retains the full lyrics.
@@ -2212,12 +2345,7 @@ class SourceDiscoveryService {
             );
           }
         } else {
-          if (publishedLyricScriptAlternative(
-            references.first.candidate,
-            result.candidate,
-            references.first.body,
-            result.body,
-          )) {
+          if (score.scriptAlternative) {
             results[i] = result.copyWith(
               extra: {
                 ...result.extra,
@@ -2244,17 +2372,21 @@ class SourceDiscoveryService {
         );
       }
     }
+    await warmDependencyScores(results);
     invalidateLyricDependentResults();
     await _checkChordKeys(
       results,
       active,
       selection,
       reference: references.firstOrNull,
+      hasChords: hasChords,
+      preparedHasChords: preparedHasChords,
       cancel: cancel,
       providerCancellation: providerCancellation,
       onOperation: recordOperation,
       timeout: alternativeTimeout,
     );
+    await warmDependencyScores(results);
     invalidateLyricDependentResults();
     // One late pass only, after existing recording metadata retries and chart
     // checks settle. Missing context never triggers another donor search.
@@ -2269,12 +2401,24 @@ class SourceDiscoveryService {
         publish(id, 'cancelled', code: 'cancelled');
         continue;
       }
-      final plan = planRecordingContext(
+      final eligibleProviders = {
+        for (final source in results)
+          if (contextProviderEligible(source.candidate.providerId))
+            source.candidate.providerId,
+      };
+      final plan = await prepareRecordingContext(
         selection,
         results,
         namespace: namespace,
-        eligible: contextProviderEligible,
+        eligible: eligibleProviders,
       );
+      cancel?.throwIfCancelled();
+      if (!contextProviderEligible(id)) {
+        providerChecksState[id] = 'cancelled';
+        traceOpen[id] = false;
+        publish(id, 'cancelled', code: 'cancelled');
+        continue;
+      }
       if (plan == null) {
         providerChecksState[id] = 'unavailable';
         publish(id, 'unavailable', code: 'identity_required');
@@ -2355,6 +2499,10 @@ class SourceDiscoveryService {
         final enriched = result.copyWith(
           extra: {...result.extra, 'recordingContext': plan.provenance},
         );
+        if (enriched.body.length > inlineChordScanLimit) {
+          await prepareBody(enriched);
+          checkContext();
+        }
         recordingContextPlans[enriched.id] = plan;
         results.add(enriched);
         preferredResultIds[id] = enriched.id;
@@ -2423,6 +2571,7 @@ class SourceDiscoveryService {
       finalizePending(provider.definition.id, 'failed', 'provider_error');
       traceOpen[provider.definition.id] = false;
     }
+    await warmDependencyScores(results);
     invalidateLyricDependentResults();
     invalidateRecordingContextResults();
     return results
@@ -2695,6 +2844,8 @@ class SourceDiscoveryService {
     List<SourceResult> results,
     List<LyricsProvider> active,
     SongCandidate selection, {
+    required bool Function(SourceResult) hasChords,
+    required Future<bool> Function(SourceResult) preparedHasChords,
     SourceResult? reference,
     CancellationToken? cancel,
     Map<String, CancellationToken> providerCancellation = const {},
@@ -2727,12 +2878,11 @@ class SourceDiscoveryService {
     };
     List<int> acceptedIndexes() => [
       for (var i = 0; i < results.length; i++)
-        if (results[i].hasChords &&
+        if (hasChords(results[i]) &&
             results[i].matchKind != MatchKind.rejected &&
             eligible(results[i].candidate.providerId))
           i,
     ];
-    final indexes = acceptedIndexes();
     final heard = await _recordingKey(
       selection,
       results,
@@ -2759,62 +2909,24 @@ class SourceDiscoveryService {
         }
       }
     }
+    final indexes = acceptedIndexes();
     if (indexes.isEmpty) return;
-    final charts = [for (final i in indexes) results[i].body];
-    Object? setup(SourceResult source, String field) =>
-        source.metadata[field] ?? source.candidate.metadata[field];
+    final initialCharts = [for (final i in indexes) results[i]];
+    final charts = [for (final chart in initialCharts) chart.body];
     // Conflicting analyses belong in the combination ranker. A scalar tie
     // break must never authorize an earlier in-place chart correction.
     var recording =
         heard?.recordingBound == true && heard!.key.alternatives.isEmpty
         ? heard.key
         : null;
-    // Doubt: charts in different keys, or a chart whose declared key
-    // contradicts its own chords (a transposed chart or a missing capo).
-    // Charts are compared by sounding key: the same shapes with a different
-    // capo are in different keys.
-    final disagree = indexes
-        .skip(1)
-        .any(
-          (i) =>
-              (soundingTransposition(
-                    results[indexes.first].body,
-                    setup(results[indexes.first], 'capo'),
-                    results[i].body,
-                    setup(results[i], 'capo'),
-                  ) ??
-                  0) !=
-              0,
-        );
-    final contradicted = indexes.any((i) {
-      final source = results[i];
-      final declared =
-          source.metadata['key'] ?? source.candidate.metadata['key'];
-      return declared is String &&
-          declared.trim().isNotEmpty &&
-          !declaredKeyFitsChords(
-            source.body,
-            declared.trim(),
-            source.metadata['capo'] ?? source.candidate.metadata['capo'],
-          );
-    });
-    // The recording's measured key disagreeing with a chart's chords (beyond
-    // a relative major/minor) is doubt as well.
-    final measured = recording?.key;
-    final unheard =
-        measured != null &&
-        indexes.any((i) {
-          final key = soundingChartKey(
-            results[i].body,
-            setup(results[i], 'capo'),
-          );
-          return key != null && !keysAgree(key, measured);
-        });
-    if (!disagree && !contradicted && !unheard) {
+    final doubt = await _needsChordKeyCheck(initialCharts, recording?.key);
+    cancel?.throwIfCancelled();
+    if (!doubt) {
       // No doubt to settle; the measured key still helps name a key the
       // chords leave open (a relative major or minor).
       if (heard != null && heard.providers.every(eligible)) {
         for (final i in indexes) {
+          if (!eligible(results[i].candidate.providerId)) continue;
           results[i] = results[i].copyWith(
             extra: {
               ...results[i].extra,
@@ -2832,36 +2944,35 @@ class SourceDiscoveryService {
     }
     bool referenceEligible() =>
         reference == null || eligible(reference.candidate.providerId);
-    bool lyricsAgree(String body) {
-      if (!referenceEligible()) return false;
-      if (reference == null) {
-        // Chart-to-chart votes have no anchored lyric reference and therefore
-        // retain the normal vocabulary requirement.
-        return charts.any(
-          (chart) => _agreement(body, chart) || _partialAgreement(body, chart),
-        );
+    final shortReference =
+        reference != null &&
+        reference.matchKind == MatchKind.sameRecording &&
+        recordingCompatible(selection, reference);
+    final lyricVotes = <String, Future<bool>>{};
+    Future<bool> canVote(SourceResult result) async {
+      if (!referenceEligible() ||
+          !await preparedHasChords(result) ||
+          result.matchKind == MatchKind.rejected ||
+          !explicitEditionsCompatible(
+            selection,
+            result.candidate,
+            metadata: result.metadata,
+            extra: result.extra,
+          )) {
+        return false;
       }
-      return _agreement(
-            body,
-            reference.body,
-            allowShortRecordingReference:
-                reference.matchKind == MatchKind.sameRecording &&
-                recordingCompatible(selection, reference),
-          ) ||
-          _partialAgreement(body, reference.body) ||
-          _noisyAgreement(body, reference.body);
+      final agrees = await lyricVotes.putIfAbsent(
+        result.body,
+        () => _scoreKeyVoteLyrics(
+          result.body,
+          charts,
+          reference?.body,
+          shortReference,
+        ),
+      );
+      return agrees && referenceEligible();
     }
 
-    bool canVote(SourceResult result) =>
-        result.hasChords &&
-        result.matchKind != MatchKind.rejected &&
-        explicitEditionsCompatible(
-          selection,
-          result.candidate,
-          metadata: result.metadata,
-          extra: result.extra,
-        ) &&
-        lyricsAgree(result.body);
     final votes = <({String providerId, SourceResult chart})>[];
     for (final provider in active.where(
       (p) => p.definition.capabilities.contains('chords'),
@@ -2908,7 +3019,7 @@ class SourceDiscoveryService {
         cancel?.throwIfCancelled();
         if (!eligible(id) || !referenceEligible()) continue;
         for (final chart in [best, ...found]) {
-          if (canVote(chart)) votes.add((providerId: id, chart: chart));
+          if (await canVote(chart)) votes.add((providerId: id, chart: chart));
         }
       } on ProviderException {
         if (cancel?.isCancelled == true) rethrow;
@@ -2922,38 +3033,30 @@ class SourceDiscoveryService {
     cancel?.throwIfCancelled();
     // Reference cancellation invalidates the lyric proof for this vote batch.
     if (!referenceEligible()) return;
-    // Providers cancelled or disabled during the lookups drop out entirely.
-    final current = [
-      for (final i in acceptedIndexes())
-        if (indexes.contains(i)) i,
-    ];
-    if (current.isEmpty) return;
-    final sources = [
-      for (final i in current) results[i],
-      for (final vote in votes)
-        if (eligible(vote.providerId)) vote.chart,
-    ];
-    // A recording identified only by providers disabled since is no evidence.
-    if (heard != null && !heard.providers.every(eligible)) recording = null;
-    final all = [for (final source in sources) source.body];
-    final outcome = chordKeyVerdict(
-      all,
-      recordingKey: recording?.key,
-      capos: [for (final source in sources) setup(source, 'capo')],
-      declaredKeys: [
-        for (final source in sources)
-          if (setup(source, 'key') case final String key) key else null,
-      ],
-      // Accepted charts transcribed against the recording settle a key when
-      // the other charts show no majority.
-      anchors: [
-        for (var n = 0; n < sources.length; n++)
-          n < current.length &&
-              _recordingTranscriptions.contains(
-                sources[n].candidate.providerId,
-              ),
-      ],
-    );
+    // Providers disabled during a scoring batch cannot contribute a vote.
+    late List<int> current;
+    late List<SourceResult> sources;
+    ({List<int?> shifts, String? keyEstimate})? outcome;
+    while (true) {
+      current = [
+        for (final i in acceptedIndexes())
+          if (indexes.contains(i)) i,
+      ];
+      if (current.isEmpty) return;
+      sources = [
+        for (final i in current) results[i],
+        for (final vote in votes)
+          if (eligible(vote.providerId)) vote.chart,
+      ];
+      if (heard != null && !heard.providers.every(eligible)) recording = null;
+      outcome = await _scoreChordKeys(sources, current.length, recording?.key);
+      cancel?.throwIfCancelled();
+      if (!referenceEligible()) return;
+      if (sources.every((source) => eligible(source.candidate.providerId)) &&
+          (recording == null || heard!.providers.every(eligible))) {
+        break;
+      }
+    }
     // Same-song analyses inform ranking, but cannot authorize a correction
     // of the selected recording's published chart setup.
     if (heard != null &&
@@ -2975,33 +3078,7 @@ class SourceDiscoveryService {
     }
     if (outcome == null) return;
     final verdict = outcome.shifts;
-    // Estimate the majority key from every chart moved into it; a key is
-    // named only when the estimates that do not abstain all agree.
-    final estimates = <String>{};
-    String? estimate;
-    for (var n = 0; n < all.length; n++) {
-      final shift = verdict[n];
-      if (shift == null) continue;
-      final shapes = estimateChordKey(
-        shift == 0 ? all[n] : transposeBody(all[n], shift),
-      )?.key;
-      if (shapes == null) continue;
-      // Compare sounding keys: chord shapes plus the chart's capo.
-      final capo = setup(sources[n], 'capo');
-      final frets = capo is num ? capo.toInt() : int.tryParse('${capo ?? ''}');
-      final key = frets == null || frets <= 0
-          ? shapes
-          : transposeChord(shapes, frets);
-      estimate ??= key;
-      estimates.add(key);
-    }
-    // Chord estimates name the mode best; the recording's key fills in when
-    // the chords give none and it voted for the winning key.
-    final keyEstimate = estimates.length == 1
-        ? estimate
-        : estimates.isEmpty && outcome.recordingAgrees
-        ? recording?.key
-        : null;
+    final keyEstimate = outcome.keyEstimate;
     for (var n = 0; n < current.length; n++) {
       final shift = verdict[n];
       if (shift == null) continue;
@@ -3011,7 +3088,7 @@ class SourceDiscoveryService {
           ...results[i].extra,
           'keyConsensus': shift == 0,
           'keyShift': ?(shift == 0 ? null : shift),
-          'keyCheckCharts': all.length,
+          'keyCheckCharts': sources.length,
           'keyEstimate': ?keyEstimate,
           'keyRecording': ?(recording == null
               ? null
@@ -3031,6 +3108,179 @@ class SourceDiscoveryService {
 /// (Songsterr's tabs play in sync with the original audio), unlike user
 /// arrangements that are often written in a singer's key.
 const _recordingTranscriptions = {'songsterr'};
+
+typedef _LyricPair = ({
+  SongCandidate chart,
+  SongCandidate reference,
+  String chartBody,
+  String referenceBody,
+  bool alternatePerformer,
+  bool shortRecording,
+});
+typedef _LyricScore = ({
+  bool agrees,
+  bool scriptAlternative,
+  bool contextualPartial,
+  bool loose,
+});
+
+typedef _LyricReferenceFacts = ({
+  int words,
+  bool short,
+  bool hasLyrics,
+  bool hasChords,
+});
+
+Future<_LyricReferenceFacts> _scoreLyricReference(String body) =>
+    Isolate.run(() {
+      final hasChords = containsChords(body);
+      return (
+        words: hasChords ? 0 : _words(body).toSet().length,
+        short: !hasChords && isShortRecordingLyricBody(body),
+        hasLyrics: plainLyrics(body).trim().isNotEmpty,
+        hasChords: hasChords,
+      );
+    }, debugName: 'singbook-source-body-facts');
+
+Future<List<_LyricScore>> _scoreLyricPairs(List<_LyricPair> pairs) =>
+    Isolate.run(() => [for (final pair in pairs) _scoreLyricPair(pair)]);
+
+_LyricScore _scoreLyricPair(_LyricPair pair) {
+  final strict = _agreement(
+    pair.chartBody,
+    pair.referenceBody,
+    allowShortRecordingReference: pair.shortRecording,
+  );
+  final script = publishedLyricScriptAlternative(
+    pair.reference,
+    pair.chart,
+    pair.referenceBody,
+    pair.chartBody,
+  );
+  final partial =
+      pair.alternatePerformer &&
+      !strict &&
+      contextualChartLyricsMatch(
+        pair.chartBody,
+        pair.referenceBody,
+        allowPartial: true,
+      );
+  final agrees = strict || script || partial;
+  return (
+    agrees: agrees,
+    scriptAlternative: script,
+    contextualPartial: partial,
+    loose:
+        !agrees &&
+        (_partialAgreement(pair.chartBody, pair.referenceBody) ||
+            _noisyAgreement(pair.chartBody, pair.referenceBody)),
+  );
+}
+
+Object? _chartSetup(SourceResult source, String field) =>
+    source.metadata[field] ?? source.candidate.metadata[field];
+
+Future<bool> _needsChordKeyCheck(List<SourceResult> charts, String? measured) =>
+    Isolate.run(() {
+      final first = charts.first;
+      return charts
+              .skip(1)
+              .any(
+                (chart) =>
+                    (soundingTransposition(
+                          first.body,
+                          _chartSetup(first, 'capo'),
+                          chart.body,
+                          _chartSetup(chart, 'capo'),
+                        ) ??
+                        0) !=
+                    0,
+              ) ||
+          charts.any((chart) {
+            final declared = _chartSetup(chart, 'key');
+            return declared is String &&
+                declared.trim().isNotEmpty &&
+                !declaredKeyFitsChords(
+                  chart.body,
+                  declared.trim(),
+                  _chartSetup(chart, 'capo'),
+                );
+          }) ||
+          measured != null &&
+              charts.any((chart) {
+                final key = soundingChartKey(
+                  chart.body,
+                  _chartSetup(chart, 'capo'),
+                );
+                return key != null && !keysAgree(key, measured);
+              });
+    });
+
+Future<bool> _scoreKeyVoteLyrics(
+  String body,
+  List<String> charts,
+  String? reference,
+  bool shortReference,
+) => Isolate.run(
+  () => reference == null
+      ? charts.any(
+          (chart) => _agreement(body, chart) || _partialAgreement(body, chart),
+        )
+      : _agreement(
+              body,
+              reference,
+              allowShortRecordingReference: shortReference,
+            ) ||
+            _partialAgreement(body, reference) ||
+            _noisyAgreement(body, reference),
+);
+
+Future<({List<int?> shifts, String? keyEstimate})?> _scoreChordKeys(
+  List<SourceResult> sources,
+  int acceptedCount,
+  String? recordingKey,
+) => Isolate.run(() {
+  final bodies = [for (final source in sources) source.body];
+  final capos = [for (final source in sources) _chartSetup(source, 'capo')];
+  final outcome = chordKeyVerdict(
+    bodies,
+    recordingKey: recordingKey,
+    capos: capos,
+    declaredKeys: [
+      for (final source in sources)
+        if (_chartSetup(source, 'key') case final String key) key else null,
+    ],
+    anchors: [
+      for (var n = 0; n < sources.length; n++)
+        n < acceptedCount &&
+            _recordingTranscriptions.contains(sources[n].candidate.providerId),
+    ],
+  );
+  if (outcome == null) return null;
+  final estimates = <String>{};
+  for (var n = 0; n < bodies.length; n++) {
+    final shift = outcome.shifts[n];
+    if (shift == null) continue;
+    final body = bodies[n];
+    final shapes = estimateChordKey(
+      shift == 0 ? body : transposeBody(body, shift),
+    )?.key;
+    if (shapes == null) continue;
+    final capo = capos[n];
+    final frets = capo is num ? capo.toInt() : int.tryParse('${capo ?? ''}');
+    estimates.add(
+      frets == null || frets <= 0 ? shapes : transposeChord(shapes, frets),
+    );
+  }
+  return (
+    shifts: outcome.shifts,
+    keyEstimate: estimates.length == 1
+        ? estimates.single
+        : estimates.isEmpty && outcome.recordingAgrees
+        ? recordingKey
+        : null,
+  );
+});
 
 List<String> _words(String body) => normalizedIdentity(
   foldLyricVowelAccents(body)
