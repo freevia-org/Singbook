@@ -6,6 +6,11 @@ class MainFlutterWindow: NSWindow, NSWindowDelegate {
   private var editorChannel: FlutterMethodChannel?
   private var closeChannel: FlutterMethodChannel?
   private var closeRequestPending = false
+  private var closeRequestedAt: Date?
+  private var closeRequestGeneration = 0
+  // An unanswered close request (an unresponsive Dart isolate) stops blocking
+  // the window after this long; the next close attempt then closes natively.
+  private let closeReplyTimeout: TimeInterval = 10
   private var fullScreenChannel: FlutterMethodChannel?
   private var playerFullScreenActive = false
   private var fullScreenBeforePlayer: Bool?
@@ -175,11 +180,24 @@ class MainFlutterWindow: NSWindow, NSWindowDelegate {
   }
 
   func windowShouldClose(_ sender: NSWindow) -> Bool {
+    if closeRequestPending, let requestedAt = closeRequestedAt,
+       Date().timeIntervalSince(requestedAt) >= closeReplyTimeout {
+      // No reply in time: invalidate the outstanding request and terminate.
+      closeRequestPending = false
+      closeRequestedAt = nil
+      closeRequestGeneration += 1
+      (NSApp.delegate as? AppDelegate)?.terminateAfterConfirmedClose()
+      return false
+    }
     guard !closeRequestPending, let closeChannel else { return false }
     closeRequestPending = true
+    closeRequestedAt = Date()
+    closeRequestGeneration += 1
+    let generation = closeRequestGeneration
     closeChannel.invokeMethod("requestClose", arguments: nil) { [weak self] response in
-      guard let self else { return }
+      guard let self, self.closeRequestGeneration == generation else { return }
       self.closeRequestPending = false
+      self.closeRequestedAt = nil
       if response as? Bool == true {
         // Termination is also cancelable through FlutterAppDelegate. Keep the
         // window visible until that completes, including unsaved-draft prompts.
