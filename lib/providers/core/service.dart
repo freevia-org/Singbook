@@ -629,7 +629,10 @@ Future<SourceResult> findMatchingSource(
         'state': 'failed',
         'code': 'invalid_response',
       });
-      rethrow;
+      // A page that breaks its parser is one unreadable candidate, like an
+      // `invalid_response`: the provider's other candidates are still tried.
+      unresolved.add(ProviderException('invalid_response', candidate.id));
+      return null;
     }
     report(
       'fetch',
@@ -1068,6 +1071,7 @@ Future<SourceResult> findMatchingSource(
     }).firstOrNull;
     if (evidence != null) evidence['state'] = 'attempted';
     SourceResult? result;
+    final rejectedBefore = rejectedEvidence.length;
     try {
       result = await attempt(candidate);
     } on ProviderException catch (error) {
@@ -1083,7 +1087,7 @@ Future<SourceResult> findMatchingSource(
     }
     if (result == null) {
       if (evidence != null && evidence['state'] == 'attempted') {
-        evidence['state'] = rejectedEvidence.isNotEmpty
+        evidence['state'] = rejectedEvidence.length > rejectedBefore
             ? 'rejected'
             : 'unavailable';
       }
