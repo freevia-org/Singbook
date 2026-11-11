@@ -303,7 +303,9 @@ void main() {
             200,
             headers: {
               'x-ratelimit-remaining': '0',
-              'x-ratelimit-reset-in': '3600',
+              // Within the retry cap, so the request queues for the window.
+              // Longer windows fail fast (review_core_transport_test.dart).
+              'x-ratelimit-reset-in': '5',
             },
           );
         });
