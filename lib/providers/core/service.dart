@@ -1208,6 +1208,9 @@ class SourceDiscoveryService {
     CancellationToken? cancel,
     Map<String, CancellationToken> providerCancellation = const {},
     Duration alternativeTimeout = const Duration(seconds: 30),
+    // Bounds each provider's first lookup. Expiry fails that lookup only; it
+    // never cancels the caller's token, which means "source withdrawn".
+    Duration providerTimeout = const Duration(seconds: 30),
   }) async {
     final active = providers
         .where(
@@ -1675,8 +1678,14 @@ class SourceDiscoveryService {
           cancel!.throwIfCancelled();
         }
         final provider = active[index++];
-        final local =
-            providerCancellation[provider.definition.id] ?? CancellationToken();
+        // A linked token of its own: a timeout retires this lookup without
+        // marking the caller's provider token as withdrawn.
+        final local = CancellationToken();
+        final provided = providerCancellation[provider.definition.id];
+        if (provided?.isCancelled == true) local.cancel();
+        // The link above fires a microtask late; consult the caller's token too.
+        bool retired() => local.isCancelled || provided?.isCancelled == true;
+        provided?.cancelled.then((_) => local.cancel());
         lookupCancellation[provider.definition.id] = local;
         cancel?.cancelled.then((_) => local.cancel());
         final namespace = provider is RecordingContextReceiver
@@ -1689,10 +1698,10 @@ class SourceDiscoveryService {
           continue;
         }
         Future<void> retainCandidate(SourceResult result) async {
-          if (local.isCancelled || cancel?.isCancelled == true) return;
+          if (retired() || cancel?.isCancelled == true) return;
           if (result.body.length > inlineChordScanLimit) {
             await prepareBody(result);
-            if (local.isCancelled || cancel?.isCancelled == true) return;
+            if (retired() || cancel?.isCancelled == true) return;
           }
           final previous = results.indexWhere((item) => item.id == result.id);
           if (previous < 0) {
@@ -1710,7 +1719,7 @@ class SourceDiscoveryService {
                   lyricPair(chart, result),
             ]);
           }
-          if (local.isCancelled || cancel?.isCancelled == true) return;
+          if (retired() || cancel?.isCancelled == true) return;
           final state = result.matchKind == MatchKind.rejected
               ? 'unavailable'
               : 'found';
@@ -1740,25 +1749,26 @@ class SourceDiscoveryService {
                 onSearchCandidates:
                     provider.definition.capabilities.contains('chords')
                     ? (candidates) {
-                        if (!local.isCancelled && cancel?.isCancelled != true) {
+                        if (!retired() && cancel?.isCancelled != true) {
                           searchedByProvider[provider.definition.id] =
                               candidates;
                         }
                       }
                     : null,
                 onOperation: (operation) {
-                  if (!local.isCancelled) {
+                  if (!retired()) {
                     recordOperation(provider.definition.id, operation);
                   }
                 },
               ).timeout(
-                const Duration(seconds: 30),
+                providerTimeout,
                 onTimeout: () {
                   local.cancel();
                   throw const ProviderException('timeout');
                 },
               );
           local.throwIfCancelled();
+          provided?.throwIfCancelled();
           cancel?.throwIfCancelled();
           preferredResultIds[provider.definition.id] = result.id;
           for (final alternative in alternatives) {
