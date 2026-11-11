@@ -33,21 +33,7 @@ trap cleanup_sanitized_defines EXIT
 if [[ -f config/local.defines.json ]]; then
   # Desktop OAuth clients are public clients; never compile the optional client
   # secret from ignored local defines into an app or archive.
-  sanitized_defines_file="$(python3 - config/local.defines.json <<'PY'
-import json
-import sys
-import tempfile
-
-with open(sys.argv[1], encoding='utf-8') as source:
-    defines = json.load(source)
-if not isinstance(defines, dict):
-    raise SystemExit('Local defines must be a JSON object.')
-defines.pop('SINGBOOK_GOOGLE_DESKTOP_CLIENT_SECRET', None)
-with tempfile.NamedTemporaryFile('w', encoding='utf-8', suffix='.json', delete=False) as output:
-    json.dump(defines, output, ensure_ascii=False)
-    print(output.name)
-PY
-)"
+  sanitized_defines_file="$(python3 scripts/sanitize-defines.py config/local.defines.json)"
   defines+=(--dart-define-from-file="$sanitized_defines_file")
 else
   echo 'No local defines: Google sync and Genius are unavailable.'
