@@ -14,7 +14,6 @@ permissions:
 
 jobs:
   sign-linux-assets:
-    if: github.event_name != 'release' || github.event.release.draft == false
     runs-on: ubuntu-latest
     steps:
       - name: Install Cosign
@@ -24,7 +23,7 @@ jobs:
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
-          RELEASE_TAG: ${{ github.event.release.tag_name || inputs.release_tag }}
+          RELEASE_TAG: ${{ inputs.release_tag }}
           REPOSITORY: ${{ github.repository }}
         run: |
           set -euo pipefail
