@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "runtime": "host-flutter-test",
+  "measuredAt": "2026-11-11T07:04:53.129803Z",
+  "userLibraryAccessed": false,
+  "documentsRetained": false,
+  "httpDiagnostics": {
+    "networkFailures": 0,
+    "hosts": {
+      "ozbcoz.com": {
+        "requests": 1,
+        "statuses": {
+          "400": 1
+        },
+        "retryAfterSeconds": {},
+        "databaseLag": {}
+      }
+    }
+  },
+  "probes": [
+    {
+      "id": "2941",
+      "source": "ozbcoz",
+      "sourceUrl": "https://ozbcoz.com/Songs/cp/get_pro.php?ID=2941&instr=guitar",
+      "expectedTitle": "Wild Rover [C]",
+      "expectedArtist": "The Dubliners",
+      "measuredAt": "2026-11-11T07:04:53.107358Z",
+      "nativeFilePickerTested": false,
+      "status": "unverified",
+      "reason": "network"
+    }
+  ],
+  "execution": {
+    "runtime": "managed-cloud",
+    "baseSha": "6b5270e27be159974d1f4c2dc615599af962d799",
+    "command": "SINGBOOK_LIVE_IMPORT_CHECK=1 flutter test --no-pub tool/source_import_maintenance_test.dart --reporter compact",
+    "exitCode": 1
+  }
+}
