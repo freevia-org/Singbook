@@ -1,0 +1,78 @@
+name: Build and smoke test Windows release 53
+
+on:
+  push:
+    branches: [codex/windows-release53-hosted]
+    paths: [.github/workflows/release53-windows-hosted.yml]
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: windows-2025
+    timeout-minutes: 35
+    env:
+      SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID: ${{ vars.SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: 6b5270e27be159974d1f4c2dc615599af962d799
+          persist-credentials: false
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.8'
+          channel: stable
+          cache: true
+      - name: Build portable bundle and unsigned Store package
+        shell: pwsh
+        run: |
+          if ($env:SINGBOOK_GOOGLE_DESKTOP_CLIENT_ID -notmatch '^\d+-[A-Za-z0-9_-]+\.apps\.googleusercontent\.com$') {
+            throw 'The public desktop OAuth client ID is missing.'
+          }
+          flutter pub get --enforce-lockfile --no-example
+          if ($LASTEXITCODE -ne 0) { throw 'Flutter dependency resolution failed.' }
+          ./scripts/build-windows.ps1 -DefinesFile config/defines.example.json
+          $release = @(Get-ChildItem artifacts/windows -Directory)
+          if ($release.Count -ne 1) { throw 'Expected one portable release.' }
+          $tree = (git rev-parse 'HEAD^{tree}').Trim()
+          $sdkRoot = Join-Path ${env:ProgramFiles(x86)} 'Windows Kits/10/bin'
+          $makeAppx = Get-ChildItem $sdkRoot -Filter makeappx.exe -File -Recurse |
+            Where-Object { $_.Directory.Name -eq 'x64' } |
+            Sort-Object FullName -Descending | Select-Object -First 1
+          if (-not $makeAppx) { throw 'Windows SDK MakeAppx was not found.' }
+          $manifest = Join-Path $release[0].FullName 'manifest.json'
+          $output = Join-Path $env:RUNNER_TEMP 'singbook-store-53'
+          ./scripts/windows-store/package-msix.ps1 `
+            -PortableBundle (Join-Path $release[0].FullName 'Singbook') `
+            -PortableManifest $manifest -OutputDirectory $output `
+            -IconPath assets/branding/singbook-icon.png -MakeAppxPath $makeAppx.FullName `
+            -ExpectedSourceTree $tree -ExpectedProductVersion '1.0.53+53'
+          $msix = @(Get-ChildItem $output -Filter '*.msix' -File)
+          if ($msix.Count -ne 1) { throw 'Expected one Store package.' }
+          "SINGBOOK_MSIX=$($msix[0].FullName)" >> $env:GITHUB_ENV
+          "SINGBOOK_MSIX_SHA=$((Get-FileHash $msix[0].FullName -Algorithm SHA256).Hash)" >> $env:GITHUB_ENV
+          "SINGBOOK_MANIFEST_SHA=$((Get-FileHash $manifest -Algorithm SHA256).Hash)" >> $env:GITHUB_ENV
+          "SINGBOOK_SOURCE_TREE=$tree" >> $env:GITHUB_ENV
+          "SINGBOOK_PACKAGE_PROVENANCE=$(Join-Path $output 'package-provenance.json')" >> $env:GITHUB_ENV
+      - name: Install, restart and verify persistence
+        shell: pwsh
+        run: |
+          ./scripts/test-windows-store-msix-install.ps1 `
+            -MsixPath $env:SINGBOOK_MSIX -ProvenancePath $env:SINGBOOK_PACKAGE_PROVENANCE `
+            -ExpectedSha256 $env:SINGBOOK_MSIX_SHA -ExpectedSourceTree $env:SINGBOOK_SOURCE_TREE `
+            -ExpectedSourceManifestSha256 $env:SINGBOOK_MANIFEST_SHA -ExpectedProductVersion '1.0.53+53' `
+            -EvidenceDirectory (Join-Path $PWD 'artifacts/windows-store-msix-smoke/release53')
+      - name: Retain the package and test evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: singbook-windows-store-53
+          path: |
+            ${{ runner.temp }}/singbook-store-53/*.msix
+            ${{ runner.temp }}/singbook-store-53/package-provenance.json
+            artifacts/windows/*/build.log
+            artifacts/windows/*/manifest.json
+            artifacts/windows-store-msix-smoke/release53/
+          if-no-files-found: warn
+          retention-days: 7
