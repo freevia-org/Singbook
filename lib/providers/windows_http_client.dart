@@ -21,6 +21,20 @@ class WindowsHttpClient extends http.BaseClient {
     }
     final result = Completer<http.StreamedResponse>();
     _pending[result] = null;
+    if (request case http.Abortable(:final abortTrigger?)) {
+      // Cancellation and timeouts must stop the native worker, not just stop
+      // waiting for it. The byte is only written while the request is still
+      // pending: [_send] frees it in the same turn that removes the entry.
+      unawaited(
+        abortTrigger.whenComplete(() {
+          if (!_pending.containsKey(result)) return;
+          _pending[result]?.value = 1;
+          if (!result.isCompleted) {
+            result.completeError(http.RequestAbortedException(request.url));
+          }
+        }),
+      );
+    }
     unawaited(_send(request, result));
     return result.future;
   }
