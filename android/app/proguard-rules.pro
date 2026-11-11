@@ -1,7 +1,7 @@
 # R8 rules for Singbook release builds. Deliberately minimal: Flutter, AndroidX
-# and the Google libraries ship their own consumer rules. UNTESTED against a real
-# release build in this change; verify on a device before distributing, and use
-# -PminifyRelease=false to disable shrinking if a plugin misbehaves.
+# and the Google libraries ship their own consumer rules. Verify a release
+# build on a device after changing these rules, and use -PminifyRelease=false
+# to disable shrinking if a plugin misbehaves.
 
 # Flutter deferred-component / Play Core references are optional.
 -dontwarn com.google.android.play.core.**
