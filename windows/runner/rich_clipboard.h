@@ -130,7 +130,19 @@ inline const char* WriteRichClipboard(HWND owner, const std::string& text,
   ClipboardMemory plain(unicode.c_str(), (unicode.size() + 1) * sizeof(wchar_t));
   ClipboardMemory rich(clipboard_html.c_str(), clipboard_html.size() + 1);
   if (!plain.valid() || !rich.valid()) return "clipboard_allocation_failed";
-  if (!OpenClipboard(owner)) return "clipboard_busy";
+  // Clipboard managers, remote-desktop sync and Office hold the clipboard for
+  // a few milliseconds at a time. Retry briefly before reporting it busy.
+  constexpr int kOpenAttempts = 10;
+  constexpr DWORD kOpenRetryDelayMs = 10;
+  bool opened = false;
+  for (int attempt = 0; attempt < kOpenAttempts; ++attempt) {
+    if (OpenClipboard(owner)) {
+      opened = true;
+      break;
+    }
+    if (attempt + 1 < kOpenAttempts) Sleep(kOpenRetryDelayMs);
+  }
+  if (!opened) return "clipboard_busy";
   const char* error = nullptr;
   if (!EmptyClipboard()) {
     error = "clipboard_write_failed";
