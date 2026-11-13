@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:archive/archive.dart';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/painting.dart' show Rect;
+import 'package:flutter/foundation.dart' show TargetPlatform;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:singbook/application/file_actions.dart';
@@ -693,9 +694,11 @@ void main() {
     });
 
     test('truncation never splits a surrogate pair', () {
+      // 100 emoji are 400 UTF-8 bytes; the name is also kept within the
+      // 255-byte file-name limit, which leaves 60 whole emoji.
       final name = safeName('😀' * 150);
-      expect(name.runes, hasLength(100));
-      expect(name.codeUnits, hasLength(200));
+      expect(name.runes, hasLength(60));
+      expect(name.codeUnits, hasLength(120));
       expect(name.runes.every((r) => r == 0x1f600), isTrue);
       expect(safeName('${'a' * 99}.${'b' * 20}'), isNot(endsWith('.')));
     });
@@ -720,7 +723,10 @@ void main() {
 
     test('the copy is removed once the platform reports completion', () async {
       List<String>? paths;
+      // Android is covered separately: its success only means a target was
+      // chosen, so it keeps the copy (review_app_share_test.dart).
       final actions = VerseFileActions(
+        platform: TargetPlatform.iOS,
         temporaryDirectory: () async => temp,
         shareFiles: (params) async {
           paths = params.files!.map((f) => f.path).toList();

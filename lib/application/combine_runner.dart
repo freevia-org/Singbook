@@ -131,6 +131,13 @@ CombineOutcome computeCombine(CombineRequest request) {
   );
 }
 
+/// A source whose final match check has not finished: merged without its
+/// timing and marked, so the merge treats it as provisional.
+SourceResult withPendingMatchCheck(SourceResult source) => source.copyWith(
+  timingTracks: const [],
+  extra: {...source.extra, 'pendingMatchCheck': true},
+);
+
 /// Runs a captured save independently of the replaceable discovery queue.
 Future<SongDocument> combineForSave(
   CombineRequest request, {
@@ -159,10 +166,7 @@ SongDocument _combineForSave(
   final results = [
     for (var index = 0; index < request.results.length; index++)
       if (pendingSources.contains(index))
-        request.results[index].copyWith(
-          timingTracks: const [],
-          extra: {...request.results[index].extra, 'pendingMatchCheck': true},
-        )
+        withPendingMatchCheck(request.results[index])
       else
         request.results[index],
   ];
@@ -377,7 +381,13 @@ class CombineWorker {
   Future<void>? _starting;
   final _ready = Completer<SendPort?>();
   bool _disposed = false;
+  bool _exited = false;
+  ReceivePort? _lifecycle;
   final _pending = <int, Completer<CombineOutcome>>{};
+
+  /// True once the isolate died on its own (crash or unexpected exit). A dead
+  /// worker never answers again; callers start a new one.
+  bool get isDead => _exited;
   int _nextId = 0;
 
   Future<CombineOutcome> run(CombineRequest request) => _run(request);
@@ -387,9 +397,11 @@ class CombineWorker {
     _PreparationMode? preferred,
   }) async {
     if (_disposed) throw StateError('combine worker disposed');
+    if (_exited) throw StateError('combine worker exited');
     await (_starting ??= _start());
     final send = _send;
     if (_disposed || send == null) throw StateError('combine worker disposed');
+    if (_exited) throw StateError('combine worker exited');
     final id = ++_nextId;
     final completer = Completer<CombineOutcome>();
     _pending[id] = completer;
@@ -416,11 +428,35 @@ class CombineWorker {
       }
     });
     _receive = receive;
-    final isolate = await Isolate.spawn(
-      _workerMain,
-      receive.sendPort,
-      debugName: 'singbook-combine',
-    );
+    // Uncaught errors and the isolate's end arrive here. A request the worker
+    // can no longer answer would otherwise wait forever and, in the save
+    // queue, hold every later write behind it.
+    final lifecycle = ReceivePort();
+    _lifecycle = lifecycle;
+    lifecycle.listen((message) {
+      if (message is List) {
+        // [error, stackTrace] of an uncaught error; the isolate then ends.
+        _failPending(StateError('combine worker failed: ${message.first}'));
+      } else {
+        // onExit. A reply sent just before a normal exit may still be queued
+        // on the reply port, so give it a turn before failing the rest.
+        Timer.run(() => _failPending(StateError('combine worker exited')));
+      }
+    });
+    final Isolate isolate;
+    try {
+      isolate = await Isolate.spawn(
+        _workerMain,
+        receive.sendPort,
+        debugName: 'singbook-combine',
+        onError: lifecycle.sendPort,
+        onExit: lifecycle.sendPort,
+      );
+    } catch (_) {
+      lifecycle.close();
+      _lifecycle = null;
+      rethrow;
+    }
     if (_disposed) {
       isolate.kill(priority: Isolate.immediate);
       return;
@@ -429,11 +465,24 @@ class CombineWorker {
     _send = await _ready.future;
   }
 
+  void _failPending(Object error) {
+    if (_disposed) return;
+    _exited = true;
+    if (!_ready.isCompleted) _ready.complete(null);
+    final pending = _pending.values.toList();
+    _pending.clear();
+    for (final completer in pending) {
+      completer.completeError(error);
+    }
+  }
+
   void dispose() {
     _disposed = true;
     if (!_ready.isCompleted) _ready.complete(null);
     _isolate?.kill(priority: Isolate.immediate);
     _receive?.close();
+    _lifecycle?.close();
+    _lifecycle = null;
     _isolate = null;
     _receive = null;
     _send = null;
@@ -500,8 +549,17 @@ class CombineRunner {
   /// Number of merges actually started; useful for tests and diagnostics.
   int startedRuns = 0;
 
-  Future<CombineOutcome> _compute(CombineRequest request) =>
-      (_custom ?? (_worker ??= CombineWorker()).run)(request);
+  Future<CombineOutcome> _compute(CombineRequest request) {
+    final custom = _custom;
+    if (custom != null) return custom(request);
+    // A worker that died is replaced, so one crash fails one merge only.
+    var worker = _worker;
+    if (worker == null || worker.isDead) {
+      worker?.dispose();
+      worker = _worker = CombineWorker();
+    }
+    return worker.run(request);
+  }
 
   Future<CombineOutcome?> submit(CombineRequest request) {
     final latest = _queued ?? _active;
