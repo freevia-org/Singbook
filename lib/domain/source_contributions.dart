@@ -26,6 +26,9 @@ Set<String> contributingProviderIds(SongDocument song) {
     if (song.metadata[entry.key] == null || entry.value is! List) continue;
     sourceIds.addAll((entry.value as List).whereType<String>());
   }
+  // Saved files are not trusted to hold lists here: a value of another
+  // type counts as no source, like the guarded reads above.
+  final corroboratedKeySources = song.extra['corroboratedKeySourceIds'];
   for (final track in song.timingTracks) {
     if (track.status != TimingStatus.usable || track.cues.isEmpty) continue;
     final sourceId = jsonMap(track.extra['binding'])['sourceId'];
@@ -36,10 +39,10 @@ Set<String> contributingProviderIds(SongDocument song) {
       if ((source.matchKind != MatchKind.rejected ||
               source.id == song.extra['selectedSourceId'] ||
               (source.matchReason == 'incomplete_or_different_lyrics' &&
-                  ((chordSources as List? ?? const []).contains(source.id) ||
+                  (chordSources is List && chordSources.contains(source.id) ||
                       song.metadata['key'] != null &&
-                          (song.extra['corroboratedKeySourceIds'] as List? ?? const [])
-                              .contains(source.id)))) &&
+                          corroboratedKeySources is List &&
+                          corroboratedKeySources.contains(source.id)))) &&
           sourceIds.contains(source.id))
         source.candidate.providerId,
     if (song.selectedRecording case final recording?)

@@ -92,7 +92,7 @@ class SongCandidate {
     recordingIds: stringMap(j['recordingIds']),
     extra: {...j}
       ..removeWhere(
-        (k, _) => {
+        (k, _) => const {
           'providerId',
           'id',
           'title',
@@ -106,6 +106,15 @@ class SongCandidate {
       ),
   );
 }
+
+/// Whether two rows carry different IDs in a namespace both of them know.
+/// Symmetric: a namespace only one row has is never a conflict.
+bool recordingIdsConflict(SongCandidate a, SongCandidate b) =>
+    a.recordingIds.entries.any(
+      (entry) =>
+          b.recordingIds.containsKey(entry.key) &&
+          b.recordingIds[entry.key] != entry.value,
+    );
 
 class TimingCue {
   final String id, occurrenceId, text;
@@ -152,7 +161,7 @@ class TimingCue {
     originalEnd: j['originalEnd'] as String?,
     extra: {...j}
       ..removeWhere(
-        (k, _) => {
+        (k, _) => const {
           'id',
           'occurrenceId',
           'text',
@@ -247,7 +256,7 @@ class TimingTrack {
     granularity: j['granularity'] as String? ?? 'line',
     extra: {...j}
       ..removeWhere(
-        (k, _) => {
+        (k, _) => const {
           'id',
           'sourceDocumentId',
           'sourceLyrics',
@@ -337,10 +346,10 @@ class SourceResult {
     arrangementId: j['arrangementId'] as String?,
     retrievedAt: j['retrievedAt'] == null
         ? null
-        : DateTime.parse(j['retrievedAt'] as String),
+        : DateTime.tryParse(j['retrievedAt'] as String),
     extra: {...j}
       ..removeWhere(
-        (k, _) => {
+        (k, _) => const {
           'candidate',
           'body',
           'metadata',
