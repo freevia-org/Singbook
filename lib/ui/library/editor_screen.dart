@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../library_actions.dart';
 import '../verse_ui_state.dart';
+import '../widgets/desktop_platform.dart';
 import '../widgets/subpage_header.dart';
 
 final _secondsPattern = RegExp(r'^\d+(\.\d+)?$');
@@ -172,7 +173,7 @@ class _EditorScreenState extends State<EditorScreen> {
       _reportedDirty = dirty;
       widget.controller.setEditorDirty(dirty);
     }
-    if (_titleMissing && _title.text.trim().isNotEmpty) {
+    if (_titleMissing && _safeHeader(_title.text).isNotEmpty) {
       setState(() => _titleMissing = false);
     }
     // Re-check the numeric fields as they are corrected after a failed save.
@@ -213,7 +214,9 @@ class _EditorScreenState extends State<EditorScreen> {
       widget.onBack();
       return;
     }
-    if (_title.text.trim().isEmpty) {
+    // Validate what is actually stored: braces and line breaks are removed
+    // from header values, so a title made only of them would save as empty.
+    if (_safeHeader(_title.text).isEmpty) {
       setState(() => _titleMissing = true);
       return;
     }
@@ -260,9 +263,7 @@ class _EditorScreenState extends State<EditorScreen> {
     final saveModifier = isMacOS
         ? keyboard.isMetaPressed
         : keyboard.isControlPressed;
-    if ((defaultTargetPlatform == TargetPlatform.windows ||
-            defaultTargetPlatform == TargetPlatform.linux ||
-            isMacOS) &&
+    if (isDesktopPlatform &&
         event is KeyDownEvent &&
         event.logicalKey == LogicalKeyboardKey.keyS &&
         saveModifier &&
@@ -545,10 +546,7 @@ class _EditorScreenState extends State<EditorScreen> {
           onBack: widget.onBack,
           actions: [
             IconButton(
-              tooltip:
-                  defaultTargetPlatform == TargetPlatform.windows ||
-                      defaultTargetPlatform == TargetPlatform.linux ||
-                      defaultTargetPlatform == TargetPlatform.macOS
+              tooltip: isDesktopPlatform
                   ? '${l10n.actionSave} (${defaultTargetPlatform == TargetPlatform.macOS ? '⌘' : 'Ctrl+'}S)'
                   : l10n.actionSave,
               onPressed: _saving ? null : _save,
@@ -617,10 +615,7 @@ class _EditorScreenState extends State<EditorScreen> {
       ],
     );
     return Focus(
-      autofocus:
-          defaultTargetPlatform == TargetPlatform.windows ||
-          defaultTargetPlatform == TargetPlatform.linux ||
-          defaultTargetPlatform == TargetPlatform.macOS,
+      autofocus: isDesktopPlatform,
       onKeyEvent: _handleDesktopKey,
       child: content,
     );

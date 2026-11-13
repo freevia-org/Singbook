@@ -283,46 +283,17 @@ class _AboutScreen extends StatefulWidget {
   State<_AboutScreen> createState() => _AboutScreenState();
 }
 
-class _AboutScreenState extends State<_AboutScreen> {
-  bool _leaving = false;
+class _AboutScreenState extends State<_AboutScreen>
+    with _FollowsShellNavigation<_AboutScreen> {
   late final Future<PackageInfo> _packageInfoFuture;
+
+  @override
+  VerseUiController get _shellController => widget.controller;
 
   @override
   void initState() {
     super.initState();
     _packageInfoFuture = PackageInfo.fromPlatform();
-    widget.controller.addListener(_followShellNavigation);
-  }
-
-  @override
-  void didUpdateWidget(covariant _AboutScreen oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.controller != oldWidget.controller) {
-      oldWidget.controller.removeListener(_followShellNavigation);
-      widget.controller.addListener(_followShellNavigation);
-    }
-  }
-
-  void _followShellNavigation() {
-    final state = widget.controller.state;
-    if (_leaving ||
-        (state.route == VerseRoute.main &&
-            state.activeTab == VerseTab.settings)) {
-      return;
-    }
-    final route = ModalRoute.of(context);
-    _leaving = true;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // A manual Back may already be reversing this still-mounted route.
-      // Never let its delayed listener pop the page underneath it.
-      if (mounted && route?.isCurrent == true) Navigator.of(context).pop();
-    });
-  }
-
-  @override
-  void dispose() {
-    widget.controller.removeListener(_followShellNavigation);
-    super.dispose();
   }
 
   @override
@@ -454,6 +425,51 @@ class _AboutScreenState extends State<_AboutScreen> {
   }
 }
 
+/// Dismisses a pushed settings page when the shell navigates away beneath it.
+/// Account conflict actions, for example, switch to the library in the shell;
+/// the detail route leaves as well so that destination remains visible.
+mixin _FollowsShellNavigation<T extends StatefulWidget> on State<T> {
+  VerseUiController get _shellController;
+  VerseUiController? _followed;
+  bool _leaving = false;
+
+  /// Whether this page still belongs above the shell's current destination.
+  bool _belongsTo(VerseUiState state) =>
+      state.route == VerseRoute.main && state.activeTab == VerseTab.settings;
+
+  @override
+  void initState() {
+    super.initState();
+    _followed = _shellController..addListener(_followShellNavigation);
+  }
+
+  @override
+  void didUpdateWidget(covariant T oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (_shellController != _followed) {
+      _followed?.removeListener(_followShellNavigation);
+      _followed = _shellController..addListener(_followShellNavigation);
+    }
+  }
+
+  void _followShellNavigation() {
+    if (_leaving || _belongsTo(_shellController.state)) return;
+    final route = ModalRoute.of(context);
+    _leaving = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // A manual Back may already be reversing this still-mounted route.
+      // Only dismiss the captured route while it remains current.
+      if (mounted && route?.isCurrent == true) Navigator.of(context).pop();
+    });
+  }
+
+  @override
+  void dispose() {
+    _followed?.removeListener(_followShellNavigation);
+    super.dispose();
+  }
+}
+
 class _AboutSection extends StatelessWidget {
   const _AboutSection({required this.title, required this.details});
 
@@ -494,53 +510,22 @@ class _SettingsSectionScreen extends StatefulWidget {
   State<_SettingsSectionScreen> createState() => _SettingsSectionScreenState();
 }
 
-class _SettingsSectionScreenState extends State<_SettingsSectionScreen> {
-  bool _leaving = false;
-
+class _SettingsSectionScreenState extends State<_SettingsSectionScreen>
+    with _FollowsShellNavigation<_SettingsSectionScreen> {
   @override
-  void initState() {
-    super.initState();
-    widget.controller.addListener(_followShellNavigation);
-  }
+  VerseUiController get _shellController => widget.controller;
 
+  // Player settings opened from the reader stay above it.
   @override
-  void didUpdateWidget(covariant _SettingsSectionScreen oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.controller != oldWidget.controller) {
-      oldWidget.controller.removeListener(_followShellNavigation);
-      widget.controller.addListener(_followShellNavigation);
-    }
-  }
-
-  // Account conflict actions navigate to the library in the shell. Dismiss
-  // this detail route as well so that destination remains visible.
-  void _followShellNavigation() {
-    final state = widget.controller.state;
-    if (_leaving ||
-        (widget.fromReader &&
-            widget.section == _SettingsSection.player &&
-            state.route == VerseRoute.reader) ||
-        (state.route == VerseRoute.main &&
-            state.activeTab == VerseTab.settings)) {
-      return;
-    }
-    final route = ModalRoute.of(context);
-    _leaving = true;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // The settings detail can still be mounted after a manual Back.
-      // Only dismiss the captured route while it remains current.
-      if (mounted && route?.isCurrent == true) Navigator.of(context).pop();
-    });
-  }
-
-  @override
-  void dispose() {
-    widget.controller.removeListener(_followShellNavigation);
-    super.dispose();
-  }
+  bool _belongsTo(VerseUiState state) =>
+      (widget.fromReader &&
+          widget.section == _SettingsSection.player &&
+          state.route == VerseRoute.reader) ||
+      super._belongsTo(state);
 
   /// Text size while the slider is being dragged; saved when the drag ends.
   double? _draggingFontSize;
+  int _fontSizeRevision = 0;
   bool _refreshingSources = false;
   bool? _sourceRefreshSucceeded;
 
@@ -575,10 +560,21 @@ class _SettingsSectionScreenState extends State<_SettingsSectionScreen> {
         divisions: 9,
         label: fontSize.round().toString(),
         semanticFormatterCallback: (value) => value.round().toString(),
-        onChanged: (value) => setState(() => _draggingFontSize = value),
+        onChanged: (value) {
+          // An older save finishing must not clear this newer drag.
+          _fontSizeRevision++;
+          setState(() => _draggingFontSize = value);
+        },
         onChangeEnd: (value) {
-          widget.controller.setLyricsFontSize(value);
-          setState(() => _draggingFontSize = null);
+          // The stored size is published only after the write completes, so
+          // keep showing the chosen value until then instead of snapping back.
+          final revision = ++_fontSizeRevision;
+          setState(() => _draggingFontSize = value);
+          widget.controller.setLyricsFontSize(value).whenComplete(() {
+            if (mounted && revision == _fontSizeRevision) {
+              setState(() => _draggingFontSize = null);
+            }
+          });
         },
       ),
     );
