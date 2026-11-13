@@ -131,6 +131,49 @@ void main() {
     }
   });
 
+  test('search excludes book utility pages without dropping song arrangements', () async {
+    var requests = 0;
+    final transport = _transport((request) {
+      requests++;
+      return _json({
+        'query': {
+          'search': [
+            _searchHit(),
+            _searchHit(pageId: 7124, title: 'Liederbuch/Inhalt'),
+            _searchHit(pageId: 7125, title: 'Liederbuch/Hilfe'),
+            _searchHit(pageId: 7126, title: 'Liederbuch/Lieder nach Akkorden'),
+            _searchHit(pageId: 7127, title: 'Liederbuch/Vorlage:Liedheader'),
+            _searchHit(pageId: 7128, title: 'Liederbuch/Morgenwind: zweite Fassung'),
+            _searchHit(pageId: 7129, title: 'Liederbuch/Lieder_nach_Akkorden'),
+            _searchHit(pageId: 7130, title: 'Liederbuch/Morgenwind/ Gitarrentabulatur'),
+          ],
+        },
+      });
+    });
+    try {
+      final results = await WikibooksLiederbuchProvider(transport).search('Morgenwind');
+      expect(results.map((result) => result.id), ['7123', '7128', '7130']);
+      expect(requests, 1, reason: 'Classification must not fetch every search hit.');
+    } finally {
+      await transport.close();
+    }
+  });
+
+  test('utility page cannot resolve as a song even with song-like markup', () async {
+    final transport = _transport((_) => _json(_parseResponse(title: 'Liederbuch/Hilfe')));
+    try {
+      final provider = WikibooksLiederbuchProvider(transport);
+      await expectLater(
+        provider.resolve(const SongCandidate(
+          providerId: 'wikibooksliederbuch', id: '7123', title: 'Hilfe', artist: '',
+        )),
+        throwsA(isA<ProviderException>().having((error) => error.code, 'code', 'identity_mismatch')),
+      );
+    } finally {
+      await transport.close();
+    }
+  });
+
   test('parse extracts every poem, inline chords, credits, and literal lyric syntax', () async {
     final seen = <Uri>[];
     final transport = _transport((request) {

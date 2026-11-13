@@ -20,8 +20,19 @@ void main() {
     'extra roster distinguishes imports, catalogs, and identity-bound artwork',
     () {
       final providers = createExtraProviders();
-      expect(providers.length, 23);
-      expect(providers.map((p) => p.definition.id).toSet().length, 23);
+      expect(
+        providers.map((p) => p.definition.id).toSet(),
+        hasLength(providers.length),
+      );
+      expect(providers.whereType<WikibooksLiederbuchProvider>(), hasLength(1));
+      expect(
+        providers
+            .whereType<WikibooksLiederbuchProvider>()
+            .single
+            .definition
+            .enabledByDefault,
+        isFalse,
+      );
       expect(providers.whereType<AmllProvider>(), hasLength(1));
       expect(providers.whereType<StartJammingProvider>(), hasLength(1));
       expect(providers.whereType<LyricsPlusProvider>(), hasLength(1));
@@ -32,8 +43,11 @@ void main() {
       expect(providers.whereType<PisniProvider>(), hasLength(1));
       expect(providers.whereType<OpenScoreLiederProvider>(), hasLength(1));
       expect(
-        providers.whereType<OpenScoreLiederProvider>()
-            .single.definition.enabledByDefault,
+        providers
+            .whereType<OpenScoreLiederProvider>()
+            .single
+            .definition
+            .enabledByDefault,
         isFalse,
       );
       expect(
@@ -46,7 +60,8 @@ void main() {
       expect(
         providers
             .singleWhere((p) => p.definition.id == 'pisni')
-            .definition.enabledByDefault,
+            .definition
+            .enabledByDefault,
         isFalse,
       );
       expect(

@@ -6,7 +6,7 @@ app builds; do not replace an older channel's roster with entries that require
 a newer compiled adapter. Compatible data corrections may advance a channel's
 `revision`; a new native provider capability requires a new channel snapshot.
 The catalog `revision` is independent of the distribution channel and schema
-versions. All ten files currently use `schemaVersion: 1` and
+versions. All catalog files use `schemaVersion: 1` and
 `extractionSchemaVersion: 1`:
 
 | Channel | Catalog file | Revision | Sources | Roster changes from previous channel |
@@ -21,11 +21,16 @@ versions. All ten files currently use `schemaVersion: 1` and
 | 8 | `config/source-catalog-v8.json` | 21 | 30 | Retains Chords & Tabs and Pisni; activates qualified Chords & Tabs |
 | 9 | `config/source-catalog-v9.json` | 22 | 31 | Adds OpenScore disabled/off; inherits all current channel 8 rows |
 | 10 | `config/source-catalog-v10.json` | 23 | 32 | Adds recording-ID AcousticBrainz analysis; inherits all channel 9 rows |
+| 11 (unreleased candidate) | `config/source-catalog-v11.json` | 24 | 33 | Adds disabled/off Wikibooks Liederbuch; every channel 10 row is unchanged |
 
 Roster membership alone does not show that a provider is enabled, qualified or
 live.
-Channel 10 is the current bundle and matching compiled registry (31 native IDs
-plus declarative Unison). AcousticBrainz contributes metadata only, using a
+This unreleased rollout candidate selects channel 11 and its matching registry
+(32 native IDs plus declarative Unison). Wikibooks remains disabled/off pending
+live/native/cloud qualification and integration/release review. Channel 10 is
+the prior production channel and stays intact. Candidate preparation is not
+evidence of publication or availability in an installed app.
+AcousticBrainz contributes metadata only, using a
 validated recording MBID and at most two publisher-submitted analysis samples.
 Its key/tempo estimates remain explicitly unverified and never become canonical
 musical fields or timing. The OpenScore entry remains disabled and off by default pending its separate
@@ -46,10 +51,12 @@ and durable snapshot. Bundle and cache loading do not depend on a network call.
 No provider update changes saved songs, ChordPro provenance or user preferences.
 Catalog storage is separate from the user's synced application settings.
 Channel 3 reads/writes `sourceCatalog:v3` and never overwrites channel-2 or
-legacy cache streams, or provider preferences. Channels 4 through 10 each use
+legacy cache streams, or provider preferences. Channels 4 through 11 each use
 their matching `sourceCatalog:vN` cache key. Every channel preserves older cache
-streams and provider preferences. Channel 10 checks previous caches from
-channels 9 through 1. Without a valid current-channel cache, offline startup validates the closest older cached channel against its own bundle and
+streams and provider preferences. Channel 11 checks previous caches from
+channels 10 through 1. The controller bounds that history to known compiled
+channel keys and bundled assets; the client visits the full supplied list rather
+than truncating it at nine. Without a valid current-channel cache, offline startup validates the closest older cached channel against its own bundle and
 the current compiled adapters. It carries newer compatible source
 revisions, added declarative sources, disabled/retired entries and removals into
 an in-memory view of the new bundle. New compiled sources and newer bundled
@@ -218,8 +225,9 @@ dart run tool/source_maintenance.dart --source lrclib --report artifacts/lrclib-
 Options also include `--catalog path` to validate a candidate catalog. By
 default, offline and live CLI runs use the asset named by
 `SourceCatalogClient.bundledAsset` in `lib/providers/source_catalog_client.dart`.
-That compiled source of truth currently points to
-`config/source-catalog-v10.json`; do not hard-code a channel number in scheduled
+On this unreleased candidate that compiled source of truth points to
+`config/source-catalog-v11.json`; production schedules must continue deriving it
+from current public main. Do not hard-code a channel number in scheduled
 commands or reports.
 An explicit older `--catalog` still parses/applies that snapshot, but the full
 current registry reports newer compiled providers intentionally absent from it

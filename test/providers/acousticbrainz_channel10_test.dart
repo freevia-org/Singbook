@@ -34,9 +34,9 @@ void main() {
       expect(row['probes'], hasLength(2));
       expect(
         SourceCatalogClient.bundledAsset,
-        'config/source-catalog-v10.json',
+        'config/source-catalog-v11.json',
       );
-      expect(SourceCatalogClient.cacheKey, 'sourceCatalog:v10');
+      expect(SourceCatalogClient.cacheKey, 'sourceCatalog:v11');
       expect(SourceCatalogClient.channel9CacheKey, 'sourceCatalog:v9');
     },
   );
