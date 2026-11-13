@@ -3,15 +3,20 @@ import 'models.dart';
 final _apostrophes = RegExp("['‘’]");
 final _nameSeparators = RegExp(r'[^\p{L}\p{N}]+', unicode: true);
 
+/// Comparison-only identity of a title, artist or album: lower case, without
+/// apostrophes, every other run of punctuation or spacing as one space.
+/// Never shown and never stored as a name.
+String normalizeNameIdentity(String value) => value
+    .toLowerCase()
+    .replaceAll(_apostrophes, '')
+    .replaceAll(_nameSeparators, ' ')
+    .trim();
+
 /// A conservative library key: punctuation/case can vary between providers,
 /// but artist names and edition words (live, remix, acoustic, etc.) stay intact.
 String? librarySongIdentity(String title, String artist) {
-  String normalize(String text) => text
-      .toLowerCase()
-      .replaceAll(_apostrophes, '')
-      .replaceAll(_nameSeparators, ' ')
-      .trim();
-  final name = normalize(title), performer = normalize(artist);
+  final name = normalizeNameIdentity(title),
+      performer = normalizeNameIdentity(artist);
   return name.isEmpty || performer.isEmpty ? null : '$performer\u0000$name';
 }
 

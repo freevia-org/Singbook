@@ -1,5 +1,6 @@
 import 'edition_identity.dart';
 import 'models.dart';
+import 'song_identity.dart' show normalizeNameIdentity;
 
 /// Whether [chart] is safe to resolve for lyric corroboration against
 /// [selected]. A true result only admits a candidate to the lyrics check; it
@@ -45,12 +46,7 @@ bool contextualArrangementCandidate(
       !explicitEditionsCompatible(selected, chart)) {
     return false;
   }
-  for (final entry in selected.recordingIds.entries) {
-    if (chart.recordingIds.containsKey(entry.key) &&
-        chart.recordingIds[entry.key] != entry.value) {
-      return false;
-    }
-  }
+  if (recordingIdsConflict(selected, chart)) return false;
 
   final songTitle = _words(selected.title);
   if (songTitle.isEmpty) return false;
@@ -138,8 +134,4 @@ String? _soundtrackWork(String? album) {
 
 /// Comparison-only word normalization: punctuation and apostrophes are
 /// ignored, but edition and part words remain in the comparison.
-String _words(String value) => value
-    .toLowerCase()
-    .replaceAll(RegExp("['’‘]"), '')
-    .replaceAll(RegExp(r'[^\p{L}\p{N}]+', unicode: true), ' ')
-    .trim();
+String _words(String value) => normalizeNameIdentity(value);

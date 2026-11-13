@@ -53,14 +53,4 @@ bool shortRecordingLyricAgreement(String chart, String reference) {
   return chartIndex == chartWords.length && omissions <= 2;
 }
 
-List<String> _words(String body) => _normalizedIdentity(
-  foldLyricVowelAccents(body)
-      .replaceAll(RegExp(r'\{[^}\n]*\}'), ' ')
-      .replaceAll(RegExp(r'(?<!\\)\[[^\]\n]*\]'), ''),
-).split(' ').where((word) => word.isNotEmpty).toList();
-
-String _normalizedIdentity(String text) => text
-    .toLowerCase()
-    .replaceAll(RegExp("['‘’]"), '')
-    .replaceAll(RegExp(r'[^\p{L}\p{N}]+', unicode: true), ' ')
-    .trim();
+List<String> _words(String body) => lyricIdentityWords(body);

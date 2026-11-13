@@ -1,17 +1,32 @@
 import 'models.dart';
+import 'song_identity.dart' show normalizeNameIdentity;
+
+final _nonWordRun = RegExp(r'[^\p{L}\p{N}]+', unicode: true);
+final _editionNoun = RegExp(r'\b(?:version|recording|edition)\b');
+final _spaceRun = RegExp(r'\s+');
+final _performanceNoun = RegExp(
+  r'\b(?:version|recording|performance|session)\b',
+);
+
+/// A bracketed or dash-separated qualifier at the end of or inside a title.
+final _titleQualifier = RegExp(r'\(([^()]*)\)|\[([^\[\]]*)\]|\s[-–—]\s(.+)$');
+
+const _familyWords =
+    r'\b(studio|live|acoustic|remix|instrumental|karaoke|demo|remaster(?:ed)?|mono|stereo|radio edit)\b';
+final _familyWord = RegExp(_familyWords, caseSensitive: false);
+
+/// Case-sensitive on purpose: it only reads names [_normalizeEdition] made.
+final _normalizedFamilyWord = RegExp(_familyWords);
 
 String _normalizeEdition(String value) => value
     .toLowerCase()
-    .replaceAll(RegExp(r'[^\p{L}\p{N}]+', unicode: true), ' ')
-    .replaceAll(RegExp(r'\b(?:version|recording|edition)\b'), ' ')
-    .replaceAll(RegExp(r'\s+'), ' ')
+    .replaceAll(_nonWordRun, ' ')
+    .replaceAll(_editionNoun, ' ')
+    .replaceAll(_spaceRun, ' ')
     .trim();
 
 Set<String> _families(String value) =>
-    RegExp(
-      r'\b(studio|live|acoustic|remix|instrumental|karaoke|demo|remaster(?:ed)?|mono|stereo|radio edit)\b',
-      caseSensitive: false,
-    ).allMatches(value).map((match) {
+    _familyWord.allMatches(value).map((match) {
       final text = match.group(0)!.toLowerCase();
       return text == 'remastered' ? 'remaster' : text;
     }).toSet();
@@ -20,15 +35,8 @@ bool _contradictory(Set<String> families) =>
     (families.contains('studio') && families.contains('live')) ||
     (families.contains('mono') && families.contains('stereo'));
 
-bool _descriptorsOnly(String name) => name
-    .replaceAll(
-      RegExp(
-        r'\b(studio|live|acoustic|remix|instrumental|karaoke|demo|remaster(?:ed)?|mono|stereo|radio edit)\b',
-      ),
-      '',
-    )
-    .trim()
-    .isEmpty;
+bool _descriptorsOnly(String name) =>
+    name.replaceAll(_normalizedFamilyWord, '').trim().isEmpty;
 
 ({Set<String> names, Set<String> families}) _evidence(
   SongCandidate candidate,
@@ -48,9 +56,7 @@ bool _descriptorsOnly(String name) => name
       }
     }
   }
-  for (final match in RegExp(
-    r'\(([^()]*)\)|\[([^\[\]]*)\]|\s[-–—]\s(.+)$',
-  ).allMatches(candidate.title)) {
+  for (final match in _titleQualifier.allMatches(candidate.title)) {
     families.addAll(_families(match[1] ?? match[2] ?? match[3]!));
   }
   return (names: names, families: families);
@@ -94,16 +100,13 @@ bool explicitEditionsCompatible(
 Set<String> recordingVersionMarkers(String value, {bool album = false}) {
   final labels = album
       ? [value]
-      : RegExp(
-          r'\(([^()]*)\)|\[([^\[\]]*)\]|\s[-–—]\s(.+)$',
-        ).allMatches(value).map((m) => m[1] ?? m[2] ?? m[3]!).toList();
+      : _titleQualifier
+            .allMatches(value)
+            .map((m) => m[1] ?? m[2] ?? m[3]!)
+            .toList();
   final result = <String>{};
   for (final label in labels) {
-    final text = label
-        .toLowerCase()
-        .replaceAll(RegExp("['‘’]"), '')
-        .replaceAll(RegExp(r'[^\p{L}\p{N}]+', unicode: true), ' ')
-        .trim();
+    final text = normalizeNameIdentity(label);
     var remaining = text;
     final found = <String>{};
     for (final marker in [
@@ -140,14 +143,7 @@ Set<String> recordingVersionMarkers(String value, {bool album = false}) {
         remaining = remaining.replaceAll(RegExp('\\b$marker\\b'), ' ');
       }
     }
-    if (!album &&
-        remaining
-            .replaceAll(
-              RegExp(r'\b(?:version|recording|performance|session)\b'),
-              ' ',
-            )
-            .trim()
-            .isEmpty) {
+    if (!album && remaining.replaceAll(_performanceNoun, ' ').trim().isEmpty) {
       result.addAll(found);
     }
   }

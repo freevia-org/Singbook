@@ -35,28 +35,18 @@ class ChordKeyEstimate {
 /// a clear harmonic lead.
 List<ChordKeyEstimate> rankChordKeyCandidates(String body, {String? hint}) {
   final chords = <_Chord>[];
-  var flats = 0, sharps = 0;
   for (final line in parseArrangement(body)) {
     if (line.directive) continue;
     for (final anchor in line.chords) {
       final chord = _Chord.parse(anchor.chord);
       if (chord == null) continue;
       chords.add(chord);
-      if (chord.rootText.contains('b') || chord.rootText.contains('♭')) {
-        flats++;
-      } else if (chord.rootText.contains('#') || chord.rootText.contains('♯')) {
-        sharps++;
-      }
     }
   }
+  final (flats, sharps) = _spellingCounts(chords);
   final roots = chords.map((chord) => chord.root).toSet();
   if (chords.length < 3 || roots.length < 2) return const [];
-  final scored = <_ScoredKey>[
-    for (var tonic = 0; tonic < 12; tonic++)
-      _scoreKey(chords, tonic, _Mode.major),
-    for (var tonic = 0; tonic < 12; tonic++)
-      _scoreKey(chords, tonic, _Mode.minor),
-  ]..sort(_compareScoredKeys);
+  final scored = _scoreAllKeys(chords)..sort(_compareScoredKeys);
 
   final top = scored.first;
   final measured = hint == null ? null : _keyIdentity(hint);
@@ -71,11 +61,9 @@ List<ChordKeyEstimate> rankChordKeyCandidates(String body, {String? hint}) {
         (item) => item.tonic == hintedTonic && item.mode == hintedMode,
       );
       final hinted = hintedIndex < 0 ? null : scored[hintedIndex];
-      int signature(int tonic, _Mode mode) =>
-          mode == _Mode.major ? tonic : (tonic + 3) % 12;
       if (hinted != null &&
-          signature(hinted.tonic, hinted.mode) ==
-              signature(top.tonic, top.mode) &&
+          _keySignature(hinted.tonic, hinted.mode) ==
+              _keySignature(top.tonic, top.mode) &&
           top.score - hinted.score <= chords.length * 0.65) {
         scored.removeAt(hintedIndex);
         scored.insert(0, hinted);
@@ -98,6 +86,32 @@ List<ChordKeyEstimate> rankChordKeyCandidates(String body, {String? hint}) {
   ]);
 }
 
+/// Every major and minor key scored against [chords], majors first and in
+/// tonic order. Callers sort with their own tie-break.
+List<_ScoredKey> _scoreAllKeys(List<_Chord> chords) => [
+  for (var tonic = 0; tonic < 12; tonic++)
+    _scoreKey(chords, tonic, _Mode.major),
+  for (var tonic = 0; tonic < 12; tonic++)
+    _scoreKey(chords, tonic, _Mode.minor),
+];
+
+/// How many chord roots are spelled with a flat and with a sharp.
+(int, int) _spellingCounts(Iterable<_Chord> chords) {
+  var flats = 0, sharps = 0;
+  for (final chord in chords) {
+    if (chord.rootText.contains('b') || chord.rootText.contains('♭')) {
+      flats++;
+    } else if (chord.rootText.contains('#') || chord.rootText.contains('♯')) {
+      sharps++;
+    }
+  }
+  return (flats, sharps);
+}
+
+/// The major tonic sharing a key's signature: relative keys compare equal.
+int _keySignature(int tonic, _Mode mode) =>
+    mode == _Mode.major ? tonic : (tonic + 3) % 12;
+
 int _compareScoredKeys(_ScoredKey a, _ScoredKey b) {
   final score = b.score.compareTo(a.score);
   if (score != 0) return score;
@@ -118,7 +132,6 @@ int _compareScoredKeys(_ScoredKey a, _ScoredKey b) {
 ChordKeyEstimate? estimateChordKey(String body, {String? hint}) {
   final chords = <_Chord>[], groups = <List<_Chord>>[];
   var group = <_Chord>[], sawSectionHeading = false;
-  var flatSpellings = 0, sharpSpellings = 0;
   void finishGroup() {
     if (group.isNotEmpty) groups.add(group);
     group = <_Chord>[];
@@ -140,14 +153,10 @@ ChordKeyEstimate? estimateChordKey(String body, {String? hint}) {
       if (chord == null) continue;
       chords.add(chord);
       group.add(chord);
-      if (chord.rootText.contains('b') || chord.rootText.contains('♭')) {
-        flatSpellings++;
-      } else if (chord.rootText.contains('#') || chord.rootText.contains('♯')) {
-        sharpSpellings++;
-      }
     }
   }
   finishGroup();
+  final (flatSpellings, sharpSpellings) = _spellingCounts(chords);
 
   final estimate = _estimateChords(
     chords,
@@ -187,12 +196,8 @@ ChordKeyEstimate? _estimateChords(
   final roots = chords.map((chord) => chord.root).toSet();
   if (chords.length < 6 || roots.length < 3) return null;
 
-  final candidates = <_ScoredKey>[
-    for (var tonic = 0; tonic < 12; tonic++)
-      _scoreKey(chords, tonic, _Mode.major),
-    for (var tonic = 0; tonic < 12; tonic++)
-      _scoreKey(chords, tonic, _Mode.minor),
-  ]..sort((a, b) => b.score.compareTo(a.score));
+  final candidates = _scoreAllKeys(chords)
+    ..sort((a, b) => b.score.compareTo(a.score));
 
   var best = candidates.first;
   final runnerUp = candidates[1];
@@ -213,12 +218,10 @@ ChordKeyEstimate? _estimateChords(
     final tonic = measured == null ? null : int.tryParse(measured[0]);
     if (tonic == null) return null;
     final mode = measured![1] == 'minor' ? _Mode.minor : _Mode.major;
-    int signature(int tonic, _Mode mode) =>
-        mode == _Mode.major ? tonic : (tonic + 3) % 12;
     final fits = [
       best,
       runnerUp,
-    ].any((c) => signature(c.tonic, c.mode) == signature(tonic, mode));
+    ].any((c) => _keySignature(c.tonic, c.mode) == _keySignature(tonic, mode));
     if (!fits) return null;
     best = _ScoredKey(tonic, mode, best.score);
   }
@@ -313,13 +316,13 @@ class _Chord {
   final String rootText;
 
   static final _pattern = RegExp(r'^([A-G])([#b♯♭]{0,2})(.*)$');
+  static final _noChord = RegExp(r'^N\.?C\.?$', caseSensitive: false);
+  static final _slashBass = RegExp(r'/([A-G][#b]{0,2})$');
 
   static _Chord? parse(String symbol) {
-    if (RegExp(r'^N\.?C\.?$', caseSensitive: false).hasMatch(symbol)) {
-      return null;
-    }
+    if (_noChord.hasMatch(symbol)) return null;
     final normalized = symbol.replaceAll('♯', '#').replaceAll('♭', 'b');
-    final bassMatch = RegExp(r'/([A-G][#b]{0,2})$').firstMatch(normalized);
+    final bassMatch = _slashBass.firstMatch(normalized);
     final chordText = bassMatch == null
         ? normalized
         : normalized.substring(0, bassMatch.start);
@@ -351,21 +354,7 @@ class _Chord {
     return _Chord(root, bass, quality, rootText);
   }
 
-  static int? _pitch(String note) {
-    final match = _pattern.firstMatch(note);
-    if (match == null || match[3]!.isNotEmpty) return null;
-    const natural = {'C': 0, 'D': 2, 'E': 4, 'F': 5, 'G': 7, 'A': 9, 'B': 11};
-    final pitch = natural[match[1]];
-    if (pitch == null) return null;
-    final accidental = match[2]!.replaceAll('b', '♭');
-    final offset = accidental
-        .split('')
-        .fold<int>(
-          0,
-          (sum, value) => sum + (value == '#' || value == '♯' ? 1 : -1),
-        );
-    return (pitch + offset + 12) % 12;
-  }
+  static int? _pitch(String note) => chordPitchClass(note);
 }
 
 enum _Quality { major, minor, power, other }

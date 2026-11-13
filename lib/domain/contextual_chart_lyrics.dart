@@ -1,5 +1,5 @@
 import 'arrangement.dart' show parseArrangement;
-import 'lyric_word_identity.dart' show foldLyricVowelAccents;
+import 'lyric_word_identity.dart' show lyricIdentityWords;
 
 /// Checks whether chart lyrics agree with a full recording lyric reference.
 ///
@@ -64,17 +64,7 @@ bool contextualChartLyricsMatch(
   return matchedBigrams.length / fragmentBigrams.length >= .75;
 }
 
-List<String> _words(String body) => _normalizedIdentity(
-  foldLyricVowelAccents(body)
-      .replaceAll(RegExp(r'\{[^}\n]*\}'), ' ')
-      .replaceAll(RegExp(r'(?<!\\)\[[^\]\n]*\]'), ''),
-).split(' ').where((word) => word.isNotEmpty).toList();
-
-String _normalizedIdentity(String text) => text
-    .toLowerCase()
-    .replaceAll(RegExp("['‘’]"), '')
-    .replaceAll(RegExp(r'[^\p{L}\p{N}]+', unicode: true), ' ')
-    .trim();
+List<String> _words(String body) => lyricIdentityWords(body);
 
 bool _strictAgreement(List<String> chart, List<String> reference) {
   final chartUnique = chart.toSet();
