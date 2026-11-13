@@ -73,37 +73,43 @@ void main() {
   }
 
   group('a song with linked evidence', () {
-    test('whose baseline was lost is linked again, not duplicated', () async {
-      await saveLinkedSong('linked');
-      expect((await a.sync.sync()).uploaded, 1);
-      final account = syncHash('person-a');
-      final localHash = await a.repo.getSongHash('linked');
-      final cloudBody = cloud.body('song-linked.cho')!;
-      // The local hash of such a song is not the hash of its sync file.
-      expect(localHash, isNot(syncHash(cloudBody)));
+    test(
+      'whose baseline was lost is linked again, not duplicated',
+      () async {
+        await saveLinkedSong('linked');
+        expect((await a.sync.sync()).uploaded, 1);
+        final account = syncHash('person-a');
+        final localHash = await a.repo.getSongHash('linked');
+        final cloudBody = cloud.body('song-linked.cho')!;
+        // The local hash of such a song is not the hash of its sync file.
+        expect(localHash, isNot(syncHash(cloudBody)));
 
-      await a.repo.clearSyncBaselines();
-      cloud.resetCounters();
-      final report = await a.sync.sync();
+        await a.repo.clearSyncBaselines();
+        cloud.resetCounters();
+        final report = await a.sync.sync();
 
-      expect(report.conflicts, 0);
-      expect(report.uploaded, 0);
-      expect(report.downloaded, 0);
-      expect(cloud.writes, 0);
-      expect(await a.songIds(), ['linked']);
-      expect(cloud.names, ['song-linked.cho']);
-      expect(cloud.body('song-linked.cho'), cloudBody);
-      expect(await a.repo.getSongHash('linked'), localHash);
-      final baseline = (await a.repo.loadSyncBaselines(account))['song:linked'];
-      expect(baseline, isNotNull);
-      expect(baseline!.cloudHash, syncHash(cloudBody));
-      expect(baseline.localHash, localHash);
+        expect(report.conflicts, 0);
+        expect(report.uploaded, 0);
+        expect(report.downloaded, 0);
+        expect(cloud.writes, 0);
+        expect(await a.songIds(), ['linked']);
+        expect(cloud.names, ['song-linked.cho']);
+        expect(cloud.body('song-linked.cho'), cloudBody);
+        expect(await a.repo.getSongHash('linked'), localHash);
+        final baseline = (await a.repo.loadSyncBaselines(
+          account,
+        ))['song:linked'];
+        expect(baseline, isNotNull);
+        expect(baseline!.cloudHash, syncHash(cloudBody));
+        expect(baseline.localHash, localHash);
 
-      cloud.resetCounters();
-      expect((await a.sync.sync()).isNoop, isTrue);
-      expect(cloud.reads + cloud.writes, 0);
-      // Three syncs, each hydrating evidence in background isolates.
-    }, timeout: const Timeout(Duration(minutes: 3)));
+        cloud.resetCounters();
+        expect((await a.sync.sync()).isNoop, isTrue);
+        expect(cloud.reads + cloud.writes, 0);
+        // Three syncs, each hydrating evidence in background isolates.
+      },
+      timeout: const Timeout(Duration(minutes: 3)),
+    );
 
     test(
       'that really differs from the cloud still keeps both versions',
