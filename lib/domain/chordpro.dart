@@ -5,6 +5,7 @@ import 'package:characters/characters.dart';
 import 'package:crypto/crypto.dart';
 import 'models.dart';
 import 'arrangement.dart';
+import 'timing.dart' show maxCueUs, maxTimingCues;
 
 /// A valid song whose encoded representation exceeds a ChordPro size limit.
 class ChordProSizeException extends FormatException {
@@ -26,6 +27,23 @@ class ChordProCodec {
     'discoveryEvidence',
     'providerAlternatives',
   };
+  static final _extensionLine = RegExp(
+    r'^\s*\{x_verse(?:_data)?\s*:',
+    caseSensitive: false,
+  );
+  static final _extensionHead = RegExp(
+    r'^\s*\{x_verse\s*:',
+    caseSensitive: false,
+  );
+  static final _extensionHeader = RegExp(
+    r'^\s*\{x_verse:\s*1 json-base64url (\d+)\}\s*$',
+    caseSensitive: false,
+  );
+  static final _extensionChunk = RegExp(
+    r'^\s*\{x_verse_data:\s*(\d+)/(\d+) ([A-Za-z0-9_-]{1,4096})\}\s*$',
+    caseSensitive: false,
+  );
+  static final _lineOccurrence = RegExp(r'^line-(\d+)$');
   static const _meta = {
     'album': 'album',
     'key': 'key',
@@ -49,12 +67,7 @@ class ChordProCodec {
       final value = song.metadata[entry.value];
       if (value != null) headers.add('{${entry.key}: ${_safe(value)}}');
     }
-    if (song.preservedExtensions.any(
-      (line) => RegExp(
-        r'^\s*\{x_verse(?:_data)?\s*:',
-        caseSensitive: false,
-      ).hasMatch(line),
-    )) {
+    if (song.preservedExtensions.any(_extensionLine.hasMatch)) {
       // An unsupported/invalid block is opaque and must not be replaced or duplicated.
       headers.addAll(song.preservedExtensions);
     } else {
@@ -187,10 +200,7 @@ class ChordProCodec {
     final seenMeta = <String>{};
     final anyDirective = RegExp(r'^\s*\{.*\}\s*$');
     for (final line in lines) {
-      if (RegExp(
-        r'^\s*\{x_verse(?:_data)?\s*:',
-        caseSensitive: false,
-      ).hasMatch(line)) {
+      if (_extensionLine.hasMatch(line)) {
         extension.add(line);
         continue;
       }
@@ -224,7 +234,7 @@ class ChordProCodec {
         } else {
           metadata[_meta[canonical]!] = canonical == 'duration'
               ? _duration(value) ?? value
-              : {'capo', 'tempo', 'year'}.contains(canonical)
+              : const {'capo', 'tempo', 'year'}.contains(canonical)
               ? num.tryParse(value) ?? value
               : value;
         }
@@ -280,18 +290,21 @@ class ChordProCodec {
       }
       sources = (payload['sources'] as List? ?? []).map((s) {
         final json = jsonMap(s);
+        // A source shares the track objects parsed above. Serialising each
+        // one only to parse it again repeated the cue work of every load.
+        List<TimingTrack>? shared;
         if (json['timingTrackIds'] is List) {
-          json['timingTracks'] = (json.remove('timingTrackIds') as List).map((
-            id,
-          ) {
+          shared = (json.remove('timingTrackIds') as List).map((id) {
             final track = tracksById[id];
             if (track == null) {
               throw const FormatException('Source timing track is missing.');
             }
-            return track.toJson();
+            return track;
           }).toList();
+          json.remove('timingTracks');
         }
-        return SourceResult.fromJson(json);
+        final source = SourceResult.fromJson(json);
+        return shared == null ? source : source.copyWith(timingTracks: shared);
       }).toList();
       if (payload['selectedRecording'] != null) {
         selected = SongCandidate.fromJson(
@@ -328,7 +341,7 @@ class ChordProCodec {
     }
     final extra = {...payload}
       ..removeWhere(
-        (k, _) => {
+        (k, _) => const {
           'schema',
           'schemaVersion',
           'id',
@@ -406,11 +419,7 @@ class ChordProCodec {
   }
 
   JsonMap _decodeExtension(List<String> lines) {
-    final heads = lines
-        .where(
-          (l) => RegExp(r'^\s*\{x_verse\s*:', caseSensitive: false).hasMatch(l),
-        )
-        .toList();
+    final heads = lines.where(_extensionHead.hasMatch).toList();
     if (heads.length != 1) {
       throw const FormatException('Expected one Singbook extension header.');
     }
@@ -419,10 +428,7 @@ class ChordProCodec {
         'Singbook extension header must precede its data.',
       );
     }
-    final header = RegExp(
-      r'^\s*\{x_verse:\s*1 json-base64url (\d+)\}\s*$',
-      caseSensitive: false,
-    ).firstMatch(heads.single);
+    final header = _extensionHeader.firstMatch(heads.single);
     if (header == null) {
       throw const FormatException(
         'This Singbook extension version or encoding is not supported.',
@@ -436,10 +442,7 @@ class ChordProCodec {
     }
     final chunks = <String>[];
     for (final line in lines.where((l) => l != heads.single)) {
-      final m = RegExp(
-        r'^\s*\{x_verse_data:\s*(\d+)/(\d+) ([A-Za-z0-9_-]{1,4096})\}\s*$',
-        caseSensitive: false,
-      ).firstMatch(line);
+      final m = _extensionChunk.firstMatch(line);
       if (m == null ||
           int.parse(m.group(1)!) != chunks.length + 1 ||
           int.parse(m.group(2)!) != count) {
@@ -552,7 +555,7 @@ class ChordProCodec {
   /// tracks whose cues are individually invalid so the caller can mark just
   /// those tracks invalid instead of discarding the whole song's metadata.
   Set<String> _validateTracks(List<TimingTrack> tracks) {
-    if (tracks.fold<int>(0, (n, t) => n + t.cues.length) > 100000) {
+    if (tracks.fold<int>(0, (n, t) => n + t.cues.length) > maxTimingCues) {
       throw const FormatException('Too many timing cues.');
     }
     final invalid = <String>{};
@@ -575,9 +578,9 @@ class ChordProCodec {
       for (final cue in track.cues) {
         if (!ids.add(cue.id) ||
             cue.startUs < 0 ||
-            cue.startUs > 604800000000 ||
+            cue.startUs > maxCueUs ||
             cue.endUs != null &&
-                (cue.endUs! < cue.startUs || cue.endUs! > 604800000000) ||
+                (cue.endUs! < cue.startUs || cue.endUs! > maxCueUs) ||
             cue.graphemeStart != null &&
                 (cue.graphemeStart! < 0 ||
                     cue.graphemeEnd == null ||
@@ -590,7 +593,7 @@ class ChordProCodec {
           );
         }
         previousStart = cue.startUs;
-        final occurrence = RegExp(r'^line-(\d+)$').firstMatch(cue.occurrenceId);
+        final occurrence = _lineOccurrence.firstMatch(cue.occurrenceId);
         if (occurrence != null) {
           final index = int.parse(occurrence[1]!);
           if (index >= lines.length ||

@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
 
-import 'arrangement.dart' show containsChords;
+import 'arrangement.dart' show chordPattern, containsChords;
 import 'models.dart';
 
 final _versionHeading = RegExp(
@@ -30,6 +30,13 @@ final _keyLine = RegExp(
   r'^\s*key(?:\s+of)?\s*[:=]\s*(.+?)\s*$',
   caseSensitive: false,
 );
+final _noteName = RegExp(r'[A-G][#b]?');
+final _halfStep = RegExp(r'\b(?:half|1/2)\b');
+final _wholeStep = RegExp(r'\b(?:whole|full)\b');
+final _squareBrackets = RegExp(r'[\[\]]');
+final _trailingChordsWord = RegExp(r'\bchords\s*$');
+final _nonWordRun = RegExp(r'[^\p{L}\p{N}]+', unicode: true);
+final _leadingThe = RegExp(r'^the\s+');
 const _romanCapos = {
   'i': 1,
   'ii': 2,
@@ -52,14 +59,15 @@ const _arrangementFields = {'capo', 'key', 'tuning', 'timeSignature'};
 String? _detunedValue(String line) {
   final match = _detunedLine.firstMatch(line);
   if (match == null) return null;
-  final notes = RegExp(
-    r'[A-G][#b]?',
-  ).allMatches(match.group(1)!).map((note) => note[0]!).toList();
+  final notes = _noteName
+      .allMatches(match.group(1)!)
+      .map((note) => note[0]!)
+      .toList();
   if (notes.length == 6) return notes.join(' ');
   final text = line.toLowerCase();
-  if (RegExp(r'\b(?:half|1/2)\b').hasMatch(text)) return 'Eb Ab Db Gb Bb Eb';
-  if (RegExp(r'\b(?:whole|full)\b').hasMatch(text)) return 'D G C F A D';
-  return line.trim().replaceAll(RegExp(r'[\[\]]'), '');
+  if (_halfStep.hasMatch(text)) return 'Eb Ab Db Gb Bb Eb';
+  if (_wholeStep.hasMatch(text)) return 'D G C F A D';
+  return line.trim().replaceAll(_squareBrackets, '');
 }
 
 int? _capoValue(String line) {
@@ -72,10 +80,10 @@ int? _capoValue(String line) {
 
 String _headingTitle(String value) => value
     .toLowerCase()
-    .replaceAll(RegExp(r'\bchords\s*$'), '')
-    .replaceAll(RegExp(r'[^\p{L}\p{N}]+', unicode: true), ' ')
+    .replaceAll(_trailingChordsWord, '')
+    .replaceAll(_nonWordRun, ' ')
     .trim()
-    .replaceFirst(RegExp(r'^the\s+'), '');
+    .replaceFirst(_leadingThe, '');
 
 bool _isVersionHeading(String line, String title) {
   var label = line.trim();
@@ -107,19 +115,24 @@ List<SourceResult> splitChartArrangements(SourceResult source) {
   final lines = source.body.replaceAll('\r\n', '\n').split('\n');
   final boundaries = <int>[];
   var segmentStart = 0;
-  bool currentHasChords(int through) =>
-      lines.skip(segmentStart).take(through - segmentStart).any(containsChords);
+  // Whether a line of the current segment before line i has chords. Kept
+  // as a running fact: rescanning the segment for every line was quadratic
+  // in a body without chords. Lines are tested directly, as single lines
+  // would push whole bodies out of the shared containsChords cache.
+  var segmentHasChords = false;
 
   for (var i = 0; i < lines.length; i++) {
     final line = lines[i];
     if (i > segmentStart &&
-        currentHasChords(i) &&
+        segmentHasChords &&
         (_capoValue(line) != null ||
             _detunedValue(line) != null ||
             _isVersionHeading(line, source.candidate.title))) {
       boundaries.add(i);
       segmentStart = i;
+      segmentHasChords = false;
     }
+    segmentHasChords = segmentHasChords || chordPattern.hasMatch(line);
   }
   if (boundaries.isEmpty) return const [];
 
@@ -157,7 +170,7 @@ List<SourceResult> splitChartArrangements(SourceResult source) {
         continue;
       }
       bodyLines.add(line);
-      chartStarted = chartStarted || containsChords(line);
+      chartStarted = chartStarted || chordPattern.hasMatch(line);
     }
     final viewBody = bodyLines.join('\n').trim();
     if (!containsChords(viewBody)) continue;

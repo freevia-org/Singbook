@@ -12,9 +12,32 @@ import 'arrangement.dart';
 const maxTimingBytes = 3 * 1024 * 1024;
 
 /// Latest cue time accepted (7 days); the song codec enforces the same bound.
-const _maxCueUs = 604800000000;
+const maxCueUs = 604800000000;
 const _maxLrcTimestampsPerLine = 64;
-const _maxCues = 100000;
+
+/// Most cues one parsed track, and one saved song in total, may hold.
+const maxTimingCues = 100000;
+
+final _whitespaceRun = RegExp(r'\s+');
+final _ttmlPartialClock = RegExp(r'^(\d+):(\d{2}(?:\.\d+)?)$');
+final _ttmlClock = RegExp(r'^(\d+):(\d{2}):(\d{2}(?:\.\d+)?)$');
+final _ttmlFrames = RegExp(r'^(\d+):(\d{2}):(\d{2}):(\d+)(?:\.(\d+))?$');
+final _ttmlOffset = RegExp(r'^([+-]?\d+(?:\.\d+)?)(h|m|s|ms|f|t)$');
+final _ttmlBareSeconds = RegExp(r'^\d+(?:\.\d+)?$');
+
+/// Whether any element sits more than [limit] levels below [root]; one pass
+/// with an explicit stack, so hostile nesting costs neither time nor stack.
+bool _nestsDeeperThan(XmlElement root, int limit) {
+  final pending = <(XmlElement, int)>[(root, 0)];
+  while (pending.isNotEmpty) {
+    final (node, depth) = pending.removeLast();
+    if (depth > limit) return true;
+    for (final child in node.childElements) {
+      pending.add((child, depth + 1));
+    }
+  }
+  return false;
+}
 
 // Cue IDs repeat the track ID, so opaque provider IDs must not be repeated
 // thousands of times. The original source ID remains on the track unchanged.
@@ -262,7 +285,7 @@ TimingTrack parseLrc(
     final prefix = wordMarkers.isEmpty ? const <int>[] : _graphemePrefix(text);
     final firstRaw = _lrcUs(times.first.group(1)!, times.first.group(2)!);
     for (final time in times) {
-      if (cues.length > _maxCues) {
+      if (cues.length > maxTimingCues) {
         overflow = true;
         break lines;
       }
@@ -276,7 +299,7 @@ TimingTrack parseLrc(
       final occurrence = 'line-${lyrics.length}';
       lyrics.add(text);
       if (rawUs == null ||
-          startUs > 604800000000 ||
+          startUs > maxCueUs ||
           double.parse(time.group(2)!) >= 60) {
         status = TimingStatus.invalid;
       }
@@ -292,7 +315,7 @@ TimingTrack parseLrc(
       if (wordMarkers.isNotEmpty) enhanced = true;
       var cursor = 0;
       for (var i = 0; i < wordMarkers.length; i++) {
-        if (cues.length > _maxCues) {
+        if (cues.length > maxTimingCues) {
           overflow = true;
           break lines;
         }
@@ -316,7 +339,7 @@ TimingTrack parseLrc(
             ? 0
             : max(0, markerUs - offsetUs + shiftUs);
         if (markerUs == null ||
-            wordStart > 604800000000 ||
+            wordStart > maxCueUs ||
             double.parse(marker.group(2)!) >= 60) {
           status = TimingStatus.invalid;
         }
@@ -335,7 +358,7 @@ TimingTrack parseLrc(
       }
     }
   }
-  if (overflow || cues.isEmpty || cues.length > _maxCues) {
+  if (overflow || cues.isEmpty || cues.length > maxTimingCues) {
     status = TimingStatus.invalid;
   }
   _sortCues(cues);
@@ -419,7 +442,7 @@ TimingTrack parseTtml(
 
     final hasTiming = root.descendants.whereType<XmlElement>().any(
       (e) => e.attributes.any(
-        (a) => {'begin', 'end', 'dur'}.contains(a.name.local),
+        (a) => const {'begin', 'end', 'dur'}.contains(a.name.local),
       ),
     );
     final unisonProfile =
@@ -469,16 +492,22 @@ TimingTrack parseTtml(
         );
     final absoluteClockProfile =
         appleProfile || unisonProfile || explicitWordClockProfile;
-    text = root.descendants
-        .whereType<XmlElement>()
-        .where((e) => e.name.local == 'p')
-        .map((p) => p.innerText.replaceAll(RegExp(r'\s+'), ' ').trim())
-        .where((line) => line.isNotEmpty)
-        .join('\n');
+    // This text is only the fallback kept when parsing fails below. Nested
+    // paragraphs repeat their descendants' text, so a document nested past
+    // the limit resolve() enforces could expand to gigabytes here; such a
+    // document keeps no fallback text.
+    text = _nestsDeeperThan(root, 64)
+        ? ''
+        : root.descendants
+              .whereType<XmlElement>()
+              .where((e) => e.name.local == 'p')
+              .map((p) => p.innerText.replaceAll(_whitespaceRun, ' ').trim())
+              .where((line) => line.isNotEmpty)
+              .join('\n');
     final declaredFrameRate = double.tryParse(attr(root, 'frameRate') ?? '');
     final frameRate = declaredFrameRate ?? 30;
     final multiplier = (attr(root, 'frameRateMultiplier') ?? '1 1').split(
-      RegExp(r'\s+'),
+      _whitespaceRun,
     );
     final effectiveFrames =
         frameRate * double.parse(multiplier[0]) / double.parse(multiplier[1]);
@@ -491,10 +520,16 @@ TimingTrack parseTtml(
     if (effectiveFrames <= 0 || tickRate <= 0 || subFrameRate <= 0) {
       throw const FormatException('Invalid timebase.');
     }
+    final units = {
+      'h': 3600.0,
+      'm': 60.0,
+      's': 1.0,
+      'ms': 0.001,
+      'f': 1 / effectiveFrames,
+      't': 1 / tickRate,
+    };
     int time(String expr) {
-      final partialClock = RegExp(
-        r'^(\d+):(\d{2}(?:\.\d+)?)$',
-      ).firstMatch(expr);
+      final partialClock = _ttmlPartialClock.firstMatch(expr);
       if (absoluteClockProfile && partialClock != null) {
         final minutesText = partialClock[1]!;
         final minutes = int.tryParse(minutesText);
@@ -506,14 +541,12 @@ TimingTrack parseTtml(
           throw const FormatException('Invalid clock seconds.');
         }
         final microseconds = ((minutes * 60 + seconds) * 1000000).round();
-        if (microseconds > 604800000000) {
+        if (microseconds > maxCueUs) {
           throw const FormatException('Clock time exceeds seven days.');
         }
         return microseconds;
       }
-      final clock = RegExp(
-        r'^(\d+):(\d{2}):(\d{2}(?:\.\d+)?)$',
-      ).firstMatch(expr);
+      final clock = _ttmlClock.firstMatch(expr);
       if (clock != null) {
         return ((int.parse(clock[1]!) * 3600 +
                     int.parse(clock[2]!) * 60 +
@@ -521,9 +554,7 @@ TimingTrack parseTtml(
                 1000000)
             .round();
       }
-      final frames = RegExp(
-        r'^(\d+):(\d{2}):(\d{2}):(\d+)(?:\.(\d+))?$',
-      ).firstMatch(expr);
+      final frames = _ttmlFrames.firstMatch(expr);
       if (frames != null) {
         return ((int.parse(frames[1]!) * 3600 +
                     int.parse(frames[2]!) * 60 +
@@ -535,12 +566,9 @@ TimingTrack parseTtml(
                 1000000)
             .round();
       }
-      final offset = RegExp(
-        r'^([+-]?\d+(?:\.\d+)?)(h|m|s|ms|f|t)$',
-      ).firstMatch(expr);
+      final offset = _ttmlOffset.firstMatch(expr);
       if (offset == null) {
-        if (explicitWordClockProfile &&
-            RegExp(r'^\d+(?:\.\d+)?$').hasMatch(expr)) {
+        if (explicitWordClockProfile && _ttmlBareSeconds.hasMatch(expr)) {
           final seconds = double.tryParse(expr);
           if (seconds == null ||
               !seconds.isFinite ||
@@ -552,14 +580,6 @@ TimingTrack parseTtml(
         }
         throw FormatException('Unsupported time expression: $expr');
       }
-      final units = {
-        'h': 3600.0,
-        'm': 60.0,
-        's': 1.0,
-        'ms': 0.001,
-        'f': 1 / effectiveFrames,
-        't': 1 / tickRate,
-      };
       return (double.parse(offset[1]!) * units[offset[2]!]! * 1000000).round();
     }
 
@@ -656,7 +676,7 @@ TimingTrack parseTtml(
       }
       // The song file format rejects cues beyond this bound, so a track that
       // exceeds it must not be accepted (it could never be read back).
-      if (start > _maxCueUs || end != null && end > _maxCueUs) {
+      if (start > maxCueUs || end != null && end > maxCueUs) {
         throw const FormatException('Cue time exceeds the supported range.');
       }
       timed[node] =
@@ -687,7 +707,7 @@ TimingTrack parseTtml(
       }
 
       walk(e);
-      return buffer.toString().replaceAll(RegExp(r'\s+'), ' ').trim();
+      return buffer.toString().replaceAll(_whitespaceRun, ' ').trim();
     }
 
     for (final p in root.descendants.whereType<XmlElement>().where(
@@ -756,16 +776,15 @@ TimingTrack parseTtml(
       }
       var cursor = 0;
       final prefix = timedSpans.isEmpty ? const <int>[] : _graphemePrefix(line);
+      final timedSet = Set<XmlElement>.identity()..addAll(timedSpans);
       for (final span in timedSpans) {
         // A timed background container and its words describe the same text.
         // Preserve its range in the raw document without duplicating word cues.
         if (amllProfile &&
-            span.descendants.whereType<XmlElement>().any(
-              (e) => timedSpans.contains(e),
-            )) {
+            span.descendants.whereType<XmlElement>().any(timedSet.contains)) {
           continue;
         }
-        if (cues.length > _maxCues) {
+        if (cues.length > maxTimingCues) {
           throw const FormatException('Too many timing cues.');
         }
         final word = content(span);
@@ -801,7 +820,7 @@ TimingTrack parseTtml(
       }
     }
     text = lyrics.join('\n');
-    if (cues.length > _maxCues) {
+    if (cues.length > maxTimingCues) {
       throw const FormatException('Too many timing cues.');
     }
     _sortCues(cues);

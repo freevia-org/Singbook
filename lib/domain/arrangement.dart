@@ -27,6 +27,44 @@ final _nonLyricLine = RegExp(
   r'^\s*(?:\{.*\}|#.*|\[(?:verse|chorus|bridge|intro|outro|instrumental)[^\]]*\])\s*$',
   caseSensitive: false,
 );
+final _bracketedLine = RegExp(r'^\s*\[([^\]]+)\]\s*$');
+final _explicitSectionDirective = RegExp(
+  r'^\s*\{(?:(?:start|end)_of_(?:pre_chorus|post_chorus|verse|chorus|bridge|intro|outro|instrumental|interlude|solo|refrain|hook|breakdown|coda|tag|ending)|chorus|soc|eoc|sov|eov|sob|eob)(?:\s*:[^}]*)?\}\s*$',
+  caseSensitive: false,
+);
+final _nonWordRun = RegExp(r'[^\p{L}\p{N}]+', unicode: true);
+final _noChord = RegExp(r'^N\.?C\.?$');
+final _chordRoot = RegExp(r'(^|/)([A-G][#b]{0,2})');
+const _naturalPitches = {
+  'C': 0,
+  'D': 2,
+  'E': 4,
+  'F': 5,
+  'G': 7,
+  'A': 9,
+  'B': 11,
+};
+
+/// Pitch class (C = 0 … B = 11) of a note name: a letter A–G followed by at
+/// most two accidentals (`#`/`♯` raise, `b`/`♭` lower). Anything else is null.
+int? chordPitchClass(String note) {
+  if (note.isEmpty || note.length > 3) return null;
+  final natural = _naturalPitches[note[0]];
+  if (natural == null) return null;
+  var offset = 0;
+  for (var i = 1; i < note.length; i++) {
+    final accidental = note[i];
+    if (accidental == '#' || accidental == '♯') {
+      offset++;
+    } else if (accidental == 'b' || accidental == '♭') {
+      offset--;
+    } else {
+      return null;
+    }
+  }
+  return (natural + offset + 12) % 12;
+}
+
 String unescapeChordPro(String text) =>
     text.replaceAllMapped(_chordProEscape, (m) => m[1]!);
 bool containsChords(String body) =>
@@ -175,7 +213,7 @@ String? sectionLabelForLine(ArrangementLine line) {
     return suffix == null ? kind : '$kind $suffix';
   }
 
-  final bracketed = RegExp(r'^\s*\[([^\]]+)\]\s*$').firstMatch(line.text);
+  final bracketed = _bracketedLine.firstMatch(line.text);
   return bracketed == null ? null : _sectionName(bracketed.group(1)!);
 }
 
@@ -251,11 +289,7 @@ String inferSectionDirectives(String body) {
   final arrangementLines = parseArrangement(normalizedBody);
   final hasExplicitSection = arrangementLines.any((line) {
     if (sectionLabelForLine(line) != null) return true;
-    return line.directive &&
-        RegExp(
-          r'^\s*\{(?:(?:start|end)_of_(?:pre_chorus|post_chorus|verse|chorus|bridge|intro|outro|instrumental|interlude|solo|refrain|hook|breakdown|coda|tag|ending)|chorus|soc|eoc|sov|eov|sob|eob)(?:\s*:[^}]*)?\}\s*$',
-          caseSensitive: false,
-        ).hasMatch(line.text);
+    return line.directive && _explicitSectionDirective.hasMatch(line.text);
   });
   if (hasExplicitSection) return body;
 
@@ -276,7 +310,7 @@ String inferSectionDirectives(String body) {
         .map((line) => line.text)
         .join(' ')
         .toLowerCase()
-        .replaceAll(RegExp(r'[^\p{L}\p{N}]+', unicode: true), ' ')
+        .replaceAll(_nonWordRun, ' ')
         .trim();
     if (lyricText.isNotEmpty) {
       paragraphs.add((start: start, end: index, lyrics: lyricText));
@@ -347,32 +381,9 @@ String transposeChord(String chord, int semitones, {bool? flats}) {
     'Bb',
     'B',
   ];
-  const pitches = {
-    'C': 0,
-    'B#': 0,
-    'C#': 1,
-    'Db': 1,
-    'D': 2,
-    'D#': 3,
-    'Eb': 3,
-    'E': 4,
-    'Fb': 4,
-    'E#': 5,
-    'F': 5,
-    'F#': 6,
-    'Gb': 6,
-    'G': 7,
-    'G#': 8,
-    'Ab': 8,
-    'A': 9,
-    'A#': 10,
-    'Bb': 10,
-    'B': 11,
-    'Cb': 11,
-  };
-  if (RegExp(r'^N\.?C\.?$').hasMatch(chord)) return chord;
+  if (_noChord.hasMatch(chord)) return chord;
   final normalized = chord.replaceAll('♯', '#').replaceAll('♭', 'b');
-  final rootPattern = RegExp(r'(^|/)([A-G][#b]{0,2})');
+  final rootPattern = _chordRoot;
   // Spelling follows the accidental on the root/bass notes only; a lowercase
   // "b" elsewhere (C#7b9, Cadd9b5) is a chord alteration, not a flat note.
   final useFlats =
@@ -382,15 +393,7 @@ String transposeChord(String chord, int semitones, {bool? flats}) {
           .any((m) => m.group(2)!.length > 1 && m.group(2)![1] == 'b');
   final notes = useFlats ? flat : sharp;
   return normalized.replaceAllMapped(rootPattern, (match) {
-    final note = match.group(2)!;
-    final pitch =
-        pitches[note] ??
-        ((pitches[note[0]]! +
-                note
-                    .substring(1)
-                    .split('')
-                    .fold<int>(0, (n, s) => n + (s == '#' ? 1 : -1))) %
-            12);
+    final pitch = chordPitchClass(match.group(2)!)!;
     return '${match.group(1)}${notes[(pitch + semitones) % 12]}';
   });
 }

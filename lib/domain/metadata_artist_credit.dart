@@ -2,6 +2,10 @@ import 'edition_identity.dart';
 import 'lyric_word_identity.dart';
 import 'models.dart';
 
+final _musicBrainzId = RegExp(
+  r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$',
+);
+
 /// Establishes structured performer-credit agreement between a Genius song
 /// and a MusicBrainz recording. This is credit evidence only; it does not
 /// establish that the two rows identify the same recording.
@@ -16,26 +20,13 @@ JsonMap? musicBrainzArtistCreditEvidence(
       musicBrainz.providerId != 'musicbrainz' ||
       genius == musicBrainz ||
       !RegExp(r'^[1-9][0-9]{0,17}$').hasMatch(genius.id) ||
-      !RegExp(
-        r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$',
-      ).hasMatch(musicBrainz.id) ||
+      !_musicBrainzId.hasMatch(musicBrainz.id) ||
       musicBrainz.recordingIds['musicbrainz'] != musicBrainz.id ||
       musicBrainz.metadata['identityScope'] != 'recording' ||
       !explicitEditionsCompatible(genius, musicBrainz)) {
     return null;
   }
-  for (final entry in genius.recordingIds.entries) {
-    if (musicBrainz.recordingIds.containsKey(entry.key) &&
-        musicBrainz.recordingIds[entry.key] != entry.value) {
-      return null;
-    }
-  }
-  for (final entry in musicBrainz.recordingIds.entries) {
-    if (genius.recordingIds.containsKey(entry.key) &&
-        genius.recordingIds[entry.key] != entry.value) {
-      return null;
-    }
-  }
+  if (recordingIdsConflict(genius, musicBrainz)) return null;
   if (genius.album != null && musicBrainz.album != null) {
     final first = recordingVersionMarkers(genius.album!, album: true);
     final second = recordingVersionMarkers(musicBrainz.album!, album: true);
@@ -66,9 +57,7 @@ JsonMap? musicBrainzArtistCreditEvidence(
     final phrase = item['joinPhrase'] as String;
     if (name.isEmpty ||
         name.length > 200 ||
-        !RegExp(
-          r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$',
-        ).hasMatch(id) ||
+        !_musicBrainzId.hasMatch(id) ||
         !ids.add(id)) {
       return null;
     }

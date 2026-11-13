@@ -11,6 +11,7 @@ const _maxOccurrences = 5000;
 const _maxAnchorOperations = 100000;
 final _letter = RegExp(r'^\p{L}$', unicode: true);
 final _word = RegExp(r'[\p{L}\p{N}]+', unicode: true);
+final _rootAndSuffix = RegExp(r'^([A-G](?:#|b|♯|♭)?)(.*)$');
 
 class _CompactText {
   const _CompactText(
@@ -37,7 +38,13 @@ _CompactText _compact(String text) {
   var compactOffset = 0;
   var graphemeOffset = 0;
   for (final cluster in text.characters) {
-    final normalized = foldLyricVowelAccents(cluster).toLowerCase();
+    // Folding only ever changes accented or combining characters, so the
+    // common single ASCII character skips its six replacement passes.
+    final normalized =
+        (cluster.length == 1 && cluster.codeUnitAt(0) < 0x80
+                ? cluster
+                : foldLyricVowelAccents(cluster))
+            .toLowerCase();
     for (final rune in normalized.runes) {
       final value = String.fromCharCode(rune);
       if (!_letter.hasMatch(value)) continue;
@@ -66,13 +73,11 @@ String _placementSignature(List<ChordAnchor> anchors) => anchors
 String? _preferExplicitChord(Set<String> chords) {
   if (chords.length == 1) return chords.single;
   if (chords.length != 2) return null;
-  String? root(String chord) {
-    final match = RegExp(r'^([A-G](?:#|b|♯|♭)?)(.*)$').firstMatch(chord);
-    return match?.group(1)?.toUpperCase();
-  }
+  String? root(String chord) =>
+      _rootAndSuffix.firstMatch(chord)?.group(1)?.toUpperCase();
 
   String suffix(String chord) =>
-      RegExp(r'^([A-G](?:#|b|♯|♭)?)(.*)$').firstMatch(chord)?.group(2) ?? '';
+      _rootAndSuffix.firstMatch(chord)?.group(2) ?? '';
 
   final fifth = chords.where((chord) => suffix(chord) == '5').toList();
   final explicit = chords.where((chord) {
