@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:isolate';
+import 'dart:typed_data';
 import 'package:characters/characters.dart';
 import '../../domain/models.dart';
 import '../provider.dart';
@@ -8,10 +10,21 @@ import 'common.dart';
 String _rowId(Object? value) =>
     value is String ? value.trim() : (value is int ? value.toString() : '');
 
+/// Mirrors the transport's JSON text handling (UTF-8, optional BOM).
+Object? _decodeJsonBytes(Uint8List bytes) {
+  final text = utf8.decode(bytes, allowMalformed: true);
+  return jsonDecode(text.startsWith('\uFEFF') ? text.substring(1) : text);
+}
+
+/// The registry is several MB: decode it off the calling isolate. The closure
+/// captures only [bytes].
+Future<Object?> _decodeJsonInBackground(Uint8List bytes) =>
+    Isolate.run(() => _decodeJsonBytes(bytes));
+
 class WorshipCommonsProvider implements LyricsProvider {
   WorshipCommonsProvider(this.transport);
   final ProviderTransport transport;
-  List<JsonMap>? _catalog;
+  final _catalog = CatalogLoader<({List<JsonMap> rows, List<String> text})>();
   /// Full commit SHA of ChurchApps/WorshipCommonsContent the catalog, song
   /// files and license links are read from, so content and licenses cannot
   /// change without an app update. Resolved 2026-10-15 (the `main` commit
@@ -35,25 +48,34 @@ class WorshipCommonsProvider implements LyricsProvider {
     description: 'licensedCatalog',
   );
 
-  Future<List<JsonMap>> _rows(CancellationToken? cancel) async {
-    if (_catalog != null) return _catalog!;
-    final data = jsonMap(
-      await transport.requestJson(
-        base.resolve('catalog.json'),
-        cancel: cancel,
-        // The registry is large; an oversized file fails as invalid_response
-        // (never a truncated catalog).
-        maxBytes: _catalogLimit,
-        // Several MB on a slow link; still inside discover's 30 s ceiling.
-        timeout: const Duration(seconds: 28),
-      ),
+  Future<({List<JsonMap> rows, List<String> text})> _load(
+    CancellationToken? cancel,
+  ) => _catalog.load(() async {
+    final bytes = await transport.getBytes(
+      base.resolve('catalog.json'),
+      headers: const {'Accept': 'application/json'},
+      cancel: cancel,
+      // The registry is large; an oversized file fails as invalid_response
+      // (never a truncated catalog).
+      maxBytes: _catalogLimit,
+      // Several MB on a slow link; still inside discover's 30 s ceiling.
+      timeout: const Duration(seconds: 28),
     );
+    cancel?.throwIfCancelled();
+    final Object? decoded;
+    try {
+      decoded = await _decodeJsonInBackground(bytes);
+    } catch (_) {
+      throw const ProviderException('invalid_response', 'Invalid JSON');
+    }
+    cancel?.throwIfCancelled();
+    final data = jsonMap(decoded);
     if (data['rows'] is! List) {
       throw const ProviderException('invalid_response');
     }
     // The registry is heterogeneous. Restricted worship-only or custom licenses
     // remain on the source website, rather than being silently made unrestricted.
-    return _catalog = maps(data['rows'])
+    final rows = maps(data['rows'])
         .where(
           (r) =>
               {'PD', 'CC-BY', 'CC-BY-SA'}.contains(r['license']) &&
@@ -62,7 +84,18 @@ class WorshipCommonsProvider implements LyricsProvider {
               stringValue(r['title']).isNotEmpty,
         )
         .toList();
-  }
+    return (
+      rows: rows,
+      // Search text is normalised once per catalog, not once per query.
+      text: [
+        for (final r in rows)
+          normalized('${stringValue(r['title'])} ${stringValue(r['writer'])}'),
+      ],
+    );
+  }, cancel);
+
+  Future<List<JsonMap>> _rows(CancellationToken? cancel) async =>
+      (await _load(cancel)).rows;
 
   SongCandidate _candidate(JsonMap r) => SongCandidate(
     providerId: definition.id,
@@ -81,11 +114,14 @@ class WorshipCommonsProvider implements LyricsProvider {
   Future<List<SongCandidate>> search(
     String query, {
     CancellationToken? cancel,
-  }) async => (await _rows(cancel))
-      .where((r) => queryMatches(query, '${r['title']} ${r['writer']}'))
-      .take(12)
-      .map(_candidate)
-      .toList();
+  }) async {
+    final catalog = await _load(cancel);
+    final tokens = queryTokens(query);
+    return [
+      for (var i = 0; i < catalog.rows.length; i++)
+        if (tokensMatch(tokens, catalog.text[i])) catalog.rows[i],
+    ].take(12).map(_candidate).toList();
+  }
 
   @override
   Future<SourceResult> resolve(
@@ -269,7 +305,7 @@ TimingTrack parseWorshipTiming(String raw, String sourceId) {
 class SeanMcGrathProvider implements LyricsProvider {
   SeanMcGrathProvider(this.transport);
   final ProviderTransport transport;
-  List<SongCandidate>? _catalog;
+  final _catalog = CatalogLoader<List<SongCandidate>>();
   static final base = Uri.parse('https://seanmcgrathmusic.com/');
   @override
   final definition = const ProviderDefinition(
@@ -284,17 +320,17 @@ class SeanMcGrathProvider implements LyricsProvider {
     String query, {
     CancellationToken? cancel,
   }) async {
-    if (_catalog == null) {
-      final doc = parseHtml(
-        await transport.getText(
-          base.resolve('songs_and_poems/'),
-          cancel: cancel,
-        ),
+    final catalog = await _catalog.load(() async {
+      final source = await transport.getText(
+        base.resolve('songs_and_poems/'),
+        cancel: cancel,
       );
+      final doc = parseHtml(source);
       final found = <String, SongCandidate>{};
       for (final a in doc.querySelectorAll('a[href]')) {
-        final u = base.resolve(a.attributes['href']!);
-        if (u.scheme != 'https' ||
+        final u = resolvedUri(base, a.attributes['href']);
+        if (u == null ||
+            u.scheme != 'https' ||
             u.host != base.host ||
             !RegExp(
               r'^/(?:songs|songs_and_poems)/[a-z0-9-]+/$',
@@ -318,10 +354,16 @@ class SeanMcGrathProvider implements LyricsProvider {
           ),
         );
       }
-      _catalog = found.values.toList();
-    }
-    return _catalog!
-        .where((c) => queryMatches(query, '${c.title} ${c.artist}'))
+      // A bot wall or changed layout is a failure, never a cached empty catalog.
+      if (found.isEmpty) {
+        throwIfBlocked(source);
+        throw const ProviderException('extraction_failed');
+      }
+      return found.values.toList();
+    }, cancel);
+    final tokens = queryTokens(query);
+    return catalog
+        .where((c) => tokensMatch(tokens, normalized('${c.title} ${c.artist}')))
         .take(12)
         .toList();
   }
@@ -357,7 +399,8 @@ class SeanMcGrathProvider implements LyricsProvider {
     final page = parseHtml(await transport.getText(url, cancel: cancel));
     final links = page
         .querySelectorAll('a[href]')
-        .map((a) => url.resolve(a.attributes['href']!))
+        .map((a) => resolvedUri(url, a.attributes['href']))
+        .nonNulls
         .toList();
     final files = links.where(
       (u) =>
@@ -425,7 +468,7 @@ class SeanMcGrathProvider implements LyricsProvider {
 class OpenFilkProvider implements LyricsProvider {
   OpenFilkProvider(this.transport);
   final ProviderTransport transport;
-  List<SongCandidate>? _catalog;
+  final _catalog = CatalogLoader<List<SongCandidate>>();
   static final index = Uri.parse(
     'https://filksongbook.com/songs/_index/by_title__en.html',
   );
@@ -442,56 +485,59 @@ class OpenFilkProvider implements LyricsProvider {
     String query, {
     CancellationToken? cancel,
   }) async {
-    if (_catalog == null) {
-      final doc = parseHtml(await transport.getText(index, cancel: cancel));
+    final catalog = await _catalog.load(() async {
+      final source = await transport.getText(index, cancel: cancel);
+      final doc = parseHtml(source);
       final found = <SongCandidate>[];
       for (final li in doc.querySelectorAll('li')) {
-        final anchors = li.querySelectorAll('a[href]');
+        // Each reference is resolved once; a malformed one is skipped.
+        final anchors = [
+          for (final a in li.querySelectorAll('a[href]'))
+            if (resolvedUri(index, a.attributes['href']) case final target?)
+              (element: a, target: target),
+        ];
         final pages = anchors.where(
-          (a) => index
-              .resolve(a.attributes['href']!)
-              .path
-              .startsWith('/songs/pages/'),
+          (a) => a.target.path.startsWith('/songs/pages/'),
         );
         final files = anchors.where(
-          (a) => index
-              .resolve(a.attributes['href']!)
-              .path
-              .startsWith('/songs/Chordpro/'),
+          (a) => a.target.path.startsWith('/songs/Chordpro/'),
         );
         if (pages.isEmpty || files.isEmpty) continue;
-        final u = index.resolve(files.first.attributes['href']!);
+        final u = files.first.target;
         if (u.host != index.host || !u.path.endsWith('.pro')) continue;
         final artist =
             RegExp(r'\(([^)]+)\)').allMatches(li.text).lastOrNull?[1] ?? '';
         final links = <JsonMap>[
           for (final a in anchors)
-            if (index.resolve(a.attributes['href']!).host != index.host)
-              if (httpsLink(index.resolve(a.attributes['href']!).toString())
-                  case final link?)
+            if (a.target.host != index.host)
+              if (httpsLink(a.target.toString()) case final link?)
                 {'type': 'recording', 'url': link},
         ];
         found.add(
           SongCandidate(
             providerId: definition.id,
             id: u.path,
-            title: pages.first.text.trim(),
+            title: pages.first.element.text.trim(),
             artist: artist,
             url: u.toString(),
             metadata: {
               'identityScope': 'composition',
-              'sourcePageUrl': index
-                  .resolve(pages.first.attributes['href']!)
-                  .toString(),
+              'sourcePageUrl': pages.first.target.toString(),
               if (links.isNotEmpty) 'mediaLinks': links,
             },
           ),
         );
       }
-      _catalog = found;
-    }
-    return _catalog!
-        .where((c) => queryMatches(query, '${c.title} ${c.artist}'))
+      // A bot wall or changed layout is a failure, never a cached empty catalog.
+      if (found.isEmpty) {
+        throwIfBlocked(source);
+        throw const ProviderException('extraction_failed');
+      }
+      return found;
+    }, cancel);
+    final tokens = queryTokens(query);
+    return catalog
+        .where((c) => tokensMatch(tokens, normalized('${c.title} ${c.artist}')))
         .take(12)
         .toList();
   }

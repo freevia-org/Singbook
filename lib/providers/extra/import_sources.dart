@@ -128,8 +128,11 @@ class ChordieProvider implements LyricsProvider {
     for (final anchor in doc.querySelectorAll('a[href]')) {
       final spans = anchor.querySelectorAll('span');
       if (spans.length < 2) continue;
-      final url = base.resolve(anchor.attributes['href']!);
-      if (url.host != base.host || !url.path.startsWith('/chord.pere/')) {
+      // One malformed reference must not fail the whole result page.
+      final url = resolvedUri(base, anchor.attributes['href']);
+      if (url == null ||
+          url.host != base.host ||
+          !url.path.startsWith('/chord.pere/')) {
         continue;
       }
       // Chordie double-encodes some characters ("&amp;#38;").
@@ -269,6 +272,13 @@ class WikisourceProvider implements LyricsProvider {
       'srlimit': '10',
     }, cancel);
     return maps(jsonMap(result['query'])['search'])
+        // A row without a page id or title is not a selectable page.
+        .where(
+          (r) =>
+              r['pageid'] is int &&
+              (r['pageid'] as int) > 0 &&
+              stringValue(r['title']).isNotEmpty,
+        )
         .map(
           (r) => SongCandidate(
             providerId: definition.id,
@@ -391,8 +401,4 @@ class WikisourceProvider implements LyricsProvider {
   }
 }
 
-String _wikisourceTitleIdentity(String value) => value
-    .toLowerCase()
-    .replaceAll(RegExp("['‘’]"), '')
-    .replaceAll(RegExp(r'[^\p{L}\p{N}]+', unicode: true), ' ')
-    .trim();
+String _wikisourceTitleIdentity(String value) => normalizedIdentity(value);
