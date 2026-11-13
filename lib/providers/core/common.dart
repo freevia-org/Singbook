@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:isolate';
 import '../../domain/models.dart';
 import '../sanitize.dart';
 import '../transport.dart';
@@ -15,6 +16,13 @@ export '../sanitize.dart'
         geniusImageHosts,
         deezerImageHosts,
         youtubeImageHosts;
+
+/// Runs a pure page parser on a worker isolate, so parsing a large document
+/// does not stall the UI isolate. [parse] must be a top-level or static
+/// function; its input, result and any thrown [ProviderException] are plain
+/// data. Errors reach the caller unchanged.
+Future<R> parseOffMain<A, R>(R Function(A input) parse, A input) =>
+    Isolate.run(() => parse(input), debugName: 'singbook-page-parser');
 
 final _controlChars = RegExp(
   r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f\u202a-\u202e\u2066-\u2069]',

@@ -136,6 +136,9 @@ class YoutubeMusicProvider implements LyricsProvider {
       // value, and retry once with a freshly fetched one.
       const keep = {'cancelled', 'timeout', 'rate_limited', 'blocked'};
       if (keep.contains(e.code)) rethrow;
+      // The transport reports HTTP 4xx/5xx as `network` with its status. A
+      // connection failure has none: a fresh client version cannot cure it.
+      if (e.code == 'network' && !e.message.startsWith('HTTP ')) rethrow;
       _configuration = null;
       if (cached) return _send(endpoint, fields, cancel);
       rethrow;
@@ -185,13 +188,20 @@ class YoutubeMusicProvider implements LyricsProvider {
     );
   }
 
-  static String? _type(JsonMap endpoint) =>
+  static String? _type(JsonMap endpoint) {
+    final type = jsonMap(
       jsonMap(
-            jsonMap(
-              endpoint['browseEndpointContextSupportedConfigs'],
-            )['browseEndpointContextMusicConfig'],
-          )['pageType']
-          as String?;
+        endpoint['browseEndpointContextSupportedConfigs'],
+      )['browseEndpointContextMusicConfig'],
+    )['pageType'];
+    return type is String ? type : null;
+  }
+
+  static num _width(JsonMap thumbnail) {
+    final width = thumbnail['width'];
+    return width is num ? width : 0;
+  }
+
   static bool _artist(JsonMap endpoint) =>
       _type(endpoint) == 'MUSIC_PAGE_TYPE_ARTIST' ||
       (_type(endpoint) == null &&
@@ -263,11 +273,7 @@ class YoutubeMusicProvider implements LyricsProvider {
             .map(jsonMap)
             .where((t) => httpsUrl(t['url'], hosts: youtubeImageHosts) != null)
             .toList()
-          ..sort(
-            (a, b) => ((b['width'] as num?) ?? 0).compareTo(
-              (a['width'] as num?) ?? 0,
-            ),
-          );
+          ..sort((a, b) => _width(b).compareTo(_width(a)));
     final url = 'https://music.youtube.com/watch?v=$id';
     return SongCandidate(
       providerId: 'youtubemusic',
@@ -306,7 +312,12 @@ class YoutubeMusicProvider implements LyricsProvider {
       for (final item in items) {
         final row = jsonMap(jsonMap(item)['musicResponsiveListItemRenderer']);
         if (row.isEmpty) continue;
-        final columns = array(row['flexColumns'])
+        final flex = row['flexColumns'];
+        if (flex is! List) {
+          skipped++;
+          continue;
+        }
+        final columns = flex
             .map(
               (c) => jsonMap(
                 jsonMap(c)['musicResponsiveListItemFlexColumnRenderer'],

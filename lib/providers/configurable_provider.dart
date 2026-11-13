@@ -360,7 +360,8 @@ class ConfigurableProvider implements LyricsProvider {
         );
       }
     }
-    return html_parser.parse(text);
+    // Selector evaluation and text extraction recurse: reject absurd depth.
+    return parseHtml(text);
   }
 
   SongCandidate? _candidate(
@@ -566,7 +567,7 @@ class ConfigurableProvider implements LyricsProvider {
       allowedHosts: entry.hosts.toSet(),
     );
     throwIfBlocked(text);
-    if (kind == 'html') return html_parser.parse(text);
+    if (kind == 'html') return parseHtml(text);
     try {
       return jsonDecode(text);
     } catch (_) {
@@ -609,9 +610,11 @@ class ConfigurableProvider implements LyricsProvider {
   String? _candidateUrl(String? value, String pageUrl) {
     if (value == null) return null;
     final parsed = Uri.tryParse(value);
-    final absolute = parsed != null && parsed.hasScheme
+    // An unparsable optional link drops the link, not the row or the search.
+    if (parsed == null) return null;
+    final absolute = parsed.hasScheme
         ? value
-        : Uri.parse(pageUrl).resolve(value).toString();
+        : Uri.parse(pageUrl).resolveUri(parsed).toString();
     final safe = safeHttpsUrl(absolute);
     if (safe == null || !_exactHost(Uri.parse(safe).host)) return null;
     return safe;

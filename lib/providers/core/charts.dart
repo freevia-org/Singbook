@@ -54,6 +54,11 @@ String _chartPath(String value, String provider, {bool selection = false}) {
   return path;
 }
 
+SourceResult _songsterrPage((String source, String id) page) =>
+    SongsterrProvider.parsePage(page.$1, page.$2);
+SourceResult _ultimateGuitarPage((String source, String id) page) =>
+    UltimateGuitarProvider.parsePage(page.$1, page.$2);
+
 String _pathId(String path) => RegExp(r'(\d+)$').firstMatch(path)![1]!;
 
 class SongsterrProvider implements LyricsProvider {
@@ -344,7 +349,8 @@ class SongsterrProvider implements LyricsProvider {
   Future<List<SongCandidate>> search(
     String query, {
     CancellationToken? cancel,
-  }) async => parseSearch(
+  }) async => parseOffMain(
+    parseSearch,
     await http.getText(
       Uri.https('www.songsterr.com', '/', {'pattern': queryText(query)}),
       cancel: cancel,
@@ -356,13 +362,13 @@ class SongsterrProvider implements LyricsProvider {
     CancellationToken? cancel,
   }) async {
     final path = _chartPath(candidate.id, 'songsterr', selection: true);
-    return parsePage(
+    return parseOffMain(_songsterrPage, (
       await http.getText(
         Uri.parse('https://www.songsterr.com$path'),
         cancel: cancel,
       ),
       path,
-    );
+    ));
   }
 }
 
@@ -854,7 +860,8 @@ class UltimateGuitarProvider implements LyricsProvider {
   Future<List<SongCandidate>> search(
     String query, {
     CancellationToken? cancel,
-  }) async => parseSearch(
+  }) async => parseOffMain(
+    parseSearch,
     await http.getText(
       Uri.https('www.ultimate-guitar.com', '/search.php', {
         'search_type': 'title',
@@ -869,13 +876,13 @@ class UltimateGuitarProvider implements LyricsProvider {
     CancellationToken? cancel,
   }) async {
     final path = _chartPath(candidate.id, 'ultimateguitar', selection: true);
-    return parsePage(
+    return parseOffMain(_ultimateGuitarPage, (
       await http.getText(
         Uri.parse('https://tabs.ultimate-guitar.com$path'),
         cancel: cancel,
       ),
       path,
-    );
+    ));
   }
 }
 
