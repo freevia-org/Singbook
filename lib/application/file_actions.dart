@@ -228,9 +228,79 @@ bool looksLikeSetlistXml(String text) {
   return space(next) || next == 0x3e /* > */ || next == 0x2f /* / */;
 }
 
+// Line-leading whitespace for the multi-line import patterns. `\s` also
+// matches line terminators, so `^\s*` rescans a run of blank lines from every
+// line start in it (quadratic). A line that matches after blank lines also
+// matches from its own start, so horizontal whitespace finds the same lines.
+const _lineLead = r'^[^\S\r\n\u2028\u2029]*';
+
+bool _isLineTerminator(int unit) =>
+    unit == 0x0a || unit == 0x0d || unit == 0x2028 || unit == 0x2029;
+
+// Exactly the code units `\s` matches in a non-Unicode Dart RegExp.
+bool _isRegExpSpace(int unit) =>
+    (unit >= 0x09 && unit <= 0x0d) ||
+    unit == 0x20 ||
+    unit == 0xa0 ||
+    unit == 0x1680 ||
+    (unit >= 0x2000 && unit <= 0x200a) ||
+    unit == 0x2028 ||
+    unit == 0x2029 ||
+    unit == 0x202f ||
+    unit == 0x205f ||
+    unit == 0x3000 ||
+    unit == 0xfeff;
+
+/// Splits a multi-song ChordPro text at `{new_song}` lines. Returns what
+/// `text.split(RegExp(r'^\s*\{new_song\}\s*$', multiLine: true))` returns
+/// (the directive line and the blank lines around it are removed), in linear
+/// time: that pattern is quadratic in the length of a run of blank lines.
+@visibleForTesting
+List<String> splitNewSongSections(String text) {
+  const directive = '{new_song}';
+  final parts = <String>[];
+  var partStart = 0, matchFloor = 0, from = 0;
+  while (true) {
+    final brace = text.indexOf(directive, from);
+    if (brace < 0) break;
+    from = brace + directive.length;
+    // The match begins at the first line start within the whitespace that
+    // precedes the directive, but never inside the previous match.
+    var lead = brace;
+    while (lead > matchFloor && _isRegExpSpace(text.codeUnitAt(lead - 1))) {
+      lead--;
+    }
+    var start = -1;
+    for (var at = lead; at <= brace; at++) {
+      if (at == 0 || _isLineTerminator(text.codeUnitAt(at - 1))) {
+        start = at;
+        break;
+      }
+    }
+    if (start < 0) continue;
+    // It ends before the last line terminator of the whitespace that follows,
+    // or at the end of the text.
+    var tail = from;
+    while (tail < text.length && _isRegExpSpace(text.codeUnitAt(tail))) {
+      tail++;
+    }
+    var end = tail == text.length ? tail : -1;
+    for (var at = tail - 1; end < 0 && at >= from; at--) {
+      if (_isLineTerminator(text.codeUnitAt(at))) end = at;
+    }
+    if (end < 0) continue;
+    parts.add(text.substring(partStart, start));
+    partStart = matchFloor = end;
+    from = end > from ? end : from;
+  }
+  parts.add(text.substring(partStart));
+  return parts;
+}
+
 /// Imports timing without implying that the user's file identifies a recording.
 List<SongDocument> decodeSongText(String input, {String? fileName}) {
-  if (utf8.encode(input).length > maxImportBytes) {
+  final inputBytes = utf8.encode(input);
+  if (inputBytes.length > maxImportBytes) {
     throw const FormatException('file_too_large');
   }
   final text = input.replaceFirst('\uFEFF', '');
@@ -238,11 +308,14 @@ List<SongDocument> decodeSongText(String input, {String? fileName}) {
   final title = fileName == null
       ? text.split('\n').first.trim()
       : paths.basenameWithoutExtension(fileName);
-  if (RegExp(r'^\s*\[\d+:\d{2}(?:\.\d+)?\]', multiLine: true).hasMatch(text) ||
+  if (RegExp(
+        _lineLead + r'\[\d+:\d{2}(?:\.\d+)?\]',
+        multiLine: true,
+      ).hasMatch(text) ||
       RegExp(r'<(?:\w+:)?tt(?:\s|>)').hasMatch(text)) {
     final id = newId();
     final rawTrack = parseTimingBytes(
-      utf8.encode(input),
+      inputBytes,
       sourceDocumentId: 'import:$id',
       format: text.trimLeft().startsWith('<') ? 'ttml' : 'lrc',
     );
@@ -250,28 +323,20 @@ List<SongDocument> decodeSongText(String input, {String? fileName}) {
     if (track.status == TimingStatus.invalid) {
       throw const FormatException('invalid_timing');
     }
-    final metadata = _lrcMetadata(text);
-    final lrcTitle = metadata.remove('_title')?.toString();
-    final artist = metadata.remove('_artist')?.toString() ?? '';
     return [
-      SongDocument(
-        id: id,
-        title: lrcTitle ?? title,
-        artist: artist,
-        body: track.sourceLyrics,
-        metadata: metadata,
-        timingTracks: [track],
-        activeTimingTrackId: track.status == TimingStatus.usable
-            ? track.id
-            : null,
-        extra: {'importedFile': fileName},
+      _timedImportSong(
+        id,
+        track,
+        tags: text,
+        fallbackTitle: title,
+        fileName: fileName,
       ),
     ];
   }
   if (text.trimLeft().startsWith('<')) {
     throw const FormatException('unsupported_file');
   }
-  final parts = text.split(RegExp(r'^\s*\{new_song\}\s*$', multiLine: true));
+  final parts = splitNewSongSections(text);
   if (parts.length > 1000) throw const FormatException('too_many_songs');
   return parts.where((part) => part.trim().isNotEmpty).map((part) {
     final song = ChordProCodec().decode(part);
@@ -332,31 +397,44 @@ List<SongDocument> decodePickedSongs(PickedDocument file) {
   if (track.sourceLyrics.trim().isEmpty) {
     throw const FormatException('empty_file');
   }
-  final metadata = _lrcMetadata(track.raw ?? '');
-  final title =
-      metadata.remove('_title')?.toString() ??
-      paths.basenameWithoutExtension(file.name);
-  final artist = metadata.remove('_artist')?.toString() ?? '';
   return [
-    SongDocument(
-      id: id,
-      title: title,
-      artist: artist,
-      body: track.sourceLyrics,
-      metadata: metadata,
-      timingTracks: [track],
-      activeTimingTrackId: track.status == TimingStatus.usable
-          ? track.id
-          : null,
-      extra: {'importedFile': file.name},
+    _timedImportSong(
+      id,
+      track,
+      tags: track.raw ?? '',
+      fallbackTitle: paths.basenameWithoutExtension(file.name),
+      fileName: file.name,
     ),
   ];
+}
+
+/// The song for one imported timing file; LRC tags in [tags] name it.
+SongDocument _timedImportSong(
+  String id,
+  TimingTrack track, {
+  required String tags,
+  required String fallbackTitle,
+  required String? fileName,
+}) {
+  final metadata = _lrcMetadata(tags);
+  final title = metadata.remove('_title')?.toString() ?? fallbackTitle;
+  final artist = metadata.remove('_artist')?.toString() ?? '';
+  return SongDocument(
+    id: id,
+    title: title,
+    artist: artist,
+    body: track.sourceLyrics,
+    metadata: metadata,
+    timingTracks: [track],
+    activeTimingTrackId: track.status == TimingStatus.usable ? track.id : null,
+    extra: {'importedFile': fileName},
+  );
 }
 
 Map<String, Object?> _lrcMetadata(String text) {
   String? tag(String name) {
     for (final match in RegExp(
-      r'^\s*\[' + name + r':([^\]]*)\]\s*$',
+      _lineLead + r'\[' + name + r':([^\]]*)\]\s*$',
       caseSensitive: false,
       multiLine: true,
     ).allMatches(text)) {
@@ -485,6 +563,10 @@ class VerseFileActions {
       });
     } on MissingPluginException {
       await Clipboard.setData(ClipboardData(text: text));
+    } on PlatformException {
+      // A platform that has the channel but cannot place HTML on the
+      // clipboard still copies the plain text.
+      await Clipboard.setData(ClipboardData(text: text));
     }
   }
 
@@ -542,19 +624,21 @@ class VerseFileActions {
     Uint8List bytes, {
     Rect? origin,
   }) => _share(
-    'Singbook-${DateTime.now().toIso8601String().substring(0, 10)}.lyrics-setlist',
+    _backupFileName(),
     bytes,
     'application/zip',
     'Singbook',
     origin,
   );
 
+  static String _backupFileName() =>
+      'Singbook-${DateTime.now().toIso8601String().substring(0, 10)}.lyrics-setlist';
+
   /// Writes a backup through the platform's save dialog so it can go to local
   /// storage or any document provider without a share target. Returns null
   /// when the user dismisses the dialog.
   Future<Uri?> saveBackupBytes(Uint8List bytes) => _saveFile(
-    fileName:
-        'Singbook-${DateTime.now().toIso8601String().substring(0, 10)}.lyrics-setlist',
+    fileName: _backupFileName(),
     bytes: bytes,
     mimeType: 'application/zip',
   );
@@ -605,11 +689,14 @@ class VerseFileActions {
         ),
       );
       // Where the platform reports the outcome the share sheet is finished and
-      // the copy can go. Android only reports that the chooser was launched, so
-      // the receiving app may still be reading it; the next share sweeps it.
-      if (result.status != ShareResultStatus.unavailable) {
-        await _deleteQuietly(dir);
-      }
+      // the copy can go. Android reports success as soon as a target is
+      // chosen, while the receiving app may still be reading the file (or
+      // nothing at all, `unavailable`): only a dismissed chooser is known to
+      // need no copy. Otherwise the next share or app start sweeps it.
+      final finished = _platform == TargetPlatform.android
+          ? result.status == ShareResultStatus.dismissed
+          : result.status != ShareResultStatus.unavailable;
+      if (finished) await _deleteQuietly(dir);
       return result;
     } catch (_) {
       await _deleteQuietly(dir);
@@ -823,12 +910,17 @@ String _songBodyRichHtml(SongDocument song) {
   return out.toString();
 }
 
-String songRichHtml(SongDocument song) =>
-    '<!doctype html><html><body><article>'
+/// Title, artist, metadata and body of one song, shared by the song and
+/// setlist documents.
+String _songRichHtmlContent(SongDocument song) =>
     '<h1>${_htmlEscape(song.title)}</h1>'
     '${song.artist.trim().isEmpty ? '' : '<p><strong>Artist:</strong> ${_htmlEscape(song.artist.trim())}</p>'}'
     '${_songMetadataLines(song).map((line) => '<p class="metadata">${_htmlEscape(line)}</p>').join()}'
-    '${_songBodyRichHtml(song)}'
+    '${_songBodyRichHtml(song)}';
+
+String songRichHtml(SongDocument song) =>
+    '<!doctype html><html><body><article>'
+    '${_songRichHtmlContent(song)}'
     '</article></body></html>';
 
 String setlistRichHtml(SetlistDocument setlist, List<SongDocument> songs) {
@@ -847,17 +939,7 @@ String setlistRichHtml(SetlistDocument setlist, List<SongDocument> songs) {
     out.write('</p>');
   }
   for (final song in ordered) {
-    out.write('<section><h1>${_htmlEscape(song.title)}</h1>');
-    if (song.artist.trim().isNotEmpty) {
-      out.write(
-        '<p><strong>Artist:</strong> ${_htmlEscape(song.artist.trim())}</p>',
-      );
-    }
-    for (final value in _songMetadataLines(song)) {
-      out.write('<p class="metadata">${_htmlEscape(value)}</p>');
-    }
-    out.write(_songBodyRichHtml(song));
-    out.write('</section>');
+    out.write('<section>${_songRichHtmlContent(song)}</section>');
   }
   out.write('</article></body></html>');
   return out.toString();
@@ -867,6 +949,10 @@ final _windowsReserved = RegExp(
   r'^(?:CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])$',
   caseSensitive: false,
 );
+
+/// Longest stem in UTF-8 bytes. Android, Linux and Apple file systems limit a
+/// name to 255 bytes; this leaves room for the extension.
+const _maxSafeNameBytes = 240;
 
 /// A file-name stem that is safe on Android, iOS and Windows: no separators or
 /// control characters, no reserved device names, no trailing dot/space, and
@@ -879,6 +965,23 @@ String safeName(String value) {
   var result = clean(value);
   if (result.runes.length > 100) {
     result = clean(String.fromCharCodes(result.runes.take(100)));
+  }
+  if (utf8.encode(result).length > _maxSafeNameBytes) {
+    final kept = <int>[];
+    var bytes = 0;
+    for (final rune in result.runes) {
+      final size = rune < 0x80
+          ? 1
+          : rune < 0x800
+          ? 2
+          : rune < 0x10000
+          ? 3
+          : 4;
+      if (bytes + size > _maxSafeNameBytes) break;
+      bytes += size;
+      kept.add(rune);
+    }
+    result = clean(String.fromCharCodes(kept));
   }
   if (result.isEmpty) return 'Singbook';
   // "CON" and "CON.cho" are both the console device on Windows.
@@ -1246,14 +1349,140 @@ Future<ImportedCollection> decodeLibraryPackageAsync(Uint8List bytes) =>
 /// frames. Falls back to the calling isolate only when the arguments cannot be
 /// sent to another isolate; errors thrown by [work] are rethrown unchanged.
 Future<T> _runInBackground<T>(FutureOr<T> Function() work) async {
+  final ({T? value, Object? error, StackTrace? stack}) outcome;
   try {
-    return await Isolate.run(work);
+    // The worker reports its own failure as data. An [ArgumentError] (which
+    // includes every [RangeError]) thrown by [work] must not be mistaken for
+    // an unsendable argument and repeat the whole job on the calling isolate.
+    outcome = await Isolate.run(() async {
+      try {
+        return (value: await work(), error: null, stack: null);
+      } catch (error, stack) {
+        return (value: null, error: error, stack: stack);
+      }
+    });
   } on IsolateSpawnException {
     return work();
   } on ArgumentError {
     return work();
   }
+  final error = outcome.error;
+  if (error != null) {
+    Error.throwWithStackTrace(error, outcome.stack ?? StackTrace.current);
+  }
+  return outcome.value as T;
 }
+
+/// [_runInBackground], for tests.
+@visibleForTesting
+Future<T> runInBackgroundForTest<T>(FutureOr<T> Function() work) =>
+    _runInBackground(work);
+
+/// Inputs below this size decode in less than a frame; an isolate start would
+/// cost more than it saves.
+const _inlineImportBytes = 128 * 1024;
+
+/// [decodeSongText] off the calling isolate for inputs large enough to matter.
+Future<List<SongDocument>> decodeSongTextAsync(
+  String input, {
+  String? fileName,
+}) async => input.length <= _inlineImportBytes
+    ? decodeSongText(input, fileName: fileName)
+    : _runInBackground(() => decodeSongText(input, fileName: fileName));
+
+/// [decodePickedSongs] off the calling isolate for large files.
+Future<List<SongDocument>> decodePickedSongsAsync(PickedDocument file) async =>
+    file.bytes.length <= _inlineImportBytes
+    ? decodePickedSongs(file)
+    : _runInBackground(() => decodePickedSongs(file));
+
+/// [decodeSetlistReferences] off the calling isolate for large files. Only the
+/// identity of each library song crosses the isolate boundary.
+Future<SetlistDocument> decodeSetlistReferencesAsync(
+  String text,
+  List<SongDocument> songs, {
+  String? fileName,
+}) async {
+  if (text.length <= _inlineImportBytes) {
+    return decodeSetlistReferences(text, songs, fileName: fileName);
+  }
+  final identities = [
+    for (final song in songs)
+      SongDocument(
+        id: song.id,
+        title: song.title,
+        artist: song.artist,
+        body: '',
+      ),
+  ];
+  return _runInBackground(
+    () => decodeSetlistReferences(text, identities, fileName: fileName),
+  );
+}
+
+/// [PickedDocument.lenientText] off the calling isolate for large files.
+Future<String> decodeImportedTextAsync(Uint8List bytes) async =>
+    bytes.length <= _inlineImportBytes
+    ? decodeImportedText(bytes)
+    : _runInBackground(() => decodeImportedText(bytes));
+
+/// Stable identity derived from [seed], shared by every import path.
+String stableImportId(String seed) =>
+    'imp-${sha256.convert(utf8.encode(seed)).toString().substring(0, 32)}';
+
+/// How an incoming song relates to the stored song with the same id: [same]
+/// content, or the stable id its conflicting copy is stored under.
+typedef ImportedSongVerdict = ({bool same, String? conflictId});
+
+List<ImportedSongVerdict> _compareImportedSongs(
+  List<(SongDocument existing, SongDocument incoming)> pairs,
+) {
+  final codec = ChordProCodec();
+  return [
+    for (final (existing, incoming) in pairs)
+      () {
+        final incomingText = codec.encode(incoming);
+        final opaque =
+            existing.extensionError != null || incoming.extensionError != null;
+        // An opaque x_verse block deliberately stays byte-for-byte intact
+        // when ChordPro cannot decode it. Compare its complete model too, or
+        // metadata held only in the local backup sidecar would be silently
+        // discarded.
+        final incomingJson = opaque ? jsonEncode(incoming.toJson()) : null;
+        if (codec.encode(existing) == incomingText &&
+            (!opaque || jsonEncode(existing.toJson()) == incomingJson)) {
+          return (same: true, conflictId: null);
+        }
+        return (
+          same: false,
+          // Derived from the content, so a repeated import finds its earlier
+          // copy instead of adding another.
+          conflictId: stableImportId(
+            'song:${incoming.id}:${incoming.extensionError == null ? incomingText : incomingJson}',
+          ),
+        );
+      }(),
+  ];
+}
+
+/// Compares each incoming song with the stored song of the same id. Every
+/// comparison serializes both documents, so more than a few run on a worker
+/// isolate instead of blocking frames.
+Future<List<ImportedSongVerdict>> compareImportedSongs(
+  List<(SongDocument existing, SongDocument incoming)> pairs,
+) async => pairs.length <= 4
+    ? _compareImportedSongs(pairs)
+    : _runInBackground(() => _compareImportedSongs(pairs));
+
+/// [decodeLibraryPackage] plus the SHA-256 of the package, both computed on
+/// the worker isolate.
+Future<({ImportedCollection collection, String packageHash})>
+decodeLibraryPackageWithHashAsync(Uint8List bytes) => _runInBackground(
+  () => (
+    collection: decodeLibraryPackage(bytes),
+    packageHash: sha256.convert(bytes).toString(),
+  ),
+);
 
 /// Validates central-directory sizes and file kinds before ZipDecoder can
 /// allocate entry content. This app never emits ZIP64 archives, so rejecting
@@ -1510,7 +1739,8 @@ SetlistDocument decodeSetlistReferences(
   List<SongDocument> songs, {
   String? fileName,
 }) {
-  if (utf8.encode(text).length > maxImportBytes ||
+  final textBytes = utf8.encode(text);
+  if (textBytes.length > maxImportBytes ||
       RegExp(r'<!\s*(?:DOCTYPE|ENTITY)', caseSensitive: false).hasMatch(text)) {
     throw const FormatException('invalid_xml');
   }
@@ -1518,25 +1748,33 @@ SetlistDocument decodeSetlistReferences(
   if (document.rootElement.name.local != 'set') {
     throw const FormatException('unsupported_file');
   }
+  // Indexed once: a scan of the library per entry is quadratic for a long
+  // setlist against a large library.
+  final byId = <String, List<SongDocument>>{};
+  final byTitle = <String, List<SongDocument>>{};
+  for (final song in songs) {
+    (byId[song.id] ??= []).add(song);
+    (byTitle[song.title] ??= []).add(song);
+  }
   final entries = <SetlistEntry>[];
   for (final group in document.findAllElements('slide_group')) {
     if (group.getAttribute('type') != 'song') continue;
     final reference = group.getElement('verse_reference');
     final id = reference?.getAttribute('songId');
     final artist = reference?.getElement('artist')?.innerText;
-    final exact = songs.where((s) => s.id == id).toList();
+    final exact = byId[id] ?? const <SongDocument>[];
     final matches = exact.isNotEmpty
         ? exact
-        : songs
-              .where(
-                (s) =>
-                    s.title == group.getAttribute('name') &&
-                    (artist == null || s.artist == artist),
-              )
-              .toList();
+        : [
+            for (final s
+                in byTitle[group.getAttribute('name')] ??
+                    const <SongDocument>[])
+              if (artist == null || s.artist == artist) s,
+          ];
     if (matches.length != 1) {
       throw const FormatException('missing_song_references');
     }
+    if (entries.length >= 10000) throw const FormatException('too_many_songs');
     final overrides = reference?.getElement('overrides')?.innerText;
     entries.add(
       SetlistEntry(
@@ -1546,11 +1784,10 @@ SetlistDocument decodeSetlistReferences(
       ),
     );
   }
-  if (entries.length > 10000) throw const FormatException('too_many_songs');
   return SetlistDocument(
     // Derived from the file text, so importing the same file twice yields the
     // same identity and the controller can recognise it.
-    id: 'osts-${sha256.convert(utf8.encode(text)).toString().substring(0, 32)}',
+    id: 'osts-${sha256.convert(textBytes).toString().substring(0, 32)}',
     name:
         document.rootElement.getAttribute('name') ??
         (fileName == null
@@ -2148,6 +2385,19 @@ List<pw.Widget> _pdfSongBody(
       lyricRows.addAll(rows);
       return;
     }
+    // An inseparable block taller than a page cannot be laid out at all.
+    // Only the headings nearest the row stay attached to it; a longer run
+    // (notes kept as many comment lines) flows across pages on its own.
+    if (pendingHeadings.length > _pdfAttachedHeadings) {
+      final detached = pendingHeadings.length - _pdfAttachedHeadings;
+      lyricRows.addAll(pendingHeadings.take(detached));
+      pendingHeadings.removeRange(0, detached);
+    }
+    if (pendingSpacing.length > _pdfAttachedSpacing) {
+      final detached = pendingSpacing.length - _pdfAttachedSpacing;
+      lyricRows.addAll(pendingSpacing.take(detached));
+      pendingSpacing.removeRange(0, detached);
+    }
     lyricRows.add(
       pw.Inseparable(
         child: pw.Column(
@@ -2165,19 +2415,25 @@ List<pw.Widget> _pdfSongBody(
   for (final line in lines) {
     final heading = line.directive ? _pdfSectionHeading(line.text) : null;
     if (heading != null) {
-      pendingHeadings.add(
-        pw.Padding(
-          padding: const pw.EdgeInsets.only(top: 5, bottom: 2),
-          child: pw.Text(
-            sanitizer.clean(heading, fonts.sansFaces),
-            style: fonts.sans(
-              fontSize: 8,
-              fontWeight: pw.FontWeight.bold,
-              color: muted,
+      // A very long note is cut like any other long row, so no single
+      // heading can outgrow the page either.
+      for (final text in _pdfTextChunks(
+        sanitizer.clean(heading, fonts.sansFaces),
+      )) {
+        pendingHeadings.add(
+          pw.Padding(
+            padding: const pw.EdgeInsets.only(top: 5, bottom: 2),
+            child: pw.Text(
+              text,
+              style: fonts.sans(
+                fontSize: 8,
+                fontWeight: pw.FontWeight.bold,
+                color: muted,
+              ),
             ),
           ),
-        ),
-      );
+        );
+      }
       continue;
     } else if (!line.directive &&
         line.text.trim().isEmpty &&
@@ -2300,6 +2556,10 @@ List<pw.Widget> _pdfSongBody(
 /// unbroken token needs splitting. Chorded lines are cut by measured width
 /// instead (see [_layoutChordedLine]).
 const _pdfTextChunkLength = 320;
+
+/// Headings and blank rows kept on one page with the row that follows them.
+const _pdfAttachedHeadings = 4;
+const _pdfAttachedSpacing = 8;
 
 List<String> _pdfTextChunks(String value) {
   if (value.length <= _pdfTextChunkLength) return [value];

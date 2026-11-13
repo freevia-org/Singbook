@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:flutter/foundation.dart' show TargetPlatform;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:singbook/application/file_actions.dart';
@@ -496,6 +497,7 @@ void main() {
       'PDF and backup shares clean up after a reported completion',
       () async {
         final actions = VerseFileActions(
+          platform: TargetPlatform.iOS,
           temporaryDirectory: () async => temp,
           shareFiles: (params) async {
             expect(
