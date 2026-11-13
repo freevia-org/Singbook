@@ -1,10 +1,17 @@
 import 'dart:convert';
 
 import '../../domain/models.dart';
-import '../core/common.dart' show meaningfulLyrics, plainToChordPro;
+import '../core/common.dart' show meaningfulLyrics, parseRows, plainToChordPro;
 import '../provider.dart';
 import 'common.dart'
-    show normalized, queryText, remoteChordPro, sanitizeExtraMetadata;
+    show
+        PacedQueue,
+        normalized,
+        queryText,
+        remoteChordPro,
+        sanitizeExtraMetadata,
+        sourceControlChars,
+        strictObject;
 
 /// Fixed first-party provider identities for the VocaDB family APIs.
 /// A database entry identifies a source song/version, not a confirmed
@@ -53,8 +60,7 @@ abstract class _VocaDbFamilyProvider
   final ProviderTransport transport;
   final Duration requestInterval;
   final Duration cacheLifetime;
-  Future<void> _queue = Future.value();
-  DateTime _next = DateTime.fromMillisecondsSinceEpoch(0);
+  late final _paced = PacedQueue(requestInterval);
   final _documents =
       <String, ({String raw, DateTime retrievedAt, DateTime expiresAt})>{};
 
@@ -73,33 +79,17 @@ abstract class _VocaDbFamilyProvider
 
   String get _host => _database.host;
 
-  Future<String> _get(Uri uri, CancellationToken? cancel) {
-    final result = _queue.then((_) async {
-      cancel?.throwIfCancelled();
-      final wait = _next.difference(DateTime.now());
-      if (wait > Duration.zero) await Future<void>.delayed(wait);
-      cancel?.throwIfCancelled();
-      try {
-        return await transport.getText(
-          uri,
-          maxBytes: _maxBytes,
-          allowedHosts: {_host},
-          cancel: cancel,
-        );
-      } finally {
-        _next = DateTime.now().add(requestInterval);
-      }
-    });
-    _queue = result.then<void>((_) {}, onError: (Object _) {});
-    return result;
-  }
+  Future<String> _get(Uri uri, CancellationToken? cancel) => _paced.run(
+    () => transport.getText(
+      uri,
+      maxBytes: _maxBytes,
+      allowedHosts: {_host},
+      cancel: cancel,
+    ),
+    cancel,
+  );
 
-  JsonMap _object(Object? value) {
-    if (value is! Map || value.keys.any((key) => key is! String)) {
-      throw const ProviderException('invalid_response');
-    }
-    return Map<String, dynamic>.from(value);
-  }
+  JsonMap _object(Object? value) => strictObject(value);
 
   JsonMap _decode(String raw) {
     try {
@@ -113,9 +103,7 @@ abstract class _VocaDbFamilyProvider
     if (value is! String ||
         value.trim().isEmpty ||
         value.length > max ||
-        RegExp(
-          r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f\u202a-\u202e\u2066-\u2069]',
-        ).hasMatch(value) ||
+        sourceControlChars.hasMatch(value) ||
         (!multiline && RegExp(r'[\t\r\n]').hasMatch(value))) {
       throw const ProviderException('invalid_response');
     }
@@ -248,16 +236,19 @@ abstract class _VocaDbFamilyProvider
         cancel,
       ),
     );
-    if (data['items'] is! List) {
+    final items = data['items'];
+    if (items is! List || items.length > 12) {
       throw const ProviderException('invalid_response');
     }
-    final rows = _rows(data['items'], max: 12);
-    final candidates = <SongCandidate>[];
-    for (final row in rows) {
-      if (row['deleted'] == true || row['mergedTo'] != null) continue;
-      candidates.add(_candidate(row));
-    }
-    return candidates;
+    // Rows are independent: one malformed hit is skipped, not fatal. A page
+    // whose remaining rows are all unusable is still a schema failure.
+    return parseRows(
+      items.where(
+        (row) =>
+            !(row is Map && (row['deleted'] == true || row['mergedTo'] != null)),
+      ),
+      (row) => _candidate(_object(row)),
+    );
   }
 
   bool _sameSelection(SongCandidate selected, SongCandidate found) {

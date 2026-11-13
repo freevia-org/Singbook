@@ -8,6 +8,7 @@ import '../../domain/edition_identity.dart' show explicitEditionsCompatible;
 import '../../domain/models.dart';
 import '../provider.dart';
 import '../sanitize.dart' show queryText, safeHttpsUrl, throwIfBlocked;
+import 'common.dart' show escapeChordPro, strictObject;
 
 /// LyricsPlus searches several catalogs, which need not identify the lyric
 /// winner. Its own IDs below identify title/artist lyric lookups, not recordings.
@@ -46,10 +47,7 @@ class LyricsPlusProvider implements LyricsProvider {
     return value.trim();
   }
 
-  static JsonMap _map(Object? value) {
-    if (value is! Map) throw const ProviderException('invalid_response');
-    return Map<String, dynamic>.from(value);
-  }
+  static JsonMap _map(Object? value) => strictObject(value);
 
   static String _id(String title, String artist) =>
       'work-${sha256.convert(utf8.encode(jsonEncode([_identity(title), _identity(artist)])))}';
@@ -97,11 +95,20 @@ class LyricsPlusProvider implements LyricsProvider {
     }
     final groups = <String, List<JsonMap>>{};
     for (final raw in rows) {
-      final row = _map(raw);
-      final title = _text(row['title']);
-      final artist = _text(row['artist']);
-      groups.putIfAbsent(_id(title, artist), () => []).add(row);
+      try {
+        final row = _map(raw);
+        final title = _text(row['title']);
+        final artist = _text(row['artist']);
+        groups.putIfAbsent(_id(title, artist), () => []).add(row);
+      } on ProviderException {
+        // Catalog rows are independent: skip one without a usable identity.
+      }
     }
+    if (rows.isNotEmpty && groups.isEmpty) {
+      // A populated response with no readable row is a schema problem.
+      throw const ProviderException('invalid_response');
+    }
+    final responseSha256 = sha256.convert(reply.bytes).toString();
     return [
       for (final entry in groups.entries)
         SongCandidate(
@@ -120,7 +127,7 @@ class LyricsPlusProvider implements LyricsProvider {
           extra: {
             'lyricsplus': {
               'catalogRows': entry.value,
-              'catalogResponseSha256': sha256.convert(reply.bytes).toString(),
+              'catalogResponseSha256': responseSha256,
               'catalogQuery': q,
               'catalogFieldsAreLookupHints': true,
             },
@@ -283,17 +290,13 @@ class LyricsPlusProvider implements LyricsProvider {
       reply.bytes,
       sourceDocumentId: '${candidate.identity}:apple:$platformId',
       sourceDurationMs: duration,
+      decoded: data,
     );
     final attribution =
         'LyricsPlus — Apple Music — $sourceUrl; underlying lyric rights unknown';
     final result = SourceResult(
       candidate: found,
-      body: track.sourceLyrics
-          .replaceAll('\\', '\\\\')
-          .replaceAll('[', r'\[')
-          .replaceAll(']', r'\]')
-          .replaceAll('{', r'\{')
-          .replaceAll('}', r'\}'),
+      body: escapeChordPro(track.sourceLyrics),
       metadata: facts,
       timingTracks: [track],
       attribution: attribution,
@@ -313,7 +316,8 @@ class LyricsPlusProvider implements LyricsProvider {
         'originalPayload': {
           'contentType': 'application/json',
           'encoding': 'utf-8',
-          'base64': base64Encode(reply.bytes),
+          // The parser already encoded these exact bytes once.
+          'base64': track.extra['rawBytesBase64'],
         },
         'lyricsplus': {
           ...?_mapOrNull(candidate.extra['lyricsplus']),
@@ -342,6 +346,10 @@ TimingTrack parseLyricsPlusV2(
   List<int> bytes, {
   required String sourceDocumentId,
   required int sourceDurationMs,
+
+  /// The already decoded JSON object of exactly these [bytes], if the caller
+  /// has one; it is read, never modified.
+  JsonMap? decoded,
 }) {
   const maximumMs = 604800000;
   Never invalid() =>
@@ -357,7 +365,7 @@ TimingTrack parseLyricsPlusV2(
   final JsonMap data;
   try {
     raw = utf8.decode(bytes);
-    data = LyricsPlusProvider._map(jsonDecode(raw));
+    data = decoded ?? LyricsPlusProvider._map(jsonDecode(raw));
   } catch (_) {
     invalid();
   }
