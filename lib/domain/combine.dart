@@ -30,6 +30,22 @@ import 'source_evidence.dart';
 import 'chart_arrangements.dart';
 import 'timing.dart' show timingOccurrenceMap;
 
+SourceResult? bestLyricsFallback(Iterable<SourceResult> sources) {
+  final candidates =
+      sources
+          .where((source) => plainLyrics(source.body).trim().isNotEmpty)
+          .toList()
+        ..sort((a, b) {
+          int rank(SourceResult source) =>
+              _norm(plainLyrics(source.body)).length.clamp(0, 100000) * 1000 +
+              lyricLines(source.body).length.clamp(0, 100) +
+              (source.hasChords ? 500 : 0);
+          final quality = rank(b).compareTo(rank(a));
+          return quality != 0 ? quality : a.id.compareTo(b.id);
+        });
+  return candidates.isEmpty ? null : candidates.first;
+}
+
 String _norm(String text) => normalizedEvidenceText(text);
 
 /// Whether [source], found as the same song, may lend display facts to
