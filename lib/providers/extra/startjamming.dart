@@ -3,7 +3,13 @@ import 'dart:convert';
 import '../../domain/arrangement.dart' show chordPattern;
 import '../../domain/models.dart';
 import '../core/common.dart' show clean, plainToChordPro;
-import '../extra/common.dart' show directive, isYoutubeId;
+import '../extra/common.dart'
+    show
+        directive,
+        isPlainHttpsUrl,
+        isYoutubeId,
+        normalizedIdentity,
+        strictObject;
 import '../provider.dart';
 
 /// Native read-only access to Start Jamming's documented Songbook endpoints.
@@ -81,8 +87,8 @@ class StartJammingProvider implements LyricsProvider {
     final results = <SongCandidate>[];
     for (final raw in rows) {
       cancel?.throwIfCancelled();
+      // The whole response was shape-checked when it entered the cache.
       final row = _map(raw);
-      _validateJsonShape(row);
       results.add(_candidateFromSearch(row));
     }
     return results;
@@ -99,8 +105,8 @@ class StartJammingProvider implements LyricsProvider {
     cancel?.throwIfCancelled();
     final selected = _candidateIdentity(candidate);
     final response = await _getJson(selected.apiUrl, cancel: cancel);
+    // The whole response was shape-checked when it entered the cache.
     final detail = _map(response.value);
-    _validateJsonShape(detail);
     final found = _validateDetail(detail, selected);
     final chart = _arrangement(
       detail['arrangement'],
@@ -706,10 +712,7 @@ class StartJammingProvider implements LyricsProvider {
     }
     final uri = Uri.tryParse(raw);
     if (uri == null ||
-        uri.scheme != 'https' ||
-        uri.host != _host ||
-        uri.userInfo.isNotEmpty ||
-        (uri.hasPort && uri.port != 443) ||
+        !isPlainHttpsUrl(uri, const {_host}) ||
         uri.fragment.isNotEmpty ||
         uri.pathSegments.length != 4 ||
         uri.pathSegments[0] != 'api' ||
@@ -731,10 +734,7 @@ class StartJammingProvider implements LyricsProvider {
     }
     final uri = Uri.tryParse(raw);
     if (uri == null ||
-        uri.scheme != 'https' ||
-        uri.host != _host ||
-        uri.userInfo.isNotEmpty ||
-        (uri.hasPort && uri.port != 443) ||
+        !isPlainHttpsUrl(uri, const {_host}) ||
         uri.fragment.isNotEmpty ||
         uri.query.isNotEmpty ||
         uri.path != '/song/$expectedId') {
@@ -834,14 +834,7 @@ class StartJammingProvider implements LyricsProvider {
     return id != null && isYoutubeId(id) ? uri.toString() : null;
   }
 
-  static JsonMap _map(Object? value) {
-    if (value is! Map) throw const ProviderException('invalid_response');
-    try {
-      return Map<String, dynamic>.from(value);
-    } catch (_) {
-      throw const ProviderException('invalid_response');
-    }
-  }
+  static JsonMap _map(Object? value) => strictObject(value);
 
   static bool _isFullChordToken(String value) {
     final source = '[$value]';
@@ -849,11 +842,7 @@ class StartJammingProvider implements LyricsProvider {
     return match != null && match.start == 0 && match.end == source.length;
   }
 
-  static String _normalize(String value) => value
-      .toLowerCase()
-      .replaceAll(RegExp("['‘’]"), '')
-      .replaceAll(RegExp(r'[^\p{L}\p{N}]+', unicode: true), ' ')
-      .trim();
+  static String _normalize(String value) => normalizedIdentity(value);
 
   static void _validateJsonShape(Object? root) {
     var entries = 0;

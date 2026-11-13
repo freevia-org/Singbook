@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:isolate';
 import 'dart:typed_data';
 import 'package:archive/archive.dart';
 import 'package:crypto/crypto.dart';
@@ -61,7 +62,7 @@ class RoswellMusicJamProvider implements LyricsProvider {
         allowedHosts: _hosts,
       );
       cancel?.throwIfCancelled();
-      final charts = _readArchive(bytes, cancel);
+      final charts = await _readArchiveInBackground(bytes);
       cancel?.throwIfCancelled();
       // Commit a complete validated catalog only. Failures do not poison the
       // previous cache, and expired data never masquerades as a healthy refresh.
@@ -82,6 +83,13 @@ class RoswellMusicJamProvider implements LyricsProvider {
     ]);
   }
 
+  /// Inflating and validating up to 1000 charts is kept off the calling
+  /// isolate. The closure captures only [bytes]; cancellation is checked by
+  /// the caller before and after.
+  static Future<Map<String, _RoswellChart>> _readArchiveInBackground(
+    Uint8List bytes,
+  ) => Isolate.run(() => _readArchive(bytes, null));
+
   static Uri _latestArchive(String page) {
     final links = <String, Uri>{};
     for (final anchor in parseHtml(page).querySelectorAll('a[href]')) {
@@ -90,10 +98,7 @@ class RoswellMusicJamProvider implements LyricsProvider {
       final parsed = Uri.tryParse(raw);
       if (parsed == null) continue;
       final url = songbooks.resolveUri(parsed);
-      if (url.scheme != 'https' ||
-          !_hosts.contains(url.host) ||
-          url.userInfo.isNotEmpty ||
-          (url.hasPort && url.port != 443) ||
+      if (!isPlainHttpsUrl(url, _hosts) ||
           url.fragment.isNotEmpty ||
           !RegExp(
             r'^/_files/archives/[A-Za-z0-9_-]+\.zip$',
@@ -325,12 +330,13 @@ class RoswellMusicJamProvider implements LyricsProvider {
   }) async {
     final text = queryText(query);
     final catalog = await _catalog(cancel);
+    final tokens = queryTokens(text);
     final matches =
         catalog.charts.entries
             .where(
-              (entry) => queryMatches(
-                text,
-                '${entry.value.title} ${entry.value.artist}',
+              (entry) => tokensMatch(
+                tokens,
+                normalized('${entry.value.title} ${entry.value.artist}'),
               ),
             )
             .toList()
