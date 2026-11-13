@@ -37,7 +37,7 @@ class EvidenceClaim {
   /// Each is clamped and their combined contribution is capped at +/-32.
   final Map<String, int> qualitySignals;
 
-  const EvidenceClaim({
+  EvidenceClaim({
     required this.field,
     required this.value,
     required this.sourceId,
@@ -55,9 +55,13 @@ class EvidenceClaim {
     this.qualitySignals = const {},
   });
 
-  String get normalizedValue => equivalenceKey?.trim().isNotEmpty == true
+  /// Computed once: ranking compares this inside sort comparators, and the
+  /// canonical form of a list or map value is a full JSON serialization.
+  late final String normalizedValue = equivalenceKey?.trim().isNotEmpty == true
       ? equivalenceKey!.trim()
       : _canonicalValue(value);
+
+  late final String _normalizedOrderKey = normalizedValue.toLowerCase();
 }
 
 String _canonicalValue(Object value) {
@@ -446,9 +450,7 @@ int _claimOrder(EvidenceClaim a, EvidenceClaim b) {
     a.contextCompatible.toString(),
   );
   if (order != 0) return order;
-  order = a.normalizedValue.toLowerCase().compareTo(
-    b.normalizedValue.toLowerCase(),
-  );
+  order = a._normalizedOrderKey.compareTo(b._normalizedOrderKey);
   if (order != 0) return order;
   order = a.providerId.compareTo(b.providerId);
   if (order != 0) return order;
