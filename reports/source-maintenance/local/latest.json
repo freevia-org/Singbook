@@ -2228,6 +2228,13 @@
       "tried": "Included in registry/catalog structural check",
       "resolved": false,
       "action": "Existing integration review remains"
+    },
+    {
+      "affected": "SB Integration handoff",
+      "reason": "Authorized MacMini remote environment offline",
+      "tried": "Two attempts to send exact base, head, files and check evidence",
+      "resolved": false,
+      "action": "Retry handoff when the remote environment is available"
     }
   ]
 }
