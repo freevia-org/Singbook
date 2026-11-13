@@ -256,50 +256,99 @@ class AccountSection extends StatelessWidget {
 
   Future<void> _chooseDriveFolder(BuildContext context) async {
     final l10n = AppLocalizations.of(context);
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.accountDriveFolderMoveTitle),
-        content: Text(l10n.accountDriveFolderMoveBody),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(l10n.actionCancel),
-          ),
-          FilledButton(
-            key: const ValueKey('account-drive-folder-confirm'),
-            onPressed: () => Navigator.of(context).pop(true),
-            child: Text(l10n.accountChooseDriveFolder),
-          ),
-        ],
-      ),
+    final confirmed = await _confirmAccountAction(
+      context,
+      title: l10n.accountDriveFolderMoveTitle,
+      body: l10n.accountDriveFolderMoveBody,
+      confirmKey: const ValueKey('account-drive-folder-confirm'),
+      confirmLabel: l10n.accountChooseDriveFolder,
     );
     if (confirmed == true) await controller.chooseSyncDriveFolder();
   }
 
   Future<void> _confirmSignOut(BuildContext context) async {
     final l10n = AppLocalizations.of(context);
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.accountSignOutTitle),
-        content: Text(l10n.accountSignOutBody),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(l10n.actionCancel),
-          ),
-          FilledButton(
-            key: const ValueKey('account-sign-out-confirm'),
-            onPressed: () => Navigator.of(context).pop(true),
-            child: Text(l10n.accountSignOut),
-          ),
-        ],
-      ),
+    final confirmed = await _confirmAccountAction(
+      context,
+      title: l10n.accountSignOutTitle,
+      body: l10n.accountSignOutBody,
+      confirmKey: const ValueKey('account-sign-out-confirm'),
+      confirmLabel: l10n.accountSignOut,
     );
     if (confirmed == true) await controller.signOutFromSync();
   }
 }
+
+Future<bool?> _confirmAccountAction(
+  BuildContext context, {
+  required String title,
+  required String body,
+  required Key confirmKey,
+  required String confirmLabel,
+}) => showDialog<bool>(
+  context: context,
+  builder: (context) => AlertDialog(
+    title: Text(title),
+    content: Text(body),
+    actions: [
+      TextButton(
+        onPressed: () => Navigator.of(context).pop(false),
+        child: Text(AppLocalizations.of(context).actionCancel),
+      ),
+      FilledButton(
+        key: confirmKey,
+        onPressed: () => Navigator.of(context).pop(true),
+        child: Text(confirmLabel),
+      ),
+    ],
+  ),
+);
+
+/// The second, explicit answer required before an action that deletes local
+/// content. Cancel is the focused default and the confirm button is styled as
+/// destructive.
+Future<bool?> _confirmDestructive(
+  BuildContext context, {
+  required Key dialogKey,
+  required Key cancelKey,
+  required Key confirmKey,
+  required String Function(AppLocalizations l10n) title,
+  required String Function(AppLocalizations l10n) body,
+  required String Function(AppLocalizations l10n) confirmLabel,
+}) => showDialog<bool>(
+  context: context,
+  barrierDismissible: false,
+  builder: (context) {
+    final l10n = AppLocalizations.of(context);
+    final scheme = Theme.of(context).colorScheme;
+    return AlertDialog(
+      key: dialogKey,
+      scrollable: true,
+      icon: Icon(Icons.warning_amber_rounded, color: scheme.error),
+      title: Text(title(l10n)),
+      content: Text(body(l10n)),
+      actions: [
+        TextButton(
+          key: cancelKey,
+          autofocus: true,
+          style: TextButton.styleFrom(minimumSize: const Size(64, 48)),
+          onPressed: () => Navigator.of(context).pop(false),
+          child: Text(l10n.actionCancel),
+        ),
+        FilledButton(
+          key: confirmKey,
+          style: FilledButton.styleFrom(
+            minimumSize: const Size(64, 48),
+            backgroundColor: scheme.error,
+            foregroundColor: scheme.onError,
+          ),
+          onPressed: () => Navigator.of(context).pop(true),
+          child: Text(confirmLabel(l10n)),
+        ),
+      ],
+    );
+  },
+);
 
 /// How the person answered a `remote_listing_suspicious` stop.
 enum RemoteDeletionsChoice { deleteHere, keepLocal }
@@ -378,39 +427,14 @@ Future<RemoteDeletionsChoice?> _askRemoteDeletions(
 );
 
 Future<bool?> _confirmRemoteDeletions(BuildContext context, int count) =>
-    showDialog<bool>(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        final l10n = AppLocalizations.of(context);
-        final scheme = Theme.of(context).colorScheme;
-        return AlertDialog(
-          key: const ValueKey('remote-deletions-confirm-dialog'),
-          scrollable: true,
-          icon: Icon(Icons.warning_amber_rounded, color: scheme.error),
-          title: Text(l10n.accountSuspiciousDeleteConfirmTitle(count)),
-          content: Text(l10n.accountSuspiciousDeleteConfirmBody),
-          actions: [
-            TextButton(
-              key: const ValueKey('remote-deletions-confirm-cancel'),
-              autofocus: true,
-              style: TextButton.styleFrom(minimumSize: const Size(64, 48)),
-              onPressed: () => Navigator.of(context).pop(false),
-              child: Text(l10n.actionCancel),
-            ),
-            FilledButton(
-              key: const ValueKey('remote-deletions-confirm'),
-              style: FilledButton.styleFrom(
-                minimumSize: const Size(64, 48),
-                backgroundColor: scheme.error,
-                foregroundColor: scheme.onError,
-              ),
-              onPressed: () => Navigator.of(context).pop(true),
-              child: Text(l10n.accountSuspiciousDeleteConfirmAction),
-            ),
-          ],
-        );
-      },
+    _confirmDestructive(
+      context,
+      dialogKey: const ValueKey('remote-deletions-confirm-dialog'),
+      cancelKey: const ValueKey('remote-deletions-confirm-cancel'),
+      confirmKey: const ValueKey('remote-deletions-confirm'),
+      title: (l10n) => l10n.accountSuspiciousDeleteConfirmTitle(count),
+      body: (l10n) => l10n.accountSuspiciousDeleteConfirmBody,
+      confirmLabel: (l10n) => l10n.accountSuspiciousDeleteConfirmAction,
     );
 
 /// Which way the person resolved an account change.
@@ -445,39 +469,14 @@ Future<AccountChangeChoice?> showAccountChangeDialog(
   return choice;
 }
 
-Future<bool?> _confirmReplace(BuildContext context) => showDialog<bool>(
-  context: context,
-  barrierDismissible: false,
-  builder: (context) {
-    final l10n = AppLocalizations.of(context);
-    final scheme = Theme.of(context).colorScheme;
-    return AlertDialog(
-      key: const ValueKey('account-replace-confirm-dialog'),
-      scrollable: true,
-      icon: Icon(Icons.warning_amber_rounded, color: scheme.error),
-      title: Text(l10n.accountReplaceConfirmTitle),
-      content: Text(l10n.accountReplaceConfirmBody),
-      actions: [
-        TextButton(
-          key: const ValueKey('account-replace-cancel'),
-          autofocus: true,
-          style: TextButton.styleFrom(minimumSize: const Size(64, 48)),
-          onPressed: () => Navigator.of(context).pop(false),
-          child: Text(l10n.actionCancel),
-        ),
-        FilledButton(
-          key: const ValueKey('account-replace-confirm'),
-          style: FilledButton.styleFrom(
-            minimumSize: const Size(64, 48),
-            backgroundColor: scheme.error,
-            foregroundColor: scheme.onError,
-          ),
-          onPressed: () => Navigator.of(context).pop(true),
-          child: Text(l10n.accountReplaceConfirmAction),
-        ),
-      ],
-    );
-  },
+Future<bool?> _confirmReplace(BuildContext context) => _confirmDestructive(
+  context,
+  dialogKey: const ValueKey('account-replace-confirm-dialog'),
+  cancelKey: const ValueKey('account-replace-cancel'),
+  confirmKey: const ValueKey('account-replace-confirm'),
+  title: (l10n) => l10n.accountReplaceConfirmTitle,
+  body: (l10n) => l10n.accountReplaceConfirmBody,
+  confirmLabel: (l10n) => l10n.accountReplaceConfirmAction,
 );
 
 Future<AccountChangeChoice?> _askAccountChange(BuildContext context) {
