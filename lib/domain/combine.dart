@@ -330,7 +330,11 @@ int? soundingTransposition(String a, Object? capoA, String b, Object? capoB) {
 }
 
 int _capoOf(Object? capo) {
-  final value = capo is num ? capo.toInt() : int.tryParse('${capo ?? ''}');
+  // A non-finite number (JSON `1e999` decodes to infinity) has no integer
+  // value; treat it like an unreadable capo instead of throwing.
+  final value = capo is num
+      ? (capo.isFinite ? capo.toInt() : null)
+      : int.tryParse('${capo ?? ''}');
   return value == null || value < 0 ? 0 : value % 12;
 }
 
@@ -1410,8 +1414,7 @@ _corroboratedArrangementKeyClaims(SongDocument song) {
   ];
   final claims = <String, ({String key, List<String> sourceIds})>{};
   final chordSourceIds =
-      (song.extra['chordSourceIds'] as List?)?.whereType<String>().toSet() ??
-      const <String>{};
+      _listOrEmpty(song.extra['chordSourceIds']).whereType<String>().toSet();
   for (final source in song.sources) {
     final contributingChartCreditMatches =
         source.extra['requiresLyricsAgreement'] == true &&
@@ -1609,8 +1612,7 @@ List<JsonMap> arrangementKeySetupDiagnostics(SongDocument song) {
         artist: song.artist,
       );
   final chordSourceIds =
-      (song.extra['chordSourceIds'] as List?)?.whereType<String>().toSet() ??
-      const <String>{};
+      _listOrEmpty(song.extra['chordSourceIds']).whereType<String>().toSet();
   final diagnostics = <JsonMap>[];
   for (final source in song.sources) {
     final declared = _keyIdentity(source.metadata['key']) != null
@@ -1695,7 +1697,7 @@ List<JsonMap> arrangementKeySetupDiagnostics(SongDocument song) {
     return null;
   }
   final ranked = jsonMap(song.extra['evidenceRanking']);
-  final rankedSourceIds = (ranked['claims'] as List? ?? const [])
+  final rankedSourceIds = _listOrEmpty(ranked['claims'])
       .whereType<Map>()
       .map((claim) => claim['sourceId'])
       .toSet();
@@ -1791,10 +1793,10 @@ bool _compatibleArrangementSetup(
     if (baseValue == null || donorValue == null) continue;
     final normalizedBase = baseValue is String
         ? baseValue.trim().toLowerCase()
-        : jsonEncode(baseValue);
+        : _valueKey(baseValue);
     final normalizedDonor = donorValue is String
         ? donorValue.trim().toLowerCase()
-        : jsonEncode(donorValue);
+        : _valueKey(donorValue);
     if (normalizedBase != normalizedDonor) return false;
   }
   return true;
@@ -4071,7 +4073,7 @@ SongDocument _combineSources(
           };
         }
       } else {
-        if (jsonEncode(metadata[entry.key]) == jsonEncode(entry.value)) {
+        if (_valueKey(metadata[entry.key]) == _valueKey(entry.value)) {
           if (entry.value is Map) {
             final contributors = mapEntryContributors.putIfAbsent(
               entry.key,
@@ -4110,7 +4112,7 @@ SongDocument _combineSources(
               ...metadata[entry.key] as List,
               ...entry.value as List,
             ])
-              if (seen.add(jsonEncode(value))) value,
+              if (seen.add(_valueKey(value))) value,
           ];
           if (values.length > (metadata[entry.key] as List).length) {
             metadata[entry.key] = values;
@@ -4147,8 +4149,8 @@ SongDocument _combineSources(
               current[mapEntry.key] = mapEntry.value;
               contributors[mapEntry.key] = {source.id};
               changed = true;
-            } else if (jsonEncode(current[mapEntry.key]) !=
-                jsonEncode(mapEntry.value)) {
+            } else if (_valueKey(current[mapEntry.key]) !=
+                _valueKey(mapEntry.value)) {
               final values =
                   conflicts.putIfAbsent(
                         conflictKey,
@@ -4464,6 +4466,22 @@ SongDocument _combineSources(
       : enriched;
 }
 
+/// A string that is equal for equal metadata values, for comparing and
+/// de-duplicating them. A value JSON cannot encode (an infinite number from
+/// an overflowing literal) compares by its text instead of throwing.
+String _valueKey(Object? value) {
+  try {
+    return jsonEncode(value);
+  } on Object {
+    return '$value';
+  }
+}
+
+/// Persisted and imported evidence is untrusted: a field expected to hold a
+/// list may hold anything. A value of another type reads as no entries.
+List<dynamic> _listOrEmpty(Object? value) =>
+    value is List ? value : const <dynamic>[];
+
 bool _hasMetadata(Object? value) =>
     value != null &&
     (value is! String || value.trim().isNotEmpty) &&
@@ -4485,7 +4503,7 @@ Object? _mergeMetadataFact(
     final seen = <String>{};
     return [
       for (final value in [...existing, ...incoming])
-        if (seen.add(jsonEncode(value))) value,
+        if (seen.add(_valueKey(value))) value,
     ];
   }
   if (existing is! Map || incoming is! Map) return incoming;
@@ -4660,22 +4678,24 @@ List<SourceResult> _retainedSourceEvidence(
   }
   for (final source in input) {
     final envelope = jsonMap(source.extra['discoveryEvidence']);
-    for (final raw
-        in source.extra['sourceEvidenceSnapshots'] as List? ?? const []) {
+    for (final raw in _listOrEmpty(source.extra['sourceEvidenceSnapshots'])) {
       payload(raw);
     }
-    for (final raw in envelope['acceptedPayloads'] as List? ?? const []) {
+    for (final raw in _listOrEmpty(envelope['acceptedPayloads'])) {
       payload(raw);
     }
-    for (final raw in envelope['rejectedPayloads'] as List? ?? const []) {
+    for (final raw in _listOrEmpty(envelope['rejectedPayloads'])) {
       final entry = jsonMap(raw);
-      payload(entry['payload'], rejectedReason: entry['reason'] as String?);
+      final reason = entry['reason'];
+      payload(
+        entry['payload'],
+        rejectedReason: reason is String ? reason : null,
+      );
     }
-    for (final raw
-        in source.extra['providerAlternatives'] as List? ?? const []) {
+    for (final raw in _listOrEmpty(source.extra['providerAlternatives'])) {
       payload(raw);
     }
-    for (final raw in envelope['searchCandidates'] as List? ?? const []) {
+    for (final raw in _listOrEmpty(envelope['searchCandidates'])) {
       final candidate = jsonMap(jsonMap(raw)['candidate']);
       if (candidate.isEmpty) continue;
       try {
@@ -4815,9 +4835,7 @@ bool _recordingKeyBound(
   JsonMap recording,
 ) {
   if (recording['recordingScope'] == 'song') return false;
-  final ids = (recording['ids'] as List? ?? const [])
-      .whereType<String>()
-      .toSet();
+  final ids = _listOrEmpty(recording['ids']).whereType<String>().toSet();
   if (ids.isEmpty) return false;
   if (recording['selectedIdentity'] == selected.identity) return true;
   final known = <String>{...selected.recordingIds.values};
@@ -5587,9 +5605,7 @@ EvidenceRanking _rankSourceCombination(
     final source = observation.source;
     final measured = observation.key;
     final ids =
-        (observation.data['ids'] as List? ?? const [])
-            .whereType<String>()
-            .toList()
+        _listOrEmpty(observation.data['ids']).whereType<String>().toList()
           ..sort();
     final identifierWitness =
         (observation.data['identifierSourceIds'] is List
@@ -5668,7 +5684,7 @@ EvidenceRanking _rankSourceCombination(
           'algorithmicModeUncertainty': -12,
           if (localTonicOnly) 'algorithmicLocalTonicOnly': -12,
           'recordingAgreement':
-              (((observation.data['ids'] as List? ?? const [])
+              ((_listOrEmpty(observation.data['ids'])
                               .whereType<String>()
                               .map((id) => id.toUpperCase())
                               .toSet()
@@ -5941,7 +5957,7 @@ void _applyRankedMetadata(SongDocument song, EvidenceRanking ranking) {
         ))
           if (option.claim.value is List)
             for (final item in option.claim.value as List)
-              if (seen.add(jsonEncode(item))) item,
+              if (seen.add(_valueKey(item))) item,
       ];
       sameValueSources.addAll(
         ranking.claims
