@@ -2,16 +2,17 @@
   "schemaVersion": 1,
   "catalogPath": "config/source-catalog-v10.json",
   "catalogRevision": 23,
-  "measuredAt": "2026-11-12T07:01:01.381527Z",
+  "measuredAt": "2026-11-13T07:04:50.468019Z",
   "offline": false,
   "summary": {
-    "transient_error": 6,
+    "transient_error": 5,
     "healthy": 19,
     "identity_mismatch": 1,
     "coverage_gap": 1,
     "import_only": 1,
     "retired": 1,
     "partial_coverage": 1,
+    "unavailable": 1,
     "disabled": 2
   },
   "sources": [
@@ -36,7 +37,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-12T06:58:07.535052Z",
+        "measuredAt": "2026-11-13T07:02:34.552224Z",
         "catalogPath": "config/source-catalog-v2.json",
         "catalogRevision": 13
       },
@@ -80,7 +81,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-12T06:58:07.535052Z",
+        "measuredAt": "2026-11-13T07:02:34.552224Z",
         "catalogPath": "config/source-catalog-v2.json",
         "catalogRevision": 13
       },
@@ -108,7 +109,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-12T06:58:07.535052Z",
+        "measuredAt": "2026-11-13T07:02:34.552224Z",
         "catalogPath": "config/source-catalog-v2.json",
         "catalogRevision": 13
       },
@@ -155,7 +156,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-12T06:58:07.535052Z",
+        "measuredAt": "2026-11-13T07:02:34.552224Z",
         "catalogPath": "config/source-catalog-v2.json",
         "catalogRevision": 13
       },
@@ -182,7 +183,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-12T06:58:07.535052Z",
+        "measuredAt": "2026-11-13T07:02:34.552224Z",
         "catalogPath": "config/source-catalog-v2.json",
         "catalogRevision": 13
       },
@@ -209,7 +210,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-12T06:58:07.535052Z",
+        "measuredAt": "2026-11-13T07:02:34.552224Z",
         "catalogPath": "config/source-catalog-v2.json",
         "catalogRevision": 13
       },
@@ -312,7 +313,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-12T06:58:07.535052Z",
+        "measuredAt": "2026-11-13T07:02:34.552224Z",
         "catalogPath": "config/source-catalog-v2.json",
         "catalogRevision": 13
       },
@@ -341,7 +342,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-12T06:58:07.535052Z",
+        "measuredAt": "2026-11-13T07:02:34.552224Z",
         "catalogPath": "config/source-catalog-v2.json",
         "catalogRevision": 13
       },
@@ -419,7 +420,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-12T06:58:07.535052Z",
+        "measuredAt": "2026-11-13T07:02:34.552224Z",
         "catalogPath": "config/source-catalog-v2.json",
         "catalogRevision": 13
       },
@@ -446,7 +447,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-12T06:58:07.535052Z",
+        "measuredAt": "2026-11-13T07:02:34.552224Z",
         "catalogPath": "config/source-catalog-v2.json",
         "catalogRevision": 13
       },
@@ -475,7 +476,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-12T06:58:07.535052Z",
+        "measuredAt": "2026-11-13T07:02:34.552224Z",
         "catalogPath": "config/source-catalog-v2.json",
         "catalogRevision": 13
       },
@@ -533,7 +534,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-12T06:58:07.535052Z",
+        "measuredAt": "2026-11-13T07:02:34.552224Z",
         "catalogPath": "config/source-catalog-v2.json",
         "catalogRevision": 13
       },
@@ -577,7 +578,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-12T06:58:07.535052Z",
+        "measuredAt": "2026-11-13T07:02:34.552224Z",
         "catalogPath": "config/source-catalog-v2.json",
         "catalogRevision": 13
       },
@@ -642,7 +643,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-12T06:58:07.535052Z",
+        "measuredAt": "2026-11-13T07:02:34.552224Z",
         "catalogPath": "config/source-catalog-v2.json",
         "catalogRevision": 13
       },
@@ -669,7 +670,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-12T06:58:07.535052Z",
+        "measuredAt": "2026-11-13T07:02:34.552224Z",
         "catalogPath": "config/source-catalog-v2.json",
         "catalogRevision": 13
       },
@@ -678,7 +679,7 @@
     {
       "id": "musicbrainz",
       "name": "MusicBrainz",
-      "status": "transient_error",
+      "status": "healthy",
       "coverage": {
         "status": "complete",
         "verifiedCapabilities": [
@@ -716,18 +717,33 @@
         },
         {
           "id": "exact-release-artwork-b5558485-68a8-4c6c-8283-60e6ae940e06",
-          "status": "transient_error",
-          "reason": "timeout",
-          "capability": "artwork",
-          "recordingMetadataAvailable": true,
-          "missingMetadataFields": [
-            "musicbrainzReleaseId",
+          "status": "healthy",
+          "providerId": "musicbrainz",
+          "bodyCharacters": 0,
+          "metadataFields": [
+            "album",
+            "artistCredits",
+            "artworkAssets",
             "artworkUrl",
-            "artworkAssets"
+            "durationSeconds",
+            "identityScope",
+            "isrcs",
+            "musicbrainzRecordingId",
+            "musicbrainzReleaseId",
+            "musicbrainzWorks",
+            "relationships",
+            "releases"
           ],
-          "missingIdentityFields": [
-            "album"
-          ]
+          "verifiedCapabilities": [
+            "artwork",
+            "metadata"
+          ],
+          "timingTrackCount": 0,
+          "timingGranularities": [],
+          "timingRawRetained": false,
+          "hasChords": false,
+          "artworkEvidence": "source_declared_location_and_provenance",
+          "artworkImageBytesValidated": false
         },
         {
           "id": "exact-release-artwork-b5d7d380-f43a-4c1f-a5de-694150b093ac",
@@ -764,7 +780,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-12T06:58:34.881888Z",
+        "measuredAt": "2026-11-13T07:02:49.920867Z",
         "catalogPath": "config/source-catalog-v10.json",
         "catalogRevision": 23
       },
@@ -773,80 +789,29 @@
     {
       "id": "wikidata",
       "name": "Wikidata",
-      "status": "healthy",
+      "status": "transient_error",
       "coverage": {
-        "status": "complete",
-        "verifiedCapabilities": [
+        "status": "partial",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
           "catalog",
           "metadata"
-        ],
-        "unverifiedCapabilities": []
+        ]
       },
       "probes": [
         {
           "id": "imagine-composition",
-          "status": "healthy",
-          "providerId": "wikidata",
-          "bodyCharacters": 0,
-          "metadataFields": [
-            "composers",
-            "description",
-            "durationClaims",
-            "externalIdentifiers",
-            "identityScope",
-            "key",
-            "keyAssertions",
-            "lyricists",
-            "partOf",
-            "performerIds",
-            "performers",
-            "publicationDates",
-            "types",
-            "wikidataId"
-          ],
-          "verifiedCapabilities": [
-            "catalog",
-            "metadata"
-          ],
-          "timingTrackCount": 0,
-          "timingGranularities": [],
-          "timingRawRetained": false,
-          "hasChords": false
+          "status": "transient_error",
+          "reason": "provider_busy"
         },
         {
           "id": "wonderwall-composition",
-          "status": "healthy",
-          "providerId": "wikidata",
-          "bodyCharacters": 0,
-          "metadataFields": [
-            "composers",
-            "description",
-            "durationClaims",
-            "externalIdentifiers",
-            "identityScope",
-            "key",
-            "keyAssertions",
-            "lyricists",
-            "partOf",
-            "performerIds",
-            "performers",
-            "publicationDates",
-            "types",
-            "wikidataId",
-            "wikimediaCommonsFile"
-          ],
-          "verifiedCapabilities": [
-            "catalog",
-            "metadata"
-          ],
-          "timingTrackCount": 0,
-          "timingGranularities": [],
-          "timingRawRetained": false,
-          "hasChords": false
+          "status": "transient_error",
+          "reason": "provider_busy"
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-12T06:58:07.535052Z",
+        "measuredAt": "2026-11-13T07:02:34.552224Z",
         "catalogPath": "config/source-catalog-v2.json",
         "catalogRevision": 13
       },
@@ -884,7 +849,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-12T06:58:07.535052Z",
+        "measuredAt": "2026-11-13T07:02:34.552224Z",
         "catalogPath": "config/source-catalog-v2.json",
         "catalogRevision": 13
       },
@@ -952,7 +917,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-12T06:58:07.535052Z",
+        "measuredAt": "2026-11-13T07:02:34.552224Z",
         "catalogPath": "config/source-catalog-v2.json",
         "catalogRevision": 13
       },
@@ -1040,7 +1005,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-12T06:58:07.535052Z",
+        "measuredAt": "2026-11-13T07:02:34.552224Z",
         "catalogPath": "config/source-catalog-v2.json",
         "catalogRevision": 13
       },
@@ -1114,7 +1079,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-12T06:58:07.535052Z",
+        "measuredAt": "2026-11-13T07:02:34.552224Z",
         "catalogPath": "config/source-catalog-v2.json",
         "catalogRevision": 13
       },
@@ -1228,7 +1193,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-12T06:58:07.535052Z",
+        "measuredAt": "2026-11-13T07:02:34.552224Z",
         "catalogPath": "config/source-catalog-v2.json",
         "catalogRevision": 13
       },
@@ -1394,7 +1359,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-12T06:59:17.494249Z",
+        "measuredAt": "2026-11-13T07:03:02.782305Z",
         "catalogPath": "config/source-catalog-v10.json",
         "catalogRevision": 23
       },
@@ -1510,7 +1475,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-12T06:59:32.736799Z",
+        "measuredAt": "2026-11-13T07:03:17.350648Z",
         "catalogPath": "config/source-catalog-v10.json",
         "catalogRevision": 23
       },
@@ -1576,7 +1541,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-12T06:59:49.463217Z",
+        "measuredAt": "2026-11-13T07:03:33.872708Z",
         "catalogPath": "config/source-catalog-v10.json",
         "catalogRevision": 23
       },
@@ -1644,7 +1609,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-12T07:00:01.894587Z",
+        "measuredAt": "2026-11-13T07:03:46.008855Z",
         "catalogPath": "config/source-catalog-v10.json",
         "catalogRevision": 23
       },
@@ -1714,7 +1679,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-12T07:00:12.026400Z",
+        "measuredAt": "2026-11-13T07:03:58.590685Z",
         "catalogPath": "config/source-catalog-v10.json",
         "catalogRevision": 23
       },
@@ -1723,32 +1688,68 @@
     {
       "id": "lyricsplus",
       "name": "LyricsPlus",
-      "status": "transient_error",
+      "status": "unavailable",
       "coverage": {
-        "status": "partial",
-        "verifiedCapabilities": [],
-        "unverifiedCapabilities": [
+        "status": "complete",
+        "verifiedCapabilities": [
           "catalog",
           "lineTiming",
           "lyrics",
           "metadata",
           "wordTiming"
-        ]
+        ],
+        "unverifiedCapabilities": []
       },
       "probes": [
         {
           "id": "billie-jean-michael-jackson",
-          "status": "transient_error",
-          "reason": "network"
+          "status": "unavailable",
+          "reason": "unavailable"
         },
         {
           "id": "creep-radiohead",
-          "status": "transient_error",
-          "reason": "network"
+          "status": "healthy",
+          "providerId": "lyricsplus",
+          "bodyCharacters": 803,
+          "metadataFields": [
+            "agents",
+            "album",
+            "appleMusicIds",
+            "artworkUrl",
+            "country",
+            "discCount",
+            "discNumber",
+            "documentKind",
+            "durationSeconds",
+            "genre",
+            "identityScope",
+            "language",
+            "mediaLinks",
+            "primaryGenreName",
+            "releaseDate",
+            "songParts",
+            "songWriters",
+            "trackCount",
+            "trackNumber",
+            "writers"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "lineTiming",
+            "lyrics",
+            "metadata",
+            "wordTiming"
+          ],
+          "timingTrackCount": 1,
+          "timingGranularities": [
+            "word"
+          ],
+          "timingRawRetained": true,
+          "hasChords": false
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-12T07:00:28.562746Z",
+        "measuredAt": "2026-11-13T07:04:11.846626Z",
         "catalogPath": "config/source-catalog-v10.json",
         "catalogRevision": 23
       },
@@ -1815,7 +1816,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-12T07:00:38.326395Z",
+        "measuredAt": "2026-11-13T07:04:22.629650Z",
         "catalogPath": "config/source-catalog-v10.json",
         "catalogRevision": 23
       },
@@ -1837,7 +1838,7 @@
       },
       "probes": [],
       "measurement": {
-        "measuredAt": "2026-11-12T07:00:45.192321Z",
+        "measuredAt": "2026-11-13T07:04:31.566824Z",
         "catalogPath": "config/source-catalog-v10.json",
         "catalogRevision": 23
       },
@@ -1867,7 +1868,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-12T07:00:51.640484Z",
+        "measuredAt": "2026-11-13T07:04:40.006140Z",
         "catalogPath": "config/source-catalog-v10.json",
         "catalogRevision": 23
       },
@@ -1925,7 +1926,7 @@
         }
       ],
       "measurement": {
-        "measuredAt": "2026-11-12T07:01:01.381527Z",
+        "measuredAt": "2026-11-13T07:04:50.468019Z",
         "catalogPath": "config/source-catalog-v10.json",
         "catalogRevision": 23
       },
@@ -1933,7 +1934,7 @@
     }
   ],
   "httpDiagnostics": {
-    "networkFailures": 5,
+    "networkFailures": 4,
     "hosts": {
       "api.genius.com": {
         "requests": 1,
@@ -2014,7 +2015,7 @@
       "musicbrainz.org": {
         "requests": 8,
         "statuses": {
-          "200": 7
+          "200": 8
         },
         "retryAfterSeconds": {},
         "databaseLag": {}
@@ -2080,12 +2081,16 @@
         "databaseLag": {}
       },
       "www.wikidata.org": {
-        "requests": 14,
+        "requests": 2,
         "statuses": {
-          "200": 14
+          "200": 2
         },
-        "retryAfterSeconds": {},
-        "databaseLag": {}
+        "retryAfterSeconds": {
+          "5": 2
+        },
+        "databaseLag": {
+          "8": 2
+        }
       },
       "api.amll.dev": {
         "requests": 4,
@@ -2127,10 +2132,18 @@
         "retryAfterSeconds": {},
         "databaseLag": {}
       },
-      "lyricsplus.prjktla.my.id": {
-        "requests": 2,
+      "itunes.apple.com": {
+        "requests": 1,
         "statuses": {
-          "530": 2
+          "200": 1
+        },
+        "retryAfterSeconds": {},
+        "databaseLag": {}
+      },
+      "lyricsplus.prjktla.my.id": {
+        "requests": 4,
+        "statuses": {
+          "200": 4
         },
         "retryAfterSeconds": {},
         "databaseLag": {}
@@ -2159,7 +2172,7 @@
       "exitCode": 0
     },
     "offline": {
-      "command": "dart run tool/source_maintenance.dart --catalog config/source-catalog-v10.json --offline --report artifacts/source-maintenance/2026-11-12-offline.json",
+      "command": "dart run tool/source_maintenance.dart --catalog config/source-catalog-v10.json --offline --report artifacts/source-maintenance/2026-11-13-offline.json",
       "exitCode": 0,
       "summary": {
         "offline_unverified": 28,
@@ -2184,7 +2197,7 @@
       "report": {
         "schemaVersion": 1,
         "runtime": "host-flutter-test",
-        "measuredAt": "2026-11-12T07:01:08.290220Z",
+        "measuredAt": "2026-11-13T07:05:00.318835Z",
         "userLibraryAccessed": false,
         "documentsRetained": false,
         "httpDiagnostics": {
@@ -2207,7 +2220,7 @@
             "sourceUrl": "https://ozbcoz.com/Songs/cp/get_pro.php?ID=2941&instr=guitar",
             "expectedTitle": "Wild Rover [C]",
             "expectedArtist": "The Dubliners",
-            "measuredAt": "2026-11-12T07:01:08.266246Z",
+            "measuredAt": "2026-11-13T07:05:00.287174Z",
             "nativeFilePickerTested": false,
             "status": "unverified",
             "reason": "network"
@@ -3242,7 +3255,7 @@
   ],
   "execution": {
     "runtime": "managed-cloud",
-    "baseSha": "6b5270e27be159974d1f4c2dc615599af962d799",
+    "baseSha": "e49ca46e290a142c5b2ed905f10eb3329cfb3b15",
     "sourceState": "clean detached current-public-main checkout; original checkout preserved",
     "environment": {
       "specRevision": "8",
@@ -3267,17 +3280,17 @@
           "--catalog",
           "config/source-catalog-v2.json",
           "--report",
-          "artifacts/source-maintenance/2026-11-12-v2-live.json"
+          "artifacts/source-maintenance/2026-11-13-v2-live.json"
         ],
         "source": null,
         "catalogPath": "config/source-catalog-v2.json",
         "exitCode": 1,
-        "reportPath": "artifacts/source-maintenance/2026-11-12-v2-live.json",
-        "measuredAt": "2026-11-12T06:58:07.535052Z",
+        "reportPath": "artifacts/source-maintenance/2026-11-13-v2-live.json",
+        "measuredAt": "2026-11-13T07:02:34.552224Z",
         "catalogRevision": 13,
         "summary": {
-          "transient_error": 4,
-          "healthy": 13,
+          "transient_error": 5,
+          "healthy": 12,
           "identity_mismatch": 1,
           "coverage_gap": 11,
           "import_only": 1,
@@ -3432,12 +3445,16 @@
               "databaseLag": {}
             },
             "www.wikidata.org": {
-              "requests": 14,
+              "requests": 2,
               "statuses": {
-                "200": 14
+                "200": 2
               },
-              "retryAfterSeconds": {},
-              "databaseLag": {}
+              "retryAfterSeconds": {
+                "5": 2
+              },
+              "databaseLag": {
+                "8": 2
+              }
             }
           }
         }
@@ -3452,24 +3469,24 @@
           "--source",
           "musicbrainz",
           "--report",
-          "artifacts/source-maintenance/2026-11-12-musicbrainz-live.json"
+          "artifacts/source-maintenance/2026-11-13-musicbrainz-live.json"
         ],
         "source": "musicbrainz",
         "catalogPath": "config/source-catalog-v10.json",
-        "exitCode": 1,
-        "reportPath": "artifacts/source-maintenance/2026-11-12-musicbrainz-live.json",
-        "measuredAt": "2026-11-12T06:58:34.881888Z",
+        "exitCode": 0,
+        "reportPath": "artifacts/source-maintenance/2026-11-13-musicbrainz-live.json",
+        "measuredAt": "2026-11-13T07:02:49.920867Z",
         "catalogRevision": 23,
         "summary": {
-          "transient_error": 1
+          "healthy": 1
         },
         "httpDiagnostics": {
-          "networkFailures": 1,
+          "networkFailures": 0,
           "hosts": {
             "musicbrainz.org": {
               "requests": 6,
               "statuses": {
-                "200": 5
+                "200": 6
               },
               "retryAfterSeconds": {},
               "databaseLag": {}
@@ -3487,13 +3504,13 @@
           "--source",
           "amll",
           "--report",
-          "artifacts/source-maintenance/2026-11-12-amll-live.json"
+          "artifacts/source-maintenance/2026-11-13-amll-live.json"
         ],
         "source": "amll",
         "catalogPath": "config/source-catalog-v10.json",
         "exitCode": 0,
-        "reportPath": "artifacts/source-maintenance/2026-11-12-amll-live.json",
-        "measuredAt": "2026-11-12T06:59:17.494249Z",
+        "reportPath": "artifacts/source-maintenance/2026-11-13-amll-live.json",
+        "measuredAt": "2026-11-13T07:03:02.782305Z",
         "catalogRevision": 23,
         "summary": {
           "healthy": 1
@@ -3522,13 +3539,13 @@
           "--source",
           "vocadb",
           "--report",
-          "artifacts/source-maintenance/2026-11-12-vocadb-live.json"
+          "artifacts/source-maintenance/2026-11-13-vocadb-live.json"
         ],
         "source": "vocadb",
         "catalogPath": "config/source-catalog-v10.json",
         "exitCode": 0,
-        "reportPath": "artifacts/source-maintenance/2026-11-12-vocadb-live.json",
-        "measuredAt": "2026-11-12T06:59:32.736799Z",
+        "reportPath": "artifacts/source-maintenance/2026-11-13-vocadb-live.json",
+        "measuredAt": "2026-11-13T07:03:17.350648Z",
         "catalogRevision": 23,
         "summary": {
           "healthy": 1
@@ -3557,13 +3574,13 @@
           "--source",
           "touhoudb",
           "--report",
-          "artifacts/source-maintenance/2026-11-12-touhoudb-live.json"
+          "artifacts/source-maintenance/2026-11-13-touhoudb-live.json"
         ],
         "source": "touhoudb",
         "catalogPath": "config/source-catalog-v10.json",
         "exitCode": 0,
-        "reportPath": "artifacts/source-maintenance/2026-11-12-touhoudb-live.json",
-        "measuredAt": "2026-11-12T06:59:49.463217Z",
+        "reportPath": "artifacts/source-maintenance/2026-11-13-touhoudb-live.json",
+        "measuredAt": "2026-11-13T07:03:33.872708Z",
         "catalogRevision": 23,
         "summary": {
           "healthy": 1
@@ -3592,13 +3609,13 @@
           "--source",
           "utaitedb",
           "--report",
-          "artifacts/source-maintenance/2026-11-12-utaitedb-live.json"
+          "artifacts/source-maintenance/2026-11-13-utaitedb-live.json"
         ],
         "source": "utaitedb",
         "catalogPath": "config/source-catalog-v10.json",
         "exitCode": 0,
-        "reportPath": "artifacts/source-maintenance/2026-11-12-utaitedb-live.json",
-        "measuredAt": "2026-11-12T07:00:01.894587Z",
+        "reportPath": "artifacts/source-maintenance/2026-11-13-utaitedb-live.json",
+        "measuredAt": "2026-11-13T07:03:46.008855Z",
         "catalogRevision": 23,
         "summary": {
           "healthy": 1
@@ -3627,13 +3644,13 @@
           "--source",
           "startjamming",
           "--report",
-          "artifacts/source-maintenance/2026-11-12-startjamming-live.json"
+          "artifacts/source-maintenance/2026-11-13-startjamming-live.json"
         ],
         "source": "startjamming",
         "catalogPath": "config/source-catalog-v10.json",
         "exitCode": 0,
-        "reportPath": "artifacts/source-maintenance/2026-11-12-startjamming-live.json",
-        "measuredAt": "2026-11-12T07:00:12.026400Z",
+        "reportPath": "artifacts/source-maintenance/2026-11-13-startjamming-live.json",
+        "measuredAt": "2026-11-13T07:03:58.590685Z",
         "catalogRevision": 23,
         "summary": {
           "healthy": 1
@@ -3662,24 +3679,32 @@
           "--source",
           "lyricsplus",
           "--report",
-          "artifacts/source-maintenance/2026-11-12-lyricsplus-live.json"
+          "artifacts/source-maintenance/2026-11-13-lyricsplus-live.json"
         ],
         "source": "lyricsplus",
         "catalogPath": "config/source-catalog-v10.json",
         "exitCode": 1,
-        "reportPath": "artifacts/source-maintenance/2026-11-12-lyricsplus-live.json",
-        "measuredAt": "2026-11-12T07:00:28.562746Z",
+        "reportPath": "artifacts/source-maintenance/2026-11-13-lyricsplus-live.json",
+        "measuredAt": "2026-11-13T07:04:11.846626Z",
         "catalogRevision": 23,
         "summary": {
-          "transient_error": 1
+          "unavailable": 1
         },
         "httpDiagnostics": {
           "networkFailures": 0,
           "hosts": {
-            "lyricsplus.prjktla.my.id": {
-              "requests": 2,
+            "itunes.apple.com": {
+              "requests": 1,
               "statuses": {
-                "530": 2
+                "200": 1
+              },
+              "retryAfterSeconds": {},
+              "databaseLag": {}
+            },
+            "lyricsplus.prjktla.my.id": {
+              "requests": 4,
+              "statuses": {
+                "200": 4
               },
               "retryAfterSeconds": {},
               "databaseLag": {}
@@ -3697,13 +3722,13 @@
           "--source",
           "chordsandtabs",
           "--report",
-          "artifacts/source-maintenance/2026-11-12-chordsandtabs-live.json"
+          "artifacts/source-maintenance/2026-11-13-chordsandtabs-live.json"
         ],
         "source": "chordsandtabs",
         "catalogPath": "config/source-catalog-v10.json",
         "exitCode": 0,
-        "reportPath": "artifacts/source-maintenance/2026-11-12-chordsandtabs-live.json",
-        "measuredAt": "2026-11-12T07:00:38.326395Z",
+        "reportPath": "artifacts/source-maintenance/2026-11-13-chordsandtabs-live.json",
+        "measuredAt": "2026-11-13T07:04:22.629650Z",
         "catalogRevision": 23,
         "summary": {
           "healthy": 1
@@ -3732,13 +3757,13 @@
           "--source",
           "pisni",
           "--report",
-          "artifacts/source-maintenance/2026-11-12-pisni-live.json"
+          "artifacts/source-maintenance/2026-11-13-pisni-live.json"
         ],
         "source": "pisni",
         "catalogPath": "config/source-catalog-v10.json",
         "exitCode": 0,
-        "reportPath": "artifacts/source-maintenance/2026-11-12-pisni-live.json",
-        "measuredAt": "2026-11-12T07:00:45.192321Z",
+        "reportPath": "artifacts/source-maintenance/2026-11-13-pisni-live.json",
+        "measuredAt": "2026-11-13T07:04:31.566824Z",
         "catalogRevision": 23,
         "summary": {
           "disabled": 1
@@ -3758,13 +3783,13 @@
           "--source",
           "openscorelieder",
           "--report",
-          "artifacts/source-maintenance/2026-11-12-openscorelieder-live.json"
+          "artifacts/source-maintenance/2026-11-13-openscorelieder-live.json"
         ],
         "source": "openscorelieder",
         "catalogPath": "config/source-catalog-v10.json",
         "exitCode": 0,
-        "reportPath": "artifacts/source-maintenance/2026-11-12-openscorelieder-live.json",
-        "measuredAt": "2026-11-12T07:00:51.640484Z",
+        "reportPath": "artifacts/source-maintenance/2026-11-13-openscorelieder-live.json",
+        "measuredAt": "2026-11-13T07:04:40.006140Z",
         "catalogRevision": 23,
         "summary": {
           "disabled": 1
@@ -3784,13 +3809,13 @@
           "--source",
           "acousticbrainz",
           "--report",
-          "artifacts/source-maintenance/2026-11-12-acousticbrainz-live.json"
+          "artifacts/source-maintenance/2026-11-13-acousticbrainz-live.json"
         ],
         "source": "acousticbrainz",
         "catalogPath": "config/source-catalog-v10.json",
         "exitCode": 0,
-        "reportPath": "artifacts/source-maintenance/2026-11-12-acousticbrainz-live.json",
-        "measuredAt": "2026-11-12T07:01:01.381527Z",
+        "reportPath": "artifacts/source-maintenance/2026-11-13-acousticbrainz-live.json",
+        "measuredAt": "2026-11-13T07:04:50.468019Z",
         "catalogRevision": 23,
         "summary": {
           "healthy": 1
@@ -3812,17 +3837,18 @@
     ],
     "overallLiveExitCode": 1,
     "scope": "Requested v2 invocation once; selected current-channel missing/changed entries only. Reused21 unchanged shared entries after exact configuration equality. MusicBrainz revision3/artwork probes measured separately. No repeated full live suite.",
-    "youtubeMode": "anonymous HTTP only; no private profile/session/consent flow"
+    "youtubeMode": "anonymous HTTP only; no private profile/session/consent flow",
+    "dartSdk": "3.12.2 stable linux_x64"
   },
   "comparison": {
     "priorCloud": {
       "path": "reports/source-maintenance/latest.json",
       "baseSha": "6b5270e27be159974d1f4c2dc615599af962d799",
-      "measuredAt": "2026-11-11T07:04:47.971316Z",
-      "ageSecondsAtCurrentMeasurement": 86173.41,
+      "measuredAt": "2026-11-12T07:01:01.381527Z",
+      "ageSecondsAtCurrentMeasurement": 86629.087,
       "summary": {
-        "transient_error": 5,
-        "healthy": 20,
+        "transient_error": 6,
+        "healthy": 19,
         "identity_mismatch": 1,
         "coverage_gap": 1,
         "import_only": 1,
@@ -3834,8 +3860,8 @@
     "priorLocal": {
       "path": "reports/source-maintenance/local/latest.json",
       "baseSha": "6b5270e27be159974d1f4c2dc615599af962d799",
-      "measuredAt": "2026-11-11T08:46:18.659277Z",
-      "ageSecondsAtCurrentMeasurement": 80082.722,
+      "measuredAt": "2026-11-12T06:59:47.460378Z",
+      "ageSecondsAtCurrentMeasurement": 86703.008,
       "summary": {
         "healthy": 23,
         "identity_mismatch": 1,
@@ -3848,12 +3874,12 @@
       }
     },
     "datedCloudHistory": {
-      "path": "reports/source-maintenance/2026-11-10T070520Z.json",
-      "measuredAt": "2026-11-10T07:05:20.180921Z",
-      "baseSha": "dc9d723452abf16670b0b8155448b72b8cc550e5",
+      "path": "reports/source-maintenance/2026-11-11T070447Z.json",
+      "measuredAt": "2026-11-11T07:04:47.971316Z",
+      "baseSha": "6b5270e27be159974d1f4c2dc615599af962d799",
       "summary": {
-        "transient_error": 10,
-        "healthy": 15,
+        "transient_error": 5,
+        "healthy": 20,
         "identity_mismatch": 1,
         "coverage_gap": 1,
         "import_only": 1,
@@ -4075,7 +4101,7 @@
         },
         {
           "id": "musicbrainz",
-          "status": "transient_error",
+          "status": "healthy",
           "coverage": {
             "status": "complete",
             "verifiedCapabilities": [
@@ -4088,14 +4114,14 @@
         },
         {
           "id": "wikidata",
-          "status": "transient_error",
+          "status": "healthy",
           "coverage": {
-            "status": "partial",
-            "verifiedCapabilities": [],
-            "unverifiedCapabilities": [
+            "status": "complete",
+            "verifiedCapabilities": [
               "catalog",
               "metadata"
-            ]
+            ],
+            "unverifiedCapabilities": []
           }
         },
         {
@@ -4185,41 +4211,41 @@
         },
         {
           "id": "vocadb",
-          "status": "transient_error",
+          "status": "healthy",
           "coverage": {
-            "status": "partial",
-            "verifiedCapabilities": [],
-            "unverifiedCapabilities": [
+            "status": "complete",
+            "verifiedCapabilities": [
               "catalog",
               "lyrics",
               "metadata"
-            ]
+            ],
+            "unverifiedCapabilities": []
           }
         },
         {
           "id": "touhoudb",
-          "status": "transient_error",
+          "status": "healthy",
           "coverage": {
-            "status": "partial",
-            "verifiedCapabilities": [],
-            "unverifiedCapabilities": [
+            "status": "complete",
+            "verifiedCapabilities": [
               "catalog",
               "lyrics",
               "metadata"
-            ]
+            ],
+            "unverifiedCapabilities": []
           }
         },
         {
           "id": "utaitedb",
-          "status": "transient_error",
+          "status": "healthy",
           "coverage": {
-            "status": "partial",
-            "verifiedCapabilities": [],
-            "unverifiedCapabilities": [
+            "status": "complete",
+            "verifiedCapabilities": [
               "catalog",
               "lyrics",
               "metadata"
-            ]
+            ],
+            "unverifiedCapabilities": []
           }
         },
         {
@@ -4356,7 +4382,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-12T06:58:07.535052Z",
+            "measuredAt": "2026-11-13T07:02:34.552224Z",
             "catalogPath": "config/source-catalog-v2.json",
             "catalogRevision": 13
           }
@@ -4381,7 +4407,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-11T07:03:24.699613Z",
+            "measuredAt": "2026-11-12T06:58:07.535052Z",
             "catalogPath": "config/source-catalog-v2.json",
             "catalogRevision": 13
           }
@@ -4439,7 +4465,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-12T06:58:07.535052Z",
+            "measuredAt": "2026-11-13T07:02:34.552224Z",
             "catalogPath": "config/source-catalog-v2.json",
             "catalogRevision": 13
           }
@@ -4470,7 +4496,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-11T07:03:24.699613Z",
+            "measuredAt": "2026-11-12T06:58:07.535052Z",
             "catalogPath": "config/source-catalog-v2.json",
             "catalogRevision": 13
           }
@@ -4525,7 +4551,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-12T06:58:07.535052Z",
+            "measuredAt": "2026-11-13T07:02:34.552224Z",
             "catalogPath": "config/source-catalog-v2.json",
             "catalogRevision": 13
           }
@@ -4551,7 +4577,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-11T07:03:24.699613Z",
+            "measuredAt": "2026-11-12T06:58:07.535052Z",
             "catalogPath": "config/source-catalog-v2.json",
             "catalogRevision": 13
           }
@@ -4611,7 +4637,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-12T06:58:07.535052Z",
+            "measuredAt": "2026-11-13T07:02:34.552224Z",
             "catalogPath": "config/source-catalog-v2.json",
             "catalogRevision": 13
           }
@@ -4642,7 +4668,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-11T07:03:24.699613Z",
+            "measuredAt": "2026-11-12T06:58:07.535052Z",
             "catalogPath": "config/source-catalog-v2.json",
             "catalogRevision": 13
           }
@@ -4696,7 +4722,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-12T06:58:07.535052Z",
+            "measuredAt": "2026-11-13T07:02:34.552224Z",
             "catalogPath": "config/source-catalog-v2.json",
             "catalogRevision": 13
           }
@@ -4721,7 +4747,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-11T07:03:24.699613Z",
+            "measuredAt": "2026-11-12T06:58:07.535052Z",
             "catalogPath": "config/source-catalog-v2.json",
             "catalogRevision": 13
           }
@@ -4773,7 +4799,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-12T06:58:07.535052Z",
+            "measuredAt": "2026-11-13T07:02:34.552224Z",
             "catalogPath": "config/source-catalog-v2.json",
             "catalogRevision": 13
           }
@@ -4798,7 +4824,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-11T07:03:24.699613Z",
+            "measuredAt": "2026-11-12T06:58:07.535052Z",
             "catalogPath": "config/source-catalog-v2.json",
             "catalogRevision": 13
           }
@@ -4874,7 +4900,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-12T06:58:07.535052Z",
+            "measuredAt": "2026-11-13T07:02:34.552224Z",
             "catalogPath": "config/source-catalog-v2.json",
             "catalogRevision": 13
           }
@@ -4927,7 +4953,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-11T07:03:24.699613Z",
+            "measuredAt": "2026-11-12T06:58:07.535052Z",
             "catalogPath": "config/source-catalog-v2.json",
             "catalogRevision": 13
           }
@@ -5005,7 +5031,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-12T06:58:07.535052Z",
+            "measuredAt": "2026-11-13T07:02:34.552224Z",
             "catalogPath": "config/source-catalog-v2.json",
             "catalogRevision": 13
           }
@@ -5032,7 +5058,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-11T07:03:24.699613Z",
+            "measuredAt": "2026-11-12T06:58:07.535052Z",
             "catalogPath": "config/source-catalog-v2.json",
             "catalogRevision": 13
           }
@@ -5106,7 +5132,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-12T06:58:07.535052Z",
+            "measuredAt": "2026-11-13T07:02:34.552224Z",
             "catalogPath": "config/source-catalog-v2.json",
             "catalogRevision": 13
           }
@@ -5155,7 +5181,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-11T07:03:24.699613Z",
+            "measuredAt": "2026-11-12T06:58:07.535052Z",
             "catalogPath": "config/source-catalog-v2.json",
             "catalogRevision": 13
           }
@@ -5227,7 +5253,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-12T06:58:07.535052Z",
+            "measuredAt": "2026-11-13T07:02:34.552224Z",
             "catalogPath": "config/source-catalog-v2.json",
             "catalogRevision": 13
           }
@@ -5252,7 +5278,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-11T07:03:24.699613Z",
+            "measuredAt": "2026-11-12T06:58:07.535052Z",
             "catalogPath": "config/source-catalog-v2.json",
             "catalogRevision": 13
           }
@@ -5302,7 +5328,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-12T06:58:07.535052Z",
+            "measuredAt": "2026-11-13T07:02:34.552224Z",
             "catalogPath": "config/source-catalog-v2.json",
             "catalogRevision": 13
           }
@@ -5329,7 +5355,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-11T07:03:24.699613Z",
+            "measuredAt": "2026-11-12T06:58:07.535052Z",
             "catalogPath": "config/source-catalog-v2.json",
             "catalogRevision": 13
           }
@@ -5393,7 +5419,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-12T06:58:07.535052Z",
+            "measuredAt": "2026-11-13T07:02:34.552224Z",
             "catalogPath": "config/source-catalog-v2.json",
             "catalogRevision": 13
           }
@@ -5426,7 +5452,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-11T07:03:24.699613Z",
+            "measuredAt": "2026-11-12T06:58:07.535052Z",
             "catalogPath": "config/source-catalog-v2.json",
             "catalogRevision": 13
           }
@@ -5488,7 +5514,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-12T06:58:07.535052Z",
+            "measuredAt": "2026-11-13T07:02:34.552224Z",
             "catalogPath": "config/source-catalog-v2.json",
             "catalogRevision": 13
           }
@@ -5519,7 +5545,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-11T07:03:24.699613Z",
+            "measuredAt": "2026-11-12T06:58:07.535052Z",
             "catalogPath": "config/source-catalog-v2.json",
             "catalogRevision": 13
           }
@@ -5589,7 +5615,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-12T06:58:07.535052Z",
+            "measuredAt": "2026-11-13T07:02:34.552224Z",
             "catalogPath": "config/source-catalog-v2.json",
             "catalogRevision": 13
           }
@@ -5630,7 +5656,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-11T07:03:24.699613Z",
+            "measuredAt": "2026-11-12T06:58:07.535052Z",
             "catalogPath": "config/source-catalog-v2.json",
             "catalogRevision": 13
           }
@@ -5694,7 +5720,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-12T06:58:07.535052Z",
+            "measuredAt": "2026-11-13T07:02:34.552224Z",
             "catalogPath": "config/source-catalog-v2.json",
             "catalogRevision": 13
           }
@@ -5719,7 +5745,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-11T07:03:24.699613Z",
+            "measuredAt": "2026-11-12T06:58:07.535052Z",
             "catalogPath": "config/source-catalog-v2.json",
             "catalogRevision": 13
           }
@@ -5748,47 +5774,6 @@
       {
         "id": "musicbrainz",
         "currentCloud": {
-          "id": "musicbrainz",
-          "status": "transient_error",
-          "coverage": {
-            "status": "complete",
-            "verifiedCapabilities": [
-              "artwork",
-              "catalog",
-              "metadata"
-            ],
-            "unverifiedCapabilities": []
-          },
-          "probes": [
-            {
-              "id": "wonderwall-oasis-recording",
-              "status": "healthy",
-              "verifiedCapabilities": [
-                "catalog",
-                "metadata"
-              ]
-            },
-            {
-              "id": "exact-release-artwork-b5558485-68a8-4c6c-8283-60e6ae940e06",
-              "status": "transient_error",
-              "reason": "timeout"
-            },
-            {
-              "id": "exact-release-artwork-b5d7d380-f43a-4c1f-a5de-694150b093ac",
-              "status": "healthy",
-              "verifiedCapabilities": [
-                "artwork",
-                "metadata"
-              ]
-            }
-          ],
-          "measurement": {
-            "measuredAt": "2026-11-12T06:58:34.881888Z",
-            "catalogPath": "config/source-catalog-v10.json",
-            "catalogRevision": 23
-          }
-        },
-        "priorCloud": {
           "id": "musicbrainz",
           "status": "healthy",
           "coverage": {
@@ -5827,7 +5812,48 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-11T07:03:37.261444Z",
+            "measuredAt": "2026-11-13T07:02:49.920867Z",
+            "catalogPath": "config/source-catalog-v10.json",
+            "catalogRevision": 23
+          }
+        },
+        "priorCloud": {
+          "id": "musicbrainz",
+          "status": "transient_error",
+          "coverage": {
+            "status": "complete",
+            "verifiedCapabilities": [
+              "artwork",
+              "catalog",
+              "metadata"
+            ],
+            "unverifiedCapabilities": []
+          },
+          "probes": [
+            {
+              "id": "wonderwall-oasis-recording",
+              "status": "healthy",
+              "verifiedCapabilities": [
+                "catalog",
+                "metadata"
+              ]
+            },
+            {
+              "id": "exact-release-artwork-b5558485-68a8-4c6c-8283-60e6ae940e06",
+              "status": "transient_error",
+              "reason": "timeout"
+            },
+            {
+              "id": "exact-release-artwork-b5d7d380-f43a-4c1f-a5de-694150b093ac",
+              "status": "healthy",
+              "verifiedCapabilities": [
+                "artwork",
+                "metadata"
+              ]
+            }
+          ],
+          "measurement": {
+            "measuredAt": "2026-11-12T06:58:34.881888Z",
             "catalogPath": "config/source-catalog-v10.json",
             "catalogRevision": 23
           }
@@ -5876,35 +5902,29 @@
         "id": "wikidata",
         "currentCloud": {
           "id": "wikidata",
-          "status": "healthy",
+          "status": "transient_error",
           "coverage": {
-            "status": "complete",
-            "verifiedCapabilities": [
+            "status": "partial",
+            "verifiedCapabilities": [],
+            "unverifiedCapabilities": [
               "catalog",
               "metadata"
-            ],
-            "unverifiedCapabilities": []
+            ]
           },
           "probes": [
             {
               "id": "imagine-composition",
-              "status": "healthy",
-              "verifiedCapabilities": [
-                "catalog",
-                "metadata"
-              ]
+              "status": "transient_error",
+              "reason": "provider_busy"
             },
             {
               "id": "wonderwall-composition",
-              "status": "healthy",
-              "verifiedCapabilities": [
-                "catalog",
-                "metadata"
-              ]
+              "status": "transient_error",
+              "reason": "provider_busy"
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-12T06:58:07.535052Z",
+            "measuredAt": "2026-11-13T07:02:34.552224Z",
             "catalogPath": "config/source-catalog-v2.json",
             "catalogRevision": 13
           }
@@ -5939,7 +5959,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-11T07:03:24.699613Z",
+            "measuredAt": "2026-11-12T06:58:07.535052Z",
             "catalogPath": "config/source-catalog-v2.json",
             "catalogRevision": 13
           }
@@ -5999,7 +6019,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-12T06:58:07.535052Z",
+            "measuredAt": "2026-11-13T07:02:34.552224Z",
             "catalogPath": "config/source-catalog-v2.json",
             "catalogRevision": 13
           }
@@ -6026,7 +6046,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-11T07:03:24.699613Z",
+            "measuredAt": "2026-11-12T06:58:07.535052Z",
             "catalogPath": "config/source-catalog-v2.json",
             "catalogRevision": 13
           }
@@ -6091,7 +6111,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-12T06:58:07.535052Z",
+            "measuredAt": "2026-11-13T07:02:34.552224Z",
             "catalogPath": "config/source-catalog-v2.json",
             "catalogRevision": 13
           }
@@ -6131,7 +6151,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-11T07:03:24.699613Z",
+            "measuredAt": "2026-11-12T06:58:07.535052Z",
             "catalogPath": "config/source-catalog-v2.json",
             "catalogRevision": 13
           }
@@ -6213,7 +6233,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-12T06:58:07.535052Z",
+            "measuredAt": "2026-11-13T07:02:34.552224Z",
             "catalogPath": "config/source-catalog-v2.json",
             "catalogRevision": 13
           }
@@ -6257,7 +6277,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-11T07:03:24.699613Z",
+            "measuredAt": "2026-11-12T06:58:07.535052Z",
             "catalogPath": "config/source-catalog-v2.json",
             "catalogRevision": 13
           }
@@ -6340,7 +6360,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-12T06:58:07.535052Z",
+            "measuredAt": "2026-11-13T07:02:34.552224Z",
             "catalogPath": "config/source-catalog-v2.json",
             "catalogRevision": 13
           }
@@ -6381,7 +6401,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-11T07:03:24.699613Z",
+            "measuredAt": "2026-11-12T06:58:07.535052Z",
             "catalogPath": "config/source-catalog-v2.json",
             "catalogRevision": 13
           }
@@ -6461,7 +6481,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-12T06:58:07.535052Z",
+            "measuredAt": "2026-11-13T07:02:34.552224Z",
             "catalogPath": "config/source-catalog-v2.json",
             "catalogRevision": 13
           }
@@ -6502,7 +6522,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-11T07:03:24.699613Z",
+            "measuredAt": "2026-11-12T06:58:07.535052Z",
             "catalogPath": "config/source-catalog-v2.json",
             "catalogRevision": 13
           }
@@ -6605,7 +6625,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-12T06:59:17.494249Z",
+            "measuredAt": "2026-11-13T07:03:02.782305Z",
             "catalogPath": "config/source-catalog-v10.json",
             "catalogRevision": 23
           }
@@ -6669,7 +6689,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-11T07:03:44.305851Z",
+            "measuredAt": "2026-11-12T06:59:17.494249Z",
             "catalogPath": "config/source-catalog-v10.json",
             "catalogRevision": 23
           }
@@ -6785,7 +6805,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-12T06:59:32.736799Z",
+            "measuredAt": "2026-11-13T07:03:17.350648Z",
             "catalogPath": "config/source-catalog-v10.json",
             "catalogRevision": 23
           }
@@ -6839,7 +6859,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-11T07:03:53.435899Z",
+            "measuredAt": "2026-11-12T06:59:32.736799Z",
             "catalogPath": "config/source-catalog-v10.json",
             "catalogRevision": 23
           }
@@ -6929,7 +6949,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-12T06:59:49.463217Z",
+            "measuredAt": "2026-11-13T07:03:33.872708Z",
             "catalogPath": "config/source-catalog-v10.json",
             "catalogRevision": 23
           }
@@ -6967,7 +6987,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-11T07:04:03.239085Z",
+            "measuredAt": "2026-11-12T06:59:49.463217Z",
             "catalogPath": "config/source-catalog-v10.json",
             "catalogRevision": 23
           }
@@ -7040,7 +7060,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-12T07:00:01.894587Z",
+            "measuredAt": "2026-11-13T07:03:46.008855Z",
             "catalogPath": "config/source-catalog-v10.json",
             "catalogRevision": 23
           }
@@ -7077,7 +7097,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-11T07:04:12.114947Z",
+            "measuredAt": "2026-11-12T07:00:01.894587Z",
             "catalogPath": "config/source-catalog-v10.json",
             "catalogRevision": 23
           }
@@ -7152,7 +7172,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-12T07:00:12.026400Z",
+            "measuredAt": "2026-11-13T07:03:58.590685Z",
             "catalogPath": "config/source-catalog-v10.json",
             "catalogRevision": 23
           }
@@ -7192,7 +7212,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-11T07:04:18.681581Z",
+            "measuredAt": "2026-11-12T07:00:12.026400Z",
             "catalogPath": "config/source-catalog-v10.json",
             "catalogRevision": 23
           }
@@ -7237,32 +7257,38 @@
         "id": "lyricsplus",
         "currentCloud": {
           "id": "lyricsplus",
-          "status": "transient_error",
+          "status": "unavailable",
           "coverage": {
-            "status": "partial",
-            "verifiedCapabilities": [],
-            "unverifiedCapabilities": [
+            "status": "complete",
+            "verifiedCapabilities": [
               "catalog",
               "lineTiming",
               "lyrics",
               "metadata",
               "wordTiming"
-            ]
+            ],
+            "unverifiedCapabilities": []
           },
           "probes": [
             {
               "id": "billie-jean-michael-jackson",
-              "status": "transient_error",
-              "reason": "network"
+              "status": "unavailable",
+              "reason": "unavailable"
             },
             {
               "id": "creep-radiohead",
-              "status": "transient_error",
-              "reason": "network"
+              "status": "healthy",
+              "verifiedCapabilities": [
+                "catalog",
+                "lineTiming",
+                "lyrics",
+                "metadata",
+                "wordTiming"
+              ]
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-12T07:00:28.562746Z",
+            "measuredAt": "2026-11-13T07:04:11.846626Z",
             "catalogPath": "config/source-catalog-v10.json",
             "catalogRevision": 23
           }
@@ -7294,7 +7320,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-11T07:04:23.742240Z",
+            "measuredAt": "2026-11-12T07:00:28.562746Z",
             "catalogPath": "config/source-catalog-v10.json",
             "catalogRevision": 23
           }
@@ -7365,7 +7391,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-12T07:00:38.326395Z",
+            "measuredAt": "2026-11-13T07:04:22.629650Z",
             "catalogPath": "config/source-catalog-v10.json",
             "catalogRevision": 23
           }
@@ -7406,7 +7432,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-11T07:04:30.983178Z",
+            "measuredAt": "2026-11-12T07:00:38.326395Z",
             "catalogPath": "config/source-catalog-v10.json",
             "catalogRevision": 23
           }
@@ -7465,7 +7491,7 @@
           },
           "probes": [],
           "measurement": {
-            "measuredAt": "2026-11-12T07:00:45.192321Z",
+            "measuredAt": "2026-11-13T07:04:31.566824Z",
             "catalogPath": "config/source-catalog-v10.json",
             "catalogRevision": 23
           }
@@ -7485,7 +7511,7 @@
           },
           "probes": [],
           "measurement": {
-            "measuredAt": "2026-11-11T07:04:35.412093Z",
+            "measuredAt": "2026-11-12T07:00:45.192321Z",
             "catalogPath": "config/source-catalog-v10.json",
             "catalogRevision": 23
           }
@@ -7531,7 +7557,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-12T07:00:51.640484Z",
+            "measuredAt": "2026-11-13T07:04:40.006140Z",
             "catalogPath": "config/source-catalog-v10.json",
             "catalogRevision": 23
           }
@@ -7559,7 +7585,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-11T07:04:39.941916Z",
+            "measuredAt": "2026-11-12T07:00:51.640484Z",
             "catalogPath": "config/source-catalog-v10.json",
             "catalogRevision": 23
           }
@@ -7617,7 +7643,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-12T07:01:01.381527Z",
+            "measuredAt": "2026-11-13T07:04:50.468019Z",
             "catalogPath": "config/source-catalog-v10.json",
             "catalogRevision": 23
           }
@@ -7649,7 +7675,7 @@
             }
           ],
           "measurement": {
-            "measuredAt": "2026-11-11T07:04:47.971316Z",
+            "measuredAt": "2026-11-12T07:01:01.381527Z",
             "catalogPath": "config/source-catalog-v10.json",
             "catalogRevision": 23
           }
@@ -7687,12 +7713,12 @@
   },
   "findings": {
     "environment": "Genius binding ready but request failed network; not not_configured. UG, anonymous YouTube Music and Chordie also network failures. No fresh CONNECT/origin status-only probe; historical CONNECT403 not substituted as actual current status.",
-    "external": "MusicBrainz recording probe and one exact-release artwork canary passed; other artwork canary timed out with recordingMetadataAvailable true. Current MusicBrainz phase: six attempts, fiveHTTP200, one network failure; no current503 observed. Aggregate capability coverage is not all-canary success. VocaDB/TouhouDB/UtaiteDB passed. Wikidata two canaries passed,14HTTP200. LyricsPlus twoHTTP530; proxy-vs-origin cause not independently determined. No additional live rechecks.",
-    "identity": "Lyrics.ovh HTTP200 search again failed expected_candidate_not_found. Prior Nov11 native diagnostic showed one exact title/artist/duration match but zero exact album matches; no repeat diagnostic, no guessed replacement or weakened edition check. BetterLyrics remains ambiguous_candidate.",
+    "external": "MusicBrainz all three current probes passed, eightHTTP200; prior artwork timeout recovered. Wikidata twoHTTP200 databaseLag8 RetryAfter5 responses; provider_busy, no metadata extraction verified. Regional providers passed. LyricsPlus fourHTTP200: Creep passed native catalog/lyrics/metadata/lineTiming/wordTiming, raw timing retained; Billie Jean unavailable. Aggregate capability coverage is not all-canary success. No current winner/cause inferred from generic unavailable, no additional rechecks.",
+    "identity": "Lyrics.ovh HTTP200 search again failed expected_candidate_not_found. Prior Nov11 native diagnostic showed one exact title/artist/duration match but zero exact album matches; no repeat diagnostic, guessed replacement or weakened edition check. BetterLyrics remains ambiguous_candidate.",
     "coverage": "19 healthy sources. Wikisource fileImport unverified. Disabled/retired/import_only remain explicit. AcousticBrainz estimates are submission facts, not verified musical truth. Artwork location/provenance does not prove image-byte decoding or rights. Timing belongs to tested arrangements/recordings only.",
     "catalogSelection": "Requested v2 path remains stale. Registry-missing gaps retained in phase summaries; supplemental current-catalog entries independently measured. No source or schedule changes.",
     "requestCounts": {
-      "liveAttempts": 95,
+      "liveAttempts": 86,
       "targetedDiagnosticAttempts": 0,
       "publisherImportAttempts": 1,
       "documentationToolReadsSeparate": true
@@ -7700,36 +7726,40 @@
     "lifecycle": "No activation, deactivation or retirement; no catalog revisions, secret provisioning or policy changes."
   },
   "discovery": {
-    "measuredDate": "2026-11-12",
+    "measuredDate": "2026-11-13",
     "existingEquivalentPRs": [
       {
         "number": 290,
-        "scope": "NØISE discovery",
+        "title": "Record NØISE chord catalog access constraints",
         "head": "d7de9cc6a6b8a389b9041146c7404aa742b06430"
       },
       {
-        "number": 261,
-        "scope": "Mutopia",
-        "head": "e4a3fd842494f3490f413bf854dce7f9d0e01d01"
-      },
-      {
         "number": 285,
-        "scope": "ABC/LyricsPlus evidence",
+        "title": "Record ABC tune-index access and LyricsPlus winner availability",
         "head": "d6f4293c945ade15a9b90aa5e15e5886f26bd046"
       },
       {
+        "number": 261,
+        "title": "Add Mutopia source candidate with persistent text-stream selection",
+        "head": "e4a3fd842494f3490f413bf854dce7f9d0e01d01"
+      },
+      {
         "number": 205,
-        "scope": "OpenScore",
+        "title": "Prepare OpenScore Lieder lyrics and composition metadata adapter",
         "head": "08915fe5fc2b27ea1876712039f0e1fcd1e23f74"
       }
     ],
+    "integratedDiscovery": {
+      "number": 307,
+      "candidate": "guitaradda",
+      "status": "deferred",
+      "mainHead": "e49ca46e290a142c5b2ed905f10eb3329cfb3b15"
+    },
     "primaryDocumentationReviewed": [
+      "https://guitaradda.com/chords/",
       "https://noise-app.com/docs/reference/api",
-      "https://noise-app.com/legal/content-rules",
-      "https://noise-app.com/docs/sharing/overview",
-      "https://www.mutopiaproject.org/legal.html",
-      "https://www.mutopiaproject.org/contribute.html"
+      "https://noise-app.com/legal/content-rules"
     ],
-    "decision": "Deferred; reuse existing equivalent PRs290/261/285/205. Primary docs still describe NØISE public anonymous read-only API (120requests/min/IP, Retry-After), chart-only content and per-work Mutopia licenses. Compatible identity/parser/import, rights and two full canaries remain required; no newly qualified source or validated extraction repair. No duplicate discovery/source edits."
+    "decision": "Reuse merged PR307 and open equivalent discovery PRs. GuitarAdda offers multilingual chord-library search but public API contract, permitted application access/storage/export, stable selection, attribution and two extraction canaries remain unestablished. NØISE public read-only API/content rules do not settle third-party storage/export permission. No source activation, duplicate discovery edits or speculative repair."
   }
 }
