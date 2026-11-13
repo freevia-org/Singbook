@@ -6,6 +6,7 @@ import 'package:crypto/crypto.dart';
 import 'package:flutter/services.dart';
 
 import 'desktop_oauth_flow.dart';
+import 'google_oauth_token_client.dart';
 import 'sync_protocol.dart';
 import 'windows_drive_file_access.dart';
 import 'windows_google_auth.dart';
@@ -49,9 +50,7 @@ class IOSPickerOAuthFlow extends DesktopOAuthFlow {
     bool folders = false,
   }) async {
     if (_busy) throw const SyncException('sync_in_progress');
-    if (!RegExp(
-      r'^[A-Za-z0-9_-]+\.apps\.googleusercontent\.com$',
-    ).hasMatch(clientId)) {
+    if (!isGoogleClientId(clientId, allowDots: false)) {
       throw const SyncException('not_configured');
     }
     _busy = true;
