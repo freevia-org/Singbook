@@ -226,15 +226,17 @@ class _SourceVersionBrowserState extends State<_SourceVersionPages> {
     }
   }
 
+  /// A version Save can act on: one with content to save, or one already in
+  /// the library that Save opens.
+  static bool _canOpen(SourceVersionData version) =>
+      version.isUsableVersion ||
+      version.hasLyrics ||
+      version.savedSongId != null;
+
   Future<void> _open() async {
     if (_saving) return;
     final version = _current[_visibleId];
-    if (version == null ||
-        (!version.isUsableVersion &&
-            !version.hasLyrics &&
-            version.savedSongId == null)) {
-      return;
-    }
+    if (version == null || !_canOpen(version)) return;
     // The highlighted version is the Save target even while its page slides
     // into view or the projected comparison is catching up.
     setState(() => _saving = true);
@@ -269,16 +271,7 @@ class _SourceVersionBrowserState extends State<_SourceVersionPages> {
       });
     }
     final version = _current[_visibleId];
-    final ready = _current.values
-        .where(
-          (version) =>
-              version.isUsableVersion ||
-              version.hasLyrics ||
-              version.savedSongId != null,
-        )
-        .map(versionSelectionId)
-        .toSet()
-        .length;
+    final ready = countDistinctVersions(_current.values, _canOpen);
     final checked = comparison.providerChecks
         .where((c) => c.state != 'pending')
         .length;
@@ -432,21 +425,8 @@ class _SourceVersionBrowserState extends State<_SourceVersionPages> {
                           icon: Icons.filter_alt_off_outlined,
                           title: l10n.emptyFiltered,
                           actionLabel: l10n.actionClear,
-                          onAction: () {
-                            widget.controller.setSearchFilter(
-                              'chordsOnly',
-                              false,
-                            );
-                            widget.controller.setSearchFilter(
-                              'timedOnly',
-                              false,
-                            );
-                            widget.controller.setSearchFilter('language', '');
-                            widget.controller.setSearchFilter(
-                              'durationBucket',
-                              '',
-                            );
-                          },
+                          onAction: () =>
+                              clearVersionFilters(widget.controller),
                         )
                       else
                         Text(
@@ -551,7 +531,9 @@ class _SourceVersionBrowserState extends State<_SourceVersionPages> {
                       ? 'save-open-lyrics'
                       : 'preview-save-open',
                 ),
-                onPressed: _open,
+                onPressed: _saving || (version != null && _canOpen(version))
+                    ? _open
+                    : null,
                 icon: _saving
                     ? const SizedBox(
                         width: 18,
@@ -606,6 +588,59 @@ class _VersionDocumentState extends State<_VersionDocument>
   final _lineKeys = <String, GlobalKey>{};
   @override
   bool get wantKeepAlive => true;
+
+  // Every provider update rebuilds each page that is kept alive. The parsed
+  // lines of a version keep their identity between those updates, so the same
+  // widgets are handed back and Flutter leaves their elements untouched.
+  List<LyricLineData>? _builtFrom;
+  bool? _builtShowChords;
+  double? _builtFontSize;
+  List<LyricLineData> _notes = const [];
+  List<Widget> _lyricWidgets = const [];
+  List<Widget> _noteWidgets = const [];
+  bool _hasBody = false;
+
+  void _buildLineWidgets(List<LyricLineData> lines) {
+    if (identical(_builtFrom, lines) &&
+        _builtShowChords == widget.showChords &&
+        _builtFontSize == widget.fontSize) {
+      return;
+    }
+    _builtFrom = lines;
+    _builtShowChords = widget.showChords;
+    _builtFontSize = widget.fontSize;
+    _notes = lines.where((line) => line.isArrangementNote).toList();
+    final lyrics = lines.where((line) => !line.isArrangementNote).toList();
+    _hasBody = lyrics.any(
+      (line) => line.text.trim().isNotEmpty || line.chords.isNotEmpty,
+    );
+    _lyricWidgets = [
+      for (var index = 0; index < lyrics.length; index++)
+        _PreviewLine(
+          key: _lineKeys.putIfAbsent(lyrics[index].id, GlobalKey.new),
+          line: lyrics[index],
+          instrumentalBlank:
+              lyrics[index].isBlank &&
+              lyrics[index].section == null &&
+              ((index > 0 &&
+                      lyrics[index - 1].text.trim().isEmpty &&
+                      lyrics[index - 1].chords.isNotEmpty) ||
+                  (index + 1 < lyrics.length &&
+                      lyrics[index + 1].text.trim().isEmpty &&
+                      lyrics[index + 1].chords.isNotEmpty)),
+          showChords: widget.showChords,
+          fontSize: widget.fontSize,
+        ),
+    ];
+    _noteWidgets = [
+      for (final line in _notes)
+        _PreviewLine(
+          line: line,
+          showChords: widget.showChords,
+          fontSize: widget.fontSize,
+        ),
+    ];
+  }
 
   @override
   void initState() {
@@ -699,12 +734,9 @@ class _VersionDocumentState extends State<_VersionDocument>
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-    final lines = _lines;
-    final notes = lines.where((line) => line.isArrangementNote).toList();
-    final lyrics = lines.where((line) => !line.isArrangementNote).toList();
-    final hasBody = lyrics.any(
-      (line) => line.text.trim().isNotEmpty || line.chords.isNotEmpty,
-    );
+    _buildLineWidgets(_lines);
+    final notes = _notes;
+    final hasBody = _hasBody;
     // The version's own release comes first; the selected song fills gaps.
     final album = version.album?.trim().isNotEmpty == true
         ? version.album!
@@ -818,34 +850,12 @@ class _VersionDocumentState extends State<_VersionDocument>
                 style: theme.textTheme.bodySmall?.copyWith(color: colors.error),
               ),
             if (!hasBody) Text(l10n.searchPreviewUnavailable),
-            for (var index = 0; index < lyrics.length; index++)
-              _PreviewLine(
-                key: _lineKeys.putIfAbsent(lyrics[index].id, GlobalKey.new),
-                line: lyrics[index],
-                instrumentalBlank:
-                    lyrics[index].isBlank &&
-                    lyrics[index].section == null &&
-                    ((index > 0 &&
-                            lyrics[index - 1].text.trim().isEmpty &&
-                            lyrics[index - 1].chords.isNotEmpty) ||
-                        (index + 1 < lyrics.length &&
-                            lyrics[index + 1].text.trim().isEmpty &&
-                            lyrics[index + 1].chords.isNotEmpty)),
-                showChords: widget.showChords,
-                fontSize: widget.fontSize,
-              ),
+            ..._lyricWidgets,
             if (notes.isNotEmpty)
               ExpansionTile(
                 key: ValueKey('preview-notes-${version.id}'),
                 title: Text(l10n.searchArrangementNotes),
-                children: [
-                  for (final line in notes)
-                    _PreviewLine(
-                      line: line,
-                      showChords: widget.showChords,
-                      fontSize: widget.fontSize,
-                    ),
-                ],
+                children: _noteWidgets,
               ),
           ],
         ),

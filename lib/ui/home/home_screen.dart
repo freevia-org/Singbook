@@ -7,6 +7,7 @@ import '../format.dart';
 import '../library_actions.dart';
 import '../library/songs_screen.dart';
 import '../library/collation.dart';
+import '../song_search.dart';
 import '../verse_ui_state.dart';
 import '../widgets/verse_components.dart';
 import 'source_preview_screen.dart';
@@ -158,17 +159,42 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
     return const [];
   }
 
+  // The header shows these results as counts on every build, including the
+  // rebuilds that scrolling and unrelated notifications cause. They are
+  // recomputed only when the list, the query or a filter changes.
+  List<RecentItemData>? _cachedHistory;
+  Object? _historyRecent;
+  String? _historyQuery;
+  bool? _historyFavoritesOnly;
+  int? _cachedLibraryCount;
+  Object? _librarySongs;
+  String? _libraryQuery;
+  bool? _libraryFavoritesOnly, _libraryConflictFilter;
+
   List<RecentItemData> _filteredHistoryItems(HomeListMode mode) {
-    final query = foldForSearch(widget.state.query);
+    if (mode != HomeListMode.recent) return const [];
+    final state = widget.state;
+    final cached = _cachedHistory;
+    if (cached != null &&
+        identical(_historyRecent, state.recent) &&
+        _historyQuery == state.query &&
+        _historyFavoritesOnly == state.favoritesOnly) {
+      return cached;
+    }
+    _historyRecent = state.recent;
+    _historyQuery = state.query;
+    _historyFavoritesOnly = state.favoritesOnly;
+    final query = foldForSearch(state.query);
     final items = _historyItemsForMode(mode);
-    if (query.isEmpty) return items;
-    return items
-        .where(
-          (item) => foldForSearch(
-            '${item.title} ${item.artist} ${item.subtitle}',
-          ).contains(query),
-        )
-        .toList();
+    return _cachedHistory = query.isEmpty
+        ? items
+        : items
+              .where(
+                (item) => foldForSearch(
+                  '${item.title} ${item.artist} ${item.subtitle}',
+                ).contains(query),
+              )
+              .toList();
   }
 
   List<_HistoryGroup> _groups(AppLocalizations l10n) {
@@ -447,17 +473,27 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
   );
 
   int _libraryCount(VerseUiState state) {
+    final cached = _cachedLibraryCount;
+    if (cached != null &&
+        identical(_librarySongs, state.songs) &&
+        _libraryQuery == state.query &&
+        _libraryFavoritesOnly == state.favoritesOnly &&
+        _libraryConflictFilter == state.songsConflictFilter) {
+      return cached;
+    }
+    _librarySongs = state.songs;
+    _libraryQuery = state.query;
+    _libraryFavoritesOnly = state.favoritesOnly;
+    _libraryConflictFilter = state.songsConflictFilter;
     final query = foldForSearch(state.query);
-    return state.songs
+    return _cachedLibraryCount = state.songs
         .where(
           (song) =>
               (!state.songsConflictFilter || song.isConflictCopy) &&
               (state.songsConflictFilter ||
                   !state.favoritesOnly ||
                   song.favorite) &&
-              foldForSearch(
-                '${song.title} ${song.artist} ${song.album ?? ''}',
-              ).contains(query),
+              songMatchesQuery(song, query),
         )
         .length;
   }
@@ -899,11 +935,7 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
               ),
               trailing: Tooltip(
                 message: l10n.searchViewVersions,
-                child: Icon(
-                  Directionality.of(context) == TextDirection.rtl
-                      ? Icons.chevron_left_rounded
-                      : Icons.chevron_right_rounded,
-                ),
+                child: Icon(forwardChevron(context)),
               ),
               onTap: () => _openReference(item),
             );
@@ -947,14 +979,11 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
               final comparison = state.comparison;
               final ready = comparison == null
                   ? 0
-                  : comparisonVersions(comparison)
-                        .where(
-                          (version) =>
-                              version.canSave || version.savedSongId != null,
-                        )
-                        .map(versionSelectionId)
-                        .toSet()
-                        .length;
+                  : countDistinctVersions(
+                      comparisonVersions(comparison),
+                      (version) =>
+                          version.canSave || version.savedSongId != null,
+                    );
               return Column(
                 children: [
                   Padding(
@@ -989,21 +1018,8 @@ class _VerseHomeScreenState extends State<VerseHomeScreen> {
                         _searchFilters(context, l10n, state),
                         TextButton(
                           key: const ValueKey('version-filters-clear'),
-                          onPressed: () {
-                            widget.controller.setSearchFilter(
-                              'chordsOnly',
-                              false,
-                            );
-                            widget.controller.setSearchFilter(
-                              'timedOnly',
-                              false,
-                            );
-                            widget.controller.setSearchFilter('language', '');
-                            widget.controller.setSearchFilter(
-                              'durationBucket',
-                              '',
-                            );
-                          },
+                          onPressed: () =>
+                              clearVersionFilters(widget.controller),
                           child: Text(l10n.actionClear),
                         ),
                       ],

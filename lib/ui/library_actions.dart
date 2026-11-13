@@ -6,7 +6,9 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../l10n/generated/app_localizations.dart';
 import 'format.dart';
+import 'library/collation.dart' show foldForSearch;
 import 'localized_labels.dart';
+import 'song_search.dart';
 import 'verse_ui_state.dart';
 
 /// Menu, dialog and sheet flows shared by the song, setlist and reader
@@ -328,13 +330,10 @@ class _SongPickerSheetState extends State<_SongPickerSheet> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final mediaQuery = MediaQuery.of(context);
-    final needle = _query.text.trim().toLowerCase();
+    // The same accent-insensitive match as the song lists.
+    final needle = foldForSearch(_query.text);
     final songs = widget.songs
-        .where(
-          (song) => '${song.title} ${song.artist} ${song.album ?? ''}'
-              .toLowerCase()
-              .contains(needle),
-        )
+        .where((song) => songMatchesQuery(song, needle))
         .toList();
     final availableHeight =
         (mediaQuery.size.height - mediaQuery.viewInsets.bottom).clamp(

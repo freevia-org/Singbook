@@ -20,7 +20,9 @@ import '../domain/source_contributions.dart';
 import 'format.dart';
 import 'library/collation.dart' show foldForSearch;
 import 'player_section_timeline.dart';
+import 'adapter_metadata.dart';
 import 'player_duration.dart';
+import 'song_search.dart';
 import 'verse_ui_state.dart';
 
 typedef AppAppearance = ({
@@ -170,12 +172,6 @@ class _ComparisonMetadata {
   DisplayMetadata get reference => projection?.display.first ?? _localReference;
   DisplayMetadata versionAt(int index) =>
       projection?.display[index + 1] ?? _localVersions[index];
-}
-
-double? _validDuration(Object? value) {
-  if (value is! num) return null;
-  final seconds = value.toDouble();
-  return seconds.isFinite && seconds > 0 && seconds <= 86400 ? seconds : null;
 }
 
 String _lyricHighlightStyle(Object? value) =>
@@ -468,6 +464,7 @@ class AppControllerAdapter extends VerseUiController {
       _indexedSongs = app.songs;
       _indexedSongCount = app.songs.length;
       _songIndex = index;
+      _chartEstimates.removeWhere((id, _) => !index.containsKey(id));
       _orderedSongs = null;
       _libraryCards = null;
       _setlistCards = Expando<SetlistCardData>();
@@ -614,44 +611,7 @@ class AppControllerAdapter extends VerseUiController {
       timedStarts: timedLineStarts,
       estimatedStarts: hasActiveTimedCues ? null : estimatedStarts,
     );
-    final recent = <RecentItemData>[];
-    for (final event in app.recent) {
-      if (event.objectKind == 'song') {
-        final item = _lookupSong(event.objectId);
-        if (item != null) {
-          recent.add(
-            RecentItemData(
-              id: item.id,
-              title: item.title,
-              artist: item.artist,
-              subtitle: _subtitle(item),
-              artworkUrl: _metaString(item.metadata['artworkUrl']),
-              occurredAt: event.occurredAt,
-              isSetlist: false,
-              favorite: item.favorite,
-              playCount: opens[item.id] ?? 0,
-            ),
-          );
-        }
-      } else if (event.objectKind == 'setlist') {
-        final item = app.setlists
-            .where((value) => value.id == event.objectId)
-            .firstOrNull;
-        if (item != null) {
-          recent.add(
-            RecentItemData(
-              id: item.id,
-              title: item.name,
-              subtitle: '',
-              occurredAt: event.occurredAt,
-              isSetlist: true,
-              favorite: item.favorite,
-              playCount: item.entries.length,
-            ),
-          );
-        }
-      }
-    }
+    final recent = _recentItems(opens);
     final comparison = _route == VerseRoute.main ? _comparison() : null;
     final catalog = _catalogProjection();
     final groups = _catalogGroups(catalog);
@@ -676,11 +636,7 @@ class AppControllerAdapter extends VerseUiController {
             : null);
     final readerSource = sourceProviderId == null
         ? null
-        : app.providers
-                  .where((provider) => provider.id == sourceProviderId)
-                  .firstOrNull
-                  ?.name ??
-              sourceProviderId;
+        : _providerName(sourceProviderId);
     final readerTimingAvailable =
         song != null &&
         !readerDeferred &&
@@ -805,6 +761,82 @@ class AppControllerAdapter extends VerseUiController {
       readerTimingAvailable: readerTimingAvailable,
       readerCanCompareVersions: readerCanCompareVersions,
     );
+  }
+
+  ({
+    Object events,
+    int eventCount,
+    Object songs,
+    int songCount,
+    Object setlists,
+    int setlistCount,
+    List<RecentItemData> items,
+  })?
+  _recentCache;
+
+  /// The Recent rows. The same list instance is returned until the history,
+  /// the library or the setlists are replaced, so the home screen can keep its
+  /// grouping and counts across notifications that concern none of them.
+  List<RecentItemData> _recentItems(Map<String, int> opens) {
+    final cached = _recentCache;
+    if (cached != null &&
+        identical(cached.events, app.recent) &&
+        cached.eventCount == app.recent.length &&
+        identical(cached.songs, app.songs) &&
+        cached.songCount == app.songs.length &&
+        identical(cached.setlists, app.setlists) &&
+        cached.setlistCount == app.setlists.length) {
+      return cached.items;
+    }
+    final recent = <RecentItemData>[];
+    for (final event in app.recent) {
+      if (event.objectKind == 'song') {
+        final item = _lookupSong(event.objectId);
+        if (item != null) {
+          recent.add(
+            RecentItemData(
+              id: item.id,
+              title: item.title,
+              artist: item.artist,
+              subtitle: _subtitle(item),
+              artworkUrl: metaString(item.metadata['artworkUrl']),
+              occurredAt: event.occurredAt,
+              isSetlist: false,
+              favorite: item.favorite,
+              playCount: opens[item.id] ?? 0,
+            ),
+          );
+        }
+      } else if (event.objectKind == 'setlist') {
+        final item = app.setlists
+            .where((value) => value.id == event.objectId)
+            .firstOrNull;
+        if (item != null) {
+          recent.add(
+            RecentItemData(
+              id: item.id,
+              title: item.name,
+              subtitle: '',
+              occurredAt: event.occurredAt,
+              isSetlist: true,
+              favorite: item.favorite,
+              playCount: item.entries.length,
+            ),
+          );
+        }
+      }
+    }
+    final items = List<RecentItemData>.unmodifiable(recent);
+    _recentCache = (
+      events: app.recent,
+      eventCount: app.recent.length,
+      songs: app.songs,
+      songCount: app.songs.length,
+      setlists: app.setlists,
+      setlistCount: app.setlists.length,
+      items: items,
+    );
+    return items;
   }
 
   List<SongDocument>? _orderedSongs;
@@ -1107,25 +1139,51 @@ class AppControllerAdapter extends VerseUiController {
     List<LyricLineData>? lines,
   }) => _playbackDurations[song] ??= resolvePlayerDuration(
     song,
-    estimate: () {
-      final prepared = _readerChart;
-      return estimateChartDuration(
-        lines ??
-            (prepared != null && prepared.body == song.body
-                ? prepared.lines
-                : _lines(song.body)),
-      );
-    },
+    estimate: () => _chartEstimate(song, lines),
   );
+
+  /// Chart estimates by song id, valid for the stored content hash they were
+  /// computed from. A library reload replaces every [SongDocument] instance,
+  /// which empties the identity-keyed duration cache; the estimate depends
+  /// only on the body, so an unchanged song must not be parsed again.
+  final _chartEstimates = <String, ({String hash, double seconds})>{};
+  int _chartEstimateRuns = 0;
+
+  /// How many charts have been estimated from their lines (for tests).
+  @visibleForTesting
+  int get chartEstimateCount => _chartEstimateRuns;
+
+  double _chartEstimate(SongDocument song, List<LyricLineData>? lines) {
+    // Only the library's own instance is described by the stored hash; a
+    // draft or a superseded copy is estimated without touching the cache.
+    final hash = identical(_lookupSong(song.id), song)
+        ? app.songHash(song.id)
+        : null;
+    if (hash != null) {
+      final cached = _chartEstimates[song.id];
+      if (cached != null && cached.hash == hash) return cached.seconds;
+    }
+    _chartEstimateRuns++;
+    final prepared = _readerChart;
+    final seconds = estimateChartDuration(
+      lines ??
+          (prepared != null && prepared.body == song.body
+              ? prepared.lines
+              : _lines(song.body)),
+    );
+    if (hash != null) _chartEstimates[song.id] = (hash: hash, seconds: seconds);
+    return seconds;
+  }
+
   String? _songKey(SongDocument song) =>
-      _metaString(song.metadata['key']) ?? app.displayKeysFor(song)?.sourceKey;
+      metaString(song.metadata['key']) ?? app.displayKeysFor(song)?.sourceKey;
 
   SongCardData _songCard(SongDocument song) => SongCardData(
     id: song.id,
     title: song.title,
     artist: song.artist,
-    album: _metaString(song.metadata['album']),
-    artworkUrl: _metaString(song.metadata['artworkUrl']),
+    album: metaString(song.metadata['album']),
+    artworkUrl: metaString(song.metadata['artworkUrl']),
     durationSeconds: _libraryDurationForSong(song)?.seconds,
     key: _songKey(song),
     favorite: song.favorite,
@@ -1187,7 +1245,7 @@ class AppControllerAdapter extends VerseUiController {
       artist: song?.artist ?? '',
       durationSeconds: song == null
           ? null
-          : _validDuration(song.metadata['durationSeconds']),
+          : validDurationSeconds(song.metadata['durationSeconds']),
       keyOverride: key == null || key.isEmpty ? null : key,
       capoOverride: capo == null || capo.isEmpty ? null : capo,
       missing: song == null,
@@ -1332,18 +1390,18 @@ class AppControllerAdapter extends VerseUiController {
     final sourceMetadata = source?.metadata ?? const {};
     final sourceExtra = source?.extra ?? const {};
     final artwork =
-        _metaString(metadata['artworkUrl']) ??
-        _metaString(sourceMetadata['artworkUrl']);
+        metaString(metadata['artworkUrl']) ??
+        metaString(sourceMetadata['artworkUrl']);
     return SongCandidate(
       providerId: candidate.providerId,
       id: candidate.id,
       title: candidate.title,
       artist: candidate.artist,
-      album: candidate.album ?? _metaString(sourceMetadata['album']),
+      album: candidate.album ?? metaString(sourceMetadata['album']),
       durationSeconds:
-          _validDuration(candidate.durationSeconds) ??
-          _validDuration(sourceMetadata['durationSeconds']) ??
-          _validDuration(metadata['durationSeconds']),
+          validDurationSeconds(candidate.durationSeconds) ??
+          validDurationSeconds(sourceMetadata['durationSeconds']) ??
+          validDurationSeconds(metadata['durationSeconds']),
       metadata: {
         for (final key in [
           ...identityKeys,
@@ -1633,26 +1691,18 @@ class AppControllerAdapter extends VerseUiController {
             // The UI renders combined entries from [sourceCount]; there is no
             // provider name to show.
             providerName: contributorCount == 1 && chosenSource != null
-                ? app.providers
-                          .where(
-                            (provider) =>
-                                provider.id ==
-                                chosenSource.candidate.providerId,
-                          )
-                          .firstOrNull
-                          ?.name ??
-                      chosenSource.candidate.providerId
+                ? _providerName(chosenSource.candidate.providerId)
                 : '',
             sourceCount: contributorCount,
             title: combined.title,
             artist: combined.artist,
-            album: _metaString(combined.metadata['album']),
+            album: metaString(combined.metadata['album']),
             sourceUrl: safeDiagnosticUrl(chosenSource?.candidate.url),
-            metadata: _diagnosticMetadata(combined.metadata),
-            durationSeconds: _validDuration(
+            metadata: diagnosticMetadata(combined.metadata),
+            durationSeconds: validDurationSeconds(
               combined.metadata['durationSeconds'],
             ),
-            artworkUrl: _metaString(combined.metadata['artworkUrl']),
+            artworkUrl: metaString(combined.metadata['artworkUrl']),
             hasLyrics: _sourceHasLyrics(combined, combined.body),
             isUsableVersion: _hasUsableDocument(combined),
             hasChords: app.documentHasChords(combined),
@@ -1707,12 +1757,7 @@ class AppControllerAdapter extends VerseUiController {
         .map(
           (check) => SearchProviderCheckData(
             id: check.providerId,
-            name:
-                app.providers
-                    .where((provider) => provider.id == check.providerId)
-                    .firstOrNull
-                    ?.name ??
-                check.providerId,
+            name: _providerName(check.providerId),
             code: check.code,
             state: check.result?.matchKind == MatchKind.rejected
                 ? 'rejected'
@@ -1770,13 +1815,7 @@ class AppControllerAdapter extends VerseUiController {
                       .contains(sourceId)))) {
         return;
       }
-      final name =
-          app.providers
-              .where((provider) => provider.id == providerId)
-              .firstOrNull
-              ?.name ??
-          providerId;
-      providerNames[providerId] = name;
+      providerNames[providerId] = _providerName(providerId);
       sourceUrls.putIfAbsent(
         providerId,
         () => safeDiagnosticUrl(source?.candidate.url),
@@ -1913,7 +1952,7 @@ class AppControllerAdapter extends VerseUiController {
       return false;
     }
     if (_filters.language.isNotEmpty &&
-        _metaString(combined.metadata['language'])?.toLowerCase() !=
+        metaString(combined.metadata['language'])?.toLowerCase() !=
             _filters.language.toLowerCase()) {
       return false;
     }
@@ -1951,24 +1990,19 @@ class AppControllerAdapter extends VerseUiController {
     return SourceVersionData(
       id: result.id,
       providerId: candidate.providerId,
-      providerName:
-          app.providers
-              .where((item) => item.id == candidate.providerId)
-              .firstOrNull
-              ?.name ??
-          candidate.providerId,
+      providerName: _providerName(candidate.providerId),
       title: candidate.title,
       artist: candidate.artist,
       sourceUrl: safeDiagnosticUrl(candidate.url),
-      metadata: _diagnosticMetadata({
+      metadata: diagnosticMetadata({
         ...candidate.metadata,
         ...result.metadata,
       }, providerId: candidate.providerId),
       album: display.album,
       durationSeconds: display.durationSeconds,
       artworkUrl: display.artworkUrl,
-      rating: _metaDouble(result.metadata['rating']),
-      ratingCount: _metaInt(result.metadata['ratingCount']),
+      rating: metaDouble(result.metadata['rating']),
+      ratingCount: metaInt(result.metadata['ratingCount']),
       hasLyrics: hasLyrics,
       isUsableVersion: usable,
       hasChords: app.sourceHasChords(result),
@@ -1997,10 +2031,7 @@ class AppControllerAdapter extends VerseUiController {
     final roles = <String>[
       if (_sourceHasLyrics(result, result.body)) 'lyrics',
       if (app.sourceHasChords(result)) 'chords',
-      if (result.timingTracks.any(
-        (track) => track.status == TimingStatus.usable && track.cues.isNotEmpty,
-      ))
-        'timing',
+      if (_hasUsableTiming(result.timingTracks)) 'timing',
       if (result.candidate.album?.isNotEmpty == true ||
           result.candidate.metadata.values.any(
             (value) => value != null && value != '',
@@ -2312,7 +2343,8 @@ class AppControllerAdapter extends VerseUiController {
 
   String _subtitle(SongDocument song) => [
     if (song.metadata['album'] is String) song.metadata['album'],
-    if (_validDuration(song.metadata['durationSeconds']) case final duration?)
+    if (validDurationSeconds(song.metadata['durationSeconds'])
+        case final duration?)
       formatDuration(duration),
   ].join(' · ');
 
@@ -2366,7 +2398,17 @@ class AppControllerAdapter extends VerseUiController {
 
   @override
   Future<void> setStartupSongsView(String view) =>
-      app.setSetting('startupSongsView', _startupSongsView(view));
+      _setSetting('startupSongsView', _startupSongsView(view));
+
+  /// Stores a preference. A failed write is reported instead of escaping from
+  /// an unawaited UI callback, and the screen is brought back in step with the
+  /// value the controller now holds.
+  Future<void> _setSetting(String key, Object? value) =>
+      _guardSetting(() => app.setSetting(key, value));
+
+  Future<void> _guardSetting(Future<void> Function() write) async {
+    if (!await _guard(write)) notifyListeners();
+  }
 
   @override
   void setTab(VerseTab tab) {
@@ -2510,9 +2552,7 @@ class AppControllerAdapter extends VerseUiController {
       (song) =>
           (!_conflictFilter || song.isConflictCopy) &&
           (_conflictFilter || !_favoritesOnly || song.favorite) &&
-          foldForSearch(
-            '${song.title} ${song.artist} ${song.album ?? ''}',
-          ).contains(needle),
+          songMatchesQuery(song, needle),
     );
   }
 
@@ -2681,7 +2721,10 @@ class AppControllerAdapter extends VerseUiController {
     if (candidate == null) return;
     _selectedVersionId = null;
     _selectedQuery = _query.trim();
-    await app.selectCandidate(candidate);
+    await _guard(() => app.selectCandidate(candidate));
+    // Another song may have been opened while this discovery was cancelled;
+    // its default version is not this request's to choose.
+    if (_disposed || app.selection?.identity != candidate.identity) return;
     _chooseFallbackVersion();
     notifyListeners();
   }
@@ -2860,7 +2903,7 @@ class AppControllerAdapter extends VerseUiController {
     if (song == null) return;
     final reference = _comparisonReference(song);
     if (reference == null) return;
-    _beginNavigationIntent();
+    final navigationIntent = _beginNavigationIntent();
     final reuseComparison =
         app.selection?.identity == reference.identity &&
         _songMatchesSearchReference(song, reference.identity) &&
@@ -2888,21 +2931,27 @@ class AppControllerAdapter extends VerseUiController {
       ].where((part) => part.trim().isNotEmpty).join(' ');
       _selectedQuery = _query.trim();
       _cachedAutocomplete = [reference];
-      final refresh =
-          reference.providerId == 'wikisource' ||
-              song.extra.containsKey('libraryEvidenceIdentity')
-          ? app.compareSavedSong(
-              song.id,
-              expectedReference: reference,
-              searchQuery: _query,
-            )
-          : app.selectCandidate(
-              reference,
-              searchQuery: _query,
-              cachedResults: song.sources,
-            );
+      final query = _query;
+      final refresh = _guard(
+        () =>
+            reference.providerId == 'wikisource' ||
+                song.extra.containsKey('libraryEvidenceIdentity')
+            ? app.compareSavedSong(
+                song.id,
+                expectedReference: reference,
+                searchQuery: query,
+              )
+            : app.selectCandidate(
+                reference,
+                searchQuery: query,
+                cachedResults: song.sources,
+              ),
+      );
       notifyListeners();
       await refresh;
+      // Leaving this comparison (back, another song, a tab) ends the request;
+      // it must not choose a version for whatever is on screen now.
+      if (!_isCurrentNavigationIntent(navigationIntent)) return;
       _chooseFallbackVersion();
       notifyListeners();
       return;
@@ -3027,7 +3076,15 @@ class AppControllerAdapter extends VerseUiController {
         song: projectedSong,
         projection: pendingProjection,
       ) = work;
-      final projection = await pendingProjection;
+      final _ReaderProjection projection;
+      try {
+        projection = await pendingProjection;
+      } catch (_) {
+        // The chart is already saved. Open the reader and let it prepare the
+        // lines itself rather than losing the navigation and the notice.
+        if (!_isCurrentNavigationIntent(intent)) return;
+        break;
+      }
       if (!_isCurrentNavigationIntent(intent)) return;
       final current = app.findSong(id);
       if (current == null) return;
@@ -3096,8 +3153,10 @@ class AppControllerAdapter extends VerseUiController {
     _editingSetlist = false;
     _route = VerseRoute.setlistDetail;
     final value = currentSetlist;
-    if (value != null) await app.recordUse('setlist', id);
+    // Navigate first: the visit is recorded behind any history page that is
+    // still loading, and a failed write must not leave the route unannounced.
     notifyListeners();
+    if (value != null) await _guard(() => app.recordUse('setlist', id));
   }
 
   @override
@@ -3111,8 +3170,10 @@ class AppControllerAdapter extends VerseUiController {
     // Editing from the song's own reader keeps its transpose and position;
     // editing another song starts from a clean reader state.
     _editorReturnsToReader = _route == VerseRoute.reader && _songId == id;
+    // The playback clock must not keep running behind the editor; the song's
+    // own reader keeps its position and resumes from there.
+    _stopPlayer();
     if (_songId != id) {
-      _stopPlayer();
       _progress = 0;
       _transpose = _storedTranspose(song);
       _playbackSpeed = _storedPlaybackSpeed(song);
@@ -3894,17 +3955,13 @@ class AppControllerAdapter extends VerseUiController {
       );
       inPlace = writeHashes != null;
     });
-    if (ok &&
-        inPlace &&
-        editing &&
-        _editingSetlist &&
-        _setlistId == setlist.id &&
-        _route == VerseRoute.setlistDetail &&
-        _setlistEditSessionRevision == editSessionRevision &&
-        _setlistBaseHash == editBaseHash &&
-        writeHashes?.expectedHash == editBaseHash &&
-        app.setlistHash(setlist.id) == writeHashes?.persistedHash) {
-      _setlistBaseHash = writeHashes!.persistedHash;
+    if (ok && inPlace && editing) {
+      _adoptSetlistWriteHash(
+        setlist.id,
+        writeHashes,
+        editSessionRevision: editSessionRevision,
+        editBaseHash: editBaseHash,
+      );
     }
     if (ok && !inPlace) postNotice(UiNotice.setlistSaveConflict);
     if (ok && inPlace && isDraft && _draftSetlist?.id == setlist.id) {
@@ -3972,20 +4029,38 @@ class AppControllerAdapter extends VerseUiController {
     final saved = await _guard(() async {
       writeHashes = await app.addToSetlistWithHashes(songId, setlistId);
     });
-    if (saved &&
-        writeHashes != null &&
-        editing &&
+    if (saved && editing) {
+      _adoptSetlistWriteHash(
+        setlistId,
+        writeHashes,
+        editSessionRevision: editSessionRevision,
+        editBaseHash: editBaseHash,
+      );
+    }
+    // The setlist was deleted meanwhile, or kept changing underneath the
+    // write: nothing was added, and the person must be told.
+    if (saved && writeHashes == null) postNotice(UiNotice.genericError);
+  }
+
+  /// Moves the open edit session's baseline to [hashes] after its own write.
+  /// Adopt only the exact hash returned by that write, and only while the CAS
+  /// began from the baseline and the session remains the one that initiated
+  /// it.
+  void _adoptSetlistWriteHash(
+    String setlistId,
+    SetlistWriteHashes? hashes, {
+    required int editSessionRevision,
+    required String? editBaseHash,
+  }) {
+    if (hashes != null &&
         _editingSetlist &&
         _setlistId == setlistId &&
         _route == VerseRoute.setlistDetail &&
         _setlistEditSessionRevision == editSessionRevision &&
         _setlistBaseHash == editBaseHash &&
-        writeHashes?.expectedHash == editBaseHash &&
-        app.setlistHash(setlistId) == writeHashes?.persistedHash) {
-      // Adopt only the exact hash returned by this write, and only while the
-      // CAS began from the baseline and the session remains the one that
-      // initiated it.
-      _setlistBaseHash = writeHashes!.persistedHash;
+        hashes.expectedHash == editBaseHash &&
+        app.setlistHash(setlistId) == hashes.persistedHash) {
+      _setlistBaseHash = hashes.persistedHash;
     }
   }
 
@@ -4017,12 +4092,7 @@ class AppControllerAdapter extends VerseUiController {
       sources: [
         for (final source in song.sources)
           SongInfoSourceData(
-            providerName:
-                app.providers
-                    .where((item) => item.id == source.candidate.providerId)
-                    .firstOrNull
-                    ?.name ??
-                source.candidate.providerId,
+            providerName: _providerName(source.candidate.providerId),
             attribution: source.attribution ?? '',
             matchReason: source.matchReason,
             url: source.candidate.url,
@@ -4033,40 +4103,39 @@ class AppControllerAdapter extends VerseUiController {
 
   @override
   Future<void> setThemeMode(AppThemeMode mode) =>
-      app.setSetting('themeMode', mode.name);
+      _setSetting('themeMode', mode.name);
   @override
   Future<void> setLanguage(String? languageCode) =>
-      app.setSetting('locale', languageCode);
+      _setSetting('locale', languageCode);
   @override
-  Future<void> setPalette(String palette) => app.setSetting('palette', palette);
+  Future<void> setPalette(String palette) => _setSetting('palette', palette);
   @override
   Future<void> setFontFamily(String fontFamily) =>
-      app.setSetting('fontFamily', fontFamily);
+      _setSetting('fontFamily', fontFamily);
   @override
   Future<void> setLyricsFontSize(double size) =>
-      app.setSetting('readerFontSize', size);
+      _setSetting('readerFontSize', size);
   @override
   Future<void> setLyricHighlightStyle(String style) =>
-      app.setSetting('lyricHighlightStyle', style);
+      _setSetting('lyricHighlightStyle', style);
   @override
-  Future<void> setShowChords(bool show) => app.setSetting('showChords', show);
+  Future<void> setShowChords(bool show) => _setSetting('showChords', show);
 
   @override
-  Future<void> setShowSections(bool show) =>
-      app.setSetting('showSections', show);
+  Future<void> setShowSections(bool show) => _setSetting('showSections', show);
 
   @override
   Future<void> setPlayerControlsExpanded(bool expanded) =>
-      app.setSetting('playerControlsExpanded', expanded);
+      _setSetting('playerControlsExpanded', expanded);
 
   @override
   Future<void> setAutoscroll(bool enabled) =>
-      app.setSetting('autoscroll', enabled);
+      _setSetting('autoscroll', enabled);
   @override
-  Future<void> setTimingMode(String mode) => app.setSetting('timingMode', mode);
+  Future<void> setTimingMode(String mode) => _setSetting('timingMode', mode);
   @override
   Future<void> setProviderEnabled(String id, bool enabled) =>
-      app.setProviderEnabled(id, enabled);
+      _guardSetting(() => app.setProviderEnabled(id, enabled));
 
   @override
   Future<bool> refreshSources() => app.refreshSources();
@@ -4160,24 +4229,18 @@ class AppControllerAdapter extends VerseUiController {
   @override
   Future<void> chooseSyncDriveFolder() async {
     if (!app.syncConnected) return;
-    try {
-      await app.chooseSyncDriveFolder();
-      if (_syncCancelled) return;
-      if (app.syncError != null) {
-        postNotice(UiNotice.syncFailed);
-      } else {
-        postNotice(UiNotice.syncSucceeded);
-      }
-    } catch (_) {
-      postNotice(UiNotice.syncFailed);
-    }
+    await _runDriveAction(app.chooseSyncDriveFolder);
   }
 
   @override
   Future<void> importChordProFromDrive() async {
     if (!app.syncConnected || app.syncDriveFolderName == null) return;
+    await _runDriveAction(app.importChordProFromDrive);
+  }
+
+  Future<void> _runDriveAction(Future<void> Function() action) async {
     try {
-      await app.importChordProFromDrive();
+      await action();
       if (_syncCancelled) return;
       if (app.syncError != null) {
         postNotice(UiNotice.syncFailed);
@@ -4210,22 +4273,15 @@ class AppControllerAdapter extends VerseUiController {
   }
 
   @override
-  Future<void> importChordPro() async {
-    if (onImport == null) return;
-    try {
-      await onImport!();
-    } on FormatException catch (error) {
-      postNotice(_failureNotice(error, UiNotice.importFailed));
-    } catch (_) {
-      postNotice(UiNotice.importFailed);
-    }
-  }
+  Future<void> importChordPro() => _runImport(onImport);
 
   @override
-  Future<void> importSetlist() async {
-    if (onImportSetlist == null) return;
+  Future<void> importSetlist() => _runImport(onImportSetlist);
+
+  Future<void> _runImport(Future<void> Function()? import) async {
+    if (import == null) return;
     try {
-      await onImportSetlist!();
+      await import();
     } on FormatException catch (error) {
       postNotice(_failureNotice(error, UiNotice.importFailed));
     } catch (_) {
@@ -4300,115 +4356,4 @@ class AppControllerAdapter extends VerseUiController {
 
 extension _FirstOrNull<T> on Iterable<T> {
   T? get firstOrNull => isEmpty ? null : first;
-}
-
-/// Metadata comes from imported files and synced documents, so values may have
-/// an unexpected type. These read them without throwing.
-double? _metaDouble(Object? value) {
-  final number = switch (value) {
-    num() => value.toDouble(),
-    String() => double.tryParse(value.trim()),
-    _ => null,
-  };
-  return number != null && number.isFinite ? number : null;
-}
-
-int? _metaInt(Object? value) => switch (value) {
-  int() => value,
-  num() when value.isFinite => value.toInt(),
-  String() => int.tryParse(value.trim()),
-  _ => null,
-};
-
-String? _metaString(Object? value) => switch (value) {
-  String() => value,
-  num() || bool() => value.toString(),
-  _ => null,
-};
-
-Map<String, Object?> _diagnosticMetadata(
-  Map<String, Object?> values, {
-  String? providerId,
-}) {
-  const aliases = <String, List<String>>{
-    'timeSignature': ['timeSignature', 'time_signature', 'time'],
-    'tuning': ['tuning', 'tuningStrings', 'tuning_strings'],
-  };
-  const allowed = {
-    'key',
-    'capo',
-    'tuning',
-    'tempo',
-    'timeSignature',
-    'year',
-    'album',
-    'language',
-    'composer',
-    'composers',
-    'lyricist',
-    'lyricists',
-    'author',
-    'writers',
-    'genre',
-    'credits',
-    'mediaLinks',
-  };
-  final output = <String, Object?>{};
-  final analysis = AcousticBrainzAnalysis.fromMetadata(
-    providerId ?? '',
-    values,
-  );
-  if (analysis != null) output['acousticbrainz'] = analysis.toMetadata();
-  for (final key in allowed) {
-    Object? value = values[key];
-    if (value == null) {
-      for (final alias in aliases[key] ?? const <String>[]) {
-        if (values.containsKey(alias)) {
-          value = values[alias];
-          break;
-        }
-      }
-    }
-    if (key == 'mediaLinks' && value is List) {
-      final links = <String>[];
-      for (final entry in value.take(30)) {
-        final rawUrl = entry is String
-            ? entry
-            : entry is Map
-            ? _metaString(entry['url'])
-            : null;
-        final url = safeDiagnosticUrl(rawUrl);
-        if (url == null) continue;
-        final rawTitle = entry is Map ? _metaString(entry['title']) : null;
-        final title = rawTitle?.trim().replaceAll(RegExp(r'\s+'), ' ');
-        final label = title == null || title.isEmpty || title == rawUrl
-            ? url
-            : '${title.length > 256 ? title.substring(0, 256) : title}\n$url';
-        if (!links.contains(label)) links.add(label);
-      }
-      if (links.isNotEmpty) output[key] = List<String>.unmodifiable(links);
-    } else if (value is List) {
-      final entries = value
-          .map((item) => _diagnosticCredit(item))
-          .whereType<String>()
-          .toList(growable: false);
-      if (entries.isNotEmpty) output[key] = List<String>.unmodifiable(entries);
-    } else if (_metaString(value) case final text?
-        when text.trim().isNotEmpty) {
-      output[key] = text.trim();
-    }
-  }
-  return Map<String, Object?>.unmodifiable(output);
-}
-
-String? _diagnosticCredit(Object? value) {
-  if (value is String) return value.trim().isEmpty ? null : value.trim();
-  if (value is! Map) return null;
-  final name = _metaString(value['name'] ?? value['artist'] ?? value['value']);
-  final role = _metaString(value['role'] ?? value['type']);
-  final parts = [
-    if (name?.trim().isNotEmpty == true) name!.trim(),
-    if (role?.trim().isNotEmpty == true) role!.trim(),
-  ];
-  return parts.isEmpty ? null : parts.join(' · ');
 }
