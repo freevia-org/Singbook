@@ -6,7 +6,7 @@ param(
     [Parameter(Mandatory)][string]$ExpectedSourceTree,
     [Parameter(Mandatory)][string]$ExpectedSourceManifestSha256,
     [Parameter(Mandatory)][string]$EvidenceDirectory,
-    [string]$ExpectedProductVersion = '1.0.52+52'
+    [Parameter(Mandatory)][string]$ExpectedProductVersion
 )
 $ErrorActionPreference = 'Stop'
 

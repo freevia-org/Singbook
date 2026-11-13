@@ -14,7 +14,12 @@ struct _MyApplication {
   FlMethodChannel* fullscreen_channel;
   gboolean close_approved;
   gboolean close_pending;
+  gint64 close_requested_at;
 };
+
+// An unanswered close request (an unresponsive Dart isolate) stops blocking
+// the window after this long; the next close attempt then closes natively.
+static const gint64 kCloseReplyTimeoutMicroseconds = 10 * G_USEC_PER_SEC;
 
 G_DEFINE_TYPE(MyApplication, my_application, GTK_TYPE_APPLICATION)
 
@@ -24,7 +29,8 @@ static void first_frame_cb(MyApplication* self, FlView* view) {
 }
 
 // The Dart side may veto closing (unsaved edits, running sync), as on the
-// other desktop runners. Missing or failed replies cancel the close.
+// other desktop runners. Missing or failed replies cancel the close; a reply
+// that never arrives is bounded by kCloseReplyTimeoutMicroseconds.
 static void close_reply_cb(GObject* channel, GAsyncResult* result,
                            gpointer user_data) {
   MyApplication* self = MY_APPLICATION(user_data);
@@ -45,8 +51,17 @@ static void close_reply_cb(GObject* channel, GAsyncResult* result,
 static gboolean delete_event_cb(GtkWidget*, GdkEvent*, gpointer user_data) {
   MyApplication* self = MY_APPLICATION(user_data);
   if (self->close_approved) return FALSE;
+  if (self->close_pending &&
+      g_get_monotonic_time() - self->close_requested_at >=
+          kCloseReplyTimeoutMicroseconds) {
+    // No reply in time: let GTK destroy the window without asking again.
+    self->close_pending = FALSE;
+    self->close_approved = TRUE;
+    return FALSE;
+  }
   if (!self->close_pending) {
     self->close_pending = TRUE;
+    self->close_requested_at = g_get_monotonic_time();
     fl_method_channel_invoke_method(self->window_close_channel, "requestClose",
                                     nullptr, nullptr, close_reply_cb, self);
   }

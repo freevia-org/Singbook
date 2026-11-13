@@ -17,7 +17,14 @@ final class ICloudSyncChannel {
   private let epochLock = NSLock()
   private var accountEpoch: UInt64 = 0
   private let maxBytes = 16 * 1024 * 1024
+  // Live (non-deleted) records a library may hold. Tombstones are skipped
+  // without counting against it; maxScannedRecords bounds the whole scan.
   private let maxRecords = 40000
+  private let maxScannedRecords = 200000
+  // Fail instead of waiting for connectivity: CloudKit's default resource
+  // timeout is seven days and the Dart caller has no timeout of its own.
+  private let requestTimeout: TimeInterval = 60
+  private let resourceTimeout: TimeInterval = 300
   private let tombstoneKey = "deleted"
   private let sizeKey = "contentSize"
 
@@ -146,16 +153,39 @@ final class ICloudSyncChannel {
     }
   }
 
+  private func configure(_ operation: CKDatabaseOperation) {
+    let configuration = CKOperation.Configuration()
+    configuration.qualityOfService = .userInitiated
+    configuration.timeoutIntervalForRequest = requestTimeout
+    configuration.timeoutIntervalForResource = resourceTimeout
+    operation.configuration = configuration
+  }
+
   private func fetch(_ id: String, _ done: @escaping (CKRecord?, Error?) -> Void) {
-    db.fetch(withRecordID: CKRecord.ID(recordName: id)) { record, error in
-      if let ck = error as? CKError, ck.code == .unknownItem { done(nil, nil) }
-      else { done(record, error) }
+    let operation = CKFetchRecordsOperation(recordIDs: [CKRecord.ID(recordName: id)])
+    configure(operation)
+    var fetchedRecord: CKRecord?
+    var fetchError: Error?
+    operation.perRecordResultBlock = { _, outcome in
+      switch outcome {
+      case .success(let record): fetchedRecord = record
+      case .failure(let error): fetchError = error
+      }
     }
+    operation.fetchRecordsResultBlock = { outcome in
+      switch outcome {
+      case .success: break
+      case .failure(let error): if fetchError == nil { fetchError = error }
+      }
+      if let ck = fetchError as? CKError, ck.code == .unknownItem { done(nil, nil) }
+      else { done(fetchedRecord, fetchError) }
+    }
+    db.add(operation)
   }
 
   private func contentURL(_ content: String) throws -> URL {
     let data = Data(content.utf8)
-    guard data.count <= maxBytes else { throw NSError(domain: "icloud", code: 1) }
+    guard data.count <= maxBytes else { throw PayloadError.tooLarge }
     let dir = FileManager.default.temporaryDirectory.appendingPathComponent("singbook-cloudkit-\(UUID().uuidString)", isDirectory: true)
     try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
     let url = dir.appendingPathComponent("body")
@@ -190,14 +220,16 @@ final class ICloudSyncChannel {
         let op: CKQueryOperation
         if let cursor { op = CKQueryOperation(cursor: cursor) } else { op = CKQueryOperation(query: query) }
         op.desiredKeys = ["name", "propertiesJSON", self.sizeKey, self.tombstoneKey]
+        self.configure(op)
         op.recordMatchedBlock = { _, outcome in
           switch outcome {
           case .success(let record):
             scanned += 1
-            if scanned > self.maxRecords { op.cancel() }
+            if scanned > self.maxScannedRecords { op.cancel(); return }
             if record[self.tombstoneKey] as? Bool != true {
               guard let item = self.metadata(record) else { recordFailure = true; op.cancel(); return }
               rows.append(item)
+              if rows.count > self.maxRecords { op.cancel() }
             }
           case .failure:
             recordFailure = true
@@ -205,7 +237,7 @@ final class ICloudSyncChannel {
           }
         }
         op.queryCompletionBlock = { next, error in
-          guard scanned <= self.maxRecords else { self.fail(result, "remote_library_too_large"); return }
+          guard scanned <= self.maxScannedRecords, rows.count <= self.maxRecords else { self.fail(result, "remote_library_too_large"); return }
           guard !recordFailure else { self.fail(result, "invalid_remote_data"); return }
           guard error == nil else { self.fail(result, "icloud_unavailable"); return }
           if let next { page(next) } else { result(rows) }
@@ -252,7 +284,8 @@ final class ICloudSyncChannel {
           record["propertiesJSON"] = propertiesJSON as CKRecordValue
           record[self.tombstoneKey] = false as CKRecordValue
           self.modify([record], temporaryDirectories: [directory], context: context, result: result)
-        } catch { self.fail(result, "local_file_too_large") }
+        } catch PayloadError.tooLarge { self.fail(result, "local_file_too_large") }
+        catch { self.fail(result, "icloud_unavailable") }
       }
 
     case "create":
@@ -267,7 +300,8 @@ final class ICloudSyncChannel {
       do {
         let directory = try attachContent(content, to: record)
         modify([record], temporaryDirectories: [directory], context: context, result: result)
-      } catch { fail(result, "local_file_too_large") }
+      } catch PayloadError.tooLarge { fail(result, "local_file_too_large") }
+      catch { fail(result, "icloud_unavailable") }
     default: result(FlutterMethodNotImplemented)
     }
   }
@@ -293,6 +327,7 @@ final class ICloudSyncChannel {
   private func submit(_ records: [CKRecord], temporaryDirectories: [URL], result: @escaping FlutterResult) {
     let operation = CKModifyRecordsOperation(recordsToSave: records, recordIDsToDelete: nil)
     operation.savePolicy = .ifServerRecordUnchanged
+    configure(operation)
     var savedRecord: CKRecord?
     var saveError: Error?
     operation.perRecordSaveBlock = { _, outcome in

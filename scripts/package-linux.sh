@@ -2,7 +2,10 @@
 # Package build/linux/x64/release/bundle as an AppImage and a .deb.
 # Usage: scripts/package-linux.sh [output-dir]   (run `flutter build linux --release` first)
 # Needs: dpkg-deb, ImageMagick (convert) and, for the AppImage, appimagetool
-# (APPIMAGETOOL=/path or downloaded to the output dir). Nothing is published.
+# and the AppImage type2 runtime. Both are downloaded from pinned upstream
+# releases and verified against the SHA-256 digests below before use; set
+# APPIMAGETOOL=/path and/or APPIMAGE_RUNTIME=/path to supply local copies
+# instead (those are used as given). Nothing is published.
 set -euo pipefail
 
 root="$(cd "$(dirname "$0")/.." && pwd)"
@@ -50,7 +53,7 @@ app="$work/Singbook.AppDir"
 mkdir -p "$app/usr/lib/singbook"
 cp -a "$bundle/." "$app/usr/lib/singbook/"
 cp "$desktop" "$app/$id.desktop"
-sed -i 's|^Exec=.*|Exec=AppRun %F|' "$app/$id.desktop"
+sed -i 's|^Exec=.*|Exec=AppRun|' "$app/$id.desktop"
 cp "$work/icon.png" "$app/$id.png"
 cat > "$app/AppRun" <<'RUN'
 #!/bin/sh
@@ -58,12 +61,41 @@ here="$(dirname "$(readlink -f "$0")")"
 exec "$here/usr/lib/singbook/singbook" "$@"
 RUN
 chmod +x "$app/AppRun"
-tool="${APPIMAGETOOL:-$out/appimagetool-x86_64.AppImage}"
-if [[ ! -x "$tool" ]]; then
-  curl -fsSL -o "$tool" \
-    https://github.com/AppImage/appimagetool/releases/download/1.9.0/appimagetool-x86_64.AppImage
+# Pinned upstream artifacts. The digests are the SHA-256 values GitHub records
+# for these exact release assets (REST API `digest` field). The runtime becomes
+# the executable header of the shipped AppImage: without --runtime-file,
+# appimagetool would fetch a mutable "continuous" build at packaging time.
+appimagetool_url=https://github.com/AppImage/appimagetool/releases/download/1.9.1/appimagetool-x86_64.AppImage
+appimagetool_sha256=ed4ce84f0d9caff66f50bcca6ff6f35aae54ce8135408b3fa33abfc3cb384eb0
+runtime_url=https://github.com/AppImage/type2-runtime/releases/download/20251108/runtime-x86_64
+runtime_sha256=2fca8b443c92510f1483a883f60061ad09b46b978b2631c807cd873a47ec260d
+
+# Download to a temporary name and only move into place after verification,
+# so an unverified file is never executable or reused.
+fetch_verified() {
+  local url="$1" sha256="$2" destination="$3"
+  curl -fsSL --proto '=https' --tlsv1.2 -o "$destination.download" "$url"
+  if ! echo "$sha256  $destination.download" | sha256sum --check --status; then
+    rm -f -- "$destination.download"
+    echo "SHA-256 verification failed for $url" >&2
+    exit 1
+  fi
+  mv -- "$destination.download" "$destination"
+}
+
+tool="${APPIMAGETOOL:-}"
+if [[ -z "$tool" ]]; then
+  tool="$work/appimagetool-x86_64.AppImage"
+  fetch_verified "$appimagetool_url" "$appimagetool_sha256" "$tool"
   chmod +x "$tool"
 fi
-ARCH=x86_64 "$tool" --appimage-extract-and-run "$app" "$out/Singbook-${version}-${build}-x86_64.AppImage"
-rm -f "$out/appimagetool-x86_64.AppImage"
+[[ -x "$tool" ]] || { echo "appimagetool is not executable: $tool" >&2; exit 1; }
+runtime="${APPIMAGE_RUNTIME:-}"
+if [[ -z "$runtime" ]]; then
+  runtime="$work/runtime-x86_64"
+  fetch_verified "$runtime_url" "$runtime_sha256" "$runtime"
+fi
+[[ -s "$runtime" ]] || { echo "AppImage runtime is missing: $runtime" >&2; exit 1; }
+ARCH=x86_64 "$tool" --appimage-extract-and-run --runtime-file "$runtime" \
+  "$app" "$out/Singbook-${version}-${build}-x86_64.AppImage"
 ls -l "$out"

@@ -61,8 +61,11 @@ val allowDebugSigning =
     (findProperty("allowDebugSigning") as String?)?.toBoolean() == true
 // Safety valve for R8 (-PminifyRelease=false) if shrinking ever breaks a plugin.
 val minifyRelease = (findProperty("minifyRelease") as String?)?.toBoolean() != false
-val releaseRequested =
-    gradle.startParameter.taskNames.any { it.contains("release", ignoreCase = true) }
+// Tasks of this module that produce or sign a release APK/bundle. The guard
+// below inspects the resolved task graph, so aggregate entry points such as
+// `gradlew assemble`, `build` or `bundle` are covered as well as the explicit
+// assembleRelease/bundleRelease that `flutter build` requests.
+val releaseArtifactTask = Regex("^(assemble|bundle|package|sign).*Release.*")
 
 android {
     namespace = "org.freevia.singbook"
@@ -134,21 +137,8 @@ android {
             if (hasReleaseKey) {
                 signingConfig = signingConfigs.getByName("release")
             } else {
-                if (releaseRequested && (requireReleaseSigning || !allowDebugSigning)) {
-                    throw GradleException(
-                        "android/key.properties is missing or incomplete, so the release " +
-                            "build cannot be signed. Refusing to sign a release with the " +
-                            "debug key. Create the file (see README, Release signing); for a " +
-                            "local preview APK only, pass -PallowDebugSigning=true."
-                    )
-                }
-                if (releaseRequested) {
-                    logger.warn(
-                        "WARNING: android/key.properties not found; signing the release " +
-                            "build with the DEBUG key. This is for local preview builds only " +
-                            "and must never be distributed."
-                    )
-                }
+                // Only reached by a build that the task-graph guard below
+                // allowed (-PallowDebugSigning=true) or that builds no release.
                 signingConfig = signingConfigs.getByName("debug")
             }
             isMinifyEnabled = minifyRelease
@@ -156,6 +146,29 @@ android {
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
+            )
+        }
+    }
+}
+
+if (!hasReleaseKey) {
+    gradle.taskGraph.whenReady {
+        val releaseScheduled = allTasks.any { task ->
+            task.project == project && releaseArtifactTask.matches(task.name)
+        }
+        if (releaseScheduled && (requireReleaseSigning || !allowDebugSigning)) {
+            throw GradleException(
+                "android/key.properties is missing or incomplete, so the release " +
+                    "build cannot be signed. Refusing to sign a release with the " +
+                    "debug key. Create the file (see README, Release signing); for a " +
+                    "local preview APK only, pass -PallowDebugSigning=true."
+            )
+        }
+        if (releaseScheduled) {
+            logger.warn(
+                "WARNING: android/key.properties not found; signing the release " +
+                    "build with the DEBUG key. This is for local preview builds only " +
+                    "and must never be distributed."
             )
         }
     }

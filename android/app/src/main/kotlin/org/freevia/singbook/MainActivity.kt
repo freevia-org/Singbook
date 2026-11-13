@@ -301,6 +301,9 @@ class MainActivity : FlutterActivity() {
     }
 
     override fun onDestroy() {
+        // Never leave a Drive picker call unanswered when the activity goes
+        // away while Google's authorization UI is still in front.
+        finishDrivePickerError("cancelled", "Drive selection was interrupted")
         playerActivityResumed = false
         restorePlayerSystemBars()
         playerUiMode = "inactive"
