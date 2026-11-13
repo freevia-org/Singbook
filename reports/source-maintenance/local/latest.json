@@ -1,16 +1,17 @@
 {
   "schemaVersion": 1,
   "catalogRevision": 23,
-  "measuredAt": "2026-11-12T06:59:47.460378Z",
+  "measuredAt": "2026-11-13T07:08:40.055706Z",
   "offline": false,
   "summary": {
-    "healthy": 23,
+    "healthy": 22,
     "identity_mismatch": 1,
     "coverage_gap": 1,
     "import_only": 1,
     "partial_coverage": 2,
     "retired": 1,
     "transient_error": 1,
+    "unavailable": 1,
     "disabled": 2
   },
   "sources": [
@@ -674,7 +675,7 @@
     {
       "id": "musicbrainz",
       "name": "MusicBrainz",
-      "status": "healthy",
+      "status": "transient_error",
       "coverage": {
         "status": "complete",
         "verifiedCapabilities": [
@@ -744,37 +745,18 @@
         },
         {
           "id": "exact-release-artwork-b5d7d380-f43a-4c1f-a5de-694150b093ac",
-          "status": "healthy",
-          "candidateId": "b5d7d380-f43a-4c1f-a5de-694150b093ac",
-          "providerId": "musicbrainz",
-          "bodyCharacters": 0,
-          "metadataFields": [
-            "album",
-            "artistCredits",
-            "artworkAssets",
-            "artworkUrl",
-            "credits",
-            "durationSeconds",
-            "identityScope",
-            "isrcs",
-            "mediaLinks",
-            "musicbrainzRecordingId",
+          "status": "transient_error",
+          "reason": "timeout",
+          "capability": "artwork",
+          "recordingMetadataAvailable": true,
+          "missingMetadataFields": [
             "musicbrainzReleaseId",
-            "musicbrainzWorks",
-            "relationships",
-            "releases",
-            "writers"
+            "artworkUrl",
+            "artworkAssets"
           ],
-          "verifiedCapabilities": [
-            "artwork",
-            "metadata"
-          ],
-          "timingTrackCount": 0,
-          "timingGranularities": [],
-          "timingRawRetained": false,
-          "hasChords": false,
-          "artworkEvidence": "source_declared_location_and_provenance",
-          "artworkImageBytesValidated": false
+          "missingIdentityFields": [
+            "album"
+          ]
         }
       ]
     },
@@ -1690,28 +1672,65 @@
     {
       "id": "lyricsplus",
       "name": "LyricsPlus",
-      "status": "transient_error",
+      "status": "unavailable",
       "coverage": {
-        "status": "partial",
-        "verifiedCapabilities": [],
-        "unverifiedCapabilities": [
+        "status": "complete",
+        "verifiedCapabilities": [
           "catalog",
           "lineTiming",
           "lyrics",
           "metadata",
           "wordTiming"
-        ]
+        ],
+        "unverifiedCapabilities": []
       },
       "probes": [
         {
           "id": "billie-jean-michael-jackson",
-          "status": "transient_error",
-          "reason": "network"
+          "status": "unavailable",
+          "reason": "unavailable"
         },
         {
           "id": "creep-radiohead",
-          "status": "transient_error",
-          "reason": "network"
+          "status": "healthy",
+          "candidateId": "sha256:7b9ed8028dcc7382",
+          "providerId": "lyricsplus",
+          "bodyCharacters": 803,
+          "metadataFields": [
+            "agents",
+            "album",
+            "appleMusicIds",
+            "artworkUrl",
+            "country",
+            "discCount",
+            "discNumber",
+            "documentKind",
+            "durationSeconds",
+            "genre",
+            "identityScope",
+            "language",
+            "mediaLinks",
+            "primaryGenreName",
+            "releaseDate",
+            "songParts",
+            "songWriters",
+            "trackCount",
+            "trackNumber",
+            "writers"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "lineTiming",
+            "lyrics",
+            "metadata",
+            "wordTiming"
+          ],
+          "timingTrackCount": 1,
+          "timingGranularities": [
+            "word"
+          ],
+          "timingRawRetained": true,
+          "hasChords": false
         }
       ]
     },
@@ -1874,7 +1893,7 @@
     }
   ],
   "httpDiagnostics": {
-    "networkFailures": 0,
+    "networkFailures": 1,
     "hosts": {
       "acousticbrainz.org": {
         "requests": 4,
@@ -1948,6 +1967,14 @@
         "retryAfterSeconds": {},
         "databaseLag": {}
       },
+      "itunes.apple.com": {
+        "requests": 1,
+        "statuses": {
+          "200": 1
+        },
+        "retryAfterSeconds": {},
+        "databaseLag": {}
+      },
       "kara.moe": {
         "requests": 4,
         "statuses": {
@@ -1973,9 +2000,9 @@
         "databaseLag": {}
       },
       "lyricsplus.prjktla.my.id": {
-        "requests": 2,
+        "requests": 4,
         "statuses": {
-          "530": 2
+          "200": 4
         },
         "retryAfterSeconds": {},
         "databaseLag": {}
@@ -1991,7 +2018,7 @@
       "musicbrainz.org": {
         "requests": 6,
         "statuses": {
-          "200": 6
+          "200": 5
         },
         "retryAfterSeconds": {},
         "databaseLag": {}
@@ -2110,7 +2137,7 @@
       }
     }
   },
-  "sourceCommit": "6b5270e27be159974d1f4c2dc615599af962d799",
+  "sourceCommit": "e49ca46e290a142c5b2ed905f10eb3329cfb3b15",
   "catalogPath": "config/source-catalog-v10.json",
   "catalogChannel": 10,
   "catalogSha256": "a61377c845601888f22a8abf0f43a66ace1a61a85b6f627cd709e9f376b28dce",
@@ -2125,10 +2152,10 @@
     "dedicatedGeniusMaintenanceCredential": true,
     "userLibraryAccessed": false,
     "offlineStructuralCheck": "passed",
-    "separateFileImportPhase": "passed; two HTTP 200 requests"
+    "separateFileImportPhase": "passed; see separate import report for HTTP counts"
   },
   "comparisonEvidence": {
-    "previousLocalMeasuredAt": "2026-11-11T08:46:18.659277Z",
+    "previousLocalMeasuredAt": "2026-11-12T06:59:47.460378Z",
     "previousLocalSummary": {
       "healthy": 23,
       "identity_mismatch": 1,
@@ -2139,67 +2166,68 @@
       "transient_error": 1,
       "disabled": 2
     },
-    "latestCloudMeasuredAt": "2026-11-11T07:04:47.971316Z",
+    "latestCloudMeasuredAt": "2026-11-13T07:04:50.468019Z",
     "latestCloudSummary": {
       "transient_error": 5,
-      "healthy": 20,
+      "healthy": 19,
       "identity_mismatch": 1,
       "coverage_gap": 1,
       "import_only": 1,
       "retired": 1,
       "partial_coverage": 1,
+      "unavailable": 1,
       "disabled": 2
     }
   },
   "roadblocks": [
     {
+      "affected": "MusicBrainz",
+      "reason": "One release-artwork probe timed out; other recording and artwork probes passed",
+      "tried": "Scheduled bounded canaries",
+      "resolved": false,
+      "action": "Observe next run; avoid diagnosing a schema change from one timeout"
+    },
+    {
       "affected": "Lyrics.ovh",
-      "reason": "Expected original-album search candidate absent",
-      "tried": "Scheduled canary; reused November 10 identity diagnostic",
+      "reason": "Expected original-album candidate absent",
+      "tried": "Scheduled search and prior identity evidence",
       "resolved": false,
       "action": "Investigate publisher search without substituting another edition"
     },
     {
       "affected": "Better Lyrics",
-      "reason": "Ambiguous search candidates",
-      "tried": "Scheduled canary without selecting an uncertain match",
+      "reason": "Search results ambiguous",
+      "tried": "Scheduled search without selecting uncertain match",
       "resolved": false,
       "action": "Further identity investigation needed"
     },
     {
       "affected": "LyricsPlus",
-      "reason": "Both canaries returned HTTP 530",
-      "tried": "Scheduled probes; reused prior identity diagnostics",
+      "reason": "Billie Jean unavailable; Creep healthy; both HTTP 200",
+      "tried": "Scheduled canaries and prior identity evidence; yesterday both returned 530",
       "resolved": false,
-      "action": "Await upstream recovery or independently validated identity"
+      "action": "Investigate source availability without changing recording identity"
     },
     {
       "affected": "Chordie and Wikisource",
       "reason": "File import capability unverified",
-      "tried": "Scheduled search and extraction canaries passed",
+      "tried": "Scheduled search and extraction passed",
       "resolved": false,
       "action": "Separate permitted import qualification needed"
     },
     {
       "affected": "Ozbcoz",
       "reason": "Native file picker not tested",
-      "tried": "Two host downloads, imports, saves, reopen and exports passed",
+      "tried": "Separate host import qualification passed",
       "resolved": false,
       "action": "Native picker qualification remains"
     },
     {
       "affected": "Pisni and OpenScore Lieder",
       "reason": "Disabled pending qualification and rights review",
-      "tried": "Included in registry and catalog structural check",
+      "tried": "Included in registry/catalog structural check",
       "resolved": false,
       "action": "Existing integration review remains"
-    },
-    {
-      "affected": "Discovery branch push",
-      "reason": "Initial GitHub account lacked repository write permission",
-      "tried": "Retried using existing authorized Freevia GitHub credential",
-      "resolved": true,
-      "action": "None"
     }
   ]
 }
