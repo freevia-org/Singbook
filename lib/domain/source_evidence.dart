@@ -4,6 +4,7 @@ import 'package:crypto/crypto.dart';
 
 import 'arrangement.dart' show lyricLines, parseArrangement;
 import 'evidence_ranking.dart';
+import 'evidence_values.dart';
 import 'models.dart';
 
 typedef EvidenceQualitySignals =
@@ -76,12 +77,6 @@ List<EvidenceClaim> collectSourceEvidence(
       ? EvidenceOrigin.userProvided
       : sourceOrigin?.call(source, field) ?? EvidenceOrigin.provider;
 
-  bool present(Object? value) =>
-      value != null &&
-      (value is! String || value.trim().isNotEmpty) &&
-      (value is! Iterable || value.isNotEmpty) &&
-      (value is! Map || value.isNotEmpty);
-
   void emit({
     required String field,
     required Object? value,
@@ -97,7 +92,7 @@ List<EvidenceClaim> collectSourceEvidence(
     String? contextId,
     String? incompatibilityReason,
   }) {
-    if (!present(value)) return;
+    if (!hasEvidenceValue(value)) return;
     claims.add(
       EvidenceClaim(
         field: field,
@@ -130,11 +125,10 @@ List<EvidenceClaim> collectSourceEvidence(
     required JsonMap values,
     required String prefix,
     required bool resolved,
-    required Iterable<JsonMap> contextMaps,
   }) {
     final lineage = sourceLineage?.call(source);
     void visit(String path, Object? value) {
-      if (!present(value)) return;
+      if (!hasEvidenceValue(value)) return;
       if (path == '$prefix.keys' && value is List) {
         for (final key in value.whereType<String>().toSet()) {
           visit('$prefix.key', key);
@@ -205,7 +199,6 @@ List<EvidenceClaim> collectSourceEvidence(
     }
   }
 
-  final selectedMaps = [selected.metadata, selected.extra];
   final selectedMetadata = <String, dynamic>{
     ...selected.metadata,
     if (selected.album != null) 'album': selected.album,
@@ -217,16 +210,9 @@ List<EvidenceClaim> collectSourceEvidence(
     values: selectedMetadata,
     prefix: 'metadata',
     resolved: false,
-    contextMaps: selectedMaps,
   );
 
   for (final source in sources) {
-    final maps = [
-      source.candidate.metadata,
-      source.candidate.extra,
-      source.metadata,
-      source.extra,
-    ];
     final lineage = sourceLineage?.call(source);
     final recordingMatch =
         sameRecording?.call(source) ??
@@ -235,12 +221,7 @@ List<EvidenceClaim> collectSourceEvidence(
         ? EvidenceMatchQuality.sameRecording
         : matchQuality(source.matchKind);
     final lyricText = lyricLines(source.body)
-        .map(
-          (line) => line
-              .toLowerCase()
-              .replaceAll(RegExp(r'[^\p{L}\p{N}]+', unicode: true), ' ')
-              .trim(),
-        )
+        .map(normalizedEvidenceText)
         .where((line) => line.isNotEmpty)
         .toList();
     if (lyricText.isNotEmpty) {
@@ -269,10 +250,7 @@ List<EvidenceClaim> collectSourceEvidence(
       for (final line in arrangement)
         if (line.chords.isNotEmpty)
           {
-            'lyrics': line.text
-                .toLowerCase()
-                .replaceAll(RegExp(r'[^\p{L}\p{N}]+', unicode: true), ' ')
-                .trim(),
+            'lyrics': normalizedEvidenceText(line.text),
             'chords': [
               for (final chord in line.chords) [chord.offset, chord.chord],
             ],
@@ -311,14 +289,12 @@ List<EvidenceClaim> collectSourceEvidence(
       values: candidateFacts,
       prefix: 'metadata',
       resolved: false,
-      contextMaps: maps,
     );
     metadataClaims(
       source: source,
       values: source.metadata,
       prefix: 'metadata',
       resolved: true,
-      contextMaps: maps,
     );
   }
   return List.unmodifiable(claims);

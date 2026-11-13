@@ -45,6 +45,15 @@ void _dump(String name, Object? value) {
   File('$directory/$name.digest').writeAsStringSync(_digest(value));
 }
 
+Object? _withoutUpdatedAt(Object? value) => switch (value) {
+  Map() => {
+    for (final entry in value.entries)
+      entry.key: entry.key == 'updatedAt' ? 'X' : _withoutUpdatedAt(entry.value),
+  },
+  List() => [for (final item in value) _withoutUpdatedAt(item)],
+  _ => value,
+};
+
 String _digest(Object? value) =>
     sha256.convert(utf8.encode(jsonEncode(value))).toString();
 
@@ -440,8 +449,10 @@ void main() {
       }
       outputs.add(history);
     }
-    _dump('history', outputs);
-    expect(_digest(outputs), _historyDigest);
+    // Saved-version snapshots carry the wall-clock time of their creation.
+    final stable = _withoutUpdatedAt(jsonDecode(jsonEncode(outputs)));
+    _dump('history', stable);
+    expect(_digest(stable), _historyDigest);
   });
 
   test('generic evidence ranking output is unchanged', () {
@@ -525,6 +536,9 @@ void main() {
 const _automaticDigest = '1dcdc378b24e6263da55bc104408eaa34c6c6e8643519f1e89635599f27b547f';
 const _explicitDigest = 'fb179bed4b9f8e8b260a2adc03e003f2fa975bf42640ea315fd58cca98a18c0e';
 const _keyDigest = 'e9e6f7e909d2f00e0656e4d63c16cf818390e03d89068ce9180454f04a1f2415';
-const _diagnosticsDigest = 'ca6876bca022a0c6def31ee1e4df66e539ebff83df8940c89075b316e3a87d8a';
-const _historyDigest = 'c02b21c96b606844911f73779d1db989de7ca9e04ef93a29320fbc54af53181a';
+// Recorded after the review fix that made the diagnostics' `basicEligible`
+// agree with the key recovery it describes (6 of 74 entries gained
+// `basicEligible: true`); every other corpus digest predates the refactoring.
+const _diagnosticsDigest = '36d041c2159ec329dc0bcba8508ec19ddac555704c73cfaeebcb348357e50b6c';
+const _historyDigest = 'c46830b8c269f66e645993ccb119eea8de3b31e3fdeba58b29b9e2ba5e4c3158';
 const _rankingDigest = '24ae1efe7fc2b064277882cc012c4d2f61a24bbbbc3ae9e1eedd4ebea0e75f1e';

@@ -5,6 +5,7 @@ import 'package:crypto/crypto.dart';
 import 'lyrics_variants.dart';
 import 'arrangement.dart';
 import 'edition_identity.dart';
+import 'evidence_values.dart';
 import 'models.dart';
 
 const _historyKey = 'previousSourceVersions';
@@ -65,17 +66,9 @@ String sourceArchiveFingerprint(JsonMap payload) => sha256
     )
     .toString();
 
-bool _present(Object? value) =>
-    value != null &&
-    (value is! String || value.trim().isNotEmpty) &&
-    (value is! Iterable || value.isNotEmpty) &&
-    (value is! Map || value.isNotEmpty);
+bool _present(Object? value) => hasEvidenceValue(value);
 
-String _identity(String value) => value
-    .toLowerCase()
-    .replaceAll(RegExp("['‘’]"), '')
-    .replaceAll(RegExp(r'[^\p{L}\p{N}]+', unicode: true), ' ')
-    .trim();
+String _identity(String value) => identityEvidenceText(value);
 
 bool _sameEvidence(SourceResult a, SourceResult b) {
   if (a.id != b.id ||
@@ -482,7 +475,12 @@ List<JsonMap> retainedSavedVersions(
     final comparison = {...snapshot}
       ..remove('updatedAt')
       ..remove('revision');
-    history.putIfAbsent(_json(comparison), () => snapshot);
+    // A snapshot is a whole saved document; key the history by its digest
+    // rather than holding every serialized version in memory.
+    history.putIfAbsent(
+      sha256.convert(utf8.encode(_json(comparison))).toString(),
+      () => snapshot,
+    );
   }
 
   for (final document in [previous, incoming]) {
