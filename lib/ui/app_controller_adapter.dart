@@ -20,6 +20,7 @@ import '../domain/source_contributions.dart';
 import 'format.dart';
 import 'library/collation.dart' show foldForSearch;
 import 'player_section_timeline.dart';
+import 'adapter_metadata.dart';
 import 'player_duration.dart';
 import 'song_search.dart';
 import 'verse_ui_state.dart';
@@ -798,7 +799,7 @@ class AppControllerAdapter extends VerseUiController {
               title: item.title,
               artist: item.artist,
               subtitle: _subtitle(item),
-              artworkUrl: _metaString(item.metadata['artworkUrl']),
+              artworkUrl: metaString(item.metadata['artworkUrl']),
               occurredAt: event.occurredAt,
               isSetlist: false,
               favorite: item.favorite,
@@ -1175,14 +1176,14 @@ class AppControllerAdapter extends VerseUiController {
   }
 
   String? _songKey(SongDocument song) =>
-      _metaString(song.metadata['key']) ?? app.displayKeysFor(song)?.sourceKey;
+      metaString(song.metadata['key']) ?? app.displayKeysFor(song)?.sourceKey;
 
   SongCardData _songCard(SongDocument song) => SongCardData(
     id: song.id,
     title: song.title,
     artist: song.artist,
-    album: _metaString(song.metadata['album']),
-    artworkUrl: _metaString(song.metadata['artworkUrl']),
+    album: metaString(song.metadata['album']),
+    artworkUrl: metaString(song.metadata['artworkUrl']),
     durationSeconds: _libraryDurationForSong(song)?.seconds,
     key: _songKey(song),
     favorite: song.favorite,
@@ -1389,14 +1390,14 @@ class AppControllerAdapter extends VerseUiController {
     final sourceMetadata = source?.metadata ?? const {};
     final sourceExtra = source?.extra ?? const {};
     final artwork =
-        _metaString(metadata['artworkUrl']) ??
-        _metaString(sourceMetadata['artworkUrl']);
+        metaString(metadata['artworkUrl']) ??
+        metaString(sourceMetadata['artworkUrl']);
     return SongCandidate(
       providerId: candidate.providerId,
       id: candidate.id,
       title: candidate.title,
       artist: candidate.artist,
-      album: candidate.album ?? _metaString(sourceMetadata['album']),
+      album: candidate.album ?? metaString(sourceMetadata['album']),
       durationSeconds:
           validDurationSeconds(candidate.durationSeconds) ??
           validDurationSeconds(sourceMetadata['durationSeconds']) ??
@@ -1695,13 +1696,13 @@ class AppControllerAdapter extends VerseUiController {
             sourceCount: contributorCount,
             title: combined.title,
             artist: combined.artist,
-            album: _metaString(combined.metadata['album']),
+            album: metaString(combined.metadata['album']),
             sourceUrl: safeDiagnosticUrl(chosenSource?.candidate.url),
-            metadata: _diagnosticMetadata(combined.metadata),
+            metadata: diagnosticMetadata(combined.metadata),
             durationSeconds: validDurationSeconds(
               combined.metadata['durationSeconds'],
             ),
-            artworkUrl: _metaString(combined.metadata['artworkUrl']),
+            artworkUrl: metaString(combined.metadata['artworkUrl']),
             hasLyrics: _sourceHasLyrics(combined, combined.body),
             isUsableVersion: _hasUsableDocument(combined),
             hasChords: app.documentHasChords(combined),
@@ -1951,7 +1952,7 @@ class AppControllerAdapter extends VerseUiController {
       return false;
     }
     if (_filters.language.isNotEmpty &&
-        _metaString(combined.metadata['language'])?.toLowerCase() !=
+        metaString(combined.metadata['language'])?.toLowerCase() !=
             _filters.language.toLowerCase()) {
       return false;
     }
@@ -1993,15 +1994,15 @@ class AppControllerAdapter extends VerseUiController {
       title: candidate.title,
       artist: candidate.artist,
       sourceUrl: safeDiagnosticUrl(candidate.url),
-      metadata: _diagnosticMetadata({
+      metadata: diagnosticMetadata({
         ...candidate.metadata,
         ...result.metadata,
       }, providerId: candidate.providerId),
       album: display.album,
       durationSeconds: display.durationSeconds,
       artworkUrl: display.artworkUrl,
-      rating: _metaDouble(result.metadata['rating']),
-      ratingCount: _metaInt(result.metadata['ratingCount']),
+      rating: metaDouble(result.metadata['rating']),
+      ratingCount: metaInt(result.metadata['ratingCount']),
       hasLyrics: hasLyrics,
       isUsableVersion: usable,
       hasChords: app.sourceHasChords(result),
@@ -4355,115 +4356,4 @@ class AppControllerAdapter extends VerseUiController {
 
 extension _FirstOrNull<T> on Iterable<T> {
   T? get firstOrNull => isEmpty ? null : first;
-}
-
-/// Metadata comes from imported files and synced documents, so values may have
-/// an unexpected type. These read them without throwing.
-double? _metaDouble(Object? value) {
-  final number = switch (value) {
-    num() => value.toDouble(),
-    String() => double.tryParse(value.trim()),
-    _ => null,
-  };
-  return number != null && number.isFinite ? number : null;
-}
-
-int? _metaInt(Object? value) => switch (value) {
-  int() => value,
-  num() when value.isFinite => value.toInt(),
-  String() => int.tryParse(value.trim()),
-  _ => null,
-};
-
-String? _metaString(Object? value) => switch (value) {
-  String() => value,
-  num() || bool() => value.toString(),
-  _ => null,
-};
-
-Map<String, Object?> _diagnosticMetadata(
-  Map<String, Object?> values, {
-  String? providerId,
-}) {
-  const aliases = <String, List<String>>{
-    'timeSignature': ['timeSignature', 'time_signature', 'time'],
-    'tuning': ['tuning', 'tuningStrings', 'tuning_strings'],
-  };
-  const allowed = {
-    'key',
-    'capo',
-    'tuning',
-    'tempo',
-    'timeSignature',
-    'year',
-    'album',
-    'language',
-    'composer',
-    'composers',
-    'lyricist',
-    'lyricists',
-    'author',
-    'writers',
-    'genre',
-    'credits',
-    'mediaLinks',
-  };
-  final output = <String, Object?>{};
-  final analysis = AcousticBrainzAnalysis.fromMetadata(
-    providerId ?? '',
-    values,
-  );
-  if (analysis != null) output['acousticbrainz'] = analysis.toMetadata();
-  for (final key in allowed) {
-    Object? value = values[key];
-    if (value == null) {
-      for (final alias in aliases[key] ?? const <String>[]) {
-        if (values.containsKey(alias)) {
-          value = values[alias];
-          break;
-        }
-      }
-    }
-    if (key == 'mediaLinks' && value is List) {
-      final links = <String>[];
-      for (final entry in value.take(30)) {
-        final rawUrl = entry is String
-            ? entry
-            : entry is Map
-            ? _metaString(entry['url'])
-            : null;
-        final url = safeDiagnosticUrl(rawUrl);
-        if (url == null) continue;
-        final rawTitle = entry is Map ? _metaString(entry['title']) : null;
-        final title = rawTitle?.trim().replaceAll(RegExp(r'\s+'), ' ');
-        final label = title == null || title.isEmpty || title == rawUrl
-            ? url
-            : '${title.length > 256 ? title.substring(0, 256) : title}\n$url';
-        if (!links.contains(label)) links.add(label);
-      }
-      if (links.isNotEmpty) output[key] = List<String>.unmodifiable(links);
-    } else if (value is List) {
-      final entries = value
-          .map((item) => _diagnosticCredit(item))
-          .whereType<String>()
-          .toList(growable: false);
-      if (entries.isNotEmpty) output[key] = List<String>.unmodifiable(entries);
-    } else if (_metaString(value) case final text?
-        when text.trim().isNotEmpty) {
-      output[key] = text.trim();
-    }
-  }
-  return Map<String, Object?>.unmodifiable(output);
-}
-
-String? _diagnosticCredit(Object? value) {
-  if (value is String) return value.trim().isEmpty ? null : value.trim();
-  if (value is! Map) return null;
-  final name = _metaString(value['name'] ?? value['artist'] ?? value['value']);
-  final role = _metaString(value['role'] ?? value['type']);
-  final parts = [
-    if (name?.trim().isNotEmpty == true) name!.trim(),
-    if (role?.trim().isNotEmpty == true) role!.trim(),
-  ];
-  return parts.isEmpty ? null : parts.join(' · ');
 }
