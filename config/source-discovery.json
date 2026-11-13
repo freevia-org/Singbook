@@ -726,6 +726,18 @@
       ],
       "endpoint": "https://guitaradda.com/chords/",
       "reason": "Publisher chord-library page describes song and artist search, chord sheets, key and capo, and Hindi, Punjabi, Marathi, Bengali and English categories. Discovery on 2026-11-12 reviewed that public page only; it mentions a shared API store but does not establish a documented public API, application-use terms, stable song identity, attribution contract, response grammar, catalog size or extraction reliability. No song content, authentication or canaries were requested. Defer until those conditions and two independent live extraction canaries are established; do not activate."
+    },
+    {
+      "id": "freqblog",
+      "name": "FreqBlog",
+      "firstSeen": "2026-11-13",
+      "lastChecked": "2026-11-13",
+      "status": "deferred",
+      "documentation": [
+        "https://freqblog.com/"
+      ],
+      "endpoint": "https://freqblog.com/",
+      "reason": "Publisher website describes a recording metadata and audio-analysis API with title/artist or ISRC lookup, BPM, key, mood and genre, including multiple regional genres; it describes an API key and a free tier. Claims of coverage, fallback and field quality have not been independently verified. Documentation-only discovery on 2026-11-13 did not access credentials, request audio analysis, or run extraction canaries. Defer pending documented app-use, quota, attribution and persistence terms, recording identity and provenance checks, runtime compatibility and two independent extraction canaries. No lyrics are claimed and no source is activated."
     }
   ]
 }
