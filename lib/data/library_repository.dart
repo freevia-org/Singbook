@@ -1075,24 +1075,40 @@ String _aggregateHash(String documentHash, String evidenceHash) =>
 String setlistContentHash(SetlistDocument setlist) =>
     sha256.convert(utf8.encode(jsonEncode(setlist.toJson()))).toString();
 
-/// Encodes songs applied by sync and checks that each survives the ChordPro
-/// round trip with its identity, away from the UI isolate.
-Future<Map<String, String>> _encodeSyncBatch(List<SongDocument> songs) {
-  if (songs.isEmpty) return Future.value(const {});
-  return Isolate.run(() {
-    final codec = ChordProCodec();
-    final documents = {for (final song in songs) song.id: codec.encode(song)};
-    for (final song in songs) {
-      final parsed = codec.decode(documents[song.id]!);
-      if (song.extensionError != null ||
-          parsed.extensionError != null ||
-          parsed.id != song.id) {
-        throw const FormatException('invalid_local_data');
-      }
+Map<String, String> _encodeSyncSongs(List<SongDocument> songs) {
+  final codec = ChordProCodec();
+  final documents = {for (final song in songs) song.id: codec.encode(song)};
+  for (final song in songs) {
+    final parsed = codec.decode(documents[song.id]!);
+    if (song.extensionError != null ||
+        parsed.extensionError != null ||
+        parsed.id != song.id) {
+      throw const FormatException('invalid_local_data');
     }
-    return documents;
-  }, debugName: 'singbook-sync-encode');
+  }
+  return documents;
 }
+
+bool _isSmallSyncBatch(List<SongDocument> songs) {
+  if (songs.length > 2) return false;
+  var bytes = 0;
+  for (final song in songs) {
+    bytes += song.body.length;
+  }
+  return bytes < 64 * 1024;
+}
+
+/// Encodes songs applied by sync and checks that each survives the ChordPro
+/// round trip with its identity. A pulled batch goes to a worker isolate; one
+/// or two small songs stay inline (see [_isSmallSyncBatch]), where an isolate
+/// costs more than the work and would delay the transaction past other writes
+/// queued right behind the call.
+Future<Map<String, String>> _encodeSyncBatchInIsolate(
+  List<SongDocument> songs,
+) => Isolate.run(
+  () => _encodeSyncSongs(songs),
+  debugName: 'singbook-sync-encode',
+);
 
 String _localSongHash(
   String document,
@@ -3232,7 +3248,9 @@ class LibraryRepository {
     String? syncAccount,
     Map<String, String?> baselineCloudHashes = const {},
   }) async {
-    final documents = await _encodeSyncBatch(songs);
+    final documents = _isSmallSyncBatch(songs)
+        ? _encodeSyncSongs(songs)
+        : await _encodeSyncBatchInIsolate(songs);
     return database.transaction((txn) async {
       final savedSongs = <String>[],
           savedSetlists = <String>[],
