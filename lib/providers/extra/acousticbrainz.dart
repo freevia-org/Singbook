@@ -8,7 +8,7 @@ import '../../domain/edition_identity.dart';
 import '../../domain/models.dart' show JsonMap;
 import '../provider.dart';
 import '../core/recording_context.dart';
-import 'common.dart' show normalized;
+import 'common.dart' show mbidOrNull, normalized, strictObject;
 
 /// Recording-ID enrichment. Uploaded analysis is evidence about a submission,
 /// not verified musical truth, recording alignment, or an authoritative offset.
@@ -32,10 +32,6 @@ class AcousticBrainzProvider
   static const _limit = 512 * 1024;
   static const _features =
       'metadata.tags;rhythm.bpm;tonal.key_key;tonal.key_scale;tonal.key_strength';
-  static final _mbid = RegExp(
-    r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$',
-    caseSensitive: false,
-  );
 
   @override
   final definition = const ProviderDefinition(
@@ -47,8 +43,7 @@ class AcousticBrainzProvider
     website: 'https://acousticbrainz.org/',
   );
 
-  static String? _recordingId(String? value) =>
-      value != null && _mbid.hasMatch(value) ? value.toLowerCase() : null;
+  static String? _recordingId(String? value) => mbidOrNull(value);
 
   @override
   String get requiredRecordingIdNamespace => 'musicbrainz';
@@ -410,10 +405,7 @@ num _number(Object? value, num max) {
   return value;
 }
 
-JsonMap _object(Object? value) {
-  if (value is! Map || value.keys.any((key) => key is! String)) _invalid();
-  return Map<String, dynamic>.from(value);
-}
+JsonMap _object(Object? value) => strictObject(value);
 
 Object? _decode(List<int> bytes) {
   try {

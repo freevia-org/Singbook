@@ -8,12 +8,14 @@ import '../provider.dart';
 import '../core/common.dart' show meaningfulLyrics, plainToChordPro;
 import 'common.dart'
     show
+        PacedQueue,
         normalized,
         queryText,
         remoteChordPro,
         sanitizeExtraMetadata,
         sourceEvidence,
-        throwIfBlocked;
+        throwIfBlocked,
+        uuidPattern;
 
 /// Search and line-timing access to kara.moe's public API. A KID identifies a
 /// karaoke arrangement/video, not the underlying studio recording.
@@ -25,8 +27,7 @@ class KaraMoeProvider implements LyricsProvider {
 
   final ProviderTransport transport;
   final Duration requestInterval;
-  Future<void> _queue = Future.value();
-  DateTime _next = DateTime.fromMillisecondsSinceEpoch(0);
+  late final _paced = PacedQueue(requestInterval);
 
   static const _host = 'kara.moe';
   static const _hosts = {_host};
@@ -34,10 +35,7 @@ class KaraMoeProvider implements LyricsProvider {
   static const _detailLimit = 512 * 1024;
   static const _maxCues = 10000;
   static const _maxUs = 604800000000;
-  static final _uuid = RegExp(
-    r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$',
-    caseSensitive: false,
-  );
+  static final _uuid = uuidPattern;
 
   @override
   final definition = const ProviderDefinition(
@@ -49,27 +47,8 @@ class KaraMoeProvider implements LyricsProvider {
     enabledByDefault: false,
   );
 
-  Future<T> _request<T>(Future<T> Function() send, CancellationToken? cancel) {
-    final result = _queue.then((_) async {
-      cancel?.throwIfCancelled();
-      final wait = _next.difference(DateTime.now());
-      if (wait > Duration.zero) {
-        if (cancel == null) {
-          await Future<void>.delayed(wait);
-        } else {
-          await Future.any([Future<void>.delayed(wait), cancel.cancelled]);
-        }
-      }
-      cancel?.throwIfCancelled();
-      try {
-        return await send();
-      } finally {
-        _next = DateTime.now().add(requestInterval);
-      }
-    });
-    _queue = result.then<void>((_) {}, onError: (Object _) {});
-    return result;
-  }
+  Future<T> _request<T>(Future<T> Function() send, CancellationToken? cancel) =>
+      _paced.run(send, cancel);
 
   static Uri _searchUrl(String query) => Uri.https(_host, '/api/karas/search', {
     'filter': query,
@@ -243,14 +222,21 @@ class KaraMoeProvider implements LyricsProvider {
     return micros;
   }
 
-  static TimingTrack _parseTiming(String raw, String uuid, String lyrics) {
-    final id =
-        'karamoe:$uuid:${sha256.convert(utf8.encode(raw)).toString().substring(0, 20)}';
+  /// [rawBytes], [rawSha256] and [parsed] are the UTF-8 bytes, their digest and
+  /// the decoded JSON of exactly [raw], computed once by the caller.
+  static TimingTrack _parseTiming(
+    String raw,
+    String uuid,
+    String lyrics, {
+    required List<int> rawBytes,
+    required String rawSha256,
+    required Object? parsed,
+  }) {
+    final id = 'karamoe:$uuid:${rawSha256.substring(0, 20)}';
     try {
-      if (utf8.encode(raw).length > _detailLimit) {
+      if (rawBytes.length > _detailLimit) {
         throw const FormatException('Detail JSON exceeds the response limit.');
       }
-      final parsed = jsonDecode(raw);
       if (parsed is! Map || parsed['lyrics'] is! List) {
         throw const ProviderException('unavailable');
       }
@@ -437,7 +423,16 @@ class KaraMoeProvider implements LyricsProvider {
       throw const ProviderException('invalid_response');
     }
     final body = remoteChordPro(plainToChordPro(meaningfulLyrics(lyricText)));
-    final track = _parseTiming(raw, uuid, lyricText);
+    final rawBytes = utf8.encode(raw);
+    final rawSha256 = sha256.convert(rawBytes).toString();
+    final track = _parseTiming(
+      raw,
+      uuid,
+      lyricText,
+      rawBytes: rawBytes,
+      rawSha256: rawSha256,
+      parsed: decoded,
+    );
     final attribution = _attribution(data);
     final contributorNames = _names(data['creators'], limit: 30);
     final karaokeAuthors = _names(data['authors'], limit: 30);
@@ -452,7 +447,7 @@ class KaraMoeProvider implements LyricsProvider {
       extra: {
         ...sourceEvidence(
           found,
-          revision: sha256.convert(utf8.encode(raw)).toString(),
+          revision: rawSha256,
           evidenceUrl: found.url,
           attribution: attribution,
           licenseUrl:
@@ -473,7 +468,7 @@ class KaraMoeProvider implements LyricsProvider {
         'originalPayload': {
           'contentType': 'application/json',
           'encoding': 'utf-8',
-          'base64': base64Encode(utf8.encode(raw)),
+          'base64': base64Encode(rawBytes),
         },
         'karaokeMugenId': uuid,
         'sourceSongTypes': found.metadata['sourceSongTypes'] ?? const [],

@@ -3,13 +3,7 @@ import 'dart:convert';
 import '../../domain/models.dart';
 import 'common.dart';
 
-final _mbid = RegExp(
-  r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$',
-  caseSensitive: false,
-);
-
-String? _id(Object? value) =>
-    value is String && _mbid.hasMatch(value) ? value.toLowerCase() : null;
+String? _id(Object? value) => mbidOrNull(value);
 
 List<String> _attributes(Object? value) => value is List
     ? value
