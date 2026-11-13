@@ -19,7 +19,9 @@ class PlayerDuration {
       kind == PlayerDurationKind.chartEstimate;
 }
 
-double? _seconds(Object? value) {
+/// A stored duration in seconds, or null when [value] is not a finite number
+/// within a day. Metadata comes from imports and sync, so it is not trusted.
+double? validDurationSeconds(Object? value) {
   if (value is! num) return null;
   final seconds = value.toDouble();
   return seconds.isFinite && seconds > 0 && seconds <= 86400 ? seconds : null;
@@ -31,7 +33,7 @@ List<double> _candidateDurations(SongCandidate candidate) => [
     candidate.metadata['durationSeconds'],
     candidate.metadata['duration'],
   ])
-    ?_seconds(value),
+    ?validDurationSeconds(value),
 ];
 
 List<double> _sourceDurations(SourceResult source) => [
@@ -40,7 +42,7 @@ List<double> _sourceDurations(SourceResult source) => [
     source.metadata['durationSeconds'],
     source.metadata['duration'],
   ])
-    ?_seconds(value),
+    ?validDurationSeconds(value),
 ];
 
 double? _agreedDuration(List<double> values) {
@@ -198,7 +200,7 @@ double _cueEndLowerBound(SongDocument song) {
     }
     for (final cue in track.cues) {
       final end = (cue.endUs ?? cue.startUs) / 1000000;
-      if (_seconds(end) != null && end > seconds) seconds = end;
+      if (validDurationSeconds(end) != null && end > seconds) seconds = end;
     }
   }
   return seconds;
@@ -211,7 +213,8 @@ PlayerDuration resolvePlayerDuration(
   SongDocument song, {
   required double Function() estimate,
 }) {
-  if (_seconds(song.metadata['durationSeconds']) case final seconds?) {
+  if (validDurationSeconds(song.metadata['durationSeconds'])
+      case final seconds?) {
     return PlayerDuration(seconds, PlayerDurationKind.metadata);
   }
   final selected = song.selectedRecording;
@@ -266,7 +269,7 @@ PlayerDuration resolvePlayerDuration(
     }
   }
   var seconds = estimate();
-  if (_seconds(seconds) == null) seconds = 90;
+  if (validDurationSeconds(seconds) == null) seconds = 90;
   // A usable cue can extend the estimated clock, but its last lyric does not
   // establish the recording's total duration or change any cue timestamp.
   final cueFloor = _cueEndLowerBound(song);
