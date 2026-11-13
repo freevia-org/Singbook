@@ -205,6 +205,10 @@ class GoogleDriveSyncService {
   DriveFolderInfo? selectedDriveFolder;
   final _codec = ChordProCodec();
   bool _busy = false, _cancelled = false;
+
+  /// Songs already validated during the running [sync] (id -> content hash),
+  /// so its later passes re-read only songs that changed. Null outside a sync.
+  Map<String, String>? _validated;
   bool _confirmDeletions = false;
 
   /// Number of local items the last refused sync would have deleted (see
@@ -316,18 +320,13 @@ class GoogleDriveSyncService {
         removeKeys: baselines.keys.toList(),
       );
     }
-    await repository.setSetting(_bindingKey, {
-      'id': account,
-      'email': auth.accountEmail,
+    // The binding and the merge/replace decision are one SQLite commit. An
+    // interruption between them must not turn a chosen "replace" into a merge
+    // that uploads the previous library to the new account.
+    await repository.setSettingsAtomically({
+      _bindingKey: {'id': account, 'email': auth.accountEmail},
+      _replaceKey: mergeLocal ? null : {'account': account, 'keys': existing},
     });
-    if (mergeLocal) {
-      await repository.setSetting(_replaceKey, null);
-    } else {
-      await repository.setSetting(_replaceKey, {
-        'account': account,
-        'keys': existing,
-      });
-    }
   }
 
   /// The user approved the deletions that a sync refused with
@@ -537,23 +536,28 @@ class GoogleDriveSyncService {
       await store.verifyFolder();
       _checkIdentity(identityId, identityEmail);
       var imported = 0;
+      // Each picked file maps to its own derived id, so one listing answers
+      // "already imported?" for the whole selection.
+      final existingSongIds = <String>{};
+      for (final file in await store.listFiles()) {
+        final item = _itemForFile(file);
+        if (item?.kind == 'song') existingSongIds.add(item!.id);
+      }
       for (final sourceId in ids.toSet()) {
         final source = await store.getFile(sourceId);
         if (source == null || !source.name.toLowerCase().endsWith('.cho')) {
           continue;
         }
         final id = 'drive-${syncHash(sourceId).substring(0, 32)}';
-        final existing = await store.listFiles();
-        if (existing.any((file) {
-          final item = _itemForFile(file);
-          return item?.kind == 'song' && item?.id == id;
-        })) {
+        if (existingSongIds.contains(id)) continue;
+        final content = await store.readFile(sourceId);
+        final String normalized;
+        try {
+          normalized = _codec.encode(_codec.decode(content).copyWith(id: id));
+        } on FormatException {
+          // An unusable file is left alone; the other selected files import.
           continue;
         }
-        final content = await store.readFile(sourceId);
-        final normalized = _codec.encode(
-          _codec.decode(content).copyWith(id: id),
-        );
         final properties = {
           'kind': 'song',
           'id': id,
@@ -619,6 +623,7 @@ class GoogleDriveSyncService {
     }
     _busy = true;
     _cancelled = false;
+    _validated = {};
     try {
       // Refuse unrepresentable or damaged local records before writing even
       // account-binding or replace-pending state. `_round` revalidates after
@@ -706,6 +711,7 @@ class GoogleDriveSyncService {
     } on FormatException {
       throw const SyncException('invalid_remote_data');
     } finally {
+      _validated = null;
       _busy = false;
     }
   }
@@ -724,11 +730,25 @@ class GoogleDriveSyncService {
     final puts = run.puts.values.toList(), removes = run.removes.toList();
     run.puts.clear();
     run.removes.clear();
-    await repository.writeSyncBaselines(
-      run.account,
-      puts: puts,
-      removeKeys: removes,
-    );
+    try {
+      await repository.writeSyncBaselines(
+        run.account,
+        puts: puts,
+        removeKeys: removes,
+      );
+    } catch (_) {
+      // Keep what was agreed for the next flush. A decision recorded while
+      // this write was in flight is newer and stays.
+      for (final put in puts) {
+        if (!run.puts.containsKey(put.key) && !run.removes.contains(put.key)) {
+          run.puts[put.key] = put;
+        }
+      }
+      for (final key in removes) {
+        if (!run.puts.containsKey(key)) run.removes.add(key);
+      }
+      rethrow;
+    }
   }
 
   Future<Map<String, String>> _localSnapshot() async {
@@ -736,7 +756,7 @@ class GoogleDriveSyncService {
     // damaged record or opaque extension cannot safely participate in the
     // strict ChordPro sync contract.
     try {
-      await repository.validateSyncSongData();
+      await repository.validateSyncSongData(validated: _validated);
     } on Object {
       throw const SyncException('invalid_local_data');
     }
@@ -760,7 +780,7 @@ class GoogleDriveSyncService {
       } on SyncException {
         throw const SyncException('invalid_local_data');
       }
-      result['setlist:${setlist.id}'] = syncHash(jsonEncode(setlist.toJson()));
+      result['setlist:${setlist.id}'] = setlistContentHash(setlist);
     }
     return result;
   }
@@ -905,7 +925,17 @@ class GoogleDriveSyncService {
       if (remoteMd5 == null || file.properties['md5'] == remoteMd5) continue;
       final identity = _itemForFile(file);
       if (identity == null) continue;
-      final content = await store.readFile(file.id);
+      final String content;
+      try {
+        content = await store.readFile(file.id);
+      } on SyncException catch (error) {
+        // One unreadable externally edited file must not stop the library.
+        // Network, authorization and quota failures still end the sync.
+        if (error.code == 'remote_file_missing') continue;
+        if (!_skippable.contains(error.code)) rethrow;
+        run.skipCodes.add(error.code);
+        continue;
+      }
       try {
         final String normalized;
         if (identity.kind == 'song') {
@@ -1139,7 +1169,12 @@ class GoogleDriveSyncService {
     }
     final local = await _readLocal(it.kind, it.id);
     if (local == null) return; // deleted meanwhile; the next sync decides
-    if (local.hash != it.local) throw const _Stale();
+    if (local.hash != it.local) {
+      // Edited here while syncing. Re-reading the cloud cannot settle that;
+      // nothing was uploaded and the next sync decides from the new state.
+      run.pending++;
+      return;
+    }
     if (utf8.encode(local.content).length > maxSyncFileBytes - 8192) {
       throw const SyncException('local_file_too_large');
     }
@@ -1370,6 +1405,21 @@ class GoogleDriveSyncService {
     final local = await _readLocal(it.kind, it.id);
     if (local == null || local.hash != it.local) {
       run.pending++; // edited again while we were looking
+      return;
+    }
+    if (syncHash(local.content) == cloud.hash) {
+      // The local hash of a song with linked evidence is not the hash of its
+      // sync file, so equal content is only visible here. The file this
+      // device would upload is byte-identical to the cloud one: agree on it
+      // instead of keeping a conflict copy of the same song.
+      run.put(
+        SyncBaseline(
+          kind: it.kind,
+          id: it.id,
+          cloudHash: cloud.hash!,
+          localHash: local.hash,
+        ),
+      );
       return;
     }
     final copyId = conflictDocumentId(it.id, local.hash);
