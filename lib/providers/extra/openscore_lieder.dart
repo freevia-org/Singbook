@@ -90,7 +90,7 @@ class OpenScoreLiederProvider implements LyricsProvider {
     String source, {
     required String indexSha256,
   }) {
-    if (utf8.encode(source).length > _maxIndexBytes ||
+    if (utf8Exceeds(source, _maxIndexBytes) ||
         !RegExp(r'^[a-f0-9]{64}$').hasMatch(indexSha256)) {
       throw const ProviderException('invalid_response');
     }
@@ -255,11 +255,14 @@ class OpenScoreLiederProvider implements LyricsProvider {
     final checked = queryText(query);
     final catalog = await _load(cancel);
     cancel?.throwIfCancelled();
+    final tokens = queryTokens(checked);
     return catalog
         .where(
-          (c) => queryMatches(
-            checked,
-            '${c.title} ${c.artist} ${c.metadata['lyricist'] ?? ''}',
+          (c) => tokensMatch(
+            tokens,
+            normalized(
+              '${c.title} ${c.artist} ${c.metadata['lyricist'] ?? ''}',
+            ),
           ),
         )
         .take(30)
@@ -313,10 +316,7 @@ class OpenScoreLiederProvider implements LyricsProvider {
     requireSongText(original);
     // Every source character is lyric text, including whole bracketed lines,
     // hashes and directive-shaped poetry. Escape rather than interpret/drop it.
-    final body = original.trim().replaceAllMapped(
-      RegExp(r'[\\\[\]{}#]'),
-      (m) => '\\${m[0]}',
-    );
+    final body = escapeChordPro(original.trim(), hash: true);
     final attribution = '${found.artist}; OpenScore Lieder contributors';
     return SourceResult(
       candidate: found,

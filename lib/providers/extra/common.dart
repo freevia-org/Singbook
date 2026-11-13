@@ -30,10 +30,139 @@ String normalized(String value) => value
     .toLowerCase()
     .replaceAll(RegExp(r"[^\p{L}\p{N}]+", unicode: true), ' ')
     .trim();
-bool queryMatches(String query, String text) {
-  final haystack = normalized(text);
-  final tokens = normalized(query).split(' ').where((t) => t.isNotEmpty);
-  return tokens.isNotEmpty && tokens.every(haystack.contains);
+bool queryMatches(String query, String text) =>
+    tokensMatch(queryTokens(query), normalized(text));
+
+/// Normalised search tokens of [query]; compute once per search, not per row.
+List<String> queryTokens(String query) =>
+    normalized(query).split(' ').where((t) => t.isNotEmpty).toList();
+
+/// [queryMatches] for precomputed [tokens] and an already [normalized]
+/// haystack.
+bool tokensMatch(List<String> tokens, String normalizedHaystack) =>
+    tokens.isNotEmpty && tokens.every(normalizedHaystack.contains);
+
+/// [normalized] identity that also ignores straight and curly apostrophes.
+String normalizedIdentity(String value) => value
+    .toLowerCase()
+    .replaceAll(RegExp("['‘’]"), '')
+    .replaceAll(RegExp(r'[^\p{L}\p{N}]+', unicode: true), ' ')
+    .trim();
+
+/// A JSON object with string keys, or `invalid_response`.
+JsonMap strictObject(Object? value) {
+  if (value is! Map || value.keys.any((key) => key is! String)) {
+    throw const ProviderException('invalid_response');
+  }
+  return Map<String, dynamic>.from(value);
+}
+
+final _chordProSyntax = RegExp(r'[\\\[\]{}]');
+final _chordProSyntaxAndHash = RegExp(r'[\\\[\]{}#]');
+
+/// Backslash-escapes ChordPro syntax so source text stays literal lyric text.
+/// [hash] also escapes `#`, which starts a ChordPro comment line.
+String escapeChordPro(String text, {bool hash = false}) => text.replaceAllMapped(
+  hash ? _chordProSyntaxAndHash : _chordProSyntax,
+  (match) => '\\${match[0]}',
+);
+
+/// MusicBrainz identifiers and other canonical 8-4-4-4-12 hexadecimal UUIDs.
+final uuidPattern = RegExp(
+  r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$',
+  caseSensitive: false,
+);
+
+/// Lower-cased MusicBrainz identifier, or null when [value] is not one.
+String? mbidOrNull(Object? value) =>
+    value is String && uuidPattern.hasMatch(value) ? value.toLowerCase() : null;
+
+/// Whether [text] needs more than [limit] bytes as UTF-8, without encoding it
+/// when its UTF-16 length already decides the answer.
+bool utf8Exceeds(String text, int limit) {
+  if (text.length > limit) return true;
+  if (text.length * 3 <= limit) return false;
+  return utf8.encode(text).length > limit;
+}
+
+/// Resolves an untrusted, possibly relative reference against [base]. A
+/// malformed reference yields null instead of a [FormatException].
+Uri? resolvedUri(Uri base, String? reference) {
+  if (reference == null) return null;
+  final parsed = Uri.tryParse(reference);
+  if (parsed == null) return null;
+  try {
+    return base.resolveUri(parsed);
+  } on FormatException {
+    return null;
+  } on StateError {
+    return null;
+  } on ArgumentError {
+    return null;
+  }
+}
+
+/// https on one of [hosts], without userinfo or a non-default port.
+bool isPlainHttpsUrl(Uri uri, Set<String> hosts) =>
+    uri.scheme == 'https' &&
+    hosts.contains(uri.host) &&
+    uri.userInfo.isEmpty &&
+    (!uri.hasPort || uri.port == 443);
+
+/// Serialises one adapter's requests and keeps [interval] between them, for
+/// publishers whose documented limit is stricter than the transport's host
+/// pacing. A cancelled caller stops waiting immediately; its slot is skipped.
+class PacedQueue {
+  PacedQueue(this.interval);
+  final Duration interval;
+  Future<void> _queue = Future.value();
+  DateTime _next = DateTime.fromMillisecondsSinceEpoch(0);
+
+  Future<T> run<T>(Future<T> Function() send, CancellationToken? cancel) {
+    final result = _queue.then((_) async {
+      cancel?.throwIfCancelled();
+      final wait = _next.difference(DateTime.now());
+      if (wait > Duration.zero) {
+        if (cancel == null) {
+          await Future<void>.delayed(wait);
+        } else {
+          await Future.any([Future<void>.delayed(wait), cancel.cancelled]);
+        }
+      }
+      cancel?.throwIfCancelled();
+      try {
+        return await send();
+      } finally {
+        _next = DateTime.now().add(interval);
+      }
+    });
+    _queue = result.then<void>((_) {}, onError: (Object _) {});
+    return result;
+  }
+}
+
+/// A lazily loaded in-memory catalog. Loads are serialised, so overlapping
+/// callers download once: a caller queued behind a successful load reuses its
+/// value, and a failed or cancelled load is never cached. Each load runs with
+/// its own caller's cancellation; a cancelled caller stops waiting at once.
+class CatalogLoader<T extends Object> {
+  T? _value;
+  Future<void> _queue = Future.value();
+
+  Future<T> load(Future<T> Function() fetch, CancellationToken? cancel) {
+    final result = _queue.then((_) async {
+      cancel?.throwIfCancelled();
+      return _value ??= await fetch();
+    });
+    _queue = result.then<void>((_) {}, onError: (Object _) {});
+    if (cancel == null) return result;
+    return Future.any([
+      result,
+      cancel.cancelled.then<T>((_) {
+        throw const ProviderException('cancelled');
+      }),
+    ]);
+  }
 }
 
 /// Maps a MediaWiki API `error` object to a typed failure: replication lag
@@ -48,10 +177,7 @@ void throwIfApiError(JsonMap data) {
 Uri checkedUrl(String value, Set<String> hosts, {String? prefix}) {
   final uri = Uri.tryParse(value);
   if (uri == null ||
-      uri.scheme != 'https' ||
-      !hosts.contains(uri.host) ||
-      uri.userInfo.isNotEmpty ||
-      (uri.hasPort && uri.port != 443) ||
+      !isPlainHttpsUrl(uri, hosts) ||
       (prefix != null && !uri.path.startsWith(prefix))) {
     throw const ProviderException('invalid_url');
   }
@@ -179,7 +305,8 @@ String? chordProTitle(String document, String key) {
   ).firstMatch(document)?[1]?.trim();
 }
 
-final _metadataControls = RegExp(
+/// Control and bidi-override characters never kept in source text.
+final sourceControlChars = RegExp(
   r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f\u202a-\u202e\u2066-\u2069]',
 );
 
@@ -188,7 +315,7 @@ final _metadataControls = RegExp(
 String boundedText(Object? value, {int max = 300}) {
   if (value is! String) return '';
   var text = value
-      .replaceAll(_metadataControls, '')
+      .replaceAll(sourceControlChars, '')
       .replaceAll(RegExp(r'\s+'), ' ')
       .trim();
   if (text.length > max) {

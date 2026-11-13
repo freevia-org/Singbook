@@ -6,7 +6,13 @@ import '../provider.dart';
 import '../core/common.dart'
     show clean, meaningfulLyrics, parseRows, plainToChordPro;
 import 'common.dart'
-    show normalized, queryText, sanitizeExtraMetadata, throwIfBlocked;
+    show
+        PacedQueue,
+        normalized,
+        queryText,
+        sanitizeExtraMetadata,
+        throwIfBlocked,
+        utf8Exceeds;
 
 /// Bounded adapter for the public AMLL TTML lyrics database API.
 /// Numeric document IDs identify lyric documents, not verified recordings.
@@ -18,8 +24,7 @@ class AmllProvider implements LyricsProvider, ContextualLyricsSearch {
 
   final ProviderTransport transport;
   final Duration requestInterval;
-  Future<void> _queue = Future.value();
-  DateTime _next = DateTime.fromMillisecondsSinceEpoch(0);
+  late final _paced = PacedQueue(requestInterval);
   final Map<String, String> _documents = {};
 
   static const _host = 'api.amll.dev';
@@ -39,27 +44,8 @@ class AmllProvider implements LyricsProvider, ContextualLyricsSearch {
     enabledByDefault: false,
   );
 
-  Future<T> _request<T>(Future<T> Function() send, CancellationToken? cancel) {
-    final result = _queue.then((_) async {
-      cancel?.throwIfCancelled();
-      final wait = _next.difference(DateTime.now());
-      if (wait > Duration.zero) {
-        if (cancel == null) {
-          await Future<void>.delayed(wait);
-        } else {
-          await Future.any([Future<void>.delayed(wait), cancel.cancelled]);
-        }
-      }
-      cancel?.throwIfCancelled();
-      try {
-        return await send();
-      } finally {
-        _next = DateTime.now().add(requestInterval);
-      }
-    });
-    _queue = result.then<void>((_) {}, onError: (Object _) {});
-    return result;
-  }
+  Future<T> _request<T>(Future<T> Function() send, CancellationToken? cancel) =>
+      _paced.run(send, cancel);
 
   static int _id(Object? value) {
     final int? id = value is int
@@ -311,7 +297,7 @@ class AmllProvider implements LyricsProvider, ContextualLyricsSearch {
       throw const ProviderException('identity_mismatch');
     }
     final ttml = data['lyrics'] as String;
-    if (utf8.encode(ttml).length > _maxLyricBytes || ttml.trim().isEmpty) {
+    if (utf8Exceeds(ttml, _maxLyricBytes) || ttml.trim().isEmpty) {
       throw const ProviderException('invalid_response');
     }
     final parsed = parseTtml(

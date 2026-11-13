@@ -185,7 +185,7 @@ class WikibooksLiederbuchProvider implements LyricsProvider {
     final html = parsed['text'];
     if (revision is! int || revision <= 0 ||
         rawCategories is! List || rawCategories.length > 200 ||
-        html is! String || utf8.encode(html).length > _maxResponseBytes) {
+        html is! String || utf8Exceeds(html, _maxResponseBytes)) {
       throw const ProviderException('invalid_response');
     }
     final categories = <String>[];
@@ -368,10 +368,7 @@ String _text(String value, {int max = 1000}) {
   return value.replaceAll(RegExp(r'\s+'), ' ').trim();
 }
 
-String _literal(String value) => value.replaceAllMapped(
-  RegExp(r'[\\\[\]{}#]'),
-  (match) => '\\${match[0]}',
-);
+String _literal(String value) => escapeChordPro(value, hash: true);
 
 String _comment(String value) =>
     '{comment: ${value.replaceAll(RegExp(r'[{}\\\r\n]'), ' ')}}';
