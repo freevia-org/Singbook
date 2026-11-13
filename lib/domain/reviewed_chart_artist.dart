@@ -130,12 +130,7 @@ bool sameReviewedChartArtist(SongCandidate first, SongCandidate second) {
       _normalizeTitle(first.title) != _normalizeTitle(second.title)) {
     return false;
   }
-  for (final entry in first.recordingIds.entries) {
-    if (second.recordingIds.containsKey(entry.key) &&
-        second.recordingIds[entry.key] != entry.value) {
-      return false;
-    }
-  }
+  if (recordingIdsConflict(first, second)) return false;
   final firstCredit = reviewedChartArtistCredit(first);
   final secondCredit = reviewedChartArtistCredit(second);
   return firstCredit != null &&

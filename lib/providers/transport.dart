@@ -33,7 +33,7 @@ class CancellationToken {
 
 /// Application version sent in the User-Agent. Keep in sync with the
 /// `version:` line in pubspec.yaml (a unit test enforces this).
-const singbookVersion = '1.0.53';
+const singbookVersion = '1.0.54';
 
 /// Public project contact for API operators, including maintenance invocations
 /// without app build defines. An explicit contact URL may override this real
@@ -84,6 +84,10 @@ class ProviderTransport {
   final Set<String> redirectHosts;
   final Map<String, Future<void>> _queues = {};
   final Map<String, DateTime> _next = {};
+
+  /// Publisher-declared cooldowns only (Retry-After / exhausted windows),
+  /// kept apart from ordinary per-host pacing in [_next].
+  final Map<String, DateTime> _cooldowns = {};
   final Set<Future<void>> _inFlight = {};
   final Map<Future<void>, void Function()> _aborters = {};
   bool _closed = false;
@@ -347,6 +351,8 @@ class ProviderTransport {
     final until = DateTime.now().add(delay);
     final previous = _next[key];
     if (previous == null || until.isAfter(previous)) _next[key] = until;
+    final cooldown = _cooldowns[key];
+    if (cooldown == null || until.isAfter(cooldown)) _cooldowns[key] = until;
   }
 
   Future<void> _wait(Duration delay, CancellationToken? cancel) async {
@@ -364,9 +370,20 @@ class ProviderTransport {
   }
 
   Future<void> _pace(String host, CancellationToken? cancel) async {
-    final wait = (_next[_rateKey(host)] ?? DateTime.now()).difference(
-      DateTime.now(),
-    );
+    final key = _rateKey(host);
+    // A publisher window longer than any retry this transport would wait for
+    // is reported at once. Sleeping through it in the host queue would hold
+    // every later request (and its caller's worker) until the window ends.
+    final cooldown = _cooldowns[key];
+    if (cooldown != null) {
+      final remaining = cooldown.difference(DateTime.now());
+      if (remaining <= Duration.zero) {
+        _cooldowns.remove(key);
+      } else if (remaining > maxRetryDelay) {
+        throw const ProviderException('rate_limited', 'cooldown');
+      }
+    }
+    final wait = (_next[key] ?? DateTime.now()).difference(DateTime.now());
     if (wait > Duration.zero) {
       await _wait(wait, cancel);
     }

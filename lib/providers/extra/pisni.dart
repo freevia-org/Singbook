@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:characters/characters.dart';
 import 'package:crypto/crypto.dart';
 import 'package:html/dom.dart' as dom;
@@ -55,6 +56,7 @@ class PisniProvider implements LyricsProvider, ContextualLyricsSearch {
     final text = _decode(bytes);
     throwIfBlocked(text);
     final doc = parseHtml(text);
+    final responseSha256 = sha256.convert(bytes).toString();
     final found = <String, SongCandidate>{};
     for (final anchor in doc.querySelectorAll('a[href]')) {
       cancel?.throwIfCancelled();
@@ -80,7 +82,7 @@ class PisniProvider implements LyricsProvider, ContextualLyricsSearch {
         },
         extra: {
           'pisni': {
-            'searchResponseSha256': sha256.convert(bytes).toString(),
+            'searchResponseSha256': responseSha256,
             'searchQuery': q,
             'wireQuery': seed,
           },
@@ -107,12 +109,31 @@ class PisniProvider implements LyricsProvider, ContextualLyricsSearch {
     final rows = await search(selection.title, cancel: cancel);
     if (selection.artist.trim().isEmpty) return rows;
     final found = <SongCandidate>[];
+    ProviderException? failure;
     // No document crawl: inspect at most three exact-title source variants.
     for (final row
         in rows
             .where((r) => normalized(r.title) == normalized(selection.title))
             .take(3)) {
-      final page = await _page(row.id, cancel);
+      final _Page page;
+      try {
+        page = await _page(row.id, cancel);
+      } on ProviderException catch (error) {
+        // Same-title variants are independent documents: one unreadable page
+        // must not hide a later variant that lists the performer. Transport
+        // failures (rate limit, block, network, cancellation) still stop.
+        if (cancel?.isCancelled == true ||
+            !const {
+              'extraction_failed',
+              'invalid_response',
+              'identity_mismatch',
+              'unavailable',
+            }.contains(error.code)) {
+          rethrow;
+        }
+        failure ??= error;
+        continue;
+      }
       if (normalized(page.title) != normalized(row.title)) continue;
       for (final performer in page.performers) {
         if (normalized(performer['name'] as String) !=
@@ -139,6 +160,7 @@ class PisniProvider implements LyricsProvider, ContextualLyricsSearch {
       // exact document match, do not fetch other same-title arrangements.
       if (found.isNotEmpty) break;
     }
+    if (found.isEmpty && failure != null) throw failure;
     return found;
   }
 
@@ -346,7 +368,7 @@ class PisniProvider implements LyricsProvider, ContextualLyricsSearch {
     final page = _Page(
       title,
       body,
-      bytes.toList(),
+      bytes,
       _clock(),
       credits,
       performers,
@@ -402,12 +424,7 @@ String _preText(dom.Node node) {
   return node.nodes.map(_preText).join();
 }
 
-String _escape(String text) => text
-    .replaceAll('\\', '\\\\')
-    .replaceAll('[', r'\[')
-    .replaceAll(']', r'\]')
-    .replaceAll('{', r'\{')
-    .replaceAll('}', r'\}');
+String _escape(String text) => escapeChordPro(text);
 
 class _Page {
   _Page(
@@ -422,7 +439,7 @@ class _Page {
     this.variantTexts,
   );
   final String title, originalBody;
-  final List<int> bytes;
+  final Uint8List bytes;
   final DateTime at;
   final List<Map<String, dynamic>> credits, performers;
   final List<String> unlinkedPerformerCredits;
@@ -581,15 +598,17 @@ const _high = <int>[
   0x457,
 ];
 String _decode(List<int> bytes) {
-  final result = <int>[];
-  for (final byte in bytes) {
+  // Every Windows-1251 code point fits one UTF-16 unit.
+  final result = Uint16List(bytes.length);
+  for (var i = 0; i < bytes.length; i++) {
+    final byte = bytes[i];
     final code = byte < 128
         ? byte
         : byte >= 192
         ? byte + 0x350
         : _high[byte - 128];
     if (code < 0) throw const ProviderException('invalid_response', 'charset');
-    result.add(code);
+    result[i] = code;
   }
   final text = String.fromCharCodes(result);
   if (!RegExp(

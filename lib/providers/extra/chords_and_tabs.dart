@@ -201,11 +201,18 @@ class ChordsAndTabsProvider implements LyricsProvider {
     return parseSearch(source, cleanQuery);
   }
 
-  static SourceResult parsePage(String source, SongCandidate selected) {
+  /// [bytes] are the exact HTTP body [source] was decoded from, when the
+  /// caller has them; they are then retained as the original payload instead
+  /// of re-encoding the decoded text.
+  static SourceResult parsePage(
+    String source,
+    SongCandidate selected, {
+    List<int>? bytes,
+  }) {
     if (source.length > _maxPageBytes) {
       throw const ProviderException('invalid_response');
     }
-    final snapshot = utf8.encode(source);
+    final snapshot = bytes ?? utf8.encode(source);
     if (snapshot.length > _maxPageBytes) {
       throw const ProviderException('invalid_response');
     }
@@ -371,7 +378,7 @@ class ChordsAndTabsProvider implements LyricsProvider {
           'contentType': 'text/html',
           'encoding': 'utf-8',
           'base64': base64Encode(snapshot),
-          'httpBodyBytesExact': false,
+          'httpBodyBytesExact': bytes != null,
         },
         'chartInstrument': chartType.classes.contains('typeukulele')
             ? 'ukulele'
@@ -409,18 +416,7 @@ class ChordsAndTabsProvider implements LyricsProvider {
     } on FormatException {
       throw const ProviderException('invalid_response');
     }
-    final result = parsePage(source, candidate);
-    return result.copyWith(
-      extra: {
-        ...result.extra,
-        'originalPayload': {
-          'contentType': 'text/html',
-          'encoding': 'utf-8',
-          'base64': base64Encode(bytes),
-          'httpBodyBytesExact': true,
-        },
-      },
-    );
+    return parsePage(source, candidate, bytes: bytes);
   }
 }
 

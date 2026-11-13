@@ -44,12 +44,7 @@ bool sameGeniusPrimaryCredit(
       if (scope != null && scope != 'recording') return false;
     }
   }
-  for (final entry in a.recordingIds.entries) {
-    if (b.recordingIds.containsKey(entry.key) &&
-        b.recordingIds[entry.key] != entry.value) {
-      return false;
-    }
-  }
+  if (recordingIdsConflict(a, b)) return false;
   if (a.album != null && b.album != null) {
     final first = recordingVersionMarkers(a.album!, album: true);
     final second = recordingVersionMarkers(b.album!, album: true);

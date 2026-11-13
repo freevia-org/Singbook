@@ -35,7 +35,7 @@ jobs:
           cp capture/integration_test/play_public_domain_gallery_device_test.dart release/integration_test/
 
       - name: Set up Flutter
-        uses: subosito/flutter-action@v2
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with:
           flutter-version: '3.44.8'
           channel: stable
@@ -46,7 +46,7 @@ jobs:
         run: flutter pub get --enforce-lockfile --no-example
 
       - name: Capture genuine release-source UI
-        uses: reactivecircus/android-emulator-runner@v2
+        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # v2.38.0
         with:
           api-level: 36
           target: google_apis

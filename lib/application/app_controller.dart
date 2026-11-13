@@ -55,6 +55,13 @@ typedef _MergeSnapshot = ({
   bool hasPendingSources,
 });
 
+typedef _BackupSnapshot = ({
+  List<SongDocument> songs,
+  List<SetlistDocument> setlists,
+  JsonMap appSettings,
+  String libraryFingerprint,
+});
+
 /// Owns durable application state; navigation and player clock stay in the UI.
 class AppController extends ChangeNotifier {
   /// The remaining timing arguments stay accepted for source compatibility.
@@ -837,6 +844,12 @@ class AppController extends ChangeNotifier {
     _emit();
     final catalog = searchCatalogId;
     final catalogRevision = discovery.catalogClient?.runtime.catalog?.revision;
+    // A newer search, another catalog or a refreshed source list owns the UI.
+    bool stale() =>
+        epoch != _searchEpoch ||
+        _disposed ||
+        catalog != searchCatalogId ||
+        catalogRevision != discovery.catalogClient?.runtime.catalog?.revision;
     bool updateSuggestions(List<SongCandidate> found) {
       final eligible = searchCatalogs.map((provider) => provider.id).toSet();
       final filtered = found.every((row) => eligible.contains(row.providerId))
@@ -860,23 +873,11 @@ class AppController extends ChangeNotifier {
         providerCancellation: providerCancellations,
         cancel: cancellation,
         onProgress: (found) {
-          if (epoch != _searchEpoch ||
-              _disposed ||
-              catalog != searchCatalogId ||
-              catalogRevision !=
-                  discovery.catalogClient?.runtime.catalog?.revision) {
-            return;
-          }
+          if (stale()) return;
           if (updateSuggestions(found)) _emit();
         },
         onStatus: (id, state, code) {
-          if (epoch != _searchEpoch ||
-              _disposed ||
-              catalog != searchCatalogId ||
-              catalogRevision !=
-                  discovery.catalogClient?.runtime.catalog?.revision) {
-            return;
-          }
+          if (stale()) return;
           catalogChecks[id] = ProviderCheck(
             providerId: id,
             state: state,
@@ -885,22 +886,10 @@ class AppController extends ChangeNotifier {
           _emit();
         },
       );
-      if (epoch != _searchEpoch ||
-          _disposed ||
-          catalog != searchCatalogId ||
-          catalogRevision !=
-              discovery.catalogClient?.runtime.catalog?.revision) {
-        return;
-      }
+      if (stale()) return;
       updateSuggestions(found);
     } catch (error) {
-      if (epoch != _searchEpoch ||
-          _disposed ||
-          catalog != searchCatalogId ||
-          catalogRevision !=
-              discovery.catalogClient?.runtime.catalog?.revision) {
-        return;
-      }
+      if (stale()) return;
       errorCode = error is ProviderException ? error.code : 'search_failed';
     } finally {
       if (epoch == _searchEpoch) {
@@ -1546,10 +1535,7 @@ class AppController extends ChangeNotifier {
                         if (isSourceReady(source))
                           source
                         else
-                          source.copyWith(
-                            timingTracks: const [],
-                            extra: {...source.extra, 'pendingMatchCheck': true},
-                          ),
+                          withPendingMatchCheck(source),
                     ]
                   : snapshot.sources,
               historicalCacheUses: snapshot.historicalUses,
@@ -1952,10 +1938,53 @@ class AppController extends ChangeNotifier {
         : earliest(_chartTargets[(_ChartTargetKind.name, name)]);
   }
 
-  void _publishChosenSong(SongDocument song, String hash) {
-    if (_disposed) return;
+  /// A cache patch supersedes any snapshot still being read. The patched
+  /// state is published first; the interrupted reload is then repeated.
+  bool _beginCachePatch() {
     final wasReloading = _snapshotLoadsInFlight > 0;
     ++_reloadEpoch;
+    return wasReloading;
+  }
+
+  void _endCachePatch({required bool wasReloading}) {
+    if (wasReloading) {
+      unawaited(_reload().then<void>((_) => _emit(), onError: (Object _) {}));
+    }
+  }
+
+  /// Replaces one cached song with its stored row instead of reloading (and
+  /// decoding) the whole library. Returns false, leaving the cache untouched,
+  /// when the row cannot be read as one consistent document and hash; the
+  /// caller then falls back to a full reload.
+  Future<bool> _publishStoredSong(
+    String id, {
+    bool keepDisplayKeys = false,
+  }) async {
+    final SongDocument? stored;
+    final String? hash;
+    try {
+      hash = await repository.getSongEditHash(id);
+      stored = hash == null ? null : await repository.getPlayableSong(id);
+      // A write landing between the two reads would pair a document with
+      // another version's hash.
+      if (stored == null || await repository.getSongEditHash(id) != hash) {
+        return false;
+      }
+    } catch (_) {
+      return false;
+    }
+    if (_disposed) return true;
+    _publishChosenSong(stored, hash!, keepDisplayKeys: keepDisplayKeys);
+    return true;
+  }
+
+  void _publishChosenSong(
+    SongDocument song,
+    String hash, {
+    bool keepDisplayKeys = false,
+  }) {
+    if (_disposed) return;
+    final wasReloading = _beginCachePatch();
     final savedIndexCurrent =
         identical(songs, _savedIndexedSongs) &&
         songs.length == _savedIndexedSongCount;
@@ -1986,17 +2015,26 @@ class AppController extends ChangeNotifier {
     if (!ordered) next.sort(byRecency);
     _replaceIndexedSong(next, song, previous: previous);
     _songHashes[song.id] = hash;
-    _songDisplayKeys.remove(song.id);
+    // Display keys depend only on the chart; a change that leaves the chart
+    // alone keeps them instead of showing the song without a key meanwhile.
+    final keptKeys = keepDisplayKeys && previous != null
+        ? _displayKeysByDocument[previous]
+        : null;
+    if (keptKeys != null) {
+      _displayKeysByDocument[song] = keptKeys;
+      _songDisplayKeys[song.id] = keptKeys;
+      _songDisplayKeysRevision++;
+    } else {
+      _songDisplayKeys.remove(song.id);
+    }
     if (savedIndexCurrent && ordered) {
       _updateSavedIndex(song, previous);
     } else {
       _indexSaved();
     }
     _notifyWrite(songsChanged: true);
-    _scorePublishedSong(song);
-    if (wasReloading) {
-      unawaited(_reload().then<void>((_) => _emit(), onError: (Object _) {}));
-    }
+    if (keptKeys == null) _scorePublishedSong(song);
+    _endCachePatch(wasReloading: wasReloading);
   }
 
   void _scorePublishedSong(SongDocument song) {
@@ -2019,10 +2057,79 @@ class AppController extends ChangeNotifier {
     }
   }
 
-  Future<void> _afterWrite({bool songsChanged = true}) async {
-    await _reload();
+  Timer? _reloadRetry;
+
+  /// Refreshes the cache after a committed write. The write itself succeeded,
+  /// so a failed refresh is not reported as a failed write: a caller that
+  /// retried would compare against stale hashes and store a conflict copy,
+  /// and the change would miss its sync. [songId] names the one song a write
+  /// touched, which can then be refreshed on its own.
+  Future<void> _afterWrite({bool songsChanged = true, String? songId}) async {
+    try {
+      await _reload();
+    } catch (_) {
+      if (_disposed) return;
+      _retryReloadSoon();
+      if (songId != null && await _publishStoredSong(songId)) return;
+      _notifyWrite(songsChanged: songsChanged);
+      return;
+    }
     if (songsChanged) _indexSaved();
     _notifyWrite(songsChanged: songsChanged);
+  }
+
+  void _retryReloadSoon() {
+    if (_disposed || _reloadRetry != null) return;
+    _reloadRetry = Timer(const Duration(seconds: 2), () {
+      _reloadRetry = null;
+      if (_disposed) return;
+      unawaited(
+        _reload().then<void>((_) {
+          if (_disposed) return;
+          _indexSaved();
+          _emit();
+        }, onError: (Object _) {}),
+      );
+    });
+  }
+
+  int _setlistReloadEpoch = 0;
+  Future<void>? _latestSetlistReload;
+
+  /// Refreshes only the setlists after a write that touched no song row, so
+  /// the library is not read and decoded again. Publishes exactly what a full
+  /// reload would (same query order, same hashes) and becomes one whenever a
+  /// library snapshot overlaps it.
+  Future<void> _reloadSetlists() {
+    final run = _loadSetlists(++_setlistReloadEpoch);
+    _latestSetlistReload = run;
+    return run.then((_) => _latestSetlistReload ?? run);
+  }
+
+  Future<void> _loadSetlists(int turn) async {
+    if (_snapshotLoadsInFlight > 0) return _reload();
+    final epoch = _reloadEpoch;
+    final List<SetlistDocument> loaded;
+    try {
+      loaded = await repository.listSetlists();
+    } catch (_) {
+      return _reload();
+    }
+    if (_disposed) return;
+    if (epoch != _reloadEpoch || _snapshotLoadsInFlight > 0) return _reload();
+    if (turn != _setlistReloadEpoch) return;
+    setlists = loaded;
+    _setlistHashes = {for (final set in loaded) set.id: _setlistHash(set)};
+  }
+
+  Future<void> _afterSetlistWrite() async {
+    try {
+      await _reloadSetlists();
+    } catch (_) {
+      if (_disposed) return;
+      _retryReloadSoon();
+    }
+    _notifyWrite(songsChanged: false);
   }
 
   void _notifyWrite({required bool songsChanged}) {
@@ -2079,11 +2186,11 @@ class AppController extends ChangeNotifier {
               updatedAt: song.updatedAt,
             ),
           );
-          await _afterWrite();
+          await _afterWrite(songId: copyId);
           postMessage('save_conflict', operation: 'save', isError: false);
           return false;
         }
-        await _afterWrite();
+        await _afterWrite(songId: song.id);
         return true;
       });
 
@@ -2126,8 +2233,7 @@ class AppController extends ChangeNotifier {
         if (_disposed) return true;
         if (identical(findSong(id), current) && _songHashes[id] == hash) {
           final snapshot = updated.copyWith(favorite: saved.favorite);
-          final wasReloading = _snapshotLoadsInFlight > 0;
-          ++_reloadEpoch;
+          final wasReloading = _beginCachePatch();
           _replaceIndexedSong(
             [for (final song in songs) song.id == id ? snapshot : song],
             snapshot,
@@ -2140,11 +2246,7 @@ class AppController extends ChangeNotifier {
             _scorePublishedSong(snapshot);
           }
           _notifyWrite(songsChanged: false);
-          if (wasReloading) {
-            unawaited(
-              _reload().then<void>((_) => _emit(), onError: (Object _) {}),
-            );
-          }
+          _endCachePatch(wasReloading: wasReloading);
         } else {
           await _afterWrite(songsChanged: false);
         }
@@ -2176,7 +2278,12 @@ class AppController extends ChangeNotifier {
         mustExist: true,
       );
     }
-    await _afterWrite();
+    // Only this song's row changed: patch it in place. Anything that prevents
+    // a consistent read of it falls back to reloading the library.
+    if (!saved ||
+        !await _publishStoredSong(song.id, keepDisplayKeys: true)) {
+      await _afterWrite();
+    }
     if (!saved) postMessage('save_conflict', operation: 'save', isError: false);
   });
 
@@ -2228,17 +2335,17 @@ class AppController extends ChangeNotifier {
           updatedAt: setlist.updatedAt,
         ),
       );
-      await _afterWrite(songsChanged: false);
+      await _afterSetlistWrite();
       postMessage('save_conflict', operation: 'save', isError: false);
       return null;
     }
-    await _afterWrite(songsChanged: false);
+    await _afterSetlistWrite();
     return (expectedHash: expected, persistedHash: persistedHash);
   });
 
   Future<void> deleteSetlist(String id) => _tracked('delete', () async {
     await repository.deleteSetlist(id);
-    await _reload();
+    await _reloadSetlists();
     recent.removeWhere(
       (event) => event.objectKind == 'setlist' && event.objectId == id,
     );
@@ -2270,7 +2377,7 @@ class AppController extends ChangeNotifier {
             mustExist: true,
           );
         }
-        await _afterWrite(songsChanged: false);
+        await _afterSetlistWrite();
         if (!saved) {
           postMessage('save_conflict', operation: 'save', isError: false);
         }
@@ -2314,7 +2421,7 @@ class AppController extends ChangeNotifier {
         expectedHash,
       );
       if (persistedHash != null) {
-        await _afterWrite(songsChanged: false);
+        await _afterSetlistWrite();
         return (expectedHash: expectedHash, persistedHash: persistedHash);
       }
     }
@@ -2507,6 +2614,7 @@ class AppController extends ChangeNotifier {
   });
 
   Future<void> _syncBody() async {
+    _syncAttempted = true;
     final report = await _sync!.sync();
     if (_disposed) return;
     syncReport = report;
@@ -2552,6 +2660,7 @@ class AppController extends ChangeNotifier {
   Future<void> _runSyncAction(Future<void> Function() action) {
     if (syncBusy) return Future.value();
     if (_disposed) return Future.value();
+    final autoSyncWasPending = _autoSyncPending;
     _autoSyncTimer?.cancel();
     _autoSyncTimer = null;
     _autoSyncPending = false;
@@ -2563,12 +2672,21 @@ class AppController extends ChangeNotifier {
       _emit();
       return Future.value();
     }
-    return _activeSyncAction = _execute(action);
+    return _activeSyncAction = _execute(
+      action,
+      autoSyncWasPending: autoSyncWasPending,
+    );
   }
 
-  Future<void> _execute(Future<void> Function() action) async {
+  bool _syncAttempted = false;
+
+  Future<void> _execute(
+    Future<void> Function() action, {
+    bool autoSyncWasPending = false,
+  }) async {
     syncBusy = true;
     syncError = null;
+    _syncAttempted = false;
     _emit();
     try {
       await action();
@@ -2580,6 +2698,9 @@ class AppController extends ChangeNotifier {
       await _reloadAfterFailure();
     } finally {
       syncBusy = false;
+      // An action that never reached a sync (same provider chosen, sign-in
+      // dismissed) must not drop the upload a local change was waiting for.
+      if (autoSyncWasPending && !_syncAttempted) _scheduleAutoSync();
       _emit();
     }
   }
@@ -2604,19 +2725,6 @@ class AppController extends ChangeNotifier {
 
   String exportSong(SongDocument song) => ChordProCodec().encode(song);
 
-  bool _sameImportedSong(SongDocument a, SongDocument b) {
-    if (exportSong(a) != exportSong(b)) return false;
-    // An opaque x_verse block deliberately stays byte-for-byte intact when
-    // ChordPro cannot decode it. Compare its complete model too, or metadata
-    // held only in the local backup sidecar would be silently discarded.
-    return (a.extensionError == null && b.extensionError == null) ||
-        jsonEncode(a.toJson()) == jsonEncode(b.toJson());
-  }
-
-  String _songConflictIdentity(SongDocument song) => song.extensionError == null
-      ? exportSong(song)
-      : jsonEncode(song.toJson());
-
   Future<Uint8List> exportBackup({bool includePreferences = true}) async {
     final snapshot = await repository.backupSnapshot();
     return encodeLibraryPackageAsync(
@@ -2628,20 +2736,40 @@ class AppController extends ChangeNotifier {
     );
   }
 
-  Future<BackupPreview> inspectBackup(PickedDocument file) async {
-    final collection = await decodeLibraryPackageAsync(file.bytes);
+  /// Decodes a picked backup and binds it to the library it was compared
+  /// with: the token changes when either the package or the library does.
+  Future<
+    ({
+      ImportedCollection collection,
+      _BackupSnapshot snapshot,
+      String token,
+    })
+  >
+  _openBackup(PickedDocument file) async {
+    final decoded = await decodeLibraryPackageWithHashAsync(file.bytes);
     final snapshot = await repository.backupSnapshot();
+    return (
+      collection: decoded.collection,
+      snapshot: snapshot,
+      token: sha256
+          .convert(
+            utf8.encode(
+              '${decoded.packageHash}:${snapshot.libraryFingerprint}',
+            ),
+          )
+          .toString(),
+    );
+  }
+
+  Future<BackupPreview> inspectBackup(PickedDocument file) async {
+    final (:collection, :snapshot, :token) = await _openBackup(file);
     final existingSongs = {for (final song in snapshot.songs) song.id: song};
-    var identicalSongs = 0, conflictingSongs = 0;
-    for (final song in collection.songs) {
-      final existing = existingSongs[song.id];
-      if (existing == null) continue;
-      if (_sameImportedSong(existing, song)) {
-        identicalSongs++;
-      } else {
-        conflictingSongs++;
-      }
-    }
+    final verdicts = await compareImportedSongs([
+      for (final song in collection.songs)
+        if (existingSongs[song.id] case final existing?) (existing, song),
+    ]);
+    final identicalSongs = verdicts.where((verdict) => verdict.same).length;
+    final conflictingSongs = verdicts.length - identicalSongs;
     final existingSetlists = {
       for (final setlist in snapshot.setlists) setlist.id: setlist,
     };
@@ -2655,10 +2783,6 @@ class AppController extends ChangeNotifier {
         conflictingSetlists++;
       }
     }
-    final packageHash = sha256.convert(file.bytes).toString();
-    final token = sha256
-        .convert(utf8.encode('$packageHash:${snapshot.libraryFingerprint}'))
-        .toString();
     return BackupPreview(
       schemaVersion: collection.schemaVersion,
       songCount: collection.songs.length,
@@ -2679,12 +2803,9 @@ class AppController extends ChangeNotifier {
     required String expectedPreviewToken,
     bool restorePreferences = false,
   }) async {
-    final collection = await decodeLibraryPackageAsync(file.bytes);
-    final snapshot = await repository.backupSnapshot();
-    final packageHash = sha256.convert(file.bytes).toString();
-    final currentToken = sha256
-        .convert(utf8.encode('$packageHash:${snapshot.libraryFingerprint}'))
-        .toString();
+    final (:collection, :snapshot, token: currentToken) = await _openBackup(
+      file,
+    );
     if (currentToken != expectedPreviewToken) {
       throw const FormatException('stale_backup_preview');
     }
@@ -2741,7 +2862,7 @@ class AppController extends ChangeNotifier {
   Future<List<SongDocument>> importText(String text) =>
       _tracked('import', () async {
         final collection = await importCollection(
-          ImportedCollection(decodeSongText(text), []),
+          ImportedCollection(await decodeSongTextAsync(text), []),
         );
         return collection.songs;
       });
@@ -2759,13 +2880,14 @@ class AppController extends ChangeNotifier {
         throw const FormatException('file_too_large');
       }
       final name = file.name.toLowerCase();
+      // Large files decode on a worker isolate; see [decodeSongTextAsync].
       if (name.endsWith('.lrc') || name.endsWith('.ttml')) {
-        decoded = ImportedCollection(decodePickedSongs(file), []);
+        decoded = ImportedCollection(await decodePickedSongsAsync(file), []);
       } else {
-        final text = file.lenientText;
+        final text = await decodeImportedTextAsync(bytes);
         if (looksLikeSetlistXml(text)) {
           decoded = ImportedCollection([], [
-            decodeSetlistReferences(
+            await decodeSetlistReferencesAsync(
               text,
               await repository.listSongs(),
               fileName: file.name,
@@ -2773,7 +2895,7 @@ class AppController extends ChangeNotifier {
           ]);
         } else {
           decoded = ImportedCollection(
-            decodeSongText(text, fileName: file.name),
+            await decodeSongTextAsync(text, fileName: file.name),
             [],
           );
         }
@@ -2786,8 +2908,7 @@ class AppController extends ChangeNotifier {
     return importCollection(decoded);
   });
 
-  static String _stableId(String seed) =>
-      'imp-${sha256.convert(utf8.encode(seed)).toString().substring(0, 32)}';
+  static String _stableId(String seed) => stableImportId(seed);
 
   /// Imports songs and setlists without ever overwriting local work, and
   /// idempotently: importing the same backup or file again creates nothing new.
@@ -2802,20 +2923,40 @@ class AppController extends ChangeNotifier {
     final mapping = <String, String>{};
     final incoming = <SongDocument>[];
     final toWrite = <SongDocument>[];
-    for (final song in input.songs) {
-      final existing = await repository.getSong(song.id);
-      if (existing == null) {
+    // Stored songs are compared a batch at a time: each comparison
+    // serializes both documents, which belongs on a worker isolate, while a
+    // bounded batch keeps a large restore from holding every stored song.
+    const batchSize = 64;
+    final verdicts = <ImportedSongVerdict?>[];
+    for (var start = 0; start < input.songs.length; start += batchSize) {
+      final batch = input.songs.skip(start).take(batchSize).toList();
+      final stored = [
+        for (final song in batch) await repository.getSong(song.id),
+      ];
+      final compared = (await compareImportedSongs([
+        for (final (index, song) in batch.indexed)
+          if (stored[index] case final existing?) (existing, song),
+      ])).iterator;
+      for (final existing in stored) {
+        verdicts.add(
+          existing == null ? null : (compared..moveNext()).current,
+        );
+      }
+    }
+    for (final (index, song) in input.songs.indexed) {
+      final verdict = verdicts[index];
+      if (verdict == null) {
         mapping[song.id] = song.id;
         incoming.add(song);
         toWrite.add(song);
-      } else if (_sameImportedSong(existing, song)) {
+      } else if (verdict.same) {
         mapping[song.id] = song.id;
         incoming.add(song);
       } else {
         // An externally edited file gets its own identity; importing never
         // overwrites local work. The identity is derived from the content so
         // a repeated import finds its earlier copy instead of adding another.
-        final id = _stableId('song:${song.id}:${_songConflictIdentity(song)}');
+        final id = verdict.conflictId!;
         mapping[song.id] = id;
         final copy = SongDocument(
           id: id,
@@ -2906,6 +3047,7 @@ class AppController extends ChangeNotifier {
     combineRunner.discard();
     _historicalCacheUses = const [];
     _autoSyncTimer?.cancel();
+    _reloadRetry?.cancel();
     for (final service in {..._syncProviders.values, ?_sync}) {
       service.cancel();
     }

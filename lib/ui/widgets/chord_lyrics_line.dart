@@ -49,8 +49,26 @@ class ChordLyricsLine extends StatefulWidget {
 class _ChordLyricsLineState extends State<ChordLyricsLine> {
   _ChordLineLayout? _layout;
 
+  /// Everything [_layout] was computed from. The reader rebuilds each visible
+  /// line whenever the highlighted line changes; a line whose inputs are
+  /// unchanged keeps its paragraphs instead of laying them all out again.
+  Object? _layoutInputs;
+
+  @override
+  void initState() {
+    super.initState();
+    PaintingBinding.instance.systemFonts.addListener(_fontsChanged);
+  }
+
+  // Font metrics are not part of the inputs, so measure again afterwards.
+  void _fontsChanged() {
+    if (!mounted) return;
+    setState(() => _layoutInputs = null);
+  }
+
   @override
   void dispose() {
+    PaintingBinding.instance.systemFonts.removeListener(_fontsChanged);
     _layout?.dispose();
     super.dispose();
   }
@@ -83,22 +101,43 @@ class _ChordLyricsLineState extends State<ChordLyricsLine> {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final nextLayout = _ChordLineLayout.create(
-          text: widget.text,
-          chords: widget.chords,
-          lyricStyle: lyricStyle,
-          chordStyle: chordStyle,
-          direction: direction,
-          textScaler: textScaler,
-          locale: locale,
-          textAlign: align,
-          textWidthBasis: widthBasis,
-          textHeightBehavior: heightBehavior,
-          maxLines: widget.maxLines,
-          constraints: constraints,
-          compactChordOnly: widget.compactChordOnly,
+        final inputs = (
+          widget.text,
+          widget.chords,
+          lyricStyle,
+          chordStyle,
+          direction,
+          textScaler,
+          locale,
+          align,
+          widthBasis,
+          heightBehavior,
+          widget.maxLines,
+          constraints,
+          widget.compactChordOnly,
         );
-        _replaceLayout(nextLayout);
+        final cached = _layout;
+        final nextLayout = cached != null && _layoutInputs == inputs
+            ? cached
+            : _ChordLineLayout.create(
+                text: widget.text,
+                chords: widget.chords,
+                lyricStyle: lyricStyle,
+                chordStyle: chordStyle,
+                direction: direction,
+                textScaler: textScaler,
+                locale: locale,
+                textAlign: align,
+                textWidthBasis: widthBasis,
+                textHeightBehavior: heightBehavior,
+                maxLines: widget.maxLines,
+                constraints: constraints,
+                compactChordOnly: widget.compactChordOnly,
+              );
+        if (!identical(nextLayout, cached)) {
+          _replaceLayout(nextLayout);
+          _layoutInputs = inputs;
+        }
         return Semantics(
           label: _semanticsLabel(),
           textDirection: direction,
@@ -228,6 +267,7 @@ class _ChordLyricsLineState extends State<ChordLyricsLine> {
   void _replaceLayout(_ChordLineLayout? next) {
     final old = _layout;
     _layout = next;
+    if (next == null) _layoutInputs = null;
     if (old != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) => old.dispose());
     }

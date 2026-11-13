@@ -11,7 +11,13 @@ import '../core/common.dart'
         parseRows,
         durationValue,
         lyricsResult;
-import 'common.dart' show normalized, queryText, sanitizeExtraMetadata;
+import 'common.dart'
+    show
+        PacedQueue,
+        isPlainHttpsUrl,
+        normalized,
+        queryText,
+        sanitizeExtraMetadata;
 
 /// Public API contract: https://lrc.red/api. Identification and visible source
 /// credit are required; access does not grant redistribution rights in lyrics.
@@ -22,8 +28,7 @@ class LrcRedProvider implements LyricsProvider {
   });
   final ProviderTransport transport;
   final Duration requestInterval;
-  Future<void> _queue = Future.value();
-  DateTime _next = DateTime.fromMillisecondsSinceEpoch(0);
+  late final _paced = PacedQueue(requestInterval);
   static final _isrc = RegExp(r'^[A-Z]{2}[A-Z0-9]{3}[0-9]{7}$');
   static const _headers = {
     'User-Agent':
@@ -39,27 +44,8 @@ class LrcRedProvider implements LyricsProvider {
     enabledByDefault: false,
   );
 
-  Future<T> _request<T>(Future<T> Function() send, CancellationToken? cancel) {
-    final result = _queue.then((_) async {
-      cancel?.throwIfCancelled();
-      final wait = _next.difference(DateTime.now());
-      if (wait > Duration.zero) {
-        if (cancel == null) {
-          await Future<void>.delayed(wait);
-        } else {
-          await Future.any([Future<void>.delayed(wait), cancel.cancelled]);
-        }
-      }
-      cancel?.throwIfCancelled();
-      try {
-        return await send();
-      } finally {
-        _next = DateTime.now().add(requestInterval);
-      }
-    });
-    _queue = result.then<void>((_) {}, onError: (Object _) {});
-    return result;
-  }
+  Future<T> _request<T>(Future<T> Function() send, CancellationToken? cancel) =>
+      _paced.run(send, cancel);
 
   SongCandidate _candidate(dynamic input) {
     final data = object(input);
@@ -118,10 +104,7 @@ class LrcRedProvider implements LyricsProvider {
     if (value is! String) return null;
     final url = Uri.tryParse(value);
     return url != null &&
-            url.scheme == 'https' &&
-            url.host == 'lrc.red' &&
-            url.userInfo.isEmpty &&
-            (!url.hasPort || url.port == 443) &&
+            isPlainHttpsUrl(url, const {'lrc.red'}) &&
             url.path == '/s/$isrc.$extension' &&
             url.query.isEmpty &&
             url.fragment.isEmpty

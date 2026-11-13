@@ -1,29 +1,15 @@
+import 'display_facts.dart';
 import 'edition_identity.dart';
 import 'models.dart';
+import 'song_identity.dart' show normalizeNameIdentity;
 
-String _identity(String value) => value
-    .toLowerCase()
-    .replaceAll(RegExp("['‘’]"), '')
-    .replaceAll(RegExp(r'[^\p{L}\p{N}]+', unicode: true), ' ')
-    .trim();
+String _identity(String value) => normalizeNameIdentity(value);
 
-String? _album(SongCandidate candidate) {
-  for (final value in [candidate.album, candidate.metadata['album']]) {
-    if (value is String && value.trim().isNotEmpty) return value.trim();
-  }
-  return null;
-}
+String? _album(SongCandidate candidate) => candidateAlbum(candidate);
 
-double? _seconds(Object? value) {
-  if (value is! num) return null;
-  final seconds = value.toDouble();
-  return seconds.isFinite && seconds > 0 && seconds <= 86400 ? seconds : null;
-}
+double? _seconds(Object? value) => displaySeconds(value);
 
-double? _duration(SongCandidate candidate) =>
-    _seconds(candidate.durationSeconds) ??
-    _seconds(candidate.metadata['durationSeconds']) ??
-    _seconds(candidate.metadata['duration']);
+double? _duration(SongCandidate candidate) => candidateDuration(candidate);
 
 String? _artwork(SongCandidate candidate) {
   final value = candidate.metadata['artworkUrl'];
@@ -61,28 +47,52 @@ const _albumNoise = {
   'mtv',
 };
 
+final _bracketedQualifier = RegExp(r'[(\[][^()\[\]]*[)\]]');
+final _discWord = RegExp(r'^(?:cd|disc|disk)\d*$');
+final _digitsOnly = RegExp(r'^\d+$');
+final _spaceRun = RegExp(r'\s+');
+
 /// Album words without bracketed qualifiers ("[HD]", "(Deluxe Edition)"),
 /// disc numbers, packaging words or the artist's own name.
 Set<String> _albumWords(String album, String artist) {
   final artistWords = _identity(artist).split(' ').toSet();
-  return _identity(album.replaceAll(RegExp(r'[(\[][^()\[\]]*[)\]]'), ' '))
+  return _identity(album.replaceAll(_bracketedQualifier, ' '))
       .split(' ')
       .where(
         (word) =>
             word.isNotEmpty &&
             !_albumNoise.contains(word) &&
             !artistWords.contains(word) &&
-            !RegExp(r'^(?:cd|disc|disk)\d*$').hasMatch(word),
+            !_discWord.hasMatch(word),
       )
       .toSet();
+}
+
+/// Row facts of one grouping pass, computed once for each row and album
+/// instead of for every group a row is compared with. The sets are shared
+/// and must not be changed.
+class _RowFacts {
+  final _labelsOf = Map<SongCandidate, Set<String>>.identity();
+  final _wordsOf = <(String, String), Set<String>>{};
+
+  Set<String> labels(SongCandidate row) => _labelsOf[row] ??= _labels(row);
+
+  Set<String> albumWords(String album, String artist) =>
+      _wordsOf[(album, artist)] ??= _albumWords(album, artist);
 }
 
 /// Albums match when either is unknown or one's words contain the other's:
 /// "Eric Clapton - MTV Unplugged", "Clapton Chronicles: Unplugged" and
 /// "Unplugged [Enhanced, HD]" all contain "Unplugged".
-bool _albumsCompatible(String? a, String? b, String artist) {
+bool _albumsCompatible(
+  String? a,
+  String? b,
+  String artist, [
+  _RowFacts? facts,
+]) {
   if (a == null || b == null) return true;
-  final first = _albumWords(a, artist), second = _albumWords(b, artist);
+  final first = facts?.albumWords(a, artist) ?? _albumWords(a, artist);
+  final second = facts?.albumWords(b, artist) ?? _albumWords(b, artist);
   if (first.isEmpty || second.isEmpty) return true;
   return first.length <= second.length
       ? second.containsAll(first)
@@ -140,7 +150,7 @@ Set<String> _labels(SongCandidate candidate) {
     for (final word in _identity(text).split(' ')) {
       if (word.isNotEmpty &&
           !_labelIgnore.contains(word) &&
-          !RegExp(r'^\d+$').hasMatch(word)) {
+          !_digitsOnly.hasMatch(word)) {
         labels.add(word);
       }
     }
@@ -172,21 +182,19 @@ bool _factsCompatible(
   String? album,
   Set<String> otherLabels,
   String? otherAlbum,
-  String artist,
-) {
+  String artist, [
+  _RowFacts? facts,
+]) {
   final equal =
       (labels.isEmpty && otherLabels.isEmpty) ||
       _labelsMatch(labels, otherLabels);
   if (!equal && labels.isNotEmpty && otherLabels.isNotEmpty) return false;
   if (!equal && (album == null || otherAlbum == null)) return false;
-  return _albumsCompatible(album, otherAlbum, artist);
+  return _albumsCompatible(album, otherAlbum, artist, facts);
 }
 
 bool _idsConflict(SongCandidate a, SongCandidate b) =>
-    a.recordingIds.entries.any(
-      (e) =>
-          b.recordingIds.containsKey(e.key) && b.recordingIds[e.key] != e.value,
-    );
+    recordingIdsConflict(a, b);
 
 bool _isArrangement(SongCandidate candidate) =>
     candidate.metadata['identityScope'] == 'arrangement' ||
@@ -336,9 +344,11 @@ SongCandidate withoutRowFacts(SongCandidate candidate) {
 }
 
 class _Group {
-  _Group(this.key, SongCandidate row, int index) {
+  _Group(this.key, SongCandidate row, int index, this._facts) {
     add(row, index);
   }
+
+  final _RowFacts _facts;
 
   /// Title without credits or edition qualifiers, and artist; null for a row
   /// kept alone.
@@ -363,7 +373,7 @@ class _Group {
     album ??= _album(row);
     // Every member's label fits within the union, the group's most specific
     // edition.
-    labels = {...labels, ..._labels(row)};
+    labels = {...labels, ..._facts.labels(row)};
   }
 
   bool compatibleWith(SongCandidate row) => !members.any(
@@ -374,7 +384,14 @@ class _Group {
   );
 
   bool accepts(SongCandidate row) =>
-      _factsCompatible(labels, album, _labels(row), _album(row), row.artist) &&
+      _factsCompatible(
+        labels,
+        album,
+        _facts.labels(row),
+        _album(row),
+        row.artist,
+        _facts,
+      ) &&
       compatibleWith(row);
 
   bool canMerge(_Group other, {required bool mixLabels}) =>
@@ -388,6 +405,7 @@ class _Group {
         other.labels,
         other.album,
         members.first.row.artist,
+        _facts,
       ) &&
       other.members.every((member) => compatibleWith(member.row));
 }
@@ -415,17 +433,18 @@ List<SearchRecordingGroup> groupSearchRecordings(
 }) {
   final byRecording = <String, List<_Group>>{};
   final standalone = <_Group>[];
+  final facts = _RowFacts();
   var index = 0;
   for (final row in ranked) {
     final key = _titleKey(row);
     if (key == null) {
-      standalone.add(_Group(null, row, index++));
+      standalone.add(_Group(null, row, index++, facts));
       continue;
     }
     final groups = byRecording.putIfAbsent(key, () => []);
     final group = groups.where((group) => group.accepts(row)).firstOrNull;
     if (group == null) {
-      groups.add(_Group(key, row, index++));
+      groups.add(_Group(key, row, index++, facts));
     } else {
       group.add(row, index++);
     }
@@ -650,7 +669,7 @@ int _searchRelevance(SongCandidate candidate, Set<String> tokens) {
 /// Genius publishes translations under accounts such as "Genius English
 /// Translations" or "Genius Romanizations"; "Perfume Genius" is an artist.
 bool _translationAccount(String artist) {
-  final words = artist.toLowerCase().split(RegExp(r'\s+'));
+  final words = artist.toLowerCase().split(_spaceRun);
   return words.length > 1 &&
       words.first == 'genius' &&
       words.skip(1).any((word) => _translationStem.hasMatch(word));

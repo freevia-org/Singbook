@@ -20,10 +20,10 @@ class MusicBrainzProvider implements LyricsProvider {
 
   /// Total optional-release budget, including queue waits and retries.
   final Duration artworkTimeout;
-  // MusicBrainz requires <= 1 request/second per client. The shared transport's
-  // generic host pacing is faster, so this adapter serializes its own requests.
-  Future<void> _queue = Future.value();
-  DateTime _next = DateTime.fromMillisecondsSinceEpoch(0);
+  // MusicBrainz requires <= 1 request/second per client. The transport paces
+  // the host as well (covering its own retries and redirects); this adapter
+  // additionally serializes its requests so a lookup's steps stay ordered.
+  final _paced = PacedQueue(const Duration(milliseconds: 1100));
   final _releaseDetails = <String, ({JsonMap data, DateTime expiresAt})>{};
   @override
   final definition = const ProviderDefinition(
@@ -34,37 +34,18 @@ class MusicBrainzProvider implements LyricsProvider {
     website: 'https://musicbrainz.org/',
     description: 'recordingMetadataOnly',
   );
-  Future<JsonMap> _get(Uri url, CancellationToken? cancel) {
-    final result = _queue.then((_) async {
-      cancel?.throwIfCancelled();
-      final wait = _next.difference(DateTime.now());
-      if (wait > Duration.zero) await Future<void>.delayed(wait);
-      cancel?.throwIfCancelled();
-      try {
-        return jsonMap(
-          await transport.requestJson(
-            url,
-            headers: _metadataHeaders,
-            cancel: cancel,
-          ),
-        );
-      } finally {
-        _next = DateTime.now().add(const Duration(milliseconds: 1100));
-      }
-    });
-    _queue = result.then<void>((_) {}, onError: (Object _) {});
-    return result;
-  }
-
-  static final _musicBrainzIdPattern = RegExp(
-    r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$',
-    caseSensitive: false,
+  Future<JsonMap> _get(Uri url, CancellationToken? cancel) => _paced.run(
+    () async => jsonMap(
+      await transport.requestJson(
+        url,
+        headers: _metadataHeaders,
+        cancel: cancel,
+      ),
+    ),
+    cancel,
   );
 
-  String? _musicBrainzId(Object? value) {
-    if (value is! String || !_musicBrainzIdPattern.hasMatch(value)) return null;
-    return value.toLowerCase();
-  }
+  String? _musicBrainzId(Object? value) => mbidOrNull(value);
 
   ({String? id, String? code}) _selectRelease(
     JsonMap recording,
@@ -560,9 +541,13 @@ class MusicBrainzProvider implements LyricsProvider {
     bool songMatch = false,
     SongCandidate? searchCandidate,
   }) async {
-    if (!RegExp(r'^[a-f0-9-]{36}$').hasMatch(id)) {
+    // One identifier rule for every MusicBrainz id: a full UUID in any letter
+    // case, requested and compared in the canonical lower case.
+    final recordingId = mbidOrNull(id);
+    if (recordingId == null) {
       throw const ProviderException('invalid_response');
     }
+    id = recordingId;
     final data = await _get(
       Uri.https('musicbrainz.org', '/ws/2/recording/$id', {
         'fmt': 'json',
@@ -792,23 +777,40 @@ class WikidataProvider implements LyricsProvider {
     List<String> ids,
     CancellationToken? cancel,
   ) async {
-    final valid = ids
+    final all = ids
         .where((s) => RegExp(r'^Q\d+$').hasMatch(s))
         .toSet()
-        .take(40)
+        .take(_entityBatch * _maxEntityBatches)
         .toList();
-    if (valid.isEmpty) return {};
-    final data = await _api({
-      'action': 'wbgetentities',
-      'ids': valid.join('|'),
-      'props': 'labels|descriptions|claims',
-      'languages': 'en',
-    }, cancel);
-    return {
-      for (final entry in jsonMap(data['entities']).entries)
-        if (valid.contains(entry.key)) entry.key: jsonMap(entry.value),
-    };
+    final result = <String, JsonMap>{};
+    for (var start = 0; start < all.length; start += _entityBatch) {
+      final valid = all.skip(start).take(_entityBatch).toSet();
+      final JsonMap data;
+      try {
+        data = await _api({
+          'action': 'wbgetentities',
+          'ids': valid.join('|'),
+          'props': 'labels|descriptions|claims',
+          'languages': 'en',
+        }, cancel);
+      } on ProviderException {
+        // Ids past the first batch used to be dropped unrequested. Their
+        // labels stay optional, so a later batch can only add information.
+        if (start == 0) rethrow;
+        cancel?.throwIfCancelled();
+        break;
+      }
+      for (final entry in jsonMap(data['entities']).entries) {
+        if (valid.contains(entry.key)) result[entry.key] = jsonMap(entry.value);
+      }
+    }
+    return result;
   }
+
+  /// The API accepts 50 ids per request; many performers on an early work
+  /// must not push a later work's composer or lyricist out of the lookup.
+  static const _entityBatch = 40;
+  static const _maxEntityBatches = 4;
 
   Future<List<SongCandidate>> _candidates(
     List<String> ids,

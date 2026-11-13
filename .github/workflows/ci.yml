@@ -27,8 +27,8 @@ permissions:
 
 # Keep manual runs on a branch grouped together without cancelling active builds.
 concurrency:
-  group: ci-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  group: ci-${{ github.ref }}
+  cancel-in-progress: false
 
 env:
   # Keep in sync with README.md ("Develop and test").
@@ -46,7 +46,7 @@ jobs:
       - name: Check build orchestration without SDKs
         run: python3 -m unittest discover -s tests/scripts -p 'test_*.py' -v
 
-      - uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: stable
@@ -78,7 +78,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: stable
@@ -164,7 +164,7 @@ jobs:
         shell: pwsh
         run: ./scripts/bootstrap-ci-jq.ps1
 
-      - uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: stable
@@ -350,7 +350,7 @@ jobs:
         shell: pwsh
         run: ./scripts/bootstrap-ci-jq.ps1
 
-      - uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: stable
@@ -390,7 +390,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: stable
@@ -410,10 +410,8 @@ jobs:
       - name: Package the AppImage and .deb
         run: scripts/package-linux.sh build/linux-packages
 
-      - name: Smoke-test the packaged .deb contents
-        run: |
-          dpkg-deb -c build/linux-packages/*.deb | grep -E 'opt/singbook/(singbook|lib/libapp.so)'
-          timeout 20 xvfb-run -a build/linux/x64/release/bundle/singbook || test $? -eq 124
+      - name: Verify and smoke-launch the packaged .deb and AppImage
+        run: scripts/smoke-linux-packages.sh build/linux-packages
 
       - name: Run the desktop journey on Linux
         run: >-
@@ -440,7 +438,7 @@ jobs:
         shell: pwsh
         run: ./scripts/bootstrap-ci-jq.ps1
 
-      - uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: stable

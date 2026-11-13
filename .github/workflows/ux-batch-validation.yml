@@ -11,8 +11,8 @@ defaults:
     shell: bash
 
 concurrency:
-  group: ux-batch-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  group: ux-batch-${{ github.ref }}
+  cancel-in-progress: false
 
 env:
   FLUTTER_VERSION: "3.44.8"
@@ -28,7 +28,7 @@ jobs:
         timeout-minutes: 10
         with:
           persist-credentials: false
-      - uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         timeout-minutes: 20
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
@@ -68,7 +68,7 @@ jobs:
         timeout-minutes: 10
         with:
           persist-credentials: false
-      - uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         timeout-minutes: 20
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}

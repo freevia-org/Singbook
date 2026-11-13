@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../../l10n/generated/app_localizations.dart';
@@ -19,13 +21,24 @@ class SubpageHeader extends StatelessWidget {
   final VoidCallback? onTitleTap;
   @override
   Widget build(BuildContext context) {
+    final titleStyle = Theme.of(
+      context,
+    ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700);
+    // The bar is 52 dp; with large accessibility text one title line is
+    // taller than that, so grow with the measured line instead of clipping.
+    final measure = TextPainter(
+      text: TextSpan(text: 'Ag', style: titleStyle),
+      textDirection: Directionality.of(context),
+      textScaler: MediaQuery.textScalerOf(context),
+      maxLines: 1,
+    )..layout();
+    final height = math.max(52.0, measure.height.ceilToDouble());
+    measure.dispose();
     final text = Text(
       title,
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
-      style: Theme.of(
-        context,
-      ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+      style: titleStyle,
     );
     final displayTitle = onTitleTap == null
         ? text
@@ -39,7 +52,7 @@ class SubpageHeader extends StatelessWidget {
     return SafeArea(
       bottom: false,
       child: SizedBox(
-        height: 52,
+        height: height,
         child: Row(
           children: [
             IconButton(

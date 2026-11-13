@@ -132,7 +132,7 @@ void showComparisonSourceChecks(
           ),
           title: Text(check.name),
           subtitle: Text(_status(l10n, check.state)),
-          trailing: Icon(_chevron(context)),
+          trailing: Icon(forwardChevron(context)),
           onTap: () => _showProviderDetails(context, controller, check),
         ),
       if (comparison != null &&
@@ -378,12 +378,8 @@ List<Widget> _analysisFields(
   ];
 }
 
-String _role(AppLocalizations l10n, String role) => switch (role) {
-  'lyrics' => l10n.providerCapabilityLyrics,
-  'chords' => l10n.providerCapabilityChords,
-  'timing' => l10n.playerTimedLyrics,
-  _ => l10n.providerCapabilityMetadata,
-};
+String _role(AppLocalizations l10n, String role) =>
+    contributionRoleLabel(l10n, role, other: l10n.providerCapabilityMetadata);
 
 String _status(AppLocalizations l10n, String state) => switch (state) {
   'pending' => l10n.searchProviderPending,
@@ -416,11 +412,6 @@ Color _statusColor(BuildContext context, String state) =>
     state == 'failed' || state == 'rejected'
     ? Theme.of(context).colorScheme.error
     : Theme.of(context).colorScheme.primary;
-
-IconData _chevron(BuildContext context) =>
-    Directionality.of(context) == TextDirection.rtl
-    ? Icons.chevron_left_rounded
-    : Icons.chevron_right_rounded;
 
 List<Widget> _codeDetails(BuildContext context, String code) {
   final l10n = AppLocalizations.of(context);

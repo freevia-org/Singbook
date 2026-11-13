@@ -16,10 +16,12 @@ import '../library_actions.dart';
 import '../player_section_timeline.dart';
 import '../settings/settings_screen.dart' show showPlayerSettings;
 import '../verse_ui_state.dart';
+import '../widgets/desktop_platform.dart';
 import '../widgets/slider_overlay_boundary.dart';
 import 'player_lyric_line.dart';
 import 'player_controls_panel.dart';
 import 'player_fullscreen_header.dart';
+import 'player_seek_bar.dart';
 import '../widgets/subpage_header.dart';
 import 'screen_awake.dart';
 import 'section_labels.dart';
@@ -78,6 +80,12 @@ String? _transposeKey(VerseUiState state) {
       : transposeChord(savedKey!, state.readerTranspose);
 }
 
+/// The label of the key control: the effective key, or the lyrics-only label.
+String _displayedKey(AppLocalizations l10n, VerseUiState state) =>
+    state.showChords
+    ? _transposeKey(state) ?? l10n.unknownValue
+    : l10n.searchChordsUnavailable;
+
 const _playerDropdownArrow = Icon(Icons.arrow_drop_up_rounded, size: 20);
 
 /// The lyric reader and player: scrolling lyrics, a seek bar with section
@@ -123,6 +131,10 @@ class _PlayerScreenState extends State<PlayerScreen>
   List<(int, double)>? _sectionPoints;
   List<PlayerSectionMarker>? _pointsSections;
   List<LyricLineData>? _pointsLines;
+  List<PlayerSectionMarker>? _displaySectionsSource;
+  double? _displaySectionsSpeed;
+  List<PlayerSectionMarker> _displaySections = const [];
+  final _sectionLabelCache = SectionLabelCache();
   String? _pointsTimingMode;
   double? _pointsDuration;
   Size? _lastViewportSize;
@@ -268,7 +280,11 @@ class _PlayerScreenState extends State<PlayerScreen>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    _inForeground = state == AppLifecycleState.resumed;
+    // A visible but unfocused window (desktop, split screen, an open system
+    // shade) is `inactive`; the singer is still reading from it.
+    _inForeground =
+        state == AppLifecycleState.resumed ||
+        state == AppLifecycleState.inactive;
     _applyWakeLock();
   }
 
@@ -306,11 +322,7 @@ class _PlayerScreenState extends State<PlayerScreen>
       return KeyEventResult.handled;
     }
     final isMacOS = defaultTargetPlatform == TargetPlatform.macOS;
-    final isDesktop =
-        defaultTargetPlatform == TargetPlatform.windows ||
-        defaultTargetPlatform == TargetPlatform.linux ||
-        isMacOS;
-    if (!isDesktop ||
+    if (!isDesktopPlatform ||
         event is! KeyDownEvent ||
         ModalRoute.of(context)?.isCurrent == false) {
       return KeyEventResult.ignored;
@@ -407,19 +419,23 @@ class _PlayerScreenState extends State<PlayerScreen>
     if (target != null) controller.seek(target);
   }
 
-  void _previousTransportAction(VerseUiState state) {
+  // Position ticks and seeks do not rebuild this screen, so the transport
+  // reads the live position rather than the state captured by build().
+  void _previousTransportAction() {
+    final state = controller.state;
     if (state.activeSetlist != null &&
-        (state.playerSections.isEmpty || state.progressSeconds <= 2)) {
+        (state.playerSections.isEmpty || _position.value.seconds <= 2)) {
       unawaited(controller.previousSong());
       return;
     }
     _skipSection(-1);
   }
 
-  void _nextTransportAction(VerseUiState state) {
+  void _nextTransportAction() {
+    final state = controller.state;
     if (state.activeSetlist != null &&
         (state.playerSections.isEmpty ||
-            state.progressSeconds >= _durationOf(state) - .05)) {
+            _position.value.seconds >= _durationOf(state) - .05)) {
       unawaited(controller.nextSong());
       return;
     }
@@ -849,12 +865,7 @@ class _PlayerScreenState extends State<PlayerScreen>
       ),
       child: child,
     );
-    final desktopFontControls = switch (defaultTargetPlatform) {
-      TargetPlatform.windows ||
-      TargetPlatform.macOS ||
-      TargetPlatform.linux => true,
-      _ => false,
-    };
+    final desktopFontControls = isDesktopPlatform;
     final mobilePlaybackControls =
         defaultTargetPlatform == TargetPlatform.android ||
         defaultTargetPlatform == TargetPlatform.iOS;
@@ -1037,11 +1048,7 @@ class _PlayerScreenState extends State<PlayerScreen>
           return size;
         }
 
-        final keySize = labelSize(
-          state.showChords
-              ? _transposeKey(state) ?? l10n.unknownValue
-              : l10n.searchChordsUnavailable,
-        );
+        final keySize = labelSize(_displayedKey(l10n, state));
         final speedSize = labelSize(_formatPlaybackSpeed(state.playbackSpeed));
         final preferredSideWidth = math.max(
           64.0,
@@ -1060,10 +1067,8 @@ class _PlayerScreenState extends State<PlayerScreen>
           textScaler: MediaQuery.textScalerOf(context),
           locale: Localizations.localeOf(context),
         )..layout();
-        final playWidth = math.max(
-          104.0,
-          playPainter.width.ceilToDouble() + 48,
-        );
+        final playLabelWidth = playPainter.width;
+        final playWidth = math.max(104.0, playLabelWidth.ceilToDouble() + 48);
         // Keep the compact row at least 48 dp, but let actual font metrics
         // grow it for large text and fallback scripts instead of clipping.
         final rowHeight = math.max(
@@ -1112,6 +1117,7 @@ class _PlayerScreenState extends State<PlayerScreen>
             stackActions: stackActions,
             rowHeight: rowHeight,
             sideSlotWidth: sideWidth,
+            playLabelWidth: playLabelWidth,
           ),
         );
         final content = Column(
@@ -1379,11 +1385,7 @@ class _PlayerScreenState extends State<PlayerScreen>
     );
     return Focus(
       key: const ValueKey('player-keyboard-focus'),
-      autofocus:
-          widget.fullScreen ||
-          defaultTargetPlatform == TargetPlatform.windows ||
-          defaultTargetPlatform == TargetPlatform.macOS ||
-          defaultTargetPlatform == TargetPlatform.linux,
+      autofocus: widget.fullScreen || isDesktopPlatform,
       onKeyEvent: _handleDesktopKey,
       child: Column(
         children: [
@@ -1461,18 +1463,26 @@ class _PlayerScreenState extends State<PlayerScreen>
     final speed = state.playbackSpeed;
     final displayDuration = duration / speed;
     final displayPosition = position.seconds / speed;
-    final displaySections = [
-      for (final marker in state.playerSections)
-        PlayerSectionMarker(
-          name: marker.name,
-          lineId: marker.lineId,
-          startSeconds: marker.startSeconds / speed,
-        ),
-    ];
+    // Rescaled once per section list and speed, not on every position tick,
+    // so the measured labels below can be reused by identity.
+    if (!identical(_displaySectionsSource, state.playerSections) ||
+        _displaySectionsSpeed != speed) {
+      _displaySectionsSource = state.playerSections;
+      _displaySectionsSpeed = speed;
+      _displaySections = [
+        for (final marker in state.playerSections)
+          PlayerSectionMarker(
+            name: marker.name,
+            lineId: marker.lineId,
+            startSeconds: marker.startSeconds / speed,
+          ),
+      ];
+    }
+    final displaySections = _displaySections;
     final maxValue = displayDuration > 0 ? displayDuration : 1.0;
     final timeline = SliderTheme(
       data: SliderTheme.of(context).copyWith(
-        trackShape: _SectionMarkerSliderTrackShape(
+        trackShape: SectionMarkerSliderTrackShape(
           markers: displaySections,
           durationSeconds: displayDuration,
         ),
@@ -1482,11 +1492,7 @@ class _PlayerScreenState extends State<PlayerScreen>
           final desktopTimeline =
               constraints.maxWidth >= 560 &&
               (!compactTimes || displaySections.isNotEmpty);
-          final compactDesktopTimeline =
-              desktopTimeline &&
-              (defaultTargetPlatform == TargetPlatform.macOS ||
-                  defaultTargetPlatform == TargetPlatform.windows ||
-                  defaultTargetPlatform == TargetPlatform.linux);
+          final compactDesktopTimeline = desktopTimeline && isDesktopPlatform;
           final sliderTheme = SliderTheme.of(context);
           return SizedBox(
             height: desktopTimeline && !compactDesktopTimeline ? 64 : 48,
@@ -1521,7 +1527,7 @@ class _PlayerScreenState extends State<PlayerScreen>
                     ),
                   ),
                 ),
-                ..._sectionMarkerLabelWidgets(
+                ...sectionMarkerLabelWidgets(
                   context: context,
                   markers: displaySections,
                   durationSeconds: displayDuration,
@@ -1532,6 +1538,7 @@ class _PlayerScreenState extends State<PlayerScreen>
                   sliderTheme: sliderTheme,
                   textScaler: MediaQuery.textScalerOf(context),
                   l10n: l10n,
+                  cache: _sectionLabelCache,
                 ),
               ],
             ),
@@ -1953,6 +1960,7 @@ class _PlayerScreenState extends State<PlayerScreen>
     required bool stackActions,
     required double rowHeight,
     required double sideSlotWidth,
+    required double playLabelWidth,
   }) => Padding(
     padding: const EdgeInsets.symmetric(horizontal: 4),
     child: LayoutBuilder(
@@ -1965,24 +1973,10 @@ class _PlayerScreenState extends State<PlayerScreen>
             ? constraints.maxWidth
             : constraints.maxWidth - (sideSlotWidth * 2);
         final playLabel = state.isPlaying ? l10n.playerPause : l10n.playerPlay;
-        final playLabelPainter = TextPainter(
-          text: TextSpan(
-            text: playLabel,
-            style: Theme.of(
-              context,
-            ).textTheme.labelLarge?.copyWith(height: kTextHeightNone),
-          ),
-          textDirection: direction,
-          textScaler: MediaQuery.textScalerOf(context),
-          locale: Localizations.localeOf(context),
-        )..layout();
         final navigationWidth = stackActions || mobile ? 96.0 : 80.0;
         final playWidth = centerWidth - (hasNavigation ? navigationWidth : 0);
         final playHorizontalPadding =
-            ((playWidth - 32 - playLabelPainter.width) / 2)
-                .clamp(4.0, 12.0)
-                .toDouble();
-        playLabelPainter.dispose();
+            ((playWidth - 32 - playLabelWidth) / 2).clamp(4.0, 12.0).toDouble();
         final playIcon = Icon(
           state.isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
         );
@@ -2022,7 +2016,7 @@ class _PlayerScreenState extends State<PlayerScreen>
                 ),
               );
         final controls = <Widget>[
-          if (state.playerSections.isNotEmpty || state.activeSetlist != null)
+          if (hasNavigation)
             IconButton(
               visualDensity: stackActions || mobile
                   ? VisualDensity.standard
@@ -2040,17 +2034,14 @@ class _PlayerScreenState extends State<PlayerScreen>
               ),
               onPressed: state.activeSetlist == null
                   ? () => _skipSection(-1)
-                  : () => _previousTransportAction(state),
+                  : _previousTransportAction,
               onLongPress: state.activeSetlist == null
                   ? null
                   : controller.previousSong,
               icon: const Icon(Icons.skip_previous_rounded),
             ),
           Flexible(
-            child:
-                defaultTargetPlatform == TargetPlatform.windows ||
-                    defaultTargetPlatform == TargetPlatform.linux ||
-                    defaultTargetPlatform == TargetPlatform.macOS
+            child: isDesktopPlatform
                 ? Tooltip(
                     message: _shortcutHint(
                       state.isPlaying ? l10n.playerPause : l10n.playerPlay,
@@ -2060,7 +2051,7 @@ class _PlayerScreenState extends State<PlayerScreen>
                   )
                 : start,
           ),
-          if (state.playerSections.isNotEmpty || state.activeSetlist != null)
+          if (hasNavigation)
             IconButton(
               visualDensity: stackActions || mobile
                   ? VisualDensity.standard
@@ -2078,7 +2069,7 @@ class _PlayerScreenState extends State<PlayerScreen>
               ),
               onPressed: state.activeSetlist == null
                   ? () => _skipSection(1)
-                  : () => _nextTransportAction(state),
+                  : _nextTransportAction,
               onLongPress: state.activeSetlist == null
                   ? null
                   : controller.nextSong,
@@ -2201,9 +2192,7 @@ class _PlayerScreenState extends State<PlayerScreen>
         : originalPitch == null
         ? null
         : '${keyNames[originalPitch]}${minorKey ? 'm' : ''}';
-    final displayedKey = state.showChords
-        ? currentKey ?? l10n.unknownValue
-        : l10n.searchChordsUnavailable;
+    final displayedKey = _displayedKey(l10n, state);
     return PopupMenuButton<String>(
       key: const ValueKey('pitch-key-dropdown'),
       tooltip: state.readerKeyEstimated
@@ -2321,216 +2310,4 @@ class _PlayerScreenState extends State<PlayerScreen>
       ),
     );
   }
-}
-
-class _SectionMarkerSliderTrackShape extends RoundedRectSliderTrackShape {
-  const _SectionMarkerSliderTrackShape({
-    required this.markers,
-    required this.durationSeconds,
-  });
-
-  final List<PlayerSectionMarker> markers;
-  final double durationSeconds;
-
-  @override
-  void paint(
-    PaintingContext context,
-    Offset offset, {
-    required RenderBox parentBox,
-    required SliderThemeData sliderTheme,
-    required Animation<double> enableAnimation,
-    required TextDirection textDirection,
-    required Offset thumbCenter,
-    Offset? secondaryOffset,
-    bool isDiscrete = false,
-    bool isEnabled = false,
-    double additionalActiveTrackHeight = 2,
-  }) {
-    super.paint(
-      context,
-      offset,
-      parentBox: parentBox,
-      sliderTheme: sliderTheme,
-      enableAnimation: enableAnimation,
-      textDirection: textDirection,
-      thumbCenter: thumbCenter,
-      secondaryOffset: secondaryOffset,
-      isDiscrete: isDiscrete,
-      isEnabled: isEnabled,
-      additionalActiveTrackHeight: additionalActiveTrackHeight,
-    );
-    if (markers.isEmpty || durationSeconds <= 0) return;
-    final trackRect = getPreferredRect(
-      parentBox: parentBox,
-      offset: offset,
-      sliderTheme: sliderTheme,
-      isEnabled: isEnabled,
-      isDiscrete: isDiscrete,
-    );
-    final color =
-        Color.lerp(
-          sliderTheme.activeTrackColor ?? const Color(0xFF777777),
-          sliderTheme.inactiveTrackColor ?? const Color(0xFFBBBBBB),
-          .45,
-        ) ??
-        sliderTheme.thumbColor ??
-        const Color(0xFFFFFFFF);
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.fill;
-    for (final marker in markers) {
-      final fraction = (marker.startSeconds / durationSeconds).clamp(0.0, 1.0);
-      final x = textDirection == TextDirection.rtl
-          ? trackRect.right - trackRect.width * fraction
-          : trackRect.left + trackRect.width * fraction;
-      context.canvas.drawCircle(Offset(x, trackRect.center.dy), 2.2, paint);
-    }
-  }
-}
-
-List<Widget> _sectionMarkerLabelWidgets({
-  required BuildContext context,
-  required List<PlayerSectionMarker> markers,
-  required double durationSeconds,
-  required double progressSeconds,
-  required double width,
-  required TextDirection textDirection,
-  required Color labelColor,
-  required SliderThemeData sliderTheme,
-  required TextScaler textScaler,
-  required AppLocalizations l10n,
-}) {
-  if (markers.isEmpty ||
-      durationSeconds <= 0 ||
-      !width.isFinite ||
-      width <= 0) {
-    return const [];
-  }
-  final thumbWidth = (sliderTheme.thumbShape ?? const RoundSliderThumbShape())
-      .getPreferredSize(true, false)
-      .width;
-  final overlayWidth =
-      (sliderTheme.overlayShape ?? const RoundSliderOverlayShape())
-          .getPreferredSize(true, false)
-          .width;
-  final inset = sliderTheme.padding == null
-      ? math.max(thumbWidth, overlayWidth) / 2
-      : 0.0;
-  final left = inset;
-  final right = width - inset;
-  final trackWidth = math.max(0.0, right - left);
-  if (trackWidth <= 0) return const [];
-  final progressFraction = (progressSeconds / durationSeconds).clamp(0.0, 1.0);
-  final thumbX = textDirection == TextDirection.rtl
-      ? right - trackWidth * progressFraction
-      : left + trackWidth * progressFraction;
-  // Timeline cues are secondary, but they still need to read comfortably at
-  // desktop scale. Keep compact layouts denser while honoring text scaling.
-  final fontSize = width >= 560 ? 13.0 : 10.0;
-  // Match the inherited typeface when measuring. Measuring with the default
-  // font and then painting with the app's display font made the Positioned
-  // label narrower than its rendered text, so Flutter ellipsized headings.
-  final style = DefaultTextStyle.of(context).style.merge(
-    TextStyle(
-      color: labelColor,
-      fontSize: fontSize,
-      fontWeight: FontWeight.w600,
-      height: 1,
-    ),
-  );
-  final maxLabelWidth = trackWidth * .45;
-  final candidates =
-      <
-        ({double center, String label, String sectionName, double labelWidth})
-      >[];
-  for (final marker in markers) {
-    final fraction = (marker.startSeconds / durationSeconds).clamp(0.0, 1.0);
-    final x = textDirection == TextDirection.rtl
-        ? right - trackWidth * fraction
-        : left + trackWidth * fraction;
-    final sectionName = localizedSectionName(l10n, marker.name);
-    var label = width >= 560
-        ? sectionName
-        : sectionAbbreviation(l10n, marker.name, compact: width < 400);
-    final measure = TextPainter(
-      text: TextSpan(text: label, style: style),
-      textDirection: textDirection,
-      textScaler: textScaler,
-      locale: Localizations.localeOf(context),
-      maxLines: 1,
-      ellipsis: '…',
-    )..layout();
-    if (measure.width > maxLabelWidth) {
-      label = sectionAbbreviation(l10n, marker.name, compact: width < 400);
-      measure.text = TextSpan(text: label, style: style);
-      measure.layout();
-    }
-    // A partial cue is not useful. Keep only complete labels that fit; the
-    // active section's full heading and timeline semantics remain available.
-    if (measure.width > maxLabelWidth) continue;
-    final labelWidth = math.min(measure.width, maxLabelWidth);
-    final center = x
-        .clamp(left + labelWidth / 2, right - labelWidth / 2)
-        .toDouble();
-    candidates.add((
-      center: center,
-      label: label,
-      sectionName: sectionName,
-      labelWidth: labelWidth,
-    ));
-  }
-
-  // Keep labels above the line and leave breathing room between them. When
-  // sections are densely packed, show the labels nearest the playhead first.
-  final prioritized = [...candidates]
-    ..sort(
-      (a, b) => (a.center - thumbX).abs().compareTo((b.center - thumbX).abs()),
-    );
-  final visible =
-      <
-        ({
-          double center,
-          String label,
-          String sectionName,
-          double labelWidth,
-          int row,
-        })
-      >[];
-  for (final candidate in prioritized) {
-    final rowCount = width >= 560 ? 2 : 1;
-    for (var row = 0; row < rowCount; row++) {
-      final collides = visible.any((existing) {
-        if (existing.row != row) return false;
-        final needed = (candidate.labelWidth + existing.labelWidth) / 2 + 5;
-        return (candidate.center - existing.center).abs() < needed;
-      });
-      if (collides) continue;
-      visible.add((
-        center: candidate.center,
-        label: candidate.label,
-        sectionName: candidate.sectionName,
-        labelWidth: candidate.labelWidth,
-        row: row,
-      ));
-      break;
-    }
-  }
-  return [
-    for (final candidate in visible)
-      Positioned(
-        left: candidate.center - candidate.labelWidth / 2,
-        width: candidate.labelWidth,
-        top: 2 + candidate.row * 14,
-        child: IgnorePointer(
-          child: Text(
-            candidate.label,
-            semanticsLabel: candidate.sectionName,
-            maxLines: 1,
-            softWrap: false,
-            overflow: TextOverflow.visible,
-            style: style,
-          ),
-        ),
-      ),
-  ];
 }

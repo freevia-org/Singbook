@@ -1,13 +1,11 @@
 import 'dart:convert';
 
+import 'display_facts.dart';
 import 'edition_identity.dart';
 import 'models.dart';
+import 'song_identity.dart' show normalizeNameIdentity;
 
-String _identity(String value) => value
-    .toLowerCase()
-    .replaceAll(RegExp("['‘’]"), '')
-    .replaceAll(RegExp(r'[^\p{L}\p{N}]+', unicode: true), ' ')
-    .trim();
+String _identity(String value) => normalizeNameIdentity(value);
 
 bool _present(Object? value) =>
     value != null &&
@@ -15,36 +13,16 @@ bool _present(Object? value) =>
     (value is! Iterable || value.isNotEmpty) &&
     (value is! Map || value.isNotEmpty);
 
-double? _seconds(Object? value) {
-  if (value is! num) return null;
-  final seconds = value.toDouble();
-  return seconds.isFinite && seconds > 0 && seconds <= 86400 ? seconds : null;
-}
+double? _seconds(Object? value) => displaySeconds(value);
 
-String? _album(SongCandidate candidate, [JsonMap metadata = const {}]) {
-  for (final value in [
-    candidate.album,
-    metadata['album'],
-    candidate.metadata['album'],
-  ]) {
-    if (value is String && value.trim().isNotEmpty) return value.trim();
-  }
-  return null;
-}
+String? _album(SongCandidate candidate, [JsonMap metadata = const {}]) =>
+    candidateAlbum(candidate, metadata);
 
 double? _duration(SongCandidate candidate, [JsonMap metadata = const {}]) =>
-    _seconds(candidate.durationSeconds) ??
-    _seconds(metadata['durationSeconds']) ??
-    _seconds(candidate.metadata['durationSeconds']) ??
-    _seconds(metadata['duration']) ??
-    _seconds(candidate.metadata['duration']);
+    candidateDuration(candidate, metadata);
 
 bool _conflictingIds(SongCandidate first, SongCandidate second) =>
-    first.recordingIds.entries.any(
-      (entry) =>
-          second.recordingIds.containsKey(entry.key) &&
-          second.recordingIds[entry.key] != entry.value,
-    );
+    recordingIdsConflict(first, second);
 
 bool _secureArtwork(Object? value) {
   final uri = value is String ? Uri.tryParse(value) : null;
@@ -82,12 +60,17 @@ class _DisplayDonor {
     : album = _album(source.candidate, source.metadata),
       duration = _duration(source.candidate, source.metadata);
 
-  JsonMap get facts => {
+  /// Built once and only read: every field loop and the donor order use it.
+  late final JsonMap facts = {
     ...source.candidate.metadata,
     ...source.metadata,
     if (album != null) 'album': album,
     if (duration != null) 'durationSeconds': duration,
   };
+
+  /// Sort key for donors with one source ID, encoded once per donor instead
+  /// of on every comparison.
+  late final String factsKey = jsonEncode(facts);
 }
 
 /// Complements display facts only, after recording/timing/arrangement decisions.
@@ -175,9 +158,7 @@ SongDocument enrichCombinedDisplayMetadata(
   }
   donors.sort((a, b) {
     final identity = a.source.id.compareTo(b.source.id);
-    return identity != 0
-        ? identity
-        : jsonEncode(a.facts).compareTo(jsonEncode(b.facts));
+    return identity != 0 ? identity : a.factsKey.compareTo(b.factsKey);
   });
 
   // An original selected/resolved recording may anchor an album. Neither this
@@ -328,18 +309,17 @@ SongDocument enrichCombinedDisplayMetadata(
       metadata[field] = claims.first.value;
       origins[field] = claims.first.sourceId;
     }
+    final chosen = metadata[field];
+    final chosenKey = jsonEncode(chosen);
     for (final claim in claims) {
-      if (jsonEncode(metadata[field]) == jsonEncode(claim.value)) {
+      if (chosenKey == jsonEncode(claim.value)) {
         contributors.putIfAbsent(field, () => {}).add(claim.sourceId);
       }
     }
-    final chosen = metadata[field];
     if (invalidAutomatic ||
         values.length > 1 ||
         _present(chosen) &&
-            claims.any(
-              (claim) => jsonEncode(claim.value) != jsonEncode(chosen),
-            )) {
+            claims.any((claim) => jsonEncode(claim.value) != chosenKey)) {
       final alternatives =
           conflicts.putIfAbsent(
                 field,

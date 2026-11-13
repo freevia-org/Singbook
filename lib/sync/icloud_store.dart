@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
@@ -8,10 +9,18 @@ import 'icloud_auth.dart';
 
 /// CloudKit private database adapter implementing the existing sync protocol.
 class ICloudSyncStore implements SyncCloudStore {
-  ICloudSyncStore({required this.authorization, MethodChannel? channel})
-    : _channel =
-          channel ?? const MethodChannel('org.freevia.singbook/icloud_sync');
+  ICloudSyncStore({
+    required this.authorization,
+    MethodChannel? channel,
+    this.callTimeout = const Duration(seconds: 120),
+  }) : _channel =
+           channel ?? const MethodChannel('org.freevia.singbook/icloud_sync');
   final ICloudAuthorization authorization;
+
+  /// Deadline for one native call (three times as long for the listing, which
+  /// pages through the whole library). A call that never answers would
+  /// otherwise leave a sync running forever.
+  final Duration callTimeout;
   final MethodChannel _channel;
   final Map<String, DriveFile> _observed = {};
   final Set<String> _knownMissing = {};
@@ -35,10 +44,15 @@ class ICloudSyncStore implements SyncCloudStore {
 
   Future<T> _call<T>(String method, Map<String, Object?> args) async {
     try {
-      return (await _channel.invokeMethod<T>(method, args)) as T;
+      return (await _channel
+              .invokeMethod<T>(method, args)
+              .timeout(method == 'list' ? callTimeout * 3 : callTimeout))
+          as T;
     } on PlatformException catch (error) {
       throw SyncException(error.code);
     } on MissingPluginException {
+      throw const SyncException('icloud_unavailable');
+    } on TimeoutException {
       throw const SyncException('icloud_unavailable');
     }
   }

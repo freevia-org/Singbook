@@ -1,5 +1,6 @@
 import 'edition_identity.dart';
 import 'models.dart';
+import 'song_identity.dart' show normalizeNameIdentity;
 
 /// Returns the original name and, when it is explicitly published in
 /// parentheses after a non-Latin name, its safe Latin-script alias.
@@ -45,14 +46,10 @@ List<String> publishedNameVariants(String value) {
 /// Compares names by normalized equality, including only explicitly
 /// published aliases returned by [publishedNameVariants].
 bool publishedNamesMatch(String first, String second) {
-  String normalize(String value) => value
-      .toLowerCase()
-      .replaceAll(RegExp("['‘’]"), '')
-      .replaceAll(RegExp(r'[^\p{L}\p{N}]+', unicode: true), ' ')
-      .trim();
-
-  final left = publishedNameVariants(first).map(normalize).toSet();
-  final right = publishedNameVariants(second).map(normalize).toSet();
+  final left = publishedNameVariants(first).map(normalizeNameIdentity).toSet();
+  final right = publishedNameVariants(
+    second,
+  ).map(normalizeNameIdentity).toSet();
   return left.intersection(right).any((value) => value.isNotEmpty);
 }
 
@@ -69,11 +66,7 @@ bool publishedLyricScriptAlternative(
       !publishedNamesMatch(selected.title, source.title) ||
       !publishedNamesMatch(selected.artist, source.artist) ||
       !explicitEditionsCompatible(selected, source) ||
-      selected.recordingIds.entries.any(
-        (entry) =>
-            source.recordingIds.containsKey(entry.key) &&
-            source.recordingIds[entry.key] != entry.value,
-      )) {
+      recordingIdsConflict(selected, source)) {
     return false;
   }
   final selectedEditions = recordingVersionMarkers(

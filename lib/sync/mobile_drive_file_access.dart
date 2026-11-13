@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'drive_file_access.dart';
 import 'google_auth.dart';
 import 'google_drive_folder_picker.dart';
+import 'google_oauth_token_client.dart';
 import 'sync_protocol.dart';
 
 typedef MobileFileAuthorizationBuilder =
@@ -107,7 +108,7 @@ class MobileDriveFileAccess implements DriveFileAccessCapability {
       _check(account);
       if (ids.isEmpty) throw const SyncException('cancelled');
       if (ids.length > 10000 ||
-          ids.any((id) => !RegExp(r'^[A-Za-z0-9_-]{1,512}$').hasMatch(id))) {
+          ids.any((id) => !isDriveId(id, maxLength: 512))) {
         throw const SyncException('folder_picker_failed');
       }
       return List<String>.unmodifiable(ids.toSet());

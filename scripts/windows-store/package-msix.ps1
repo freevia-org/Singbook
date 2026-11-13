@@ -10,7 +10,7 @@ param(
     [Parameter(Mandatory)][string]$IconPath,
     [Parameter(Mandatory)][string]$MakeAppxPath,
     [Parameter(Mandatory)][string]$ExpectedSourceTree,
-    [string]$ExpectedProductVersion = '1.0.52+52'
+    [Parameter(Mandatory)][string]$ExpectedProductVersion
 )
 $ErrorActionPreference = 'Stop'
 

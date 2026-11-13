@@ -45,7 +45,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: store-release-${{ github.event.pull_request.number || github.run_id }}
+  group: store-release-${{ github.run_id }}
   cancel-in-progress: true
 
 jobs:

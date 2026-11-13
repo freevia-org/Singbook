@@ -30,6 +30,10 @@ import '../catalog_search.dart';
 import 'recording_key.dart';
 import 'recording_context.dart';
 
+part 'identity_match.dart';
+part 'match_source.dart';
+part 'lyric_agreement.dart';
+
 const _diagnosticCodes = <String>{
   'blocked',
   'access_denied',
@@ -100,1061 +104,23 @@ class ProviderCheck {
   final List<ProviderOperation> operations;
 }
 
-String normalizedIdentity(String text) => text
-    .toLowerCase()
-    .replaceAll(RegExp("['‘’]"), '')
-    .replaceAll(RegExp(r'[^\p{L}\p{N}]+', unicode: true), ' ')
-    .trim();
-final _remasterTitleSuffix = RegExp(
-  r'\s*(?:\((?:\d{4}\s+)?remaster(?:ed)?(?:\s+\d{4})?\)|\[(?:\d{4}\s+)?remaster(?:ed)?(?:\s+\d{4})?\]|\s[-–—]\s(?:\d{4}\s+)?remaster(?:ed)?(?:\s+\d{4})?)\s*$',
-  caseSensitive: false,
-);
-String _titleKey(String title) =>
-    normalizedIdentity(title.replaceFirst(_remasterTitleSuffix, ''));
-Set<String> _publishedTitleKeys(String title) {
-  final withoutRemaster = title.replaceFirst(_remasterTitleSuffix, '');
-  return {
-    for (final name in publishedNameVariants(withoutRemaster)) _titleKey(name),
-  };
-}
-
-bool _samePublishedTitle(String first, String second) => _publishedTitleKeys(
-  first,
-).intersection(_publishedTitleKeys(second)).any((value) => value.isNotEmpty);
-String arrangementTitle(String title) => title
-    .replaceFirst(
-      RegExp(
-        r'\s*(?:\((?:(?:acoustic|live|unplugged|version)\s*)+\)|\[(?:(?:acoustic|live|unplugged|version)\s*)+\]|\s[-–—]\s(?:(?:acoustic|live|unplugged|version)\s*)+)\s*$',
-        caseSensitive: false,
-      ),
-      '',
-    )
-    .trim();
-
-bool sameSong(SongCandidate selected, SongCandidate result) {
-  for (final id in selected.recordingIds.entries) {
-    if (result.recordingIds.containsKey(id.key) &&
-        result.recordingIds[id.key] != id.value) {
-      return false;
-    }
-  }
-  if (!_samePublishedTitle(selected.title, result.title) ||
-      (normalizedIdentity(selected.artist) !=
-              normalizedIdentity(result.artist) &&
-          !publishedNamesMatch(selected.artist, result.artist) &&
-          !sameGeniusPrimaryCredit(selected, result, normalizedIdentity) &&
-          !sameReviewedChartArtist(selected, result) &&
-          musicBrainzArtistCreditEvidence(
-                selected,
-                result,
-                normalizedIdentity,
-              ) ==
-              null)) {
-    return false;
-  }
-  final a = recordingVersionMarkers(selected.album ?? '', album: true),
-      b = recordingVersionMarkers(result.album ?? '', album: true);
-  if (a.difference(b).isNotEmpty || b.difference(a).isNotEmpty) {
-    if (selected.album != null && result.album != null) return false;
-    if (selected.identity != result.identity &&
-        !recordingVersionMarkers(selected.title).containsAll({...a, ...b})) {
-      return false;
-    }
-  }
-  final sa = selected.durationSeconds, sb = result.durationSeconds;
-  if (sa != null &&
-      sb != null &&
-      (sa - sb).abs() > math.min(15, math.max(8, sa * 0.02))) {
-    return false;
-  }
-  return true;
-}
-
-/// Whether a chord site's arrangement may be [selected]'s song. Chord sites
-/// may credit only the main artist ("Bob Marley" for "Bob Marley & The
-/// Wailers") and drop a leading article ("House of the Rising Sun"); such
-/// matches still need their lyrics to agree before they are used.
-bool sameArrangement(
-  SongCandidate selected,
-  SongCandidate result,
-  LyricsProvider provider,
-) {
-  final selectedArtist =
-      reviewedChartArtistCredit(selected)?.canonicalName ?? selected.artist;
-  final resultArtist =
-      reviewedChartArtistCredit(result)?.canonicalName ?? result.artist;
-  if (!provider.definition.capabilities.contains('chords') ||
-      (!artistCreditsMatch(
-            selectedArtist,
-            resultArtist,
-            (value) => normalizedIdentity(foldLyricVowelAccents(value)),
-          ) &&
-          !publishedNamesMatch(selectedArtist, resultArtist))) {
-    return false;
-  }
-  for (final entry in selected.recordingIds.entries) {
-    if (result.recordingIds.containsKey(entry.key) &&
-        result.recordingIds[entry.key] != entry.value) {
-      return false;
-    }
-  }
-  final a = arrangementTitle(selected.title);
-  var b = arrangementTitle(result.title);
-  if (a != selected.title) {
-    b = b.replaceFirst(RegExp(r'\s+acoustic$', caseSensitive: false), '');
-  }
-  String key(String title) => _titleKey(
-    foldLyricVowelAccents(title),
-  ).replaceFirst(RegExp(r'^(?:the|a|an) '), '');
-  Set<String> publishedTitleKeys(String title) => {
-    for (final name in publishedNameVariants(
-      foldLyricVowelAccents(title).replaceFirst(_remasterTitleSuffix, ''),
-    ))
-      key(name),
-  };
-  return publishedTitleKeys(
-    a,
-  ).intersection(publishedTitleKeys(b)).any((value) => value.isNotEmpty);
-}
-
-bool _sameAlbum(SongCandidate a, SongCandidate b) =>
-    a.album != null &&
-    b.album != null &&
-    normalizedIdentity(a.album!) == normalizedIdentity(b.album!);
-bool _selectedHistoricalText(
-  SongCandidate selected,
-  SongCandidate result,
-  String providerId,
-) =>
-    providerId == 'wikisource' &&
-    selected.providerId == providerId &&
-    result.providerId == providerId &&
-    selected.id == result.id &&
-    RegExp(r'^\d+$').hasMatch(selected.id) &&
-    result.metadata['identityScope'] == 'historicalText' &&
-    normalizedIdentity(selected.title) == normalizedIdentity(result.title) &&
-    (selected.artist.trim().isEmpty ||
-        normalizedIdentity(selected.artist) ==
-            normalizedIdentity(result.artist));
-double _rank(SongCandidate selection, SongCandidate song) =>
-    (_sameAlbum(selection, song) ? 100 : 0) +
-    (normalizedIdentity(selection.title) == normalizedIdentity(song.title)
-        ? 20
-        : 0) +
-    (selection.durationSeconds != null && song.durationSeconds != null
-        ? 40 - (selection.durationSeconds! - song.durationSeconds!).abs()
-        : 0);
-SourceResult _matched(
-  SourceResult result,
-  MatchKind kind,
-  String reason, {
-  JsonMap extra = const {},
-}) => SourceResult(
-  candidate: result.candidate,
-  arrangementId: result.arrangementId,
-  body: result.body,
-  metadata: result.metadata,
-  timingTracks: result.timingTracks,
-  matchKind: kind,
-  matchReason: reason,
-  attribution: result.attribution,
-  retrievedAt: result.retrievedAt,
-  extra: {...result.extra, ...extra},
-);
-
-Future<int> _preferredProviderAlternative(
-  List<({String body, MatchKind kind})> alternatives,
-) => Isolate.run(() {
-  var bestIndex = 0;
-  for (var index = 1; index < alternatives.length; index++) {
-    final best = alternatives[bestIndex];
-    final next = alternatives[index];
-    if ((next.kind == MatchKind.sameRecording &&
-            best.kind != MatchKind.sameRecording) ||
-        (next.kind == best.kind &&
-            next.body != best.body &&
-            preferCompatibleLyrics(best.body, [next.body]) == next.body)) {
-      bestIndex = index;
-    }
-  }
-  return bestIndex;
-}, debugName: 'singbook-provider-alternatives');
-
-Future<SourceResult> findMatchingSource(
-  LyricsProvider provider,
-  SongCandidate selection, {
-  CancellationToken? cancel,
-  // Candidate ids already tried by an earlier pass.
-  Set<String> exclude = const {},
-  // Extra acceptance test (for example lyrics corroboration). A result that
-  // fails it is skipped so the next candidate can be tried.
-  FutureOr<bool> Function(SourceResult result)? accept,
-  void Function(ProviderOperation operation)? onOperation,
-  void Function(SourceResult result)? onAlternative,
-  FutureOr<void> Function(SourceResult result)? onCandidate,
-  // Only deliberate internal corroboration may explore alternatives to the
-  // selected provider's exact row. Ordinary selection never substitutes one.
-  bool allowSelectedProviderAlternatives = false,
-  // During initial chord discovery, defer later matching rows until the
-  // selected chart has been checked against a full lyric reference. That
-  // retry path has its own timeout and cancellation scope.
-  bool stopAfterFirstChordCandidate = false,
-  // Only the deferred, recording-lyric-backed retry may inspect an exact-title
-  // chart credited to another performer.
-  bool allowAlternatePerformers = false,
-  // Reuse bounded search rows when resolved recording metadata adds context.
-  List<SongCandidate>? searchedCandidates,
-  void Function(List<SongCandidate>)? onSearchCandidates,
-  // Only a full resolved recording reference authorizes this discovery pass.
-  bool allowContextualArrangements = false,
-  String operationPrefix = 'lookup',
-  // Candidates resolved from the provider's search before giving up.
-  int maxAttempts = 3,
-}) async {
-  cancel?.throwIfCancelled();
-  bool arrangementMatches(SongCandidate candidate) =>
-      sameArrangement(selection, candidate, provider) ||
-      (allowContextualArrangements &&
-          (contextualArrangementCandidate(selection, candidate) ||
-              allowAlternatePerformers &&
-                  provider.definition.capabilities.contains('chords') &&
-                  contextualArrangementCandidate(
-                    selection,
-                    candidate,
-                    allowAlternatePerformers: true,
-                  )));
-  String? publishedTitleAliasFor(
-    SongCandidate selected,
-    SongCandidate candidate, {
-    JsonMap metadata = const {},
-    JsonMap extra = const {},
-  }) {
-    if (candidate.providerId != provider.definition.id ||
-        provider is! PublishedTitleAliasEvidence ||
-        !explicitEditionsCompatible(
-          selected,
-          candidate,
-          metadata: metadata,
-          extra: extra,
-        )) {
-      return null;
-    }
-    final evidence = (provider as PublishedTitleAliasEvidence)
-        .publishedTitleAliasForSelection(selected, candidate);
-    if (evidence == null || evidence.trim().isEmpty) return null;
-    // Compare the publisher's alias temporarily. Keep its canonical candidate
-    // unchanged and retain every existing non-title identity constraint.
-    final aliasCandidate = SongCandidate(
-      providerId: candidate.providerId,
-      id: candidate.id,
-      title: evidence,
-      artist: candidate.artist,
-      album: candidate.album,
-      durationSeconds: candidate.durationSeconds,
-      url: candidate.url,
-      metadata: candidate.metadata,
-      recordingIds: candidate.recordingIds,
-      extra: candidate.extra,
-    );
-    return sameSong(selected, aliasCandidate) ? evidence : null;
-  }
-
-  bool matchesSelectedSong(
-    SongCandidate selected,
-    SongCandidate candidate, {
-    JsonMap metadata = const {},
-    JsonMap extra = const {},
-  }) =>
-      sameSong(selected, candidate) ||
-      publishedTitleAliasFor(
-            selected,
-            candidate,
-            metadata: metadata,
-            extra: extra,
-          ) !=
-          null;
-  Future<void> observeCandidate(SourceResult result) async {
-    if (cancel?.isCancelled == true || onCandidate == null) return;
-    try {
-      await onCandidate(result);
-    } catch (_) {
-      // Observation cannot invalidate an already validated provider payload.
-    }
-  }
-
-  final searchEvidence = <JsonMap>[];
-  final rejectedEvidence = <JsonMap>[];
-  final unresolvedEvidence = <JsonMap>[];
-  final acceptedEvidence = <JsonMap>[];
-  JsonMap evidenceSnapshot(SourceResult source) =>
-      {...source.toJson()}..remove('discoveryEvidence');
-  JsonMap evidenceEnvelope() => {
-    'providerId': provider.definition.id,
-    'capabilities': provider.definition.capabilities.toList()..sort(),
-    'searchCandidates': searchEvidence,
-    'rejectedPayloads': rejectedEvidence,
-    'unresolvedCandidates': unresolvedEvidence,
-    'acceptedPayloads': acceptedEvidence,
-  };
-  SourceResult withEvidence(SourceResult source) => source.copyWith(
-    extra: {...source.extra, 'discoveryEvidence': evidenceEnvelope()},
-  );
-
-  final phaseSequences = <String, int>{};
-  final activeOperationIds = <String, String>{};
-  void report(
-    String phase,
-    String state, {
-    String? code,
-    String? query,
-    SongCandidate? candidate,
-    int? resultCount,
-    int? elapsedMilliseconds,
-  }) {
-    if (cancel?.isCancelled == true) return;
-    final id = state == 'pending'
-        ? '${provider.definition.id}:$operationPrefix:$phase:${phaseSequences.update(phase, (n) => n + 1, ifAbsent: () => 0)}'
-        : activeOperationIds[phase] ??
-              '${provider.definition.id}:$operationPrefix:$phase:${phaseSequences.update(phase, (n) => n + 1, ifAbsent: () => 0)}';
-    activeOperationIds[phase] = id;
-    onOperation?.call(
-      ProviderOperation(
-        id: id,
-        phase: phase,
-        state: state,
-        code: code == null ? null : _safeDiagnosticCode(code),
-        query: query,
-        title: candidate?.title,
-        artist: candidate?.artist,
-        sourceUrl: candidate?.providerId == provider.definition.id
-            ? safeDiagnosticUrl(candidate?.url)
-            : null,
-        resultCount: resultCount,
-        elapsedMilliseconds: elapsedMilliseconds,
-      ),
-    );
-  }
-
-  final metadataOnly =
-      provider.definition.capabilities.contains('metadata') &&
-      !provider.definition.capabilities.contains('lyrics') &&
-      !provider.definition.capabilities.contains('chords');
-  if (metadataOnly) {
-    // Enrichment adapters have source-specific ambiguity checks and identity
-    // lookup (for example MusicBrainz IDs or an exact Commons filename). Do not
-    // bypass those checks by selecting the first generic search hit here.
-    final fetchWatch = Stopwatch()..start();
-    report('metadata', 'pending', candidate: selection);
-    late final SourceResult result;
-    try {
-      result = await provider.resolve(selection, cancel: cancel);
-      cancel?.throwIfCancelled();
-      report(
-        'metadata',
-        'completed',
-        candidate: result.candidate,
-        elapsedMilliseconds: fetchWatch.elapsedMilliseconds,
-      );
-    } on ProviderException catch (error) {
-      cancel?.throwIfCancelled();
-      unresolvedEvidence.add({
-        'candidate': selection.toJson(),
-        'state': 'failed',
-        'code': _safeDiagnosticCode(error.code),
-      });
-      report(
-        'metadata',
-        'failed',
-        code: error.code,
-        candidate: selection,
-        elapsedMilliseconds: fetchWatch.elapsedMilliseconds,
-      );
-      rethrow;
-    } catch (_) {
-      cancel?.throwIfCancelled();
-      unresolvedEvidence.add({
-        'candidate': selection.toJson(),
-        'state': 'failed',
-        'code': 'invalid_response',
-      });
-      report(
-        'metadata',
-        'failed',
-        code: 'invalid_response',
-        candidate: selection,
-        elapsedMilliseconds: fetchWatch.elapsedMilliseconds,
-      );
-      rethrow;
-    }
-    report('validate', 'pending', candidate: result.candidate);
-    final song = result.candidate;
-    if (song.providerId != provider.definition.id ||
-        !sameSong(selection, song)) {
-      report(
-        'validate',
-        'rejected',
-        code: 'identity_mismatch',
-        candidate: song,
-      );
-      final rejected = _matched(
-        result,
-        MatchKind.rejected,
-        'identity_mismatch',
-      );
-      rejectedEvidence.add({
-        'reason': 'identity_mismatch',
-        'payload': evidenceSnapshot(rejected),
-      });
-      return withEvidence(rejected);
-    }
-    if (result.metadata.isEmpty) {
-      report('validate', 'failed', code: 'unavailable', candidate: song);
-      unresolvedEvidence.add({
-        'candidate': selection.toJson(),
-        'state': 'failed',
-        'code': 'unavailable',
-      });
-      throw const ProviderException('unavailable');
-    }
-    report('validate', 'completed', candidate: song);
-    final sharedId = selection.recordingIds.entries.any(
-      (e) => song.recordingIds[e.key] == e.value,
-    );
-    final recordingScope = song.metadata['identityScope'] == 'recording';
-    final exact =
-        recordingScope &&
-        explicitEditionsCompatible(
-          selection,
-          song,
-          metadata: result.metadata,
-          extra: result.extra,
-        ) &&
-        (selection.identity == song.identity ||
-            sharedId ||
-            _sameAlbum(selection, song) &&
-                selection.durationSeconds != null &&
-                song.durationSeconds != null &&
-                (selection.durationSeconds! - song.durationSeconds!).abs() <=
-                    3);
-    final matched = _matched(
-      result,
-      exact ? MatchKind.sameRecording : MatchKind.sameSong,
-      exact ? 'same_recording' : 'same_song',
-    );
-    acceptedEvidence.add(evidenceSnapshot(matched));
-    if (onCandidate != null) await observeCandidate(matched);
-    return withEvidence(matched);
-  }
-  var attempts = 0;
-  final seen = <String>{...exclude};
-  // The first identity rejection is kept, but only returned once every
-  // candidate has been tried.
-  SourceResult? rejected;
-  // Every soft failure is kept (candidate id and code), not just the first.
-  final unresolved = <ProviderException>[];
-  Future<SourceResult?> attempt(SongCandidate candidate) async {
-    cancel?.throwIfCancelled();
-    final explicitlySelectedChart =
-        candidate.identity == selection.identity &&
-        selection.providerId == provider.definition.id &&
-        provider.definition.capabilities.contains('chords');
-    if (!seen.add(candidate.id) ||
-        (!explicitlySelectedChart &&
-            (candidate.metadata['instrumental'] == true ||
-                candidate.metadata['hasLyrics'] == false)) ||
-        attempts >= maxAttempts) {
-      final reason = exclude.contains(candidate.id)
-          ? 'excluded'
-          : candidate.metadata['instrumental'] == true
-          ? 'instrumental'
-          : candidate.metadata['hasLyrics'] == false
-          ? 'lyrics_unavailable'
-          : attempts >= maxAttempts
-          ? 'attempt_limit'
-          : 'duplicate';
-      unresolvedEvidence.add({
-        'candidate': candidate.toJson(),
-        'state': 'skipped',
-        'reason': reason,
-      });
-      return null;
-    }
-    attempts++;
-    SourceResult result;
-    final fetchWatch = Stopwatch()..start();
-    report('fetch', 'pending', candidate: candidate);
-    try {
-      result = await provider.resolve(candidate, cancel: cancel);
-      cancel?.throwIfCancelled();
-    } on ProviderException catch (e) {
-      cancel?.throwIfCancelled();
-      report(
-        'fetch',
-        'failed',
-        code: e.code,
-        candidate: candidate,
-        elapsedMilliseconds: fetchWatch.elapsedMilliseconds,
-      );
-      unresolvedEvidence.add({
-        'candidate': candidate.toJson(),
-        'state': 'failed',
-        'code': _safeDiagnosticCode(e.code),
-      });
-      if (e.code == 'unavailable') {
-        return null;
-      }
-      // One chart that cannot be read leaves the provider's other candidates
-      // to try; all failing still reports why.
-      if (e.code == 'extraction_failed' || e.code == 'invalid_response') {
-        unresolved.add(
-          ProviderException(
-            e.code,
-            '${candidate.id}${e.message.isEmpty ? '' : ' (${e.message})'}',
-          ),
-        );
-        return null;
-      }
-      rethrow;
-    } catch (_) {
-      cancel?.throwIfCancelled();
-      report(
-        'fetch',
-        'failed',
-        code: 'invalid_response',
-        candidate: candidate,
-        elapsedMilliseconds: fetchWatch.elapsedMilliseconds,
-      );
-      unresolvedEvidence.add({
-        'candidate': candidate.toJson(),
-        'state': 'failed',
-        'code': 'invalid_response',
-      });
-      rethrow;
-    }
-    report(
-      'fetch',
-      'completed',
-      candidate: result.candidate,
-      elapsedMilliseconds: fetchWatch.elapsedMilliseconds,
-    );
-    report('validate', 'pending', candidate: result.candidate);
-    final song = result.candidate,
-        historicalText =
-            candidate.identity == selection.identity &&
-            _selectedHistoricalText(selection, song, provider.definition.id) &&
-            song.metadata['resolvedPageId'] == candidate.id &&
-            song.metadata['resolvedTitle'] == song.title &&
-            song.metadata['copyrightTags'] is List &&
-            (song.metadata['copyrightTags'] as List).isNotEmpty,
-        strict = matchesSelectedSong(
-          selection,
-          result.candidate,
-          metadata: result.metadata,
-          extra: result.extra,
-        ),
-        publishedAlias = publishedTitleAliasFor(
-          selection,
-          result.candidate,
-          metadata: result.metadata,
-          extra: result.extra,
-        );
-    if (song.providerId != provider.definition.id ||
-        song.id != candidate.id ||
-        (!matchesSelectedSong(
-              candidate,
-              song,
-              metadata: result.metadata,
-              extra: result.extra,
-            ) &&
-            !historicalText) ||
-        (!strict && !arrangementMatches(song) && !historicalText)) {
-      report(
-        'validate',
-        'rejected',
-        code: 'identity_mismatch',
-        candidate: song,
-      );
-      rejected ??= _matched(result, MatchKind.rejected, 'identity_mismatch');
-      rejectedEvidence.add({
-        'reason': 'identity_mismatch',
-        'payload': evidenceSnapshot(
-          _matched(result, MatchKind.rejected, 'identity_mismatch'),
-        ),
-      });
-      return null;
-    }
-    if (result.body.trim().isEmpty &&
-        !result.timingTracks.any((track) => track.raw?.isNotEmpty == true)) {
-      report('validate', 'failed', code: 'unavailable', candidate: song);
-      rejectedEvidence.add({
-        'reason': 'unavailable',
-        'payload': evidenceSnapshot(result),
-      });
-      return null;
-    }
-    final scope = song.metadata['identityScope'];
-    final exact =
-        selection.identity == song.identity &&
-        explicitEditionsCompatible(
-          selection,
-          song,
-          metadata: result.metadata,
-          extra: result.extra,
-        ) &&
-        !{
-          'composition',
-          'arrangement',
-          'image',
-          'work',
-          'historicalText',
-        }.contains(scope) &&
-        !provider.definition.capabilities.contains('chords');
-    final verifiedRecording =
-        explicitEditionsCompatible(
-          selection,
-          song,
-          metadata: result.metadata,
-          extra: result.extra,
-        ) &&
-        _sameAlbum(selection, song) &&
-        selection.durationSeconds != null &&
-        song.durationSeconds != null &&
-        (selection.durationSeconds! - song.durationSeconds!).abs() <= 3 &&
-        normalizedIdentity(selection.title) == normalizedIdentity(song.title);
-    final contextualCandidate =
-        allowContextualArrangements &&
-        (contextualArrangementCandidate(selection, song) ||
-            allowAlternatePerformers &&
-                provider.definition.capabilities.contains('chords') &&
-                contextualArrangementCandidate(
-                  selection,
-                  song,
-                  allowAlternatePerformers: true,
-                ));
-    final alternatePerformerChart =
-        allowAlternatePerformers &&
-        provider.definition.capabilities.contains('chords') &&
-        !contextualArrangementCandidate(selection, song) &&
-        contextualArrangementCandidate(
-          selection,
-          song,
-          allowAlternatePerformers: true,
-        );
-    // Artist/title-only APIs cannot establish which recording supplied lyrics.
-    final recording =
-        provider.definition.id != 'lyricsovh' &&
-        !alternatePerformerChart &&
-        !{
-          'composition',
-          'arrangement',
-          'image',
-          'work',
-          'historicalText',
-        }.contains(scope) &&
-        (exact || verifiedRecording);
-    final matched = _matched(
-      result,
-      recording ? MatchKind.sameRecording : MatchKind.sameSong,
-      recording
-          ? 'same_recording'
-          : historicalText
-          ? 'explicit_historical_work'
-          : strict
-          ? 'same_song'
-          : 'arrangement_requires_agreement',
-      extra: {
-        if (publishedAlias != null)
-          'sourceTitleAliasEvidence': {
-            'sourceId': song.id,
-            'canonicalTitle': song.title,
-            'selectedTitle': selection.title,
-            'publishedAlias': publishedAlias,
-          },
-        if (!strict && !historicalText) ...{
-          'requiresLyricsAgreement': true,
-          if (reviewedChartArtistCredit(song) case final credit?)
-            'artistIdentityEvidence': credit.toJson(),
-          if (contextualCandidate) 'requiresRecordingLyricsAgreement': true,
-          if (alternatePerformerChart) 'alternatePerformerChart': true,
-        },
-      },
-    );
-    final acceptance = accept?.call(matched);
-    final accepted = acceptance is Future<bool> ? await acceptance : acceptance;
-    cancel?.throwIfCancelled();
-    if (accepted == false) {
-      rejectedEvidence.add({
-        'reason': operationPrefix == 'corroboration'
-            ? 'incomplete_or_different_lyrics'
-            : 'validation_rejected',
-        'payload': evidenceSnapshot(matched),
-      });
-      report(
-        'validate',
-        'rejected',
-        code: operationPrefix == 'corroboration'
-            ? 'incomplete_or_different_lyrics'
-            : 'validation_rejected',
-        candidate: song,
-      );
-      return null;
-    }
-    report('validate', 'completed', candidate: song);
-    acceptedEvidence.add(evidenceSnapshot(matched));
-    if (onCandidate != null) await observeCandidate(matched);
-    return matched;
-  }
-
-  if (selection.providerId == provider.definition.id) {
-    final result = await attempt(selection);
-    if (result != null) return withEvidence(result);
-    if (!allowSelectedProviderAlternatives ||
-        provider.definition.id == 'wikisource') {
-      if (rejected != null) return withEvidence(rejected!);
-      if (unresolved.isNotEmpty) {
-        throw ProviderException(
-          unresolved.first.code,
-          unresolved.map((e) => '${e.code}: ${e.message}').join('; '),
-        );
-      }
-      throw const ProviderException('unavailable');
-    }
-  }
-  final artist = selection.artist.length <= 100
-      ? selection.artist
-      : selection.artist.substring(0, 100);
-  var title = provider.definition.capabilities.contains('chords')
-      ? arrangementTitle(selection.title)
-      : selection.title;
-  if (title.length > 199 - artist.length) {
-    title = title.substring(0, 199 - artist.length);
-  }
-  final searchQuery = '$title $artist';
-  final searchWatch = Stopwatch()..start();
-  report('search', 'pending', query: searchQuery);
-  late List<SongCandidate> results;
-  final canReuse =
-      searchedCandidates != null &&
-      (provider is! ContextualLyricsSearch ||
-          (provider as ContextualLyricsSearch).canReuseSearchForSelection(
-            selection,
-            searchedCandidates,
-          ));
-  try {
-    results = !canReuse
-        ? provider is ContextualLyricsSearch
-              ? await (provider as ContextualLyricsSearch).searchForSelection(
-                  selection,
-                  fallbackQuery: searchQuery,
-                  cancel: cancel,
-                )
-              : await provider.search(searchQuery, cancel: cancel)
-        : List.unmodifiable(searchedCandidates.take(100));
-    cancel?.throwIfCancelled();
-    onSearchCandidates?.call(List.unmodifiable(results.take(100)));
-    for (final candidate in results) {
-      var reason = 'identity_mismatch';
-      if (candidate.providerId == provider.definition.id) {
-        if (!sameSong(selection, candidate) && !arrangementMatches(candidate)) {
-          reason = 'identity_mismatch';
-        } else if (candidate.metadata['instrumental'] == true) {
-          reason = 'instrumental';
-        } else if (candidate.metadata['hasLyrics'] == false) {
-          reason = 'lyrics_unavailable';
-        } else {
-          reason = 'eligible';
-        }
-      } else {
-        reason = 'provider_mismatch';
-      }
-      searchEvidence.add({
-        'candidate': candidate.toJson(),
-        'state': 'returned',
-        'reason': reason,
-      });
-    }
-  } on ProviderException catch (error) {
-    report(
-      'search',
-      'failed',
-      code: error.code,
-      query: searchQuery,
-      elapsedMilliseconds: searchWatch.elapsedMilliseconds,
-    );
-    rethrow;
-  } catch (_) {
-    report(
-      'search',
-      'failed',
-      code: 'invalid_response',
-      query: searchQuery,
-      elapsedMilliseconds: searchWatch.elapsedMilliseconds,
-    );
-    rethrow;
-  }
-  // Some providers index only the Latin alias that is explicitly printed
-  // beside a non-Latin name. Try that full title-and-artist query once when
-  // the primary query found no identity-compatible result. This bounded
-  // fallback runs before candidate resolution and keeps the provider's
-  // returned candidate unchanged.
-  final latinTitleAliases = publishedNameVariants(selection.title);
-  final latinArtistAliases = publishedNameVariants(selection.artist);
-  final latinTitle = latinTitleAliases.length > 1
-      ? latinTitleAliases.last
-      : null;
-  final latinArtist = latinArtistAliases.length > 1
-      ? latinArtistAliases.last
-      : null;
-  final hasIdentityMatch = results.any(
-    (candidate) =>
-        candidate.providerId == provider.definition.id &&
-        (matchesSelectedSong(selection, candidate) ||
-            arrangementMatches(candidate)),
-  );
-  var usedAliasFallback = false;
-  if (provider is! ContextualLyricsSearch &&
-      !hasIdentityMatch &&
-      latinTitle != null &&
-      latinArtist != null) {
-    var fallbackTitle = provider.definition.capabilities.contains('chords')
-        ? arrangementTitle(latinTitle)
-        : latinTitle;
-    var fallbackArtist = latinArtist;
-    if (fallbackArtist.length > 100) {
-      fallbackArtist = fallbackArtist.substring(0, 100);
-    }
-    if (fallbackTitle.length > 199 - fallbackArtist.length) {
-      fallbackTitle = fallbackTitle.substring(0, 199 - fallbackArtist.length);
-    }
-    final fallbackQuery = '$fallbackTitle $fallbackArtist';
-    if (normalizedIdentity(fallbackQuery) != normalizedIdentity(searchQuery)) {
-      report(
-        'search',
-        'completed',
-        query: searchQuery,
-        resultCount: results.length,
-        elapsedMilliseconds: searchWatch.elapsedMilliseconds,
-      );
-      usedAliasFallback = true;
-      final fallbackWatch = Stopwatch()..start();
-      report('search', 'pending', query: fallbackQuery);
-      try {
-        final fallbackResults = await provider.search(
-          fallbackQuery,
-          cancel: cancel,
-        );
-        cancel?.throwIfCancelled();
-        results = {
-          for (final candidate in results) candidate.identity: candidate,
-          for (final candidate in fallbackResults)
-            candidate.identity: candidate,
-        }.values.take(100).toList();
-        for (final candidate in fallbackResults.take(100)) {
-          final reason = candidate.providerId != provider.definition.id
-              ? 'provider_mismatch'
-              : !matchesSelectedSong(selection, candidate) &&
-                    !arrangementMatches(candidate)
-              ? 'identity_mismatch'
-              : candidate.metadata['instrumental'] == true
-              ? 'instrumental'
-              : candidate.metadata['hasLyrics'] == false
-              ? 'lyrics_unavailable'
-              : 'eligible';
-          searchEvidence.add({
-            'candidate': candidate.toJson(),
-            'state': 'returned',
-            'reason': reason,
-          });
-        }
-        onSearchCandidates?.call(List.unmodifiable(results.take(100)));
-        report(
-          'search',
-          'completed',
-          query: fallbackQuery,
-          resultCount: fallbackResults.length,
-          elapsedMilliseconds: fallbackWatch.elapsedMilliseconds,
-        );
-      } on ProviderException catch (error) {
-        cancel?.throwIfCancelled();
-        unresolvedEvidence.add({
-          'candidate': selection.toJson(),
-          'state': 'failed',
-          'code': _safeDiagnosticCode(error.code),
-        });
-        report(
-          'search',
-          'failed',
-          code: error.code,
-          query: fallbackQuery,
-          elapsedMilliseconds: fallbackWatch.elapsedMilliseconds,
-        );
-      } catch (_) {
-        cancel?.throwIfCancelled();
-        unresolvedEvidence.add({
-          'candidate': selection.toJson(),
-          'state': 'failed',
-          'code': 'invalid_response',
-        });
-        report(
-          'search',
-          'failed',
-          code: 'invalid_response',
-          query: fallbackQuery,
-          elapsedMilliseconds: fallbackWatch.elapsedMilliseconds,
-        );
-      }
-    }
-  }
-  final rankedCandidates =
-      <({SongCandidate candidate, bool performer, double rank})>[];
-  for (final candidate in results.take(100)) {
-    if (candidate.providerId != provider.definition.id) continue;
-    final selectedSong = matchesSelectedSong(selection, candidate);
-    if (!selectedSong && !arrangementMatches(candidate)) continue;
-    rankedCandidates.add((
-      candidate: candidate,
-      performer:
-          selectedSong || sameArrangement(selection, candidate, provider),
-      rank: _rank(selection, candidate),
-    ));
-  }
-  // Preserve the selected performer's charts within the provider attempt cap.
-  rankedCandidates.sort((a, b) {
-    if (a.performer != b.performer) return a.performer ? -1 : 1;
-    final rank = b.rank.compareTo(a.rank);
-    return rank != 0 ? rank : a.candidate.id.compareTo(b.candidate.id);
-  });
-  final candidates = rankedCandidates.map((entry) => entry.candidate).toList();
-  for (final evidence in searchEvidence) {
-    final raw = evidence['candidate'];
-    if (raw is Map &&
-        raw['providerId'] == provider.definition.id &&
-        candidates.any((candidate) => candidate.id == raw['id']) &&
-        evidence['reason'] == 'eligible') {
-      evidence['state'] = 'eligible';
-    }
-  }
-  for (final evidence in searchEvidence) {
-    final raw = evidence['candidate'];
-    if (evidence['reason'] == 'eligible' &&
-        raw is Map &&
-        !candidates.any(
-          (candidate) =>
-              candidate.providerId == raw['providerId'] &&
-              candidate.id == raw['id'],
-        )) {
-      evidence['state'] = 'not_considered';
-      evidence['reason'] = 'candidate_window';
-    }
-  }
-  if (!usedAliasFallback) {
-    report(
-      'search',
-      'completed',
-      query: searchQuery,
-      resultCount: results.length,
-      elapsedMilliseconds: searchWatch.elapsedMilliseconds,
-    );
-  }
-  final alternatives = <SourceResult>[];
-  String? alternativeFailure;
-  for (final candidate in candidates) {
-    if (attempts >= maxAttempts) break;
-    final evidence = searchEvidence.where((item) {
-      final raw = item['candidate'];
-      return raw is Map &&
-          raw['providerId'] == candidate.providerId &&
-          raw['id'] == candidate.id;
-    }).firstOrNull;
-    if (evidence != null) evidence['state'] = 'attempted';
-    SourceResult? result;
-    try {
-      result = await attempt(candidate);
-    } on ProviderException catch (error) {
-      cancel?.throwIfCancelled();
-      if (alternatives.isEmpty) rethrow;
-      alternativeFailure = _safeDiagnosticCode(error.code);
-      break;
-    } catch (_) {
-      cancel?.throwIfCancelled();
-      if (alternatives.isEmpty) rethrow;
-      alternativeFailure = 'invalid_response';
-      break;
-    }
-    if (result == null) {
-      if (evidence != null && evidence['state'] == 'attempted') {
-        evidence['state'] = rejectedEvidence.isNotEmpty
-            ? 'rejected'
-            : 'unavailable';
-      }
-      continue;
-    }
-    if (evidence != null) evidence['state'] = 'accepted';
-    alternatives.add(result);
-    if (stopAfterFirstChordCandidate && !allowSelectedProviderAlternatives) {
-      cancel?.throwIfCancelled();
-      return withEvidence(result);
-    }
-  }
-  if (attempts >= maxAttempts) {
-    for (final evidence in searchEvidence) {
-      if (evidence['state'] == 'eligible') evidence['reason'] = 'attempt_limit';
-    }
-  }
-  final best = alternatives.isEmpty
-      ? null
-      : alternatives.length == 1
-      ? alternatives.single
-      : alternatives[await _preferredProviderAlternative([
-          for (final result in alternatives)
-            (body: result.body, kind: result.matchKind),
-        ])];
-  if (best != null) {
-    cancel?.throwIfCancelled();
-    for (final alternative in alternatives) {
-      if (!identical(alternative, best)) {
-        try {
-          onAlternative?.call(alternative);
-        } catch (_) {
-          // A consumer may ignore alternatives; it cannot erase the best one.
-        }
-      }
-    }
-    acceptedEvidence
-      ..clear()
-      ..addAll(alternatives.map(evidenceSnapshot));
-    return best.copyWith(
-      extra: {
-        ...best.extra,
-        'discoveryEvidence': evidenceEnvelope(),
-        if (alternatives.length > 1)
-          'providerAlternatives': [
-            for (final alternative in alternatives)
-              if (!identical(alternative, best))
-                {...alternative.toJson()}..remove('providerAlternatives'),
-          ],
-        'alternativeLookupFailure': ?alternativeFailure,
-      },
-    );
-  }
-  cancel?.throwIfCancelled();
-  if (rejected != null) return withEvidence(rejected!);
-  if (unresolved.isEmpty) throw const ProviderException('unavailable');
-  // 'blocked' is rethrown at once (hammering a bot wall helps nobody); layout
-  // failures from every attempted candidate are reported together.
-  throw ProviderException(
-    unresolved.first.code,
-    unresolved.map((e) => '${e.code}: ${e.message}').join('; '),
-  );
-}
-
 /// Shared by the UI and headless device tests; no result is fabricated on failure.
 class SourceDiscoveryService {
   SourceDiscoveryService(
     this._providers, {
     this.catalogClient,
     this.recordingKeys,
-  });
+    this.discoveryConcurrency = 6,
+    this.providerTimeout = const Duration(seconds: 30),
+  }) : assert(discoveryConcurrency > 0);
+
+  /// Bounds each provider's first lookup. Expiry fails that lookup only; it
+  /// never cancels the caller's token, which means "source withdrawn".
+  final Duration providerTimeout;
+
+  /// Providers looked up at once in discovery's first pass. Each talks to its
+  /// own host and the transport already paces every host separately.
+  final int discoveryConcurrency;
   final List<LyricsProvider> _providers;
   SourceCatalogClient? catalogClient;
 
@@ -1675,8 +641,14 @@ class SourceDiscoveryService {
           cancel!.throwIfCancelled();
         }
         final provider = active[index++];
-        final local =
-            providerCancellation[provider.definition.id] ?? CancellationToken();
+        // A linked token of its own: a timeout retires this lookup without
+        // marking the caller's provider token as withdrawn.
+        final local = CancellationToken();
+        final provided = providerCancellation[provider.definition.id];
+        if (provided?.isCancelled == true) local.cancel();
+        // The link above fires a microtask late; consult the caller's token too.
+        bool retired() => local.isCancelled || provided?.isCancelled == true;
+        provided?.cancelled.then((_) => local.cancel());
         lookupCancellation[provider.definition.id] = local;
         cancel?.cancelled.then((_) => local.cancel());
         final namespace = provider is RecordingContextReceiver
@@ -1689,10 +661,10 @@ class SourceDiscoveryService {
           continue;
         }
         Future<void> retainCandidate(SourceResult result) async {
-          if (local.isCancelled || cancel?.isCancelled == true) return;
+          if (retired() || cancel?.isCancelled == true) return;
           if (result.body.length > inlineChordScanLimit) {
             await prepareBody(result);
-            if (local.isCancelled || cancel?.isCancelled == true) return;
+            if (retired() || cancel?.isCancelled == true) return;
           }
           final previous = results.indexWhere((item) => item.id == result.id);
           if (previous < 0) {
@@ -1710,7 +682,7 @@ class SourceDiscoveryService {
                   lyricPair(chart, result),
             ]);
           }
-          if (local.isCancelled || cancel?.isCancelled == true) return;
+          if (retired() || cancel?.isCancelled == true) return;
           final state = result.matchKind == MatchKind.rejected
               ? 'unavailable'
               : 'found';
@@ -1740,25 +712,26 @@ class SourceDiscoveryService {
                 onSearchCandidates:
                     provider.definition.capabilities.contains('chords')
                     ? (candidates) {
-                        if (!local.isCancelled && cancel?.isCancelled != true) {
+                        if (!retired() && cancel?.isCancelled != true) {
                           searchedByProvider[provider.definition.id] =
                               candidates;
                         }
                       }
                     : null,
                 onOperation: (operation) {
-                  if (!local.isCancelled) {
+                  if (!retired()) {
                     recordOperation(provider.definition.id, operation);
                   }
                 },
               ).timeout(
-                const Duration(seconds: 30),
+                providerTimeout,
                 onTimeout: () {
                   local.cancel();
                   throw const ProviderException('timeout');
                 },
               );
           local.throwIfCancelled();
+          provided?.throwIfCancelled();
           cancel?.throwIfCancelled();
           preferredResultIds[provider.definition.id] = result.id;
           for (final alternative in alternatives) {
@@ -1802,7 +775,10 @@ class SourceDiscoveryService {
     }
 
     await Future.wait(
-      List.generate(math.min(3, active.length), (_) => worker()),
+      List.generate(
+        math.min(discoveryConcurrency, active.length),
+        (_) => worker(),
+      ),
     );
     // Chord sources describe arrangements: corroborate their words against the
     // strongest full lyric reference before making them eligible for combining.
@@ -2973,13 +1949,16 @@ class SourceDiscoveryService {
       return agrees && referenceEligible();
     }
 
-    final votes = <({String providerId, SourceResult chart})>[];
-    for (final provider in active.where(
-      (p) => p.definition.capabilities.contains('chords'),
-    )) {
+    // Each chord source has its own host and token, so the double checks run
+    // together. Ballots are joined in `active` order below: the verdict must
+    // not depend on which source happened to answer first.
+    Future<List<({String providerId, SourceResult chart})>> ballot(
+      LyricsProvider provider,
+    ) async {
+      final ballots = <({String providerId, SourceResult chart})>[];
       final id = provider.definition.id;
       cancel?.throwIfCancelled();
-      if (!eligible(id) || !referenceEligible()) continue;
+      if (!eligible(id) || !referenceEligible()) return ballots;
       final checkCancel = CancellationToken();
       cancel?.cancelled.then((_) => checkCancel.cancel());
       providerCancellation[id]?.cancelled.then((_) => checkCancel.cancel());
@@ -3017,19 +1996,32 @@ class SourceDiscoveryService {
               },
             );
         cancel?.throwIfCancelled();
-        if (!eligible(id) || !referenceEligible()) continue;
+        if (!eligible(id) || !referenceEligible()) return ballots;
         for (final chart in [best, ...found]) {
-          if (await canVote(chart)) votes.add((providerId: id, chart: chart));
+          if (await canVote(chart)) ballots.add((providerId: id, chart: chart));
         }
       } on ProviderException {
-        if (cancel?.isCancelled == true) rethrow;
+        // The caller's cancellation wins over whatever the linked token made
+        // the lookup report first.
+        cancel?.throwIfCancelled();
       } catch (_) {
         cancel?.throwIfCancelled();
         // A failed double check leaves the charts as they were.
       } finally {
         checkCancel.cancel();
       }
+      return ballots;
     }
+
+    final votes = [
+      for (final ballots in await Future.wait([
+        for (final provider in active.where(
+          (p) => p.definition.capabilities.contains('chords'),
+        ))
+          ballot(provider),
+      ]))
+        ...ballots,
+    ];
     cancel?.throwIfCancelled();
     // Reference cancellation invalidates the lyric proof for this vote batch.
     if (!referenceEligible()) return;
@@ -3104,241 +2096,3 @@ class SourceDiscoveryService {
   }
 }
 
-/// Chord providers whose charts are transcribed against the recording itself
-/// (Songsterr's tabs play in sync with the original audio), unlike user
-/// arrangements that are often written in a singer's key.
-const _recordingTranscriptions = {'songsterr'};
-
-typedef _LyricPair = ({
-  SongCandidate chart,
-  SongCandidate reference,
-  String chartBody,
-  String referenceBody,
-  bool alternatePerformer,
-  bool shortRecording,
-});
-typedef _LyricScore = ({
-  bool agrees,
-  bool scriptAlternative,
-  bool contextualPartial,
-  bool loose,
-});
-
-typedef _LyricReferenceFacts = ({
-  int words,
-  bool short,
-  bool hasLyrics,
-  bool hasChords,
-});
-
-Future<_LyricReferenceFacts> _scoreLyricReference(String body) =>
-    Isolate.run(() {
-      final hasChords = containsChords(body);
-      return (
-        words: hasChords ? 0 : _words(body).toSet().length,
-        short: !hasChords && isShortRecordingLyricBody(body),
-        hasLyrics: plainLyrics(body).trim().isNotEmpty,
-        hasChords: hasChords,
-      );
-    }, debugName: 'singbook-source-body-facts');
-
-Future<List<_LyricScore>> _scoreLyricPairs(List<_LyricPair> pairs) =>
-    Isolate.run(() => [for (final pair in pairs) _scoreLyricPair(pair)]);
-
-_LyricScore _scoreLyricPair(_LyricPair pair) {
-  final strict = _agreement(
-    pair.chartBody,
-    pair.referenceBody,
-    allowShortRecordingReference: pair.shortRecording,
-  );
-  final script = publishedLyricScriptAlternative(
-    pair.reference,
-    pair.chart,
-    pair.referenceBody,
-    pair.chartBody,
-  );
-  final partial =
-      pair.alternatePerformer &&
-      !strict &&
-      contextualChartLyricsMatch(
-        pair.chartBody,
-        pair.referenceBody,
-        allowPartial: true,
-      );
-  final agrees = strict || script || partial;
-  return (
-    agrees: agrees,
-    scriptAlternative: script,
-    contextualPartial: partial,
-    loose:
-        !agrees &&
-        (_partialAgreement(pair.chartBody, pair.referenceBody) ||
-            _noisyAgreement(pair.chartBody, pair.referenceBody)),
-  );
-}
-
-Object? _chartSetup(SourceResult source, String field) =>
-    source.metadata[field] ?? source.candidate.metadata[field];
-
-Future<bool> _needsChordKeyCheck(List<SourceResult> charts, String? measured) =>
-    Isolate.run(() {
-      final first = charts.first;
-      return charts
-              .skip(1)
-              .any(
-                (chart) =>
-                    (soundingTransposition(
-                          first.body,
-                          _chartSetup(first, 'capo'),
-                          chart.body,
-                          _chartSetup(chart, 'capo'),
-                        ) ??
-                        0) !=
-                    0,
-              ) ||
-          charts.any((chart) {
-            final declared = _chartSetup(chart, 'key');
-            return declared is String &&
-                declared.trim().isNotEmpty &&
-                !declaredKeyFitsChords(
-                  chart.body,
-                  declared.trim(),
-                  _chartSetup(chart, 'capo'),
-                );
-          }) ||
-          measured != null &&
-              charts.any((chart) {
-                final key = soundingChartKey(
-                  chart.body,
-                  _chartSetup(chart, 'capo'),
-                );
-                return key != null && !keysAgree(key, measured);
-              });
-    });
-
-Future<bool> _scoreKeyVoteLyrics(
-  String body,
-  List<String> charts,
-  String? reference,
-  bool shortReference,
-) => Isolate.run(
-  () => reference == null
-      ? charts.any(
-          (chart) => _agreement(body, chart) || _partialAgreement(body, chart),
-        )
-      : _agreement(
-              body,
-              reference,
-              allowShortRecordingReference: shortReference,
-            ) ||
-            _partialAgreement(body, reference) ||
-            _noisyAgreement(body, reference),
-);
-
-Future<({List<int?> shifts, String? keyEstimate})?> _scoreChordKeys(
-  List<SourceResult> sources,
-  int acceptedCount,
-  String? recordingKey,
-) => Isolate.run(() {
-  final bodies = [for (final source in sources) source.body];
-  final capos = [for (final source in sources) _chartSetup(source, 'capo')];
-  final outcome = chordKeyVerdict(
-    bodies,
-    recordingKey: recordingKey,
-    capos: capos,
-    declaredKeys: [
-      for (final source in sources)
-        if (_chartSetup(source, 'key') case final String key) key else null,
-    ],
-    anchors: [
-      for (var n = 0; n < sources.length; n++)
-        n < acceptedCount &&
-            _recordingTranscriptions.contains(sources[n].candidate.providerId),
-    ],
-  );
-  if (outcome == null) return null;
-  final estimates = <String>{};
-  for (var n = 0; n < bodies.length; n++) {
-    final shift = outcome.shifts[n];
-    if (shift == null) continue;
-    final body = bodies[n];
-    final shapes = estimateChordKey(
-      shift == 0 ? body : transposeBody(body, shift),
-    )?.key;
-    if (shapes == null) continue;
-    final capo = capos[n];
-    final frets = capo is num ? capo.toInt() : int.tryParse('${capo ?? ''}');
-    estimates.add(
-      frets == null || frets <= 0 ? shapes : transposeChord(shapes, frets),
-    );
-  }
-  return (
-    shifts: outcome.shifts,
-    keyEstimate: estimates.length == 1
-        ? estimates.single
-        : estimates.isEmpty && outcome.recordingAgrees
-        ? recordingKey
-        : null,
-  );
-});
-
-List<String> _words(String body) => normalizedIdentity(
-  foldLyricVowelAccents(body)
-      .replaceAll(RegExp(r'\{[^}\n]*\}'), ' ')
-      .replaceAll(RegExp(r'(?<!\\)\[[^\]\n]*\]'), ''),
-).split(' ').where((w) => w.isNotEmpty).toList();
-bool _agreement(
-  String chart,
-  String reference, {
-  bool allowShortRecordingReference = false,
-}) {
-  if (allowShortRecordingReference &&
-      shortRecordingLyricAgreement(chart, reference)) {
-    return true;
-  }
-  return contextualChartLyricsMatch(chart, reference);
-}
-
-/// A chord chart can carry the whole song among notes that are not lyrics:
-/// chords typed as text, tab and strumming notation, links, capo or tuning
-/// instructions and commentary. Judge only its lyric-like lines (three or
-/// more words, at least 70% of them in the reference): they must cover most
-/// of the reference's words in the same order. A different song with the
-/// same title has no such lines.
-bool _noisyAgreement(String chart, String reference) {
-  final referenceWords = _words(reference);
-  final vocabulary = referenceWords.toSet();
-  if (vocabulary.length < 12) return false;
-  final lyricWords = <String>[];
-  var lyricLines = 0;
-  for (final line in chart.split('\n')) {
-    final words = _words(line);
-    if (words.length < 3) continue;
-    final known = words.where(vocabulary.contains).length;
-    if (known / words.length < .7) continue;
-    lyricLines++;
-    lyricWords.addAll(words);
-  }
-  if (lyricLines < 4) return false;
-  final covered = lyricWords.toSet().intersection(vocabulary);
-  if (covered.length / vocabulary.length < .6) return false;
-  Set<String> bigrams(List<String> values) => {
-    for (var i = 1; i < values.length; i++) '${values[i - 1]} ${values[i]}',
-  };
-  final pairs = bigrams(lyricWords);
-  return pairs.isNotEmpty &&
-      pairs.intersection(bigrams(referenceWords)).length / pairs.length >= .75;
-}
-
-bool _partialAgreement(String chart, String reference) {
-  final words = _words(chart), referenceWords = _words(reference);
-  final unique = words.toSet(), referenceUnique = referenceWords.toSet();
-  final common = unique.intersection(referenceUnique);
-  if (common.length < 12 || common.length / unique.length < .90) return false;
-  Set<String> bigrams(List<String> values) => {
-    for (var i = 1; i < values.length; i++) '${values[i - 1]} ${values[i]}',
-  };
-  final pairs = bigrams(words);
-  return pairs.isNotEmpty &&
-      pairs.intersection(bigrams(referenceWords)).length / pairs.length >= .75;
-}

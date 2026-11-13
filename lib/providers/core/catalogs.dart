@@ -182,7 +182,11 @@ class GeniusProvider implements LyricsProvider {
       throw const ProviderException('invalid_response');
     }
     final text = await http.getText(Uri.parse(song.url!), cancel: cancel);
-    return lyricsResult(song, extractLyrics(text), attribution: 'Genius');
+    return lyricsResult(
+      song,
+      await parseOffMain(extractLyrics, text),
+      attribution: 'Genius',
+    );
   }
 
   static String extractLyrics(String source) {

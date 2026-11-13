@@ -6,6 +6,7 @@ import 'dart:math';
 import 'package:crypto/crypto.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'google_oauth_token_client.dart';
 import 'sync_protocol.dart';
 
 typedef DesktopAuthorizationGrant = ({
@@ -165,9 +166,7 @@ class DesktopOAuthFlow {
             return;
           }
           if (ids.length > 10000 ||
-              ids.any(
-                (id) => !RegExp(r'^[A-Za-z0-9_-]{1,512}$').hasMatch(id),
-              ) ||
+              ids.any((id) => !isDriveId(id, maxLength: 512)) ||
               pickerFolders == true && ids.length != 1) {
             pending.completeError(const SyncException('folder_picker_failed'));
             return;

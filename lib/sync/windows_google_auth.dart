@@ -9,6 +9,7 @@ import '../providers/native_client.dart';
 import 'desktop_oauth_flow.dart';
 import 'drive_file_access.dart';
 import 'google_auth.dart';
+import 'google_oauth_token_client.dart';
 import 'sync_protocol.dart';
 import 'windows_drive_file_access.dart';
 
@@ -80,6 +81,13 @@ class WindowsGoogleDriveAuth
   bool _connecting = false;
   int _epoch = 0;
   WindowsDriveFileAccess? _files;
+  late final GoogleOAuthTokenClient _oauth = GoogleOAuthTokenClient(
+    client: _client,
+    clientId: clientId,
+    clientSecret: clientSecret,
+    invalidGrant: () => const _InvalidOAuthGrant(),
+    clock: _clock,
+  );
 
   WindowsDriveFileAccess get _fileAccess => _files ??= WindowsDriveFileAccess(
     identity: this,
@@ -104,9 +112,7 @@ class WindowsGoogleDriveAuth
 
   String get _key => 'google_drive_${sha256.convert(utf8.encode(clientId))}';
   @override
-  bool get configured => RegExp(
-    r'^[A-Za-z0-9._-]+\.apps\.googleusercontent\.com$',
-  ).hasMatch(clientId);
+  bool get configured => isGoogleClientId(clientId);
   @override
   bool get isConnected => _session != null;
   @override
@@ -282,15 +288,20 @@ class WindowsGoogleDriveAuth
       });
       if (epoch != _epoch) throw const SyncException('not_signed_in');
       final token = _accessToken(tokens);
+      final rotated = tokens['refresh_token'];
       final updated = {
         ...session,
         'accessToken': token,
         'expiresAt': _expiry(tokens),
-        if (tokens['refresh_token'] is String)
-          'refreshToken': tokens['refresh_token'],
+        if (rotated is String) 'refreshToken': rotated,
       };
-      await _write(updated);
-      if (epoch != _epoch) throw const SyncException('not_signed_in');
+      // Access tokens stay in memory, so the stored session only changes when
+      // Google rotates the refresh token. An ordinary renewal neither rewrites
+      // the vault nor depends on it being writable.
+      if (rotated is String && rotated != session['refreshToken']) {
+        await _write(updated);
+        if (epoch != _epoch) throw const SyncException('not_signed_in');
+      }
       _session = updated;
       return token;
     } on SyncException catch (error) {
@@ -310,55 +321,13 @@ class WindowsGoogleDriveAuth
     }
   }
 
-  Future<Map<String, dynamic>> _tokens(Map<String, String> body) async {
-    final response = await _client
-        .post(
-          Uri.https('oauth2.googleapis.com', '/token'),
-          body: {
-            'client_id': clientId,
-            if (clientSecret.isNotEmpty) 'client_secret': clientSecret,
-            ...body,
-          },
-        )
-        .timeout(const Duration(seconds: 30));
-    if (response.statusCode != 200) {
-      final error = jsonDecode(response.body) as Map<String, dynamic>;
-      if (error['error'] == 'invalid_grant') {
-        throw const _InvalidOAuthGrant();
-      }
-      if (error['error'] == 'invalid_client') {
-        throw const SyncException('oauth_client_configuration');
-      }
-      // An explicit response that diagnoses a missing client_secret is a
-      // client configuration error. Desktop OAuth secrets are optional in
-      // general; do not infer this from a generic invalid_request. Never
-      // include the remote description in app state or logs.
-      final errorDescription = error['error_description'];
-      if (error['error'] == 'invalid_request' &&
-          errorDescription is String &&
-          errorDescription.toLowerCase().contains('client_secret')) {
-        throw const SyncException('oauth_client_configuration');
-      }
-      throw const SyncException('network');
-    }
-    return jsonDecode(response.body) as Map<String, dynamic>;
-  }
+  Future<Map<String, dynamic>> _tokens(Map<String, String> body) =>
+      _oauth.request(body);
 
-  String _accessToken(Map<String, dynamic> tokens) {
-    final token = tokens['access_token'];
-    if (token is! String || token.isEmpty || tokens['token_type'] != 'Bearer') {
-      throw const SyncException('network');
-    }
-    return token;
-  }
+  String _accessToken(Map<String, dynamic> tokens) =>
+      _oauth.accessToken(tokens);
 
-  int _expiry(Map<String, dynamic> tokens) {
-    final seconds = tokens['expires_in'];
-    if (seconds is! int || seconds <= 0 || seconds > 86400) {
-      throw const SyncException('network');
-    }
-    return _clock().add(Duration(seconds: seconds)).millisecondsSinceEpoch;
-  }
+  int _expiry(Map<String, dynamic> tokens) => _oauth.expiry(tokens);
 
   @override
   Future<void> disconnect() => _disconnect ??= _disconnectSession()
