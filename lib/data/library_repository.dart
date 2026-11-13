@@ -1046,6 +1046,54 @@ const _boundedFullDocumentColumn =
     'CASE WHEN length(CAST(full_document AS BLOB)) <= $_documentReadChunkSize '
     'THEN full_document ELSE NULL END AS full_document';
 
+/// Columns every playable-song read needs. Oversized documents come back as
+/// NULL and are then read in chunks.
+const _songReadColumns = [
+  'id',
+  'favorite',
+  'revision',
+  'created_at',
+  'updated_at',
+  'content_hash',
+  'full_document_hash',
+  _boundedDocumentColumn,
+  _boundedFullDocumentColumn,
+];
+const _songSnapshotColumns = [..._songReadColumns, 'document_hash'];
+const _songStateColumns = [..._songSnapshotColumns, 'evidence_hash'];
+
+/// Local state hash of a song: its document hash, extended by the hash of the
+/// evidence linked to it when there is any.
+String _aggregateHash(String documentHash, String evidenceHash) =>
+    evidenceHash.isEmpty
+    ? documentHash
+    : sha256
+          .convert(utf8.encode('$documentHash\u0000$evidenceHash'))
+          .toString();
+
+/// Hash of a setlist as compared by conditional writes and by sync.
+String setlistContentHash(SetlistDocument setlist) =>
+    sha256.convert(utf8.encode(jsonEncode(setlist.toJson()))).toString();
+
+/// Encodes songs applied by sync and checks that each survives the ChordPro
+/// round trip with its identity, away from the UI isolate.
+Future<Map<String, String>> _encodeSyncBatch(List<SongDocument> songs) {
+  if (songs.isEmpty) return Future.value(const {});
+  return Isolate.run(() {
+    final codec = ChordProCodec();
+    final documents = {for (final song in songs) song.id: codec.encode(song)};
+    for (final song in songs) {
+      final parsed = codec.decode(documents[song.id]!);
+      if (song.extensionError != null ||
+          parsed.extensionError != null ||
+          parsed.id != song.id) {
+        throw const FormatException('invalid_local_data');
+      }
+    }
+    return documents;
+  }, debugName: 'singbook-sync-encode');
+}
+
 String _localSongHash(
   String document,
   String? fullDocumentHash, {
@@ -1068,9 +1116,7 @@ String _localSongHash(
           : sha256
                 .convert(utf8.encode('$document\u0000$fullDocumentHash'))
                 .toString());
-  return sha256
-      .convert(utf8.encode('$payloadHash\u0000$evidenceHash'))
-      .toString();
+  return _aggregateHash(payloadHash, evidenceHash);
 }
 
 SongCandidate _sanitizeCandidateDuration(SongCandidate candidate) =>
@@ -1655,11 +1701,7 @@ class LibraryRepository {
       return row['content_hash'] as String;
     }
     final baseHash = row['document_hash'] as String;
-    final contentHash = evidenceHash.isEmpty
-        ? baseHash
-        : sha256
-              .convert(utf8.encode('$baseHash\u0000$evidenceHash'))
-              .toString();
+    final contentHash = _aggregateHash(baseHash, evidenceHash);
     await txn.update(
       'songs',
       {'evidence_hash': evidenceHash, 'content_hash': contentHash},
@@ -1748,17 +1790,7 @@ class LibraryRepository {
     return database.transaction((txn) async {
       final rows = await txn.query(
         'songs',
-        columns: const [
-          'id',
-          'favorite',
-          'revision',
-          'created_at',
-          'updated_at',
-          'content_hash',
-          'full_document_hash',
-          _boundedDocumentColumn,
-          _boundedFullDocumentColumn,
-        ],
+        columns: _songReadColumns,
         where: clauses.isEmpty ? null : clauses.join(' AND '),
         whereArgs: args,
         orderBy: 'updated_at DESC, id',
@@ -1787,18 +1819,7 @@ class LibraryRepository {
   librarySnapshot() => database.transaction((txn) async {
     final songRows = await txn.query(
       'songs',
-      columns: const [
-        'id',
-        'favorite',
-        'revision',
-        'created_at',
-        'updated_at',
-        'content_hash',
-        'document_hash',
-        'full_document_hash',
-        _boundedDocumentColumn,
-        _boundedFullDocumentColumn,
-      ],
+      columns: _songSnapshotColumns,
       orderBy: 'updated_at DESC, id',
     );
     final setlistRows = await txn.query(
@@ -1828,18 +1849,7 @@ class LibraryRepository {
   backupSnapshot() => database.transaction((txn) async {
     final songRows = await txn.query(
       'songs',
-      columns: const [
-        'id',
-        'favorite',
-        'revision',
-        'created_at',
-        'updated_at',
-        'content_hash',
-        'document_hash',
-        'full_document_hash',
-        _boundedDocumentColumn,
-        _boundedFullDocumentColumn,
-      ],
+      columns: _songSnapshotColumns,
       orderBy: 'updated_at DESC,id',
     );
     final setlistRows = await txn.query(
@@ -1910,41 +1920,31 @@ class LibraryRepository {
     DatabaseExecutor executor,
     String id,
     String column,
-  ) async {
-    final lengthRows = await executor.rawQuery(
-      'SELECT length(CAST($column AS BLOB)) AS byte_length FROM songs WHERE id = ?',
-      [id],
-    );
-    if (lengthRows.isEmpty) throw StateError('Song document disappeared');
-    final byteLength = lengthRows.single['byte_length'] as int;
-    final bytes = BytesBuilder(copy: false);
-    for (var start = 1; start <= byteLength; start += _documentReadChunkSize) {
-      final rows = await executor.rawQuery(
-        'SELECT substr(CAST($column AS BLOB), ?, ?) AS chunk FROM songs WHERE id = ?',
-        [start, _documentReadChunkSize, id],
-      );
-      if (rows.isEmpty || rows.single['chunk'] is! Uint8List) {
-        throw StateError('Could not read song document chunk');
-      }
-      bytes.add(rows.single['chunk'] as Uint8List);
-    }
-    // A chunk may end inside a multibyte character; decode only after joining.
-    return utf8.decode(bytes.takeBytes());
-  }
+  ) => _readTableText(
+    executor,
+    'songs',
+    column,
+    'id = ?',
+    [id],
+    missing: 'Song document disappeared',
+    unreadable: 'Could not read song document chunk',
+  );
 
   static Future<String> _readTableText(
     DatabaseExecutor executor,
     String table,
     String column,
     String where,
-    List<Object?> args,
-  ) async {
+    List<Object?> args, {
+    String missing = 'Evidence row disappeared',
+    String unreadable = 'Could not read evidence chunk',
+  }) async {
     // Callers use fixed internal identifiers; values remain bound parameters.
     final lengthRows = await executor.rawQuery(
       'SELECT length(CAST($column AS BLOB)) AS byte_length FROM $table WHERE $where',
       args,
     );
-    if (lengthRows.isEmpty) throw StateError('Evidence row disappeared');
+    if (lengthRows.isEmpty) throw StateError(missing);
     final byteLength = lengthRows.single['byte_length'] as int;
     final bytes = BytesBuilder(copy: false);
     for (var start = 1; start <= byteLength; start += _documentReadChunkSize) {
@@ -1953,7 +1953,7 @@ class LibraryRepository {
         [start, _documentReadChunkSize, ...args],
       );
       if (rows.isEmpty || rows.single['chunk'] is! Uint8List) {
-        throw StateError('Could not read evidence chunk');
+        throw StateError(unreadable);
       }
       bytes.add(rows.single['chunk'] as Uint8List);
     }
@@ -2008,17 +2008,7 @@ class LibraryRepository {
     return database.transaction((txn) async {
       final rows = await txn.query(
         'songs',
-        columns: const [
-          'id',
-          'favorite',
-          'revision',
-          'created_at',
-          'updated_at',
-          'content_hash',
-          'full_document_hash',
-          _boundedDocumentColumn,
-          _boundedFullDocumentColumn,
-        ],
+        columns: _songReadColumns,
         where: 'id = ?',
         whereArgs: [id],
         limit: 1,
@@ -2041,17 +2031,7 @@ class LibraryRepository {
   }) => database.transaction((txn) async {
     final rows = await txn.query(
       'songs',
-      columns: const [
-        'id',
-        'favorite',
-        'revision',
-        'created_at',
-        'updated_at',
-        'content_hash',
-        'full_document_hash',
-        _boundedDocumentColumn,
-        _boundedFullDocumentColumn,
-      ],
+      columns: _songReadColumns,
       where: 'id = ?',
       whereArgs: [id],
       limit: 1,
@@ -2240,22 +2220,11 @@ class LibraryRepository {
     DatabaseExecutor txn,
     String id, {
     required bool requireSyncRepresentation,
+    bool hydrateEvidence = true,
   }) async {
     final rows = await txn.query(
       'songs',
-      columns: const [
-        'id',
-        'favorite',
-        'revision',
-        'created_at',
-        'updated_at',
-        'content_hash',
-        'document_hash',
-        'evidence_hash',
-        'full_document_hash',
-        _boundedDocumentColumn,
-        _boundedFullDocumentColumn,
-      ],
+      columns: _songStateColumns,
       where: 'id = ?',
       whereArgs: [id],
       limit: 1,
@@ -2322,7 +2291,9 @@ class LibraryRepository {
             await _computeEvidenceHash(txn, id) != evidenceHash) {
           throw const FormatException('invalid_local_data');
         }
-        song = await _hydrateSongEvidence(txn, song);
+        // A validate-only caller checks the evidence index above and has no
+        // use for the evidence itself.
+        if (hydrateEvidence) song = await _hydrateSongEvidence(txn, song);
       }
       return (
         song: song,
@@ -2338,16 +2309,31 @@ class LibraryRepository {
   /// Validates every complete local song before sync plans remote or local
   /// mutations. Unsupported opaque extensions remain usable in backups, but
   /// cannot be represented by the strict raw ChordPro sync format.
-  Future<void> validateSyncSongData() async {
+  ///
+  /// [validated] is an optional memo of one sync run (song id -> content hash
+  /// already validated). A song whose stored content hash still equals its
+  /// entry is not read again; songs validated here are added to it.
+  Future<void> validateSyncSongData({Map<String, String>? validated}) async {
     await database.transaction((txn) async {
-      final ids = await txn.query('songs', columns: const ['id']);
-      for (final row in ids) {
-        await _validatedSongState(
+      final rows = await txn.query(
+        'songs',
+        columns: const ['id', 'content_hash'],
+      );
+      final present = <String>{};
+      for (final row in rows) {
+        final id = row['id'] as String;
+        present.add(id);
+        final known = validated?[id];
+        if (known != null && known == row['content_hash']) continue;
+        final state = await _validatedSongState(
           txn,
-          row['id'] as String,
+          id,
           requireSyncRepresentation: true,
+          hydrateEvidence: false,
         );
+        if (state != null) validated?[id] = state.hash;
       }
+      validated?.removeWhere((id, _) => !present.contains(id));
     });
   }
 
@@ -2487,11 +2473,7 @@ class LibraryRepository {
         : previous.single['evidence_hash'] as String? ?? '';
     row['evidence_hash'] = evidenceHash;
     final baseHash = row['document_hash'] as String;
-    row['content_hash'] = evidenceHash.isEmpty
-        ? baseHash
-        : sha256
-              .convert(utf8.encode('$baseHash\u0000$evidenceHash'))
-              .toString();
+    row['content_hash'] = _aggregateHash(baseHash, evidenceHash);
     await _upsertSongRow(txn, row);
     await _writeMergeDiagnostics(txn, song.id, imported?.diagnostics);
     if (imported != null && hasImportedHistory) {
@@ -2533,9 +2515,7 @@ class LibraryRepository {
       final baseHash = values['document_hash'] as String?;
       if (baseHash != null) {
         values['evidence_hash'] = previousEvidenceHash;
-        values['content_hash'] = sha256
-            .convert(utf8.encode('$baseHash\u0000$previousEvidenceHash'))
-            .toString();
+        values['content_hash'] = _aggregateHash(baseHash, previousEvidenceHash);
       }
     }
     // UPDATE then INSERT avoids REPLACE deleting a song's setlist references.
@@ -2692,11 +2672,7 @@ class LibraryRepository {
           }
           final evidenceHash = await _computeEvidenceHash(txn, saved.id);
           final baseHash = preparedRow['document_hash'] as String;
-          final aggregateHash = evidenceHash.isEmpty
-              ? baseHash
-              : sha256
-                    .convert(utf8.encode('$baseHash\u0000$evidenceHash'))
-                    .toString();
+          final aggregateHash = _aggregateHash(baseHash, evidenceHash);
           await txn.update(
             'songs',
             {'evidence_hash': evidenceHash, 'content_hash': aggregateHash},
@@ -2731,17 +2707,7 @@ class LibraryRepository {
     return database.transaction((txn) async {
       final rows = await txn.query(
         'songs',
-        columns: const [
-          'id',
-          'favorite',
-          'revision',
-          'created_at',
-          'updated_at',
-          'content_hash',
-          'full_document_hash',
-          _boundedDocumentColumn,
-          _boundedFullDocumentColumn,
-        ],
+        columns: _songReadColumns,
         orderBy: 'created_at, id',
       );
       SongDocument? existing;
@@ -2785,17 +2751,7 @@ class LibraryRepository {
       if (source is String || existingId != null) {
         final rows = await txn.query(
           'songs',
-          columns: const [
-            'id',
-            'favorite',
-            'revision',
-            'created_at',
-            'updated_at',
-            'content_hash',
-            'full_document_hash',
-            _boundedDocumentColumn,
-            _boundedFullDocumentColumn,
-          ],
+          columns: _songReadColumns,
           where: existingId == null ? 'source_identity = ?' : 'id = ?',
           whereArgs: [existingId ?? source],
         );
@@ -3028,7 +2984,7 @@ class LibraryRepository {
           ]);
 
   static String _setlistHashOf(SetlistDocument setlist) =>
-      sha256.convert(utf8.encode(jsonEncode(setlist.toJson()))).toString();
+      setlistContentHash(setlist);
 
   Future<void> _writeSetlist(
     DatabaseExecutor txn,
@@ -3254,9 +3210,7 @@ class LibraryRepository {
 
   Future<String?> getSetlistHash(String id) async {
     final setlist = await getSetlist(id);
-    return setlist == null
-        ? null
-        : sha256.convert(utf8.encode(jsonEncode(setlist.toJson()))).toString();
+    return setlist == null ? null : setlistContentHash(setlist);
   }
 
   /// Conditional sync writes protect local edits made while the network was busy.
@@ -3278,16 +3232,7 @@ class LibraryRepository {
     String? syncAccount,
     Map<String, String?> baselineCloudHashes = const {},
   }) async {
-    final documents = {for (final song in songs) song.id: _codec.encode(song)};
-    for (final song in songs) {
-      final encoded = documents[song.id]!;
-      final parsed = _codec.decode(encoded);
-      if (song.extensionError != null ||
-          parsed.extensionError != null ||
-          parsed.id != song.id) {
-        throw const FormatException('invalid_local_data');
-      }
-    }
+    final documents = await _encodeSyncBatch(songs);
     return database.transaction((txn) async {
       final savedSongs = <String>[],
           savedSetlists = <String>[],
@@ -3315,13 +3260,7 @@ class LibraryRepository {
         );
         final hash = rows.isEmpty
             ? null
-            : sha256
-                  .convert(
-                    utf8.encode(
-                      jsonEncode((await _setlist(txn, rows.single)).toJson()),
-                    ),
-                  )
-                  .toString();
+            : setlistContentHash(await _setlist(txn, rows.single));
         return hash == expectedSetlistHashes[id];
       }
 
@@ -3393,13 +3332,9 @@ class LibraryRepository {
           whereArgs: [setlist.id],
           limit: 1,
         );
-        savedSetlistHashes[setlist.id] = sha256
-            .convert(
-              utf8.encode(
-                jsonEncode((await _setlist(txn, stored.single)).toJson()),
-              ),
-            )
-            .toString();
+        savedSetlistHashes[setlist.id] = setlistContentHash(
+          await _setlist(txn, stored.single),
+        );
       }
       if (syncAccount != null) {
         for (final id in savedSongs) {
