@@ -6,6 +6,7 @@ import 'package:crypto/crypto.dart';
 import '../domain/models.dart';
 import '../providers/native_client.dart';
 import 'google_auth.dart';
+import 'google_oauth_token_client.dart';
 import 'sync_protocol.dart';
 
 /// One file of the Drive appDataFolder as returned by a metadata listing.
@@ -99,7 +100,7 @@ const _retryableForbiddenReasons = {
   'sharingRateLimitExceeded',
 };
 
-final _idPattern = RegExp(r'^[A-Za-z0-9_-]{1,200}$');
+bool _isFileId(String id) => isDriveId(id, maxLength: 200);
 final _safeNamePattern = RegExp(r'^[A-Za-z0-9._~-]{1,255}$');
 
 class DriveAppDataStore implements VisibleDriveFolderStore {
@@ -108,6 +109,7 @@ class DriveAppDataStore implements VisibleDriveFolderStore {
     this.folderId,
     http.Client? client,
     this.requestTimeout = const Duration(seconds: 30),
+    this.tokenTimeout = const Duration(seconds: 90),
     this.maxAttempts = 4,
     Duration Function(int attempt)? backoff,
   }) : _client = client ?? createNativeHttpClient(),
@@ -120,6 +122,10 @@ class DriveAppDataStore implements VisibleDriveFolderStore {
   final String? folderId;
   final http.Client _client;
   final Duration requestTimeout;
+
+  /// Deadline for obtaining an access token from the platform. Without it a
+  /// platform call that never answers would leave a sync running forever.
+  final Duration tokenTimeout;
   final int maxAttempts;
   final Duration Function(int attempt) _backoff;
   static const maxFileBytes = maxSyncFileBytes;
@@ -151,7 +157,10 @@ class DriveAppDataStore implements VisibleDriveFolderStore {
           final found = await recover();
           if (found != null) return found;
         }
-        final token = await authorization.accessToken();
+        final token = await authorization.accessToken().timeout(
+          tokenTimeout,
+          onTimeout: () => throw const _HttpFailure(0, 'network', true),
+        );
         return await _send(
           method,
           uri,
@@ -166,7 +175,10 @@ class DriveAppDataStore implements VisibleDriveFolderStore {
             auth is RefreshableAuthorization) {
           // The cached token was revoked or expired: obtain a fresh one once.
           reauthorized = true;
-          await (auth as RefreshableAuthorization).refreshAccessToken();
+          await (auth as RefreshableAuthorization).refreshAccessToken().timeout(
+            tokenTimeout,
+            onTimeout: () => throw const SyncException('network'),
+          );
           attempt--;
           continue;
         }
@@ -285,7 +297,7 @@ class DriveAppDataStore implements VisibleDriveFolderStore {
   }
 
   static void _checkId(String id) {
-    if (!_idPattern.hasMatch(id)) {
+    if (!_isFileId(id)) {
       throw const SyncException('invalid_remote_data');
     }
   }
@@ -293,7 +305,7 @@ class DriveAppDataStore implements VisibleDriveFolderStore {
   DriveFile _parse(Object? item) {
     final row = jsonMap(item);
     final id = row['id'], name = row['name'];
-    if (id is! String || !_idPattern.hasMatch(id) || name is! String) {
+    if (id is! String || !_isFileId(id) || name is! String) {
       throw const SyncException('invalid_remote_data');
     }
     final size = row['size'];
@@ -330,7 +342,7 @@ class DriveAppDataStore implements VisibleDriveFolderStore {
   @override
   Future<DriveFolderInfo> verifyFolder() async {
     final id = folderId;
-    if (id == null || !_idPattern.hasMatch(id)) {
+    if (id == null || !_isFileId(id)) {
       throw const SyncException('invalid_drive_folder');
     }
     final String text;

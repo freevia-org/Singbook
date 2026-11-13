@@ -8,6 +8,7 @@ import '../providers/native_client.dart';
 import 'desktop_oauth_flow.dart';
 import 'drive_file_access.dart';
 import 'google_auth.dart';
+import 'google_oauth_token_client.dart';
 import 'sync_protocol.dart';
 import 'windows_google_auth.dart';
 
@@ -68,6 +69,15 @@ class WindowsDriveFileAccess implements DriveFileAccessCapability {
   final http.Client _client;
   final DateTime Function() _clock;
   late final _FileAuthorization _authorization = _FileAuthorization(this);
+  late final GoogleOAuthTokenClient _oauth = GoogleOAuthTokenClient(
+    client: _client,
+    clientId: clientId,
+    clientSecret: clientSecret,
+    invalidGrant: () => const _RevokedFileGrant(),
+    clock: _clock,
+    malformedBodyIsNetwork: true,
+    exactBearerTokenType: false,
+  );
   _FileSession? _session;
   Future<void> _writes = Future.value();
   Future<_FileSession?>? _reading;
@@ -82,11 +92,7 @@ class WindowsDriveFileAccess implements DriveFileAccessCapability {
   @override
   DriveAuthorization get fileAuthorization => _authorization;
 
-  bool get _configured =>
-      identity.configured &&
-      RegExp(
-        r'^[A-Za-z0-9._-]+\.apps\.googleusercontent\.com$',
-      ).hasMatch(clientId);
+  bool get _configured => identity.configured && isGoogleClientId(clientId);
 
   String _key(String id) =>
       'google_drive_file_${sha256.convert(utf8.encode('$clientId\u0000$id'))}';
@@ -241,7 +247,7 @@ class WindowsDriveFileAccess implements DriveFileAccessCapability {
       // IDs; that is a dismissal, not a failed selection.
       if (ids.isEmpty) throw const SyncException('cancelled');
       if ((folders && ids.length != 1) ||
-          ids.any((id) => !RegExp(r'^[A-Za-z0-9_-]{1,256}$').hasMatch(id))) {
+          ids.any((id) => !isDriveId(id, maxLength: 256))) {
         throw SyncException(folders ? 'folder_not_selected' : 'cancelled');
       }
       final tokens = await _tokens({
@@ -355,34 +361,8 @@ class WindowsDriveFileAccess implements DriveFileAccessCapability {
     }
   }
 
-  Future<Map<String, dynamic>> _tokens(Map<String, String> body) async {
-    final response = await _client
-        .post(
-          Uri.https('oauth2.googleapis.com', '/token'),
-          body: {
-            'client_id': clientId,
-            if (clientSecret.isNotEmpty) 'client_secret': clientSecret,
-            ...body,
-          },
-        )
-        .timeout(const Duration(seconds: 30));
-    final value = jsonDecode(response.body);
-    if (value is! Map<String, dynamic>) throw const SyncException('network');
-    if (response.statusCode != 200) {
-      if (value['error'] == 'invalid_grant') throw const _RevokedFileGrant();
-      if (value['error'] == 'invalid_client') {
-        throw const SyncException('oauth_client_configuration');
-      }
-      final errorDescription = value['error_description'];
-      if (value['error'] == 'invalid_request' &&
-          errorDescription is String &&
-          errorDescription.toLowerCase().contains('client_secret')) {
-        throw const SyncException('oauth_client_configuration');
-      }
-      throw const SyncException('network');
-    }
-    return value;
-  }
+  Future<Map<String, dynamic>> _tokens(Map<String, String> body) =>
+      _oauth.request(body);
 
   static void _scope(
     Map<String, dynamic> tokens, {
@@ -398,24 +378,9 @@ class WindowsDriveFileAccess implements DriveFileAccessCapability {
     }
   }
 
-  static String _token(Map<String, dynamic> tokens) {
-    final token = tokens['access_token'];
-    if (token is! String ||
-        token.isEmpty ||
-        tokens['token_type'] is! String ||
-        (tokens['token_type'] as String).toLowerCase() != 'bearer') {
-      throw const SyncException('network');
-    }
-    return token;
-  }
+  String _token(Map<String, dynamic> tokens) => _oauth.accessToken(tokens);
 
-  int _expiry(Map<String, dynamic> tokens) {
-    final seconds = tokens['expires_in'];
-    if (seconds is! int || seconds <= 0 || seconds > 86400) {
-      throw const SyncException('network');
-    }
-    return _clock().add(Duration(seconds: seconds)).millisecondsSinceEpoch;
-  }
+  int _expiry(Map<String, dynamic> tokens) => _oauth.expiry(tokens);
 
   Future<String> _verifyAccount(_Account account, String token) async {
     _check(account);
