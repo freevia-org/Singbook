@@ -1158,7 +1158,17 @@ class SourceDiscoveryService {
     this._providers, {
     this.catalogClient,
     this.recordingKeys,
-  });
+    this.discoveryConcurrency = 6,
+    this.providerTimeout = const Duration(seconds: 30),
+  }) : assert(discoveryConcurrency > 0);
+
+  /// Bounds each provider's first lookup. Expiry fails that lookup only; it
+  /// never cancels the caller's token, which means "source withdrawn".
+  final Duration providerTimeout;
+
+  /// Providers looked up at once in discovery's first pass. Each talks to its
+  /// own host and the transport already paces every host separately.
+  final int discoveryConcurrency;
   final List<LyricsProvider> _providers;
   SourceCatalogClient? catalogClient;
 
@@ -1212,9 +1222,6 @@ class SourceDiscoveryService {
     CancellationToken? cancel,
     Map<String, CancellationToken> providerCancellation = const {},
     Duration alternativeTimeout = const Duration(seconds: 30),
-    // Bounds each provider's first lookup. Expiry fails that lookup only; it
-    // never cancels the caller's token, which means "source withdrawn".
-    Duration providerTimeout = const Duration(seconds: 30),
   }) async {
     final active = providers
         .where(
@@ -1816,7 +1823,10 @@ class SourceDiscoveryService {
     }
 
     await Future.wait(
-      List.generate(math.min(3, active.length), (_) => worker()),
+      List.generate(
+        math.min(discoveryConcurrency, active.length),
+        (_) => worker(),
+      ),
     );
     // Chord sources describe arrangements: corroborate their words against the
     // strongest full lyric reference before making them eligible for combining.
@@ -2987,13 +2997,16 @@ class SourceDiscoveryService {
       return agrees && referenceEligible();
     }
 
-    final votes = <({String providerId, SourceResult chart})>[];
-    for (final provider in active.where(
-      (p) => p.definition.capabilities.contains('chords'),
-    )) {
+    // Each chord source has its own host and token, so the double checks run
+    // together. Ballots are joined in `active` order below: the verdict must
+    // not depend on which source happened to answer first.
+    Future<List<({String providerId, SourceResult chart})>> ballot(
+      LyricsProvider provider,
+    ) async {
+      final ballots = <({String providerId, SourceResult chart})>[];
       final id = provider.definition.id;
       cancel?.throwIfCancelled();
-      if (!eligible(id) || !referenceEligible()) continue;
+      if (!eligible(id) || !referenceEligible()) return ballots;
       final checkCancel = CancellationToken();
       cancel?.cancelled.then((_) => checkCancel.cancel());
       providerCancellation[id]?.cancelled.then((_) => checkCancel.cancel());
@@ -3031,19 +3044,32 @@ class SourceDiscoveryService {
               },
             );
         cancel?.throwIfCancelled();
-        if (!eligible(id) || !referenceEligible()) continue;
+        if (!eligible(id) || !referenceEligible()) return ballots;
         for (final chart in [best, ...found]) {
-          if (await canVote(chart)) votes.add((providerId: id, chart: chart));
+          if (await canVote(chart)) ballots.add((providerId: id, chart: chart));
         }
       } on ProviderException {
-        if (cancel?.isCancelled == true) rethrow;
+        // The caller's cancellation wins over whatever the linked token made
+        // the lookup report first.
+        cancel?.throwIfCancelled();
       } catch (_) {
         cancel?.throwIfCancelled();
         // A failed double check leaves the charts as they were.
       } finally {
         checkCancel.cancel();
       }
+      return ballots;
     }
+
+    final votes = [
+      for (final ballots in await Future.wait([
+        for (final provider in active.where(
+          (p) => p.definition.capabilities.contains('chords'),
+        ))
+          ballot(provider),
+      ]))
+        ...ballots,
+    ];
     cancel?.throwIfCancelled();
     // Reference cancellation invalidates the lyric proof for this vote batch.
     if (!referenceEligible()) return;
@@ -3194,7 +3220,29 @@ _LyricScore _scoreLyricPair(_LyricPair pair) {
 Object? _chartSetup(SourceResult source, String field) =>
     source.metadata[field] ?? source.candidate.metadata[field];
 
+/// The only chart facts the key workers read. Whole results also carry their
+/// discovery evidence and alternatives, which would be copied per isolate hop.
+typedef _KeyChart = ({
+  String body,
+  Object? capo,
+  Object? key,
+  String providerId,
+});
+
+List<_KeyChart> _keyCharts(List<SourceResult> sources) => [
+  for (final source in sources)
+    (
+      body: source.body,
+      capo: _chartSetup(source, 'capo'),
+      key: _chartSetup(source, 'key'),
+      providerId: source.candidate.providerId,
+    ),
+];
+
 Future<bool> _needsChordKeyCheck(List<SourceResult> charts, String? measured) =>
+    _needsChordKeyCheckFor(_keyCharts(charts), measured);
+
+Future<bool> _needsChordKeyCheckFor(List<_KeyChart> charts, String? measured) =>
     Isolate.run(() {
       final first = charts.first;
       return charts
@@ -3203,29 +3251,26 @@ Future<bool> _needsChordKeyCheck(List<SourceResult> charts, String? measured) =>
                 (chart) =>
                     (soundingTransposition(
                           first.body,
-                          _chartSetup(first, 'capo'),
+                          first.capo,
                           chart.body,
-                          _chartSetup(chart, 'capo'),
+                          chart.capo,
                         ) ??
                         0) !=
                     0,
               ) ||
           charts.any((chart) {
-            final declared = _chartSetup(chart, 'key');
+            final declared = chart.key;
             return declared is String &&
                 declared.trim().isNotEmpty &&
                 !declaredKeyFitsChords(
                   chart.body,
                   declared.trim(),
-                  _chartSetup(chart, 'capo'),
+                  chart.capo,
                 );
           }) ||
           measured != null &&
               charts.any((chart) {
-                final key = soundingChartKey(
-                  chart.body,
-                  _chartSetup(chart, 'capo'),
-                );
+                final key = soundingChartKey(chart.body, chart.capo);
                 return key != null && !keysAgree(key, measured);
               });
     });
@@ -3253,21 +3298,27 @@ Future<({List<int?> shifts, String? keyEstimate})?> _scoreChordKeys(
   List<SourceResult> sources,
   int acceptedCount,
   String? recordingKey,
+) => _scoreChordKeysFor(_keyCharts(sources), acceptedCount, recordingKey);
+
+Future<({List<int?> shifts, String? keyEstimate})?> _scoreChordKeysFor(
+  List<_KeyChart> sources,
+  int acceptedCount,
+  String? recordingKey,
 ) => Isolate.run(() {
   final bodies = [for (final source in sources) source.body];
-  final capos = [for (final source in sources) _chartSetup(source, 'capo')];
+  final capos = [for (final source in sources) source.capo];
   final outcome = chordKeyVerdict(
     bodies,
     recordingKey: recordingKey,
     capos: capos,
     declaredKeys: [
       for (final source in sources)
-        if (_chartSetup(source, 'key') case final String key) key else null,
+        if (source.key case final String key) key else null,
     ],
     anchors: [
       for (var n = 0; n < sources.length; n++)
         n < acceptedCount &&
-            _recordingTranscriptions.contains(sources[n].candidate.providerId),
+            _recordingTranscriptions.contains(sources[n].providerId),
     ],
   );
   if (outcome == null) return null;

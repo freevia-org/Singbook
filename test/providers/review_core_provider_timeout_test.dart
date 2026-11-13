@@ -96,12 +96,14 @@ void main() {
     final words = _StallingWords(), chart = _ArrangementChart();
     final tokens = {'words': CancellationToken(), 'chart': CancellationToken()};
     final checks = <ProviderCheck>[];
-    final results = await SourceDiscoveryService([words, chart])
+    final results = await SourceDiscoveryService(
+          [words, chart],
+          providerTimeout: const Duration(milliseconds: 200),
+        )
         .discover(
           _selection,
           enabledIds: {'words', 'chart'},
           providerCancellation: tokens,
-          providerTimeout: const Duration(milliseconds: 200),
           alternativeTimeout: const Duration(seconds: 2),
           onProgress: checks.add,
         )
