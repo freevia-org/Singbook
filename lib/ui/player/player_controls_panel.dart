@@ -112,6 +112,23 @@ class _PlayerControlsPanelState extends State<PlayerControlsPanel>
       _choose(expanded);
     }
 
+    void cancelDrag() {
+      _dragging = false;
+      _settle(widget.expanded);
+    }
+
+    final collapsedAction = !widget.expanded && widget.collapsedAction != null
+        ? PositionedDirectional(
+            top: 8,
+            end: 8,
+            child: Material(
+              color: Theme.of(context).colorScheme.surfaceContainerLow,
+              shape: const CircleBorder(),
+              clipBehavior: Clip.antiAlias,
+              child: widget.collapsedAction!,
+            ),
+          )
+        : null;
     final handle = Semantics(
       button: true,
       expanded: widget.expanded,
@@ -131,12 +148,7 @@ class _PlayerControlsPanelState extends State<PlayerControlsPanel>
             onVerticalDragUpdate: widget.side
                 ? null
                 : (details) => updateDrag(details.delta.dy),
-            onVerticalDragCancel: widget.side
-                ? null
-                : () {
-                    _dragging = false;
-                    _settle(widget.expanded);
-                  },
+            onVerticalDragCancel: widget.side ? null : cancelDrag,
             onVerticalDragEnd: widget.side
                 ? null
                 : (details) => endDrag(details.primaryVelocity ?? 0),
@@ -144,77 +156,45 @@ class _PlayerControlsPanelState extends State<PlayerControlsPanel>
             onHorizontalDragUpdate: widget.side
                 ? (details) => updateDrag(details.delta.dx)
                 : null,
-            onHorizontalDragCancel: widget.side
-                ? () {
-                    _dragging = false;
-                    _settle(widget.expanded);
-                  }
-                : null,
+            onHorizontalDragCancel: widget.side ? cancelDrag : null,
             onHorizontalDragEnd: widget.side
                 ? (details) => endDrag(details.primaryVelocity ?? 0)
                 : null,
             child: InkWell(
               onTap: () => _choose(!widget.expanded),
-              child: widget.side
-                  ? SizedBox(
-                      width: 48,
-                      height: 96,
-                      child: Align(
-                        alignment: AlignmentDirectional.centerEnd,
-                        child: Container(
-                          key: const ValueKey('player-controls-grip'),
-                          width: 12,
-                          height: 64,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.surfaceContainerLow,
-                            borderRadius:
-                                const BorderRadiusDirectional.horizontal(
-                                  end: Radius.circular(8),
-                                ),
-                          ),
-                          child: Container(
-                            width: 3,
-                            height: 32,
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.outline,
-                              borderRadius: BorderRadius.circular(2),
-                            ),
-                          ),
-                        ),
-                      ),
-                    )
-                  : SizedBox(
-                      width: 96,
-                      height: 48,
-                      child: Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Container(
-                          key: const ValueKey('player-controls-grip'),
-                          width: 64,
-                          height: 12,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.surfaceContainerLow,
-                            borderRadius: const BorderRadius.vertical(
+              child: SizedBox(
+                width: widget.side ? 48 : 96,
+                height: widget.side ? 96 : 48,
+                child: Align(
+                  alignment: widget.side
+                      ? AlignmentDirectional.centerEnd
+                      : Alignment.bottomCenter,
+                  child: Container(
+                    key: const ValueKey('player-controls-grip'),
+                    width: widget.side ? 12 : 64,
+                    height: widget.side ? 64 : 12,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.surfaceContainerLow,
+                      borderRadius: widget.side
+                          ? const BorderRadiusDirectional.horizontal(
+                              end: Radius.circular(8),
+                            )
+                          : const BorderRadius.vertical(
                               top: Radius.circular(8),
                             ),
-                          ),
-                          child: Container(
-                            width: 32,
-                            height: 3,
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.outline,
-                              borderRadius: BorderRadius.circular(2),
-                            ),
-                          ),
-                        ),
+                    ),
+                    child: Container(
+                      width: widget.side ? 3 : 32,
+                      height: widget.side ? 32 : 3,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.outline,
+                        borderRadius: BorderRadius.circular(2),
                       ),
                     ),
+                  ),
+                ),
+              ),
             ),
           ),
         ),
@@ -237,19 +217,7 @@ class _PlayerControlsPanelState extends State<PlayerControlsPanel>
                           end: 0,
                           child: Center(child: handle),
                         ),
-                      if (!widget.expanded && widget.collapsedAction != null)
-                        PositionedDirectional(
-                          top: 8,
-                          end: 8,
-                          child: Material(
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.surfaceContainerLow,
-                            shape: const CircleBorder(),
-                            clipBehavior: Clip.antiAlias,
-                            child: widget.collapsedAction!,
-                          ),
-                        ),
+                      ?collapsedAction,
                     ],
                   ),
                 ),
@@ -262,19 +230,7 @@ class _PlayerControlsPanelState extends State<PlayerControlsPanel>
                   child: Stack(
                     children: [
                       Positioned.fill(child: widget.lyrics),
-                      if (!widget.expanded && widget.collapsedAction != null)
-                        PositionedDirectional(
-                          top: 8,
-                          end: 8,
-                          child: Material(
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.surfaceContainerLow,
-                            shape: const CircleBorder(),
-                            clipBehavior: Clip.antiAlias,
-                            child: widget.collapsedAction!,
-                          ),
-                        ),
+                      ?collapsedAction,
                       if (!widget.hideHandle)
                         Positioned(
                           bottom: 0,

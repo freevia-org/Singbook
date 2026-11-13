@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../library_actions.dart';
 import '../verse_ui_state.dart';
+import '../widgets/library_search_row.dart';
 import '../widgets/verse_components.dart';
 import 'collation.dart';
 
@@ -31,6 +32,57 @@ class _SongsScreenState extends State<SongsScreen> {
   final _letterKeys = <String, GlobalKey>{};
   String _query = '';
 
+  // The filtered, sorted list and its index letters. Folding and collating
+  // every title is repeated only when the library or the filter changes, not
+  // on each unrelated controller notification or letter-rail drag event.
+  List<SongCardData>? _listSource;
+  String? _listQuery;
+  bool? _listFavoritesOnly, _listConflictsOnly;
+  List<SongCardData> _songs = const [];
+  List<String> _songLetters = const [];
+  List<String> _sortedLetters = const [];
+  Map<String, int> _letterFirstIndex = const {};
+
+  void _updateList(VerseUiState state, String query) {
+    final conflictsOnly = state.songsConflictFilter;
+    if (identical(_listSource, state.songs) &&
+        _listQuery == query &&
+        _listFavoritesOnly == state.favoritesOnly &&
+        _listConflictsOnly == conflictsOnly) {
+      return;
+    }
+    _listSource = state.songs;
+    _listQuery = query;
+    _listFavoritesOnly = state.favoritesOnly;
+    _listConflictsOnly = conflictsOnly;
+    final needle = foldForSearch(query);
+    _songs = sortedByTitle(
+      state.songs
+          .where((song) => !conflictsOnly || song.isConflictCopy)
+          .where(
+            (song) => conflictsOnly || !state.favoritesOnly || song.favorite,
+          )
+          .where(
+            (song) => foldForSearch(
+              '${song.title} ${song.artist} ${song.album ?? ''}',
+            ).contains(needle),
+          ),
+      (song) => song.title,
+    );
+    _songLetters = [for (final song in _songs) songIndexLetter(song.title)];
+    // Letters in list order, so the rail always matches the list.
+    final sortedLetters = <String>[];
+    final firstIndex = <String, int>{};
+    for (final (index, letter) in _songLetters.indexed) {
+      if (sortedLetters.isEmpty || sortedLetters.last != letter) {
+        sortedLetters.add(letter);
+      }
+      firstIndex.putIfAbsent(letter, () => index);
+    }
+    _sortedLetters = sortedLetters;
+    _letterFirstIndex = firstIndex;
+  }
+
   @override
   void dispose() {
     _search.dispose();
@@ -48,7 +100,7 @@ class _SongsScreenState extends State<SongsScreen> {
     List<SongCardData> songs, {
     bool animate = true,
   }) {
-    final index = songs.indexWhere((s) => songIndexLetter(s.title) == letter);
+    final index = _letterFirstIndex[letter] ?? -1;
     if (index < 0 || !_scroll.hasClients) return;
     final target = _letterKeys[letter]?.currentContext;
     if (target != null && target.mounted) {
@@ -88,78 +140,25 @@ class _SongsScreenState extends State<SongsScreen> {
     final state = controller.state;
     final l10n = AppLocalizations.of(context);
     final query = widget.query ?? _query;
-    final needle = foldForSearch(query);
     final conflictsOnly = state.songsConflictFilter;
-    final songs = sortedByTitle(
-      state.songs
-          .where((song) => !conflictsOnly || song.isConflictCopy)
-          .where(
-            (song) => conflictsOnly || !state.favoritesOnly || song.favorite,
-          )
-          .where(
-            (song) => foldForSearch(
-              '${song.title} ${song.artist} ${song.album ?? ''}',
-            ).contains(needle),
-          ),
-      (song) => song.title,
+    _updateList(state, query);
+    final songs = _songs;
+    final sortedLetters = _sortedLetters;
+    _letterKeys.removeWhere(
+      (letter, _) => !_letterFirstIndex.containsKey(letter),
     );
-    // Letters in list order, so the rail always matches the list.
-    final sortedLetters = <String>[];
-    for (final song in songs) {
-      final letter = songIndexLetter(song.title);
-      if (sortedLetters.isEmpty || sortedLetters.last != letter) {
-        sortedLetters.add(letter);
-      }
-    }
-    final letters = sortedLetters.toSet();
-    _letterKeys.removeWhere((letter, _) => !letters.contains(letter));
     return Column(
       children: [
         if (widget.showSearch)
-          Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(20, 8, 12, 8),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _search,
-                    textInputAction: TextInputAction.search,
-                    onChanged: (value) => setState(() => _query = value),
-                    onSubmitted: (_) => FocusScope.of(context).unfocus(),
-                    decoration: InputDecoration(
-                      hintText: l10n.searchHint,
-                      suffixIcon: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          if (_query.isNotEmpty)
-                            IconButton(
-                              tooltip: l10n.accessibilityClearSearch,
-                              onPressed: _clearSearch,
-                              icon: const Icon(Icons.close_rounded),
-                            ),
-                          IconButton(
-                            tooltip: l10n.searchSubmit,
-                            onPressed: () => FocusScope.of(context).unfocus(),
-                            icon: const Icon(Icons.arrow_forward_rounded),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                if (!conflictsOnly)
-                  VerseIconButton(
-                    key: const ValueKey('favorites-filter-button'),
-                    tooltip: l10n.searchFavoritesTab,
-                    selected: state.favoritesOnly,
-                    onPressed: () =>
-                        controller.setFavoritesOnly(!state.favoritesOnly),
-                    icon: state.favoritesOnly
-                        ? Icons.favorite_rounded
-                        : Icons.favorite_border_rounded,
-                  ),
-              ],
-            ),
+          LibrarySearchRow(
+            controller: _search,
+            query: _query,
+            onChanged: (value) => setState(() => _query = value),
+            onClear: _clearSearch,
+            favoritesOnly: state.favoritesOnly,
+            onFavoritesOnlyChanged: conflictsOnly
+                ? null
+                : controller.setFavoritesOnly,
           ),
         if (conflictsOnly)
           Padding(
@@ -247,9 +246,8 @@ class _SongsScreenState extends State<SongsScreen> {
   ) {
     final controller = widget.controller;
     final song = songs[index];
-    final letter = songIndexLetter(song.title);
-    final firstOfLetter =
-        index == 0 || songIndexLetter(songs[index - 1].title) != letter;
+    final letter = _songLetters[index];
+    final firstOfLetter = index == 0 || _songLetters[index - 1] != letter;
     return Column(
       children: [
         if (songs.length >= 10 && firstOfLetter)

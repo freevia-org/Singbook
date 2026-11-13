@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -8,6 +7,8 @@ import '../../l10n/generated/app_localizations.dart';
 import '../format.dart';
 import '../library_actions.dart';
 import '../verse_ui_state.dart';
+import '../widgets/desktop_platform.dart';
+import '../widgets/library_search_row.dart';
 import '../widgets/subpage_header.dart';
 import '../widgets/verse_components.dart';
 import 'collation.dart';
@@ -46,49 +47,13 @@ class _SetlistsScreenState extends State<SetlistsScreen> {
         .toList();
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsetsDirectional.fromSTEB(20, 8, 12, 8),
-          child: Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _search,
-                  textInputAction: TextInputAction.search,
-                  onChanged: (value) => setState(() => _query = value),
-                  onSubmitted: (_) => FocusScope.of(context).unfocus(),
-                  decoration: InputDecoration(
-                    hintText: l10n.searchHint,
-                    suffixIcon: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        if (_query.isNotEmpty)
-                          IconButton(
-                            tooltip: l10n.accessibilityClearSearch,
-                            onPressed: _clearSearch,
-                            icon: const Icon(Icons.close_rounded),
-                          ),
-                        IconButton(
-                          tooltip: l10n.searchSubmit,
-                          onPressed: () => FocusScope.of(context).unfocus(),
-                          icon: const Icon(Icons.arrow_forward_rounded),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              VerseIconButton(
-                key: const ValueKey('favorites-filter-button'),
-                tooltip: l10n.searchFavoritesTab,
-                selected: state.favoritesOnly,
-                onPressed: () =>
-                    widget.controller.setFavoritesOnly(!state.favoritesOnly),
-                icon: state.favoritesOnly
-                    ? Icons.favorite_rounded
-                    : Icons.favorite_border_rounded,
-              ),
-            ],
-          ),
+        LibrarySearchRow(
+          controller: _search,
+          query: _query,
+          onChanged: (value) => setState(() => _query = value),
+          onClear: _clearSearch,
+          favoritesOnly: state.favoritesOnly,
+          onFavoritesOnlyChanged: widget.controller.setFavoritesOnly,
         ),
         Expanded(
           child: lists.isEmpty
@@ -348,6 +313,19 @@ class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
     super.dispose();
   }
 
+  /// Leaves the setlist. A name that was typed but not saved is discarded
+  /// only after the person confirms, as for unsaved song edits.
+  Future<void> _back(SetlistCardData value, bool editing) async {
+    final typed = _name.text.trim();
+    // A blank name is never stored, so it is not an unsaved change.
+    if (editing && typed.isNotEmpty && typed != value.title) {
+      FocusManager.instance.primaryFocus?.unfocus();
+      if (!await confirmDiscardEdits(context)) return;
+      if (!mounted) return;
+    }
+    await controller.back();
+  }
+
   /// Text typed into the inline title, or null when not editing.
   String? _typedName(bool editing) => editing ? _name.text : null;
   String? _typedNotes(bool editing) =>
@@ -389,7 +367,7 @@ class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
                   ),
                 )
               : null,
-          onBack: controller.back,
+          onBack: () => unawaited(_back(value, editing)),
           actions: [
             if (editing)
               IconButton(
@@ -517,9 +495,7 @@ class _SetlistDetailScreenState extends State<SetlistDetailScreen> {
                         index,
                         editing,
                       );
-                      if (defaultTargetPlatform == TargetPlatform.windows ||
-                          defaultTargetPlatform == TargetPlatform.linux ||
-                          defaultTargetPlatform == TargetPlatform.macOS) {
+                      if (isDesktopPlatform) {
                         return _DesktopRowDragStartListener(
                           key: ValueKey(entry.id),
                           index: index,
