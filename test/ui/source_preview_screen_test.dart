@@ -431,9 +431,13 @@ void main() {
       tester
           .widget<FilledButton>(find.byKey(const ValueKey('preview-save-open')))
           .onPressed,
-      isNotNull,
+      // Save has nothing it could act on, so the button is disabled.
+      isNull,
     );
-    await tester.tap(find.byKey(const ValueKey('preview-save-open')));
+    await tester.tap(
+      find.byKey(const ValueKey('preview-save-open')),
+      warnIfMissed: false,
+    );
     expect(controller.saves, 0);
     expect(tester.takeException(), isNull);
   });
