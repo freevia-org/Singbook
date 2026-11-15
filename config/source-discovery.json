@@ -738,6 +738,18 @@
       ],
       "endpoint": "https://freqblog.com/",
       "reason": "Publisher website describes a recording metadata and audio-analysis API with title/artist or ISRC lookup, BPM, key, mood and genre, including multiple regional genres; it describes an API key and a free tier. Claims of coverage, fallback and field quality have not been independently verified. Documentation-only discovery on 2026-11-13 did not access credentials, request audio analysis, or run extraction canaries. Defer pending documented app-use, quota, attribution and persistence terms, recording identity and provenance checks, runtime compatibility and two independent extraction canaries. No lyrics are claimed and no source is activated."
+    },
+    {
+      "id": "maurisson_music_hub",
+      "name": "Maurisson Music Hub",
+      "firstSeen": "2026-11-15",
+      "lastChecked": "2026-11-15",
+      "status": "deferred",
+      "documentation": [
+        "https://musichub.maurisson.com/"
+      ],
+      "endpoint": "https://musichub.maurisson.com/",
+      "reason": "Publisher homepage describes a multilingual chord catalog with artist pages, key transposition and capo, including French and international artists; its claimed size and coverage are unverified. Documentation-only discovery on 2026-11-15 did not request songs or authentication. Defer until public application access and persistence terms, attribution, stable song and arrangement identity, machine-readable grammar and two independent extraction canaries are established. No API or activation is claimed."
     }
   ]
 }
