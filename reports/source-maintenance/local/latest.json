@@ -1,16 +1,15 @@
 {
   "schemaVersion": 1,
   "catalogRevision": 23,
-  "measuredAt": "2026-11-15T07:05:14.420028Z",
+  "measuredAt": "2026-11-16T07:03:28.374039Z",
   "offline": false,
   "summary": {
-    "healthy": 21,
-    "identity_mismatch": 2,
+    "healthy": 23,
     "coverage_gap": 1,
     "import_only": 1,
     "partial_coverage": 2,
-    "transient_error": 1,
     "retired": 1,
+    "identity_mismatch": 1,
     "unavailable": 1,
     "disabled": 2
   },
@@ -222,21 +221,38 @@
     {
       "id": "lyricsovh",
       "name": "Lyrics.ovh",
-      "status": "identity_mismatch",
+      "status": "healthy",
       "coverage": {
-        "status": "partial",
-        "verifiedCapabilities": [],
-        "unverifiedCapabilities": [
+        "status": "complete",
+        "verifiedCapabilities": [
           "catalog",
           "lyrics",
           "metadata"
-        ]
+        ],
+        "unverifiedCapabilities": []
       },
       "probes": [
         {
           "id": "wonderwall-oasis-studio",
-          "status": "identity_mismatch",
-          "reason": "expected_candidate_not_found"
+          "status": "healthy",
+          "candidateId": "sha256:af83be81199d0571",
+          "providerId": "lyricsovh",
+          "bodyCharacters": 1307,
+          "metadataFields": [
+            "album",
+            "artworkUrl",
+            "duration",
+            "mediaLinks"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "lyrics",
+            "metadata"
+          ],
+          "timingTrackCount": 0,
+          "timingGranularities": [],
+          "timingRawRetained": false,
+          "hasChords": false
         }
       ]
     },
@@ -554,22 +570,39 @@
     {
       "id": "openfilksongbook",
       "name": "Open Filk Songbook",
-      "status": "transient_error",
+      "status": "healthy",
       "coverage": {
-        "status": "partial",
-        "verifiedCapabilities": [],
-        "unverifiedCapabilities": [
+        "status": "complete",
+        "verifiedCapabilities": [
           "catalog",
           "chords",
           "lyrics",
           "metadata"
-        ]
+        ],
+        "unverifiedCapabilities": []
       },
       "probes": [
         {
           "id": "everything-lastalda",
-          "status": "transient_error",
-          "reason": "timeout"
+          "status": "healthy",
+          "candidateId": "sha256:c35679db6e5fa143",
+          "providerId": "openfilksongbook",
+          "bodyCharacters": 3302,
+          "metadataFields": [
+            "identityScope",
+            "sourcePageUrl",
+            "timeSignature"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "chords",
+            "lyrics",
+            "metadata"
+          ],
+          "timingTrackCount": 0,
+          "timingGranularities": [],
+          "timingRawRetained": false,
+          "hasChords": true
         }
       ]
     },
@@ -1868,7 +1901,7 @@
     }
   ],
   "httpDiagnostics": {
-    "networkFailures": 1,
+    "networkFailures": 0,
     "hosts": {
       "acousticbrainz.org": {
         "requests": 4,
@@ -1895,9 +1928,9 @@
         "databaseLag": {}
       },
       "api.lyrics.ovh": {
-        "requests": 1,
+        "requests": 2,
         "statuses": {
-          "200": 1
+          "200": 2
         },
         "retryAfterSeconds": {},
         "databaseLag": {}
@@ -1927,8 +1960,10 @@
         "databaseLag": {}
       },
       "filksongbook.com": {
-        "requests": 1,
-        "statuses": {},
+        "requests": 2,
+        "statuses": {
+          "200": 2
+        },
         "retryAfterSeconds": {},
         "databaseLag": {}
       },
@@ -1989,14 +2024,11 @@
         "databaseLag": {}
       },
       "musicbrainz.org": {
-        "requests": 7,
+        "requests": 6,
         "statuses": {
-          "200": 6,
-          "503": 1
+          "200": 6
         },
-        "retryAfterSeconds": {
-          "0": 1
-        },
+        "retryAfterSeconds": {},
         "databaseLag": {}
       },
       "raw.githubusercontent.com": {
@@ -2113,7 +2145,7 @@
       }
     }
   },
-  "sourceCommit": "f0c20bb19c6a280c6db184f3da7a4b0c62b6951c",
+  "sourceCommit": "656d432f29f75b4d4273c8e99c3ea3dfae034b16",
   "catalogPath": "config/source-catalog-v10.json",
   "catalogChannel": 10,
   "catalogSha256": "a61377c845601888f22a8abf0f43a66ace1a61a85b6f627cd709e9f376b28dce",
@@ -2128,25 +2160,26 @@
     "dedicatedGeniusMaintenanceCredential": true,
     "userLibraryAccessed": false,
     "offlineStructuralCheck": "passed",
-    "separateFileImportPhase": "passed; see separate import report for HTTP counts"
+    "separateFileImportPhase": "passed; see separate import report",
+    "separateWikidataRepairQualification": "14 HTTP 200 requests after changed adapter; plus four bounded diagnostic entity reads"
   },
   "comparisonEvidence": {
-    "previousLocalMeasuredAt": "2026-11-14T07:00:30.405128Z",
+    "previousLocalMeasuredAt": "2026-11-15T07:05:14.420028Z",
     "previousLocalSummary": {
-      "healthy": 22,
-      "identity_mismatch": 1,
+      "healthy": 21,
+      "identity_mismatch": 2,
       "coverage_gap": 1,
       "import_only": 1,
       "partial_coverage": 2,
+      "transient_error": 1,
       "retired": 1,
-      "transient_error": 2,
+      "unavailable": 1,
       "disabled": 2
     },
-    "latestCloudMeasuredAt": "2026-11-15T07:02:01.967170Z",
+    "latestCloudMeasuredAt": "2026-11-16T07:01:27.005284Z",
     "latestCloudSummary": {
-      "transient_error": 6,
-      "healthy": 18,
-      "identity_mismatch": 1,
+      "transient_error": 5,
+      "healthy": 20,
       "coverage_gap": 1,
       "import_only": 1,
       "retired": 1,
@@ -2157,25 +2190,11 @@
   },
   "roadblocks": [
     {
-      "affected": "Open Filk Songbook",
-      "reason": "Canary timed out",
-      "tried": "Scheduled bounded live probe",
-      "resolved": false,
-      "action": "Observe next run; no source retirement"
-    },
-    {
       "affected": "Wikidata",
-      "reason": "Wonderwall stable-ID search result no longer matched expected title or creator",
-      "tried": "Scheduled probe; reviewed publisher item Q1045517 which still identifies Wonderwall as a Noel Gallagher composition; exact response discrepancy remains unconfirmed",
+      "reason": "Wonderwall creator Q193459 has no direct English label; API supplies its multilingual label only when fallback requested",
+      "tried": "Two days of scheduled probes; bounded entity diagnostics; candidate adapter requests languagefallback and passed two live canaries plus 78 tests and analysis",
       "resolved": false,
-      "action": "Investigate search candidate fields without substituting identity"
-    },
-    {
-      "affected": "Lyrics.ovh",
-      "reason": "Expected original-album candidate absent",
-      "tried": "Scheduled search and previous identity diagnostic",
-      "resolved": false,
-      "action": "Investigate publisher search without substituting another edition"
+      "action": "Integration review and compatible app release required; candidate commit 4958d5014ae49119efdd3ff042d849dd7769e78e"
     },
     {
       "affected": "Better Lyrics",
@@ -2187,7 +2206,7 @@
     {
       "affected": "LyricsPlus",
       "reason": "Billie Jean unavailable while Creep passed; HTTP 200 responses",
-      "tried": "Scheduled probes; prior run returned 530",
+      "tried": "Scheduled probes; earlier 530 recovered",
       "resolved": false,
       "action": "Observe upstream availability and preserve identity"
     },
