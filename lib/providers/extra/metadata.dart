@@ -792,6 +792,7 @@ class WikidataProvider implements LyricsProvider {
           'ids': valid.join('|'),
           'props': 'labels|descriptions|claims',
           'languages': 'en',
+          'languagefallback': '1',
         }, cancel);
       } on ProviderException {
         // Ids past the first batch used to be dropped unrequested. Their

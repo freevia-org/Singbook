@@ -750,6 +750,18 @@
       ],
       "endpoint": "https://musichub.maurisson.com/",
       "reason": "Publisher homepage describes a multilingual chord catalog with artist pages, key transposition and capo, including French and international artists; its claimed size and coverage are unverified. Documentation-only discovery on 2026-11-15 did not request songs or authentication. Defer until public application access and persistence terms, attribution, stable song and arrangement identity, machine-readable grammar and two independent extraction canaries are established. No API or activation is claimed."
+    },
+    {
+      "id": "fretwork_guitar_dataset",
+      "name": "Fretwork Guitar Dataset",
+      "firstSeen": "2026-11-16",
+      "lastChecked": "2026-11-16",
+      "status": "deferred",
+      "documentation": [
+        "https://guitarfretwork.com/data/"
+      ],
+      "endpoint": "https://guitarfretwork.com/data/",
+      "reason": "Publisher describes a CC BY 4.0 open guitar dataset with chord shapes, scales and 87 traditional song records with title, key, time signature, difficulty and chords used. It explicitly excludes lyrics, melodies and notation, and cautions some works have differing copyright status by jurisdiction. Documentation-only discovery on 2026-11-16; no dataset or extraction canaries were requested. Defer due to small size, absence of song text and arrangement data, unverified identity, attribution and runtime compatibility. Reassess only if enrichment value is established and two independent extraction canaries pass."
     }
   ]
 }

@@ -343,6 +343,7 @@ ProviderTransport _transport({
       });
     }
     final requested = (request.url.queryParameters['ids'] ?? '').split('|');
+    expect(request.url.queryParameters['languagefallback'], '1');
     if (requested.any(workIds.contains)) {
       return _json({
         'entities': {
@@ -365,7 +366,7 @@ ProviderTransport _transport({
       'entities': {
         'Q2': {
           'labels': {
-            'en': {'value': 'Writer'},
+            'en': {'value': 'Writer', 'language': 'mul', 'for-language': 'en'},
           },
         },
         'Q3': {
