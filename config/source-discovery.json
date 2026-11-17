@@ -774,6 +774,102 @@
       ],
       "endpoint": "https://globalfolksongbook.com/",
       "reason": "Publisher page indexes international traditional songs by region and language and links external score sources. Documentation-only discovery on 2026-11-17; no song documents, API requests or extraction canaries were retrieved. Catalog size, structured data access, stable arrangement identity, lyrics and chord availability, provenance, jurisdiction-specific rights and attribution remain unverified. Defer pending documented application use, compatible adapter and two independent end-to-end extraction canaries; no provider activation."
+    },
+    {
+      "id": "netease-lyrics",
+      "name": "NetEase Cloud Music",
+      "firstSeen": "2026-11-17",
+      "lastChecked": "2026-11-17",
+      "status": "deferred",
+      "documentation": [
+        "https://music.163.com/"
+      ],
+      "endpoint": "https://music.163.com/",
+      "reason": "Lyricsync public client identifies NetEase as a possible lyrics or word-timing source. No publisher-documented application lyrics API, reusable timing rights, territory, registration flow or stable identity contract verified on 2026-11-17. Third-party proxy documentation is not publisher authorization. No credentials, lyric documents or live canaries requested. Defer pending publisher-approved access, exact timing semantics, attribution and two independent canaries."
+    },
+    {
+      "id": "kugou-lyrics",
+      "name": "Kugou Music",
+      "firstSeen": "2026-11-17",
+      "lastChecked": "2026-11-17",
+      "status": "deferred",
+      "documentation": [
+        "https://open.kugou.com/"
+      ],
+      "endpoint": "https://open.kugou.com/",
+      "reason": "Lyricsync public client identifies Kugou as a possible word-timing source. Publisher open platform advertises partner services and rights cooperation, but public app lyrics and timing reuse terms not established. Existing Better Lyrics Kugou route returned HTTP401 in two earlier bounded diagnostics; no bypass or unapproved credentials used. Defer pending publisher clarification and two independent canaries."
+    },
+    {
+      "id": "letras-lyrics",
+      "name": "Letras",
+      "firstSeen": "2026-11-17",
+      "lastChecked": "2026-11-17",
+      "status": "deferred",
+      "documentation": [
+        "https://www.letras.mus.br/"
+      ],
+      "endpoint": "https://www.letras.mus.br/",
+      "reason": "Lyricsync client contains a Letras source label. The exact backend target and activation remain unverified; this name must not be assumed to identify a specific domain without confirmation. No documented third-party app API, identity, attribution, export or terms verified on 2026-11-17. Web lookup could not retrieve the domain. Defer pending provider identity, documented access and two live canaries."
+    },
+    {
+      "id": "lyricsify-lyrics",
+      "name": "Lyricsify",
+      "firstSeen": "2026-11-17",
+      "lastChecked": "2026-11-17",
+      "status": "deferred",
+      "documentation": [
+        "https://www.lyricsify.com/"
+      ],
+      "endpoint": "https://www.lyricsify.com/",
+      "reason": "Lyricsync client contains a Lyricsify source label but backend activation is unverified. Site lookup returned HTTP403 through the research service on 2026-11-17; do not infer behavior on other networks or bypass denial. Public app API, access terms and rights not verified; no song extraction or canaries attempted. Defer pending approved access and two independent canaries."
+    },
+    {
+      "id": "megalobiz-lyrics",
+      "name": "Megalobiz",
+      "firstSeen": "2026-11-17",
+      "lastChecked": "2026-11-17",
+      "status": "deferred",
+      "documentation": [
+        "https://www.megalobiz.com/"
+      ],
+      "endpoint": "https://www.megalobiz.com/",
+      "reason": "Lyricsync client contains a Megalobiz source label but backend activation is unverified. Direct research-service site open was unavailable on 2026-11-17. No supported public app lyrics API, terms, identity, attribution or canary evidence verified; no access workarounds used. Defer pending documented access and two independent canaries."
+    },
+    {
+      "id": "shazam-lyrics",
+      "name": "Shazam lyric content",
+      "firstSeen": "2026-11-17",
+      "lastChecked": "2026-11-17",
+      "status": "deferred",
+      "documentation": [
+        "https://developer.apple.com/shazamkit/"
+      ],
+      "endpoint": "https://developer.apple.com/shazamkit/",
+      "reason": "Lyricsync client contains a Shazam source label but server lyrics retrieval is unverified. ShazamKit is an official recognition and position product; documentation reviewed does not establish full lyric or word-timing rights for Singbook. Do not equate recognition with lyrics access. Defer lyric source pending explicit API and content terms and two canaries. Separate recognition feature requires developer-token entitlement, cost/quota and terms review."
+    },
+    {
+      "id": "lyricsync-itunes-metadata",
+      "name": "iTunes Search metadata",
+      "firstSeen": "2026-11-17",
+      "lastChecked": "2026-11-17",
+      "status": "deferred",
+      "documentation": [
+        "https://developer.apple.com/library/archive/documentation/AudioVideo/Conceptual/iTuneSearchAPI/"
+      ],
+      "endpoint": "https://developer.apple.com/library/archive/documentation/AudioVideo/Conceptual/iTuneSearchAPI/",
+      "reason": "Lyricsync uses iTunes Search for metadata and artwork rather than an established lyric source. API documentation permits search and sets promotional restrictions for preview and artwork; persistence, matching confidence, display attribution and incremental benefit versus existing metadata require review. Do not promote metadata to verified recording identity without exact evidence. Deferred without new canaries."
+    },
+    {
+      "id": "lrclib-lyricsfile-word-timing",
+      "name": "LRCLIB Lyricsfile word timing",
+      "firstSeen": "2026-11-17",
+      "lastChecked": "2026-11-17",
+      "status": "deferred",
+      "documentation": [
+        "https://lrclib.net/docs"
+      ],
+      "endpoint": "https://lrclib.net/api",
+      "reason": "Publisher documents lyricsfile YAML and hasWordSync for word timing; existing Singbook builtin currently extracts only syncedLyrics LRC lines. On 2026-11-17 three bounded search requests and two exact-ID GETs returned HTTP200. Two independently selected source records had correct artist/title and explicit separate album identities: LRCLIB ID 7758306 Billie Jean, Thriller (25th Anniversary), 295 seconds, 54 lines and 541 word entries; ID 7243962 Creep, EMI Special Markets Presents a World of Music, 239 seconds, 37 lines and 166 word entries. These are response-shape checks using an external YAML parser, not end-to-end Singbook provider extraction or proof of exact recording/transcription accuracy, rights, unique versions or added catalog coverage. Both have version, metadata, lines and plain; observed word rows include text and start_ms. Preserve raw YAML, precise times, variants, identity and attribution, and validate limits and format safely before enabling. Requires compatible native parser, regression/round-trip tests, catalog capability revision and two independent end-to-end provider canaries; no source activation or word-timing claim in current app."
     }
   ]
 }
