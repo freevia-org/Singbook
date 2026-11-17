@@ -3,6 +3,7 @@ import 'dart:math' show max, min;
 import 'package:characters/characters.dart';
 import 'package:crypto/crypto.dart';
 import 'package:xml/xml.dart';
+import 'package:yaml/yaml.dart';
 import 'models.dart';
 import 'arrangement.dart';
 
@@ -405,6 +406,184 @@ TimingTrack parseLrc(
       'precision': 'source decimal fraction',
     },
   );
+}
+
+// LRCLIB supplies this optional, draft format alongside LRC. Limit both the
+// input and the normalized cue count so a lyric variant fits in one song file.
+const _maxLyricsfileBytes = 96 * 1024;
+const _maxLyricsfileCues = 4000;
+final _nestedLyricsfileBlock = RegExp(r'^ {33}|(?:[-?] +){16}');
+final _flowCollectionStart = RegExp(r'[\[{]');
+
+TimingTrack? parseLyricsfile(
+  String raw, {
+  required String sourceDocumentId,
+  required String recordingId,
+}) {
+  if (raw.length > _maxLyricsfileBytes ||
+      utf8.encode(raw).length > _maxLyricsfileBytes ||
+      _flowCollectionStart.allMatches(raw).take(65).length > 64 ||
+      const LineSplitter().convert(raw).any(_nestedLyricsfileBlock.hasMatch)) {
+    return null;
+  }
+
+  try {
+    final data = loadYaml(raw);
+    if (data is! YamlMap ||
+        data['version'] != '1.0' ||
+        data['lines'] is! YamlList) {
+      return null;
+    }
+    final lines = data['lines'] as YamlList;
+    final id = _trackId(
+      sourceDocumentId,
+      raw,
+      profile: 'lyricsfile-1.0',
+      recordingId: recordingId,
+    );
+    final cues = <TimingCue>[];
+    final lyrics = <String>[];
+    var previousLineStart = 0;
+    var wordCount = 0;
+    var expandedTextLength = 0;
+    var parsedWords = 0;
+
+    void addCue(
+      YamlMap entry,
+      String occurrence,
+      String text,
+      int start, {
+      int? end,
+      int? from,
+      int? to,
+    }) {
+      if (cues.length >= _maxLyricsfileCues) {
+        throw const FormatException('Too many Lyricsfile cues');
+      }
+      cues.add(
+        TimingCue(
+          id: '$id:${cues.length}',
+          occurrenceId: occurrence,
+          text: text,
+          startUs: start,
+          endUs: end,
+          graphemeStart: from,
+          graphemeEnd: to,
+          originalBegin: '${entry['start_ms']}ms',
+          originalEnd: end == null ? null : '${entry['end_ms']}ms',
+        ),
+      );
+    }
+
+    for (final line in lines) {
+      if (line is! YamlMap || line['text'] is! String) return null;
+      final originalText = line['text'] as String;
+      expandedTextLength += originalText.length;
+      if (originalText.length > 4096 ||
+          expandedTextLength > _maxLyricsfileBytes) {
+        return null;
+      }
+      if (originalText.contains('\n') || originalText.contains('\r')) {
+        return null;
+      }
+      final text = originalText.trim();
+      final start = _lyricsfileTime(line['start_ms']);
+      final end = _lyricsfileTime(line['end_ms']);
+      if (start == null ||
+          start < previousLineStart ||
+          (end != null && end < start)) {
+        return null;
+      }
+      previousLineStart = start;
+      final occurrence = 'line-${lyrics.length}';
+      lyrics.add(text);
+      addCue(line, occurrence, text, start, end: end);
+      final words = line['words'];
+      if (words == null) continue;
+      if (words is! YamlList) return null;
+      parsedWords += words.length;
+      if (parsedWords + lines.length > _maxLyricsfileCues) return null;
+
+      final boundaries = <int, int>{0: 0};
+      var offset = 0, graphemes = 0;
+      for (final character in originalText.characters) {
+        offset += character.length;
+        boundaries[offset] = ++graphemes;
+      }
+      final leadingLength =
+          originalText.length - originalText.trimLeft().length;
+      final leading = boundaries[leadingLength];
+      if (leading == null) return null;
+      var cursor = 0, previousWordStart = start;
+      for (final word in words) {
+        if (word is! YamlMap || word['text'] is! String) return null;
+        final fragment = word['text'] as String;
+        if (!originalText.startsWith(fragment, cursor)) return null;
+        final content = fragment.trim();
+        final startOffset =
+            cursor + fragment.length - fragment.trimLeft().length;
+        cursor += fragment.length;
+        if (content.isEmpty) continue;
+        final from = boundaries[startOffset];
+        final to = boundaries[startOffset + content.length];
+        final wordStart = _lyricsfileTime(word['start_ms']);
+        final wordEnd = _lyricsfileTime(word['end_ms']);
+        if (from == null ||
+            to == null ||
+            wordStart == null ||
+            wordStart < previousWordStart ||
+            (wordEnd != null && wordEnd < wordStart) ||
+            (end != null && (wordEnd ?? wordStart) > end)) {
+          return null;
+        }
+        previousWordStart = wordStart;
+        addCue(
+          word,
+          occurrence,
+          content,
+          wordStart,
+          end: wordEnd,
+          from: from - leading,
+          to: to - leading,
+        );
+        wordCount++;
+      }
+      if (words.isNotEmpty &&
+          originalText.substring(cursor).trim().isNotEmpty) {
+        return null;
+      }
+    }
+
+    if (wordCount == 0) return null;
+    final text = lyrics.join('\n');
+    _sortCues(cues);
+    return TimingTrack(
+      id: id,
+      sourceDocumentId: sourceDocumentId,
+      sourceLyrics: text,
+      format: 'lyricsfile',
+      raw: raw,
+      recordingId: recordingId,
+      cues: cues,
+      granularity: 'word',
+      lyricHash: lyricOrderHash(text),
+      extra: const {'parserVersion': 'lyricsfile-1.0', 'precision': 'ms'},
+    );
+  } on YamlException {
+    return null;
+  } on FormatException {
+    return null;
+  } on StackOverflowError {
+    return null;
+  }
+}
+
+int? _lyricsfileTime(Object? value) {
+  if (value == null) return null;
+  if (value is! int || value < 0 || value > maxCueUs ~/ 1000) {
+    throw const FormatException('Invalid Lyricsfile millisecond timestamp');
+  }
+  return value * 1000;
 }
 
 TimingTrack parseTtml(
