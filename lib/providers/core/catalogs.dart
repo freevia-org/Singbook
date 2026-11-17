@@ -267,7 +267,7 @@ class LrclibProvider implements LyricsProvider {
   ProviderDefinition get definition => const ProviderDefinition(
     id: 'lrclib',
     name: 'LRCLIB',
-    capabilities: {'catalog', 'lyrics', 'lineTiming', 'metadata'},
+    capabilities: {'catalog', 'lyrics', 'lineTiming', 'wordTiming', 'metadata'},
     website: 'https://lrclib.net',
   );
   static SongCandidate parseSong(dynamic raw) {
@@ -288,6 +288,7 @@ class LrclibProvider implements LyricsProvider {
         }),
         'instrumental': data['instrumental'] == true,
         'hasLyrics':
+            data['hasWordSync'] == true ||
             clean(data['plainLyrics'], 200000) != null ||
             clean(data['syncedLyrics'], 200000) != null,
       },
@@ -336,26 +337,45 @@ class LrclibProvider implements LyricsProvider {
             sourceDocumentId: song.identity,
             recordingId: song.identity,
           );
+    final lyricsfile = data['lyricsfile'];
+    final wordTiming = data['hasWordSync'] == true && lyricsfile is String
+        ? await parseOffMain(_parseLrclibLyricsfile, (
+            lyricsfile,
+            song.identity,
+          ))
+        : null;
+    cancel?.throwIfCancelled();
     final plain = clean(data['plainLyrics'], 200000) ?? '';
-    final choices = <String>[
-      if (timing != null && _canSupplyLyrics(timing)) timing.sourceLyrics,
-    ];
-    final selectedLyrics = preferCompatibleLyrics(plain, choices);
+    final choices = <String, String>{
+      if (timing != null && _canSupplyLyrics(timing))
+        'synced': timing.sourceLyrics,
+      if (wordTiming != null) 'lyricsfile': wordTiming.sourceLyrics,
+    };
+    final selectedLyrics = preferCompatibleLyrics(plain, choices.values);
+    final selectedVariant = selectedLyrics == plain
+        ? 'plain'
+        : choices.entries
+              .firstWhere((entry) => entry.value == selectedLyrics)
+              .key;
     final result = lyricsResult(
       song,
       selectedLyrics,
-      timing: timing == null ? [] : [timing],
+      timing: [?wordTiming, ?timing],
       attribution: 'LRCLIB',
     );
     return _withLyricsVariants(
       result,
       rawVariants: rawVariants,
-      selected: choices.isNotEmpty && (plain.isEmpty || selectedLyrics != plain)
-          ? 'synced'
-          : 'plain',
+      selected: selectedVariant,
     );
   }
 }
+
+TimingTrack? _parseLrclibLyricsfile((String, String) input) => parseLyricsfile(
+  input.$1,
+  sourceDocumentId: input.$2,
+  recordingId: input.$2,
+);
 
 class LyricsOvhProvider implements LyricsProvider {
   LyricsOvhProvider(this.http);
