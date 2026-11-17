@@ -762,6 +762,18 @@
       ],
       "endpoint": "https://guitarfretwork.com/data/",
       "reason": "Publisher describes a CC BY 4.0 open guitar dataset with chord shapes, scales and 87 traditional song records with title, key, time signature, difficulty and chords used. It explicitly excludes lyrics, melodies and notation, and cautions some works have differing copyright status by jurisdiction. Documentation-only discovery on 2026-11-16; no dataset or extraction canaries were requested. Defer due to small size, absence of song text and arrangement data, unverified identity, attribution and runtime compatibility. Reassess only if enrichment value is established and two independent extraction canaries pass."
+    },
+    {
+      "id": "global_folk_songbook",
+      "name": "Global Folk Songbook",
+      "firstSeen": "2026-11-17",
+      "lastChecked": "2026-11-17",
+      "status": "deferred",
+      "documentation": [
+        "https://globalfolksongbook.com/"
+      ],
+      "endpoint": "https://globalfolksongbook.com/",
+      "reason": "Publisher page indexes international traditional songs by region and language and links external score sources. Documentation-only discovery on 2026-11-17; no song documents, API requests or extraction canaries were retrieved. Catalog size, structured data access, stable arrangement identity, lyrics and chord availability, provenance, jurisdiction-specific rights and attribution remain unverified. Defer pending documented application use, compatible adapter and two independent end-to-end extraction canaries; no provider activation."
     }
   ]
 }
