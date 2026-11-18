@@ -1,15 +1,15 @@
 {
   "schemaVersion": 1,
   "catalogRevision": 23,
-  "measuredAt": "2026-11-17T07:05:01.594630Z",
+  "measuredAt": "2026-11-18T06:59:41.532814Z",
   "offline": false,
   "summary": {
-    "healthy": 24,
+    "healthy": 23,
     "coverage_gap": 1,
     "import_only": 1,
     "partial_coverage": 2,
+    "transient_error": 2,
     "retired": 1,
-    "transient_error": 1,
     "disabled": 2
   },
   "sources": [
@@ -234,7 +234,7 @@
         {
           "id": "wonderwall-oasis-studio",
           "status": "healthy",
-          "candidateId": "sha256:9dcd72e7489dfd0a",
+          "candidateId": "sha256:f1e2dec7092ad422",
           "providerId": "lyricsovh",
           "bodyCharacters": 1307,
           "metadataFields": [
@@ -569,39 +569,22 @@
     {
       "id": "openfilksongbook",
       "name": "Open Filk Songbook",
-      "status": "healthy",
+      "status": "transient_error",
       "coverage": {
-        "status": "complete",
-        "verifiedCapabilities": [
+        "status": "partial",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
           "catalog",
           "chords",
           "lyrics",
           "metadata"
-        ],
-        "unverifiedCapabilities": []
+        ]
       },
       "probes": [
         {
           "id": "everything-lastalda",
-          "status": "healthy",
-          "candidateId": "sha256:c35679db6e5fa143",
-          "providerId": "openfilksongbook",
-          "bodyCharacters": 3302,
-          "metadataFields": [
-            "identityScope",
-            "sourcePageUrl",
-            "timeSignature"
-          ],
-          "verifiedCapabilities": [
-            "catalog",
-            "chords",
-            "lyrics",
-            "metadata"
-          ],
-          "timingTrackCount": 0,
-          "timingGranularities": [],
-          "timingRawRetained": false,
-          "hasChords": true
+          "status": "transient_error",
+          "reason": "timeout"
         }
       ]
     },
@@ -1890,7 +1873,7 @@
     }
   ],
   "httpDiagnostics": {
-    "networkFailures": 0,
+    "networkFailures": 1,
     "hosts": {
       "acousticbrainz.org": {
         "requests": 4,
@@ -1949,10 +1932,8 @@
         "databaseLag": {}
       },
       "filksongbook.com": {
-        "requests": 2,
-        "statuses": {
-          "200": 2
-        },
+        "requests": 1,
+        "statuses": {},
         "retryAfterSeconds": {},
         "databaseLag": {}
       },
@@ -2006,13 +1987,13 @@
         "databaseLag": {}
       },
       "musicbrainz.org": {
-        "requests": 8,
+        "requests": 7,
         "statuses": {
           "200": 6,
-          "503": 2
+          "503": 1
         },
         "retryAfterSeconds": {
-          "0": 2
+          "1": 1
         },
         "databaseLag": {}
       },
@@ -2130,7 +2111,7 @@
       }
     }
   },
-  "sourceCommit": "f763d2e8ef25265a58de547993e74b958b311917",
+  "sourceCommit": "5bb490af258e5459a5dbdf360aa548d6d57a63d7",
   "catalogPath": "config/source-catalog-v10.json",
   "catalogChannel": 10,
   "catalogSha256": "a61377c845601888f22a8abf0f43a66ace1a61a85b6f627cd709e9f376b28dce",
@@ -2145,18 +2126,18 @@
     "dedicatedGeniusMaintenanceCredential": true,
     "userLibraryAccessed": false,
     "offlineStructuralCheck": "passed",
-    "separateFileImportPhase": "passed; see separate import report"
+    "separateFileImportPhase": "passed; see separate import report",
+    "separateLrclibWordQualification": "Passed: four LRCLIB editions, two searched and four resolved; six HTTP calls, no retries, on current public-main code; timing remains unverified"
   },
   "comparisonEvidence": {
-    "previousLocalMeasuredAt": "2026-11-16T07:03:28.374039Z",
+    "previousLocalMeasuredAt": "2026-11-17T07:05:01.594630Z",
     "previousLocalSummary": {
-      "healthy": 23,
+      "healthy": 24,
       "coverage_gap": 1,
       "import_only": 1,
       "partial_coverage": 2,
       "retired": 1,
-      "identity_mismatch": 1,
-      "unavailable": 1,
+      "transient_error": 1,
       "disabled": 2
     },
     "latestCloudMeasuredAt": "2026-11-17T07:02:44.675236Z",
@@ -2172,6 +2153,13 @@
   },
   "roadblocks": [
     {
+      "affected": "Open Filk Songbook",
+      "reason": "Canary timed out",
+      "tried": "Scheduled bounded live probe",
+      "resolved": false,
+      "action": "Observe next run; no source retirement"
+    },
+    {
       "affected": "Better Lyrics",
       "reason": "Search results ambiguous",
       "tried": "Scheduled search without selecting uncertain match",
@@ -2181,7 +2169,7 @@
     {
       "affected": "LyricsPlus",
       "reason": "Both canaries failed network checks; responses included HTTP 502",
-      "tried": "Scheduled probes; previous run returned HTTP 200 with one unavailable song",
+      "tried": "Scheduled probes; prior failures also recorded",
       "resolved": false,
       "action": "Observe upstream recovery and preserve identity"
     },
@@ -2208,10 +2196,17 @@
     },
     {
       "affected": "MusicBrainz",
-      "reason": "Two HTTP 503 responses occurred before successful bounded retries",
-      "tried": "Ordinary scheduled retries recovered all probes",
+      "reason": "One HTTP 503 occurred before successful bounded retry",
+      "tried": "Ordinary scheduled retry recovered all probes",
       "resolved": true,
       "action": "None; retain request counts"
+    },
+    {
+      "affected": "LRCLIB word timing release",
+      "reason": "Parser is on public main but availability in the installed app has not been verified",
+      "tried": "Opt-in current-main provider test passed four source editions with retained word cues; no recording-identity or timing-accuracy claim",
+      "resolved": false,
+      "action": "Normal compatible app release and device verification remain"
     }
   ]
 }
