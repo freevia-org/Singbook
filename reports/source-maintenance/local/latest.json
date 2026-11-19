@@ -1,15 +1,16 @@
 {
   "schemaVersion": 1,
   "catalogRevision": 23,
-  "measuredAt": "2026-11-18T06:59:41.532814Z",
+  "measuredAt": "2026-11-19T07:00:18.412962Z",
   "offline": false,
   "summary": {
     "healthy": 23,
+    "identity_mismatch": 1,
     "coverage_gap": 1,
     "import_only": 1,
     "partial_coverage": 2,
-    "transient_error": 2,
     "retired": 1,
+    "unavailable": 1,
     "disabled": 2
   },
   "sources": [
@@ -220,38 +221,21 @@
     {
       "id": "lyricsovh",
       "name": "Lyrics.ovh",
-      "status": "healthy",
+      "status": "identity_mismatch",
       "coverage": {
-        "status": "complete",
-        "verifiedCapabilities": [
+        "status": "partial",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
           "catalog",
           "lyrics",
           "metadata"
-        ],
-        "unverifiedCapabilities": []
+        ]
       },
       "probes": [
         {
           "id": "wonderwall-oasis-studio",
-          "status": "healthy",
-          "candidateId": "sha256:f1e2dec7092ad422",
-          "providerId": "lyricsovh",
-          "bodyCharacters": 1307,
-          "metadataFields": [
-            "album",
-            "artworkUrl",
-            "duration",
-            "mediaLinks"
-          ],
-          "verifiedCapabilities": [
-            "catalog",
-            "lyrics",
-            "metadata"
-          ],
-          "timingTrackCount": 0,
-          "timingGranularities": [],
-          "timingRawRetained": false,
-          "hasChords": false
+          "status": "identity_mismatch",
+          "reason": "expected_candidate_not_found"
         }
       ]
     },
@@ -569,22 +553,39 @@
     {
       "id": "openfilksongbook",
       "name": "Open Filk Songbook",
-      "status": "transient_error",
+      "status": "healthy",
       "coverage": {
-        "status": "partial",
-        "verifiedCapabilities": [],
-        "unverifiedCapabilities": [
+        "status": "complete",
+        "verifiedCapabilities": [
           "catalog",
           "chords",
           "lyrics",
           "metadata"
-        ]
+        ],
+        "unverifiedCapabilities": []
       },
       "probes": [
         {
           "id": "everything-lastalda",
-          "status": "transient_error",
-          "reason": "timeout"
+          "status": "healthy",
+          "candidateId": "sha256:c35679db6e5fa143",
+          "providerId": "openfilksongbook",
+          "bodyCharacters": 3302,
+          "metadataFields": [
+            "identityScope",
+            "sourcePageUrl",
+            "timeSignature"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "chords",
+            "lyrics",
+            "metadata"
+          ],
+          "timingTrackCount": 0,
+          "timingGranularities": [],
+          "timingRawRetained": false,
+          "hasChords": true
         }
       ]
     },
@@ -1689,28 +1690,65 @@
     {
       "id": "lyricsplus",
       "name": "LyricsPlus",
-      "status": "transient_error",
+      "status": "unavailable",
       "coverage": {
-        "status": "partial",
-        "verifiedCapabilities": [],
-        "unverifiedCapabilities": [
+        "status": "complete",
+        "verifiedCapabilities": [
           "catalog",
           "lineTiming",
           "lyrics",
           "metadata",
           "wordTiming"
-        ]
+        ],
+        "unverifiedCapabilities": []
       },
       "probes": [
         {
           "id": "billie-jean-michael-jackson",
-          "status": "transient_error",
-          "reason": "network"
+          "status": "unavailable",
+          "reason": "unavailable"
         },
         {
           "id": "creep-radiohead",
-          "status": "transient_error",
-          "reason": "network"
+          "status": "healthy",
+          "candidateId": "sha256:7b9ed8028dcc7382",
+          "providerId": "lyricsplus",
+          "bodyCharacters": 803,
+          "metadataFields": [
+            "agents",
+            "album",
+            "appleMusicIds",
+            "artworkUrl",
+            "country",
+            "discCount",
+            "discNumber",
+            "documentKind",
+            "durationSeconds",
+            "genre",
+            "identityScope",
+            "language",
+            "mediaLinks",
+            "primaryGenreName",
+            "releaseDate",
+            "songParts",
+            "songWriters",
+            "trackCount",
+            "trackNumber",
+            "writers"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "lineTiming",
+            "lyrics",
+            "metadata",
+            "wordTiming"
+          ],
+          "timingTrackCount": 1,
+          "timingGranularities": [
+            "word"
+          ],
+          "timingRawRetained": true,
+          "hasChords": false
         }
       ]
     },
@@ -1873,7 +1911,7 @@
     }
   ],
   "httpDiagnostics": {
-    "networkFailures": 1,
+    "networkFailures": 0,
     "hosts": {
       "acousticbrainz.org": {
         "requests": 4,
@@ -1900,9 +1938,9 @@
         "databaseLag": {}
       },
       "api.lyrics.ovh": {
-        "requests": 2,
+        "requests": 1,
         "statuses": {
-          "200": 2
+          "200": 1
         },
         "retryAfterSeconds": {},
         "databaseLag": {}
@@ -1932,12 +1970,22 @@
         "databaseLag": {}
       },
       "filksongbook.com": {
-        "requests": 1,
-        "statuses": {},
+        "requests": 2,
+        "statuses": {
+          "200": 2
+        },
         "retryAfterSeconds": {},
         "databaseLag": {}
       },
       "genius.com": {
+        "requests": 1,
+        "statuses": {
+          "200": 1
+        },
+        "retryAfterSeconds": {},
+        "databaseLag": {}
+      },
+      "itunes.apple.com": {
         "requests": 1,
         "statuses": {
           "200": 1
@@ -1972,8 +2020,7 @@
       "lyricsplus.prjktla.my.id": {
         "requests": 4,
         "statuses": {
-          "200": 2,
-          "502": 2
+          "200": 4
         },
         "retryAfterSeconds": {},
         "databaseLag": {}
@@ -2126,24 +2173,23 @@
     "dedicatedGeniusMaintenanceCredential": true,
     "userLibraryAccessed": false,
     "offlineStructuralCheck": "passed",
-    "separateFileImportPhase": "passed; see separate import report",
-    "separateLrclibWordQualification": "Passed: four LRCLIB editions, two searched and four resolved; six HTTP calls, no retries, on current public-main code; timing remains unverified"
+    "separateFileImportPhase": "passed; see separate import report"
   },
   "comparisonEvidence": {
-    "previousLocalMeasuredAt": "2026-11-17T07:05:01.594630Z",
+    "previousLocalMeasuredAt": "2026-11-18T06:59:41.532814Z",
     "previousLocalSummary": {
-      "healthy": 24,
+      "healthy": 23,
       "coverage_gap": 1,
       "import_only": 1,
       "partial_coverage": 2,
+      "transient_error": 2,
       "retired": 1,
-      "transient_error": 1,
       "disabled": 2
     },
-    "latestCloudMeasuredAt": "2026-11-17T07:02:44.675236Z",
+    "latestCloudMeasuredAt": "2026-11-18T07:09:27.798014Z",
     "latestCloudSummary": {
-      "transient_error": 6,
-      "healthy": 20,
+      "transient_error": 8,
+      "healthy": 18,
       "coverage_gap": 1,
       "import_only": 1,
       "retired": 1,
@@ -2153,11 +2199,11 @@
   },
   "roadblocks": [
     {
-      "affected": "Open Filk Songbook",
-      "reason": "Canary timed out",
-      "tried": "Scheduled bounded live probe",
+      "affected": "Lyrics.ovh",
+      "reason": "Expected original-album candidate absent",
+      "tried": "Scheduled search and previous identity diagnostic",
       "resolved": false,
-      "action": "Observe next run; no source retirement"
+      "action": "Investigate publisher search without substituting another edition"
     },
     {
       "affected": "Better Lyrics",
@@ -2168,10 +2214,10 @@
     },
     {
       "affected": "LyricsPlus",
-      "reason": "Both canaries failed network checks; responses included HTTP 502",
-      "tried": "Scheduled probes; prior failures also recorded",
+      "reason": "Billie Jean unavailable while Creep passed; HTTP 200 responses",
+      "tried": "Scheduled probes; prior run returned 502",
       "resolved": false,
-      "action": "Observe upstream recovery and preserve identity"
+      "action": "Observe upstream availability and preserve identity"
     },
     {
       "affected": "Chordie and Wikisource",
@@ -2196,15 +2242,15 @@
     },
     {
       "affected": "MusicBrainz",
-      "reason": "One HTTP 503 occurred before successful bounded retry",
+      "reason": "HTTP 503 occurred before successful bounded retry",
       "tried": "Ordinary scheduled retry recovered all probes",
       "resolved": true,
       "action": "None; retain request counts"
     },
     {
       "affected": "LRCLIB word timing release",
-      "reason": "Parser is on public main but availability in the installed app has not been verified",
-      "tried": "Opt-in current-main provider test passed four source editions with retained word cues; no recording-identity or timing-accuracy claim",
+      "reason": "Parser on public main but availability in installed app not verified",
+      "tried": "Previous day four live word-timing provider canaries passed; current line probe passed",
       "resolved": false,
       "action": "Normal compatible app release and device verification remain"
     }
