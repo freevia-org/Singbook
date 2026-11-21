@@ -38,6 +38,10 @@ jobs:
       - name: Report public Apple signing metadata
         run: |
           set +x
+          echo 'codesign_default_keychain:'
+          security default-keychain -d user 2>/dev/null || true
+          echo 'codesign_user_keychain_search_list:'
+          security list-keychains -d user 2>/dev/null | sed 's/^/  /' || true
           identity_list="$(mktemp)"
           trap 'rm -f "$identity_list"' EXIT
           security find-identity -v -p codesigning > "$identity_list" 2>/dev/null || true
@@ -58,10 +62,12 @@ jobs:
             rm -f "$cert_pem"
           done < <(sed -nE 's/^[[:space:]]*[0-9]+\) ([[:xdigit:]]+) "([^"]+)".*/\1|\2/p' "$identity_list")
 
-          profile_dir="$HOME/Library/MobileDevice/Provisioning Profiles"
           matching_profiles=0
-          if [[ -d "$profile_dir" ]]; then
-            for profile in "$profile_dir"/*.provisionprofile; do
+          for profile_dir in \
+            "$HOME/Library/Developer/Xcode/UserData/Provisioning Profiles" \
+            "$HOME/Library/MobileDevice/Provisioning Profiles"; do
+            [[ -d "$profile_dir" ]] || continue
+            for profile in "$profile_dir"/*.provisionprofile "$profile_dir"/*.mobileprovision; do
               [[ -f "$profile" ]] || continue
               profile_plist="$(mktemp)"
               if security cms -D -i "$profile" -o "$profile_plist" >/dev/null 2>&1; then
@@ -79,10 +85,29 @@ jobs:
               fi
               rm -f "$profile_plist"
             done
-          fi
+          done
           echo "matching_macos_app_store_profile_count=$matching_profiles"
           echo 'required_bundle_id=org.freevia.singbook'
           echo 'required_icloud_container=iCloud.org.freevia.singbook'
+
+          # Check whether the existing distribution identity can be used without
+          # modifying a keychain or writing a signature. `find-identity` above
+          # confirms the certificate/private-key pairing; this dry run probes
+          # codesign's current keychain access path.
+          distribution_identity='998C747E3000DF4C9879EDCE73F1366AAA5D74E8'
+          if grep -Fq "$distribution_identity" "$identity_list"; then
+            probe="$(mktemp -d "$RUNNER_TEMP/singbook-codesign-probe.XXXXXX")"
+            cp /usr/bin/true "$probe/probe"
+            set +e
+            codesign --force --dryrun --verbose=2 --sign "$distribution_identity" "$probe/probe" > "$probe/result.log" 2>&1
+            probe_status=$?
+            set -e
+            sed -n '1,12p' "$probe/result.log"
+            echo "existing_distribution_identity_codesign_dryrun_exit=$probe_status"
+            rm -rf "$probe"
+          else
+            echo 'existing_distribution_identity_codesign_dryrun=skipped_identity_not_found'
+          fi
       - name: Install pinned Flutter with the upstream setup script
         run: |
           set +x
