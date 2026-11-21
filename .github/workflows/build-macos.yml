@@ -3,6 +3,12 @@ name: macOS compilation
 # On-demand compile-only lane: macOS regression tests plus an unsigned universal build.
 on:
   workflow_dispatch:
+    inputs:
+      app_store_archive:
+        description: Download the existing Mac App Store profile and build a private signed archive
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -18,16 +24,77 @@ env:
 jobs:
   compile:
     runs-on: singbook-macmini
-    timeout-minutes: 25
+    timeout-minutes: 60
+    defaults:
+      run:
+        # Quote the runner-generated script path; this host's _work directory
+        # contains spaces ("/Volumes/MacMini Work/...").
+        shell: bash --noprofile --norc -e -o pipefail "{0}"
     steps:
       - uses: actions/checkout@v7
         with:
+          ref: 84969fb10d4449ef5d0a33ccefbea7e1b7a6512f
           persist-credentials: false
-      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
-        with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
-          channel: stable
-          cache: true
+      - name: Report public Apple signing metadata
+        run: |
+          set +x
+          identity_list="$(mktemp)"
+          trap 'rm -f "$identity_list"' EXIT
+          security find-identity -v -p codesigning > "$identity_list" 2>/dev/null || true
+          while IFS='|' read -r fingerprint common_name; do
+            [[ -n "$fingerprint" && -n "$common_name" ]] || continue
+            cert_pem="$(mktemp)"
+            trap 'rm -f "$identity_list" "$cert_pem"' EXIT
+            if security find-certificate -c "$common_name" -p > "$cert_pem" 2>/dev/null; then
+              subject="$(openssl x509 -in "$cert_pem" -noout -subject -nameopt RFC2253 2>/dev/null | sed 's/^subject=//')"
+              sha256="$(openssl x509 -in "$cert_pem" -noout -fingerprint -sha256 2>/dev/null | sed 's/^[^=]*=//')"
+              team_id="$(printf '%s\n' "$subject" | sed -nE 's/.*(^|,)OU=([^,\/]+).*/\2/p')"
+              echo "codesign_identity_name=$common_name"
+              echo "codesign_certificate_fingerprint_sha1=$fingerprint"
+              echo "codesign_certificate_fingerprint_sha256=$sha256"
+              echo "codesign_certificate_subject=$subject"
+              echo "codesign_certificate_team_id=${team_id:-unavailable}"
+            fi
+            rm -f "$cert_pem"
+          done < <(sed -nE 's/^[[:space:]]*[0-9]+\) ([[:xdigit:]]+) "([^"]+)".*/\1|\2/p' "$identity_list")
+
+          profile_dir="$HOME/Library/MobileDevice/Provisioning Profiles"
+          matching_profiles=0
+          if [[ -d "$profile_dir" ]]; then
+            for profile in "$profile_dir"/*.provisionprofile; do
+              [[ -f "$profile" ]] || continue
+              profile_plist="$(mktemp)"
+              if security cms -D -i "$profile" -o "$profile_plist" >/dev/null 2>&1; then
+                app_id="$(/usr/libexec/PlistBuddy -c 'Print :Entitlements:application-identifier' "$profile_plist" 2>/dev/null || true)"
+                if [[ "$app_id" == *.org.freevia.singbook ]]; then
+                  matching_profiles=$((matching_profiles + 1))
+                  profile_name="$(/usr/libexec/PlistBuddy -c 'Print :Name' "$profile_plist" 2>/dev/null || true)"
+                  profile_team="$(/usr/libexec/PlistBuddy -c 'Print :TeamIdentifier:0' "$profile_plist" 2>/dev/null || true)"
+                  profile_expiry="$(/usr/libexec/PlistBuddy -c 'Print :ExpirationDate' "$profile_plist" 2>/dev/null || true)"
+                  echo "macos_app_store_profile_name=$profile_name"
+                  echo "macos_app_store_profile_app_id=$app_id"
+                  echo "macos_app_store_profile_team_id=$profile_team"
+                  echo "macos_app_store_profile_expiry=$profile_expiry"
+                fi
+              fi
+              rm -f "$profile_plist"
+            done
+          fi
+          echo "matching_macos_app_store_profile_count=$matching_profiles"
+          echo 'required_bundle_id=org.freevia.singbook'
+          echo 'required_icloud_container=iCloud.org.freevia.singbook'
+      - name: Install pinned Flutter with the upstream setup script
+        run: |
+          set +x
+          setup_script="$RUNNER_TEMP/subosito-flutter-setup.sh"
+          curl --fail --silent --show-error --location \
+            'https://raw.githubusercontent.com/subosito/flutter-action/1a449444c387b1966244ae4d4f8c696479add0b2/setup.sh' \
+            --output "$setup_script"
+          echo '35f0cd9e9c1d7a643448223573b4a03879e63676fdc27872de3d0104d5bf89f9  '"$setup_script" | shasum --check --status
+          bash "$setup_script" -n "$FLUTTER_VERSION" -a "$RUNNER_ARCH" stable
+          rm -f "$setup_script"
+      - name: Verify Flutter installation
+        run: flutter --version
       - run: flutter pub get --enforce-lockfile
       - run: flutter gen-l10n
       - name: macOS regression checks
@@ -55,6 +122,124 @@ jobs:
                 ;;
             esac
           done
+      - name: Download existing profile and archive with manual signing
+        if: ${{ inputs.app_store_archive == true }}
+        run: |
+          set +x
+          profile_name='Singbook macOS App Store iCloud 2026-10-24'
+          team_id='8C782Q826S'
+          bundle_id='org.freevia.singbook'
+          archive_root="$HOME/Singbook-private-candidates/macos-1.0.55-build55-${GITHUB_RUN_ID}"
+          archive_path="$archive_root/Singbook.xcarchive"
+          derived_data_path="$archive_root/derived-data"
+          mkdir -p "$archive_root"
+          test ! -e "$archive_path"
+
+          # Apply manual profile settings only to the Runner app target. Global
+          # xcodebuild settings also hit Swift package targets, which do not use
+          # provisioning profiles.
+          python3 - "$profile_name" <<'PY'
+          from pathlib import Path
+          import sys
+
+          path = Path('macos/Runner.xcodeproj/project.pbxproj')
+          text = path.read_text()
+          marker = '33CC10FD2044A3C60003C045 /* Release */ = {'
+          start = text.index(marker)
+          end = text.index('name = Release;', start)
+          block = text[start:end]
+          assert block.count('CODE_SIGN_STYLE = Automatic;') == 1
+          assert block.count('PROVISIONING_PROFILE_SPECIFIER = "";') == 1
+          profile = sys.argv[1].replace('\\', '\\\\').replace('"', '\\"')
+          block = block.replace('CODE_SIGN_STYLE = Automatic;', 'CODE_SIGN_STYLE = Manual;', 1)
+          block = block.replace('PROVISIONING_PROFILE_SPECIFIER = "";',
+                                f'PROVISIONING_PROFILE_SPECIFIER = "{profile}";', 1)
+          path.write_text(text[:start] + block + text[end:])
+          PY
+          cat > macos/Runner/Configs/Signing.xcconfig <<EOF
+          DEVELOPMENT_TEAM = $team_id
+          CODE_SIGN_STYLE = Manual
+          CODE_SIGN_IDENTITY = Apple Distribution
+          PROVISIONING_PROFILE_SPECIFIER = $profile_name
+          EOF
+          git diff -- macos/Runner.xcodeproj/project.pbxproj > "$archive_root/signing-project.patch"
+          cp macos/Runner/Configs/Signing.xcconfig "$archive_root/Signing.xcconfig"
+
+          # Manual signing pins the existing profile; -allowProvisioningUpdates
+          # lets Xcode download a missing manual profile, without creating an
+          # automatic-signing profile or registering devices.
+          xcodebuild -workspace macos/Runner.xcworkspace -scheme Runner \
+            -configuration Release -destination 'generic/platform=macOS' \
+            -derivedDataPath "$derived_data_path" \
+            -allowProvisioningUpdates \
+            build 2>&1 | tee "$archive_root/signing-preflight.log"
+
+          app="$derived_data_path/Build/Products/Release/Singbook.app"
+          embedded_profile="$app/Contents/embedded.provisionprofile"
+          test -f "$embedded_profile"
+          profile_plist="$RUNNER_TEMP/singbook-macos-profile-${GITHUB_RUN_ID}.plist"
+          security cms -D -i "$embedded_profile" -o "$profile_plist"
+          installed_profile_count=0
+          for profile_dir in \
+            "$HOME/Library/Developer/Xcode/UserData/Provisioning Profiles" \
+            "$HOME/Library/MobileDevice/Provisioning Profiles"; do
+            [[ -d "$profile_dir" ]] || continue
+            for installed_profile in "$profile_dir"/*.provisionprofile "$profile_dir"/*.mobileprovision; do
+              [[ -f "$installed_profile" ]] || continue
+              installed_plist="$RUNNER_TEMP/singbook-installed-profile-${GITHUB_RUN_ID}.plist"
+              if security cms -D -i "$installed_profile" -o "$installed_plist" >/dev/null 2>&1; then
+                installed_name="$(/usr/libexec/PlistBuddy -c 'Print :Name' "$installed_plist" 2>/dev/null || true)"
+                installed_uuid="$(/usr/libexec/PlistBuddy -c 'Print :UUID' "$installed_plist" 2>/dev/null || true)"
+                archive_uuid="$(/usr/libexec/PlistBuddy -c 'Print :UUID' "$profile_plist")"
+                if [[ "$installed_name" == "$profile_name" && "$installed_uuid" == "$archive_uuid" ]]; then
+                  installed_profile_count=$((installed_profile_count + 1))
+                fi
+              fi
+              rm -f "$installed_plist"
+            done
+          done
+
+          actual_profile_name="$(/usr/libexec/PlistBuddy -c 'Print :Name' "$profile_plist")"
+          actual_profile_team="$(/usr/libexec/PlistBuddy -c 'Print :TeamIdentifier:0' "$profile_plist")"
+          actual_profile_uuid="$(/usr/libexec/PlistBuddy -c 'Print :UUID' "$profile_plist")"
+          actual_profile_expiry="$(/usr/libexec/PlistBuddy -c 'Print :ExpirationDate' "$profile_plist")"
+          app_identifier="$(/usr/libexec/PlistBuddy -c 'Print :Entitlements:application-identifier' "$profile_plist")"
+          profile_entitlements="$(/usr/libexec/PlistBuddy -c 'Print :Entitlements' "$profile_plist")"
+          [[ "$actual_profile_name" == "$profile_name" ]]
+          [[ "$actual_profile_team" == "$team_id" ]]
+          [[ "$app_identifier" == "$team_id.$bundle_id" ]]
+          grep -Fq 'iCloud.org.freevia.singbook' <<<"$profile_entitlements"
+          grep -Fq 'CloudKit' <<<"$profile_entitlements"
+          grep -Fq "$team_id.$bundle_id" <<<"$profile_entitlements"
+          grep -Fq "$team_id.com.google.GIDSignIn" <<<"$profile_entitlements"
+          [[ "$installed_profile_count" -gt 0 ]]
+
+          xcodebuild -workspace macos/Runner.xcworkspace -scheme Runner \
+            -configuration Release -destination 'generic/platform=macOS' \
+            -derivedDataPath "$derived_data_path" -archivePath "$archive_path" \
+            -allowProvisioningUpdates \
+            archive 2>&1 | tee "$archive_root/archive.log"
+          app="$archive_path/Products/Applications/Singbook.app"
+          archive_profile_plist="$RUNNER_TEMP/singbook-archive-profile-${GITHUB_RUN_ID}.plist"
+          security cms -D -i "$app/Contents/embedded.provisionprofile" -o "$archive_profile_plist"
+          archive_profile_uuid="$(/usr/libexec/PlistBuddy -c 'Print :UUID' "$archive_profile_plist")"
+          [[ "$archive_profile_uuid" == "$actual_profile_uuid" ]]
+          codesign --verify --deep --strict --verbose=2 "$app"
+          echo "profile_name=$actual_profile_name"
+          echo "profile_team_id=$actual_profile_team"
+          echo "profile_uuid=$actual_profile_uuid"
+          echo "profile_expiration=$actual_profile_expiry"
+          echo "profile_application_identifier=$app_identifier"
+          echo 'profile_icloud_container=iCloud.org.freevia.singbook (present)'
+          echo 'profile_keychain_group_app (present)'
+          echo 'profile_keychain_group_google_signin (present)'
+          echo "profile_install_verified_count=$installed_profile_count"
+          echo "archive_path=$archive_path"
+          artifact_zip="$archive_root/Singbook-macOS-1.0.55-build55.xcarchive.zip"
+          ditto -c -k --sequesterRsrc --keepParent "$archive_path" "$artifact_zip"
+          shasum -a 256 "$artifact_zip"
+          rm -f "$profile_plist"
+          rm -f "$archive_profile_plist"
       - name: Preserve compile output
         uses: actions/upload-artifact@v7
         with:
