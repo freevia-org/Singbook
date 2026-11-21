@@ -1123,21 +1123,24 @@ void main() {
 
       // Exercise the public import/export paths that normally hand off to an
       // operating-system picker or share sheet.
-      final chordPro = restored.exportSong(restored.songs.single);
+      final originalSong = restored.songs.single;
+      final chordPro = restored.exportSong(originalSong);
       final reimported = await restored.importDocument(
         PickedDocument(
           'roundtrip.cho',
           Uint8List.fromList(utf8.encode(chordPro)),
         ),
       );
-      expect(reimported.songs.single.id, restored.songs.single.id);
-      expect(restored.songs, hasLength(1));
-      final backupBytes = encodeLibraryPackage(
-        restored.songs,
-        restored.setlists,
-      );
+      expect(reimported.songs, hasLength(1));
+      expect(reimported.songs.single.id, isNot(originalSong.id));
+      expect(reimported.songs.single.body, originalSong.body);
+      expect(restored.songs, hasLength(2));
+      final backupBytes = encodeLibraryPackage([
+        originalSong,
+      ], restored.setlists);
       final backup = decodeLibraryPackage(backupBytes);
-      expect(backup.songs.single.body, restored.songs.single.body);
+      expect(backup.songs.single.id, originalSong.id);
+      expect(backup.songs.single.body, originalSong.body);
       expect(backup.setlists.single.entries, hasLength(2));
       final importedBackup = await restored.importDocument(
         PickedDocument('journey.lyrics-setlist', backupBytes),
@@ -1145,7 +1148,7 @@ void main() {
       expect(importedBackup.setlists.single.entries, hasLength(2));
       expect(restored.setlists, hasLength(2));
       final pdf = await createSongPdf(
-        restored.songs,
+        [originalSong],
         format: PdfPageFormat.a4,
         setlist: importedBackup.setlists.single,
       );
