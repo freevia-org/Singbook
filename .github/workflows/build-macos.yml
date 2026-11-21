@@ -19,10 +19,63 @@ jobs:
   compile:
     runs-on: singbook-macmini
     timeout-minutes: 25
+    defaults:
+      run:
+        # Quote the runner-generated script path; this host's _work directory
+        # contains spaces ("/Volumes/MacMini Work/...").
+        shell: bash --noprofile --norc -e -o pipefail "{0}"
     steps:
       - uses: actions/checkout@v7
         with:
           persist-credentials: false
+      - name: Report public Apple signing metadata
+        run: |
+          set +x
+          identity_list="$(mktemp)"
+          trap 'rm -f "$identity_list"' EXIT
+          security find-identity -v -p codesigning > "$identity_list" 2>/dev/null || true
+          while IFS='|' read -r fingerprint common_name; do
+            [[ -n "$fingerprint" && -n "$common_name" ]] || continue
+            cert_pem="$(mktemp)"
+            trap 'rm -f "$identity_list" "$cert_pem"' EXIT
+            if security find-certificate -c "$common_name" -p > "$cert_pem" 2>/dev/null; then
+              subject="$(openssl x509 -in "$cert_pem" -noout -subject -nameopt RFC2253 2>/dev/null | sed 's/^subject=//')"
+              sha256="$(openssl x509 -in "$cert_pem" -noout -fingerprint -sha256 2>/dev/null | sed 's/^[^=]*=//')"
+              team_id="$(printf '%s\n' "$subject" | sed -nE 's/.*(^|,)OU=([^,\/]+).*/\2/p')"
+              echo "codesign_identity_name=$common_name"
+              echo "codesign_certificate_fingerprint_sha1=$fingerprint"
+              echo "codesign_certificate_fingerprint_sha256=$sha256"
+              echo "codesign_certificate_subject=$subject"
+              echo "codesign_certificate_team_id=${team_id:-unavailable}"
+            fi
+            rm -f "$cert_pem"
+          done < <(sed -nE 's/^[[:space:]]*[0-9]+\) ([[:xdigit:]]+) "([^"]+)".*/\1|\2/p' "$identity_list")
+
+          profile_dir="$HOME/Library/MobileDevice/Provisioning Profiles"
+          matching_profiles=0
+          if [[ -d "$profile_dir" ]]; then
+            for profile in "$profile_dir"/*.provisionprofile; do
+              [[ -f "$profile" ]] || continue
+              profile_plist="$(mktemp)"
+              if security cms -D -i "$profile" -o "$profile_plist" >/dev/null 2>&1; then
+                app_id="$(/usr/libexec/PlistBuddy -c 'Print :Entitlements:application-identifier' "$profile_plist" 2>/dev/null || true)"
+                if [[ "$app_id" == *.org.freevia.singbook ]]; then
+                  matching_profiles=$((matching_profiles + 1))
+                  profile_name="$(/usr/libexec/PlistBuddy -c 'Print :Name' "$profile_plist" 2>/dev/null || true)"
+                  profile_team="$(/usr/libexec/PlistBuddy -c 'Print :TeamIdentifier:0' "$profile_plist" 2>/dev/null || true)"
+                  profile_expiry="$(/usr/libexec/PlistBuddy -c 'Print :ExpirationDate' "$profile_plist" 2>/dev/null || true)"
+                  echo "macos_app_store_profile_name=$profile_name"
+                  echo "macos_app_store_profile_app_id=$app_id"
+                  echo "macos_app_store_profile_team_id=$profile_team"
+                  echo "macos_app_store_profile_expiry=$profile_expiry"
+                fi
+              fi
+              rm -f "$profile_plist"
+            done
+          fi
+          echo "matching_macos_app_store_profile_count=$matching_profiles"
+          echo 'required_bundle_id=org.freevia.singbook'
+          echo 'required_icloud_container=iCloud.org.freevia.singbook'
       - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
