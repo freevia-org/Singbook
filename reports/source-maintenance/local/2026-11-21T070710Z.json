@@ -2250,6 +2250,13 @@
       "tried": "Fetched new head and cherry-picked local-only report preserving cloud files; non-force push retried",
       "resolved": true,
       "action": "None"
+    },
+    {
+      "affected": "SB Integration handoff",
+      "reason": "Authorized MacMini environment offline",
+      "tried": "Two attempts to send exact base, head, files and check evidence",
+      "resolved": false,
+      "action": "Retry handoff when remote environment available"
     }
   ]
 }
