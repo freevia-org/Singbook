@@ -134,12 +134,36 @@ jobs:
           derived_data_path="$archive_root/derived-data"
           mkdir -p "$archive_root"
           test ! -e "$archive_path"
-          signing_settings=(
-            CODE_SIGN_STYLE=Manual
-            "DEVELOPMENT_TEAM=$team_id"
-            'CODE_SIGN_IDENTITY=Apple Distribution'
-            "PROVISIONING_PROFILE_SPECIFIER=$profile_name"
-          )
+
+          # Apply manual profile settings only to the Runner app target. Global
+          # xcodebuild settings also hit Swift package targets, which do not use
+          # provisioning profiles.
+          python3 - "$profile_name" <<'PY'
+          from pathlib import Path
+          import sys
+
+          path = Path('macos/Runner.xcodeproj/project.pbxproj')
+          text = path.read_text()
+          marker = '33CC10FD2044A3C60003C045 /* Release */ = {'
+          start = text.index(marker)
+          end = text.index('name = Release;', start)
+          block = text[start:end]
+          assert block.count('CODE_SIGN_STYLE = Automatic;') == 1
+          assert block.count('PROVISIONING_PROFILE_SPECIFIER = "";') == 1
+          profile = sys.argv[1].replace('\\', '\\\\').replace('"', '\\"')
+          block = block.replace('CODE_SIGN_STYLE = Automatic;', 'CODE_SIGN_STYLE = Manual;', 1)
+          block = block.replace('PROVISIONING_PROFILE_SPECIFIER = "";',
+                                f'PROVISIONING_PROFILE_SPECIFIER = "{profile}";', 1)
+          path.write_text(text[:start] + block + text[end:])
+          PY
+          cat > macos/Runner/Configs/Signing.xcconfig <<EOF
+          DEVELOPMENT_TEAM = $team_id
+          CODE_SIGN_STYLE = Manual
+          CODE_SIGN_IDENTITY = Apple Distribution
+          PROVISIONING_PROFILE_SPECIFIER = $profile_name
+          EOF
+          git diff -- macos/Runner.xcodeproj/project.pbxproj > "$archive_root/signing-project.patch"
+          cp macos/Runner/Configs/Signing.xcconfig "$archive_root/Signing.xcconfig"
 
           # Manual signing pins the existing profile; -allowProvisioningUpdates
           # lets Xcode download a missing manual profile, without creating an
@@ -147,7 +171,7 @@ jobs:
           xcodebuild -workspace macos/Runner.xcworkspace -scheme Runner \
             -configuration Release -destination 'generic/platform=macOS' \
             -derivedDataPath "$derived_data_path" \
-            -allowProvisioningUpdates "${signing_settings[@]}" \
+            -allowProvisioningUpdates \
             build 2>&1 | tee "$archive_root/signing-preflight.log"
 
           app="$derived_data_path/Build/Products/Release/Singbook.app"
@@ -193,7 +217,7 @@ jobs:
           xcodebuild -workspace macos/Runner.xcworkspace -scheme Runner \
             -configuration Release -destination 'generic/platform=macOS' \
             -derivedDataPath "$derived_data_path" -archivePath "$archive_path" \
-            -allowProvisioningUpdates "${signing_settings[@]}" \
+            -allowProvisioningUpdates \
             archive 2>&1 | tee "$archive_root/archive.log"
           app="$archive_path/Products/Applications/Singbook.app"
           archive_profile_plist="$RUNNER_TEMP/singbook-archive-profile-${GITHUB_RUN_ID}.plist"
