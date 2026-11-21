@@ -172,15 +172,23 @@ void main() {
         if (mobile) await orientation(landscape);
         expect(enter.hitTestable(), findsOneWidget);
         expect(cog.hitTestable(), findsOneWidget);
+        final logicalWindowHeight =
+            tester.view.physicalSize.height / tester.view.devicePixelRatio;
+        final compactMobileLandscape =
+            mobile && landscape && logicalWindowHeight < 480;
+        final settingsScope = compactMobileLandscape ? panel : lyrics;
         expect(
-          find.descendant(of: mobile ? panel : lyrics, matching: cog),
+          find.descendant(of: settingsScope, matching: cog),
           findsOneWidget,
         );
         final cogRect = tester.getRect(cog);
         expect(cogRect.width, greaterThanOrEqualTo(48));
         expect(cogRect.height, greaterThanOrEqualTo(48));
         if (mobile) {
-          expect(tester.getRect(panel).contains(cogRect.center), isTrue);
+          expect(
+            tester.getRect(settingsScope).contains(cogRect.center),
+            isTrue,
+          );
           expect(
             tester
                 .getSize(find.byKey(const ValueKey('player-seek-slider')))
