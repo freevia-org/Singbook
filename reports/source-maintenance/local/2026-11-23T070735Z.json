@@ -2167,11 +2167,11 @@
       "action": "Existing integration review remains"
     },
     {
-      "affected": "LRCLIB word timing release",
-      "reason": "Installed-app availability unverified",
-      "tried": "Current line probe passed; four word-timing canaries passed Nov 18",
+      "affected": "LRCLIB word timing device verification",
+      "reason": "Release 55 includes word-timing support, but installed-app behavior has not been verified on a device",
+      "tried": "Current line probe passed; four word-timing canaries passed Nov 18; integration review confirmed release 55 source and publication",
       "resolved": false,
-      "action": "Compatible app release and device verification remain"
+      "action": "Verify word timing in the installed app on a device"
     },
     {
       "affected": "MusicBrainz",
