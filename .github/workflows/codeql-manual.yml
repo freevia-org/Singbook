@@ -2,6 +2,15 @@ name: Manual CodeQL security scan
 
 on:
   workflow_dispatch:
+    inputs:
+      runner:
+        description: Runner pool (hosted must be selected explicitly)
+        type: choice
+        required: true
+        default: local
+        options:
+          - local
+          - hosted
 
 permissions:
   contents: read
@@ -12,10 +21,10 @@ permissions:
 jobs:
   analyze:
     name: Analyze (${{ matrix.language }})
-    # CodeQL executes checked-out source on persistent Linux and macOS runners.
+    # The default local pool executes source on persistent Linux and macOS runners.
     # Only analyze trusted default-branch code on those machines.
     if: github.ref == 'refs/heads/main'
-    runs-on: ${{ matrix.runner }}
+    runs-on: ${{ inputs.runner == 'hosted' && matrix.hosted-runner || matrix.runner }}
     timeout-minutes: ${{ matrix.runner == 'singbook-i5-linux' && 180 || 120 }}
     strategy:
       fail-fast: false
@@ -24,18 +33,23 @@ jobs:
         include:
           - language: actions
             runner: singbook-i5-linux
+            hosted-runner: ubuntu-24.04
             build-mode: none
           - language: c-cpp
             runner: singbook-i5-linux
+            hosted-runner: ubuntu-24.04
             build-mode: none
           - language: java-kotlin
             runner: singbook-i5-linux
+            hosted-runner: ubuntu-24.04
             build-mode: none
           - language: python
             runner: singbook-i5-linux
+            hosted-runner: ubuntu-24.04
             build-mode: none
           - language: swift
             runner: singbook-macmini
+            hosted-runner: macos-14
             build-mode: autobuild
     steps:
       - name: Checkout repository
