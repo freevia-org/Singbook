@@ -49,7 +49,7 @@ jobs:
             build-mode: none
           - language: swift
             runner: singbook-macmini
-            hosted-runner: macos-14
+            hosted-runner: macos-15
             build-mode: autobuild
     steps:
       - name: Checkout repository
