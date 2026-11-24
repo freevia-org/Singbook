@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "catalogRevision": 23,
+  "measuredAt": "2026-11-24T07:08:58.651285Z",
+  "offline": false,
+  "summary": {
+    "unavailable": 1
+  },
+  "sources": [
+    {
+      "id": "chordie",
+      "name": "Chordie",
+      "status": "unavailable",
+      "coverage": {
+        "status": "partial",
+        "verifiedCapabilities": [],
+        "unverifiedCapabilities": [
+          "catalog",
+          "chords",
+          "fileImport",
+          "lyrics",
+          "metadata"
+        ]
+      },
+      "probes": [
+        {
+          "id": "seventh-stranger-duran-duran",
+          "status": "unavailable",
+          "reason": "empty_search_results"
+        }
+      ]
+    }
+  ],
+  "httpDiagnostics": {
+    "networkFailures": 0,
+    "hosts": {
+      "www.chordie.com": {
+        "requests": 1,
+        "statuses": {
+          "200": 1
+        },
+        "retryAfterSeconds": {},
+        "databaseLag": {}
+      }
+    }
+  }
+}
