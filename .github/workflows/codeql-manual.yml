@@ -45,6 +45,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
         timeout-minutes: 10
+        with:
+          persist-credentials: false
       - name: Set up Java for Java/Kotlin extraction
         if: matrix.language == 'java-kotlin'
         uses: actions/setup-java@v4
@@ -57,6 +59,36 @@ jobs:
           set -euo pipefail
           test -n "${JAVA_HOME:-}"
           java -version
+      - name: Verify Android SDK and accepted licenses
+        if: matrix.language == 'java-kotlin'
+        shell: bash
+        run: |
+          set -euo pipefail
+          sdk_root="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-}}"
+          if [[ -z "$sdk_root" ]]; then
+            echo 'ANDROID_SDK_ROOT and ANDROID_HOME are unset on this runner.' >&2
+            exit 1
+          fi
+          sdk_root="$(realpath "$sdk_root")"
+          echo "Android SDK root: $sdk_root"
+          sdkmanager="$(find -L "$sdk_root/cmdline-tools" -path '*/bin/sdkmanager' -type f -executable -print 2>/dev/null | sort -V | tail -n 1)"
+          if [[ -z "$sdkmanager" ]]; then
+            echo "No executable sdkmanager was found under $sdk_root/cmdline-tools." >&2
+            exit 1
+          fi
+          test -d "$sdk_root/platforms/android-36" || {
+            echo 'Required Android platform android-36 is not installed.' >&2
+            exit 1
+          }
+          test -d "$sdk_root/build-tools/36.0.0" || {
+            echo 'Required Android build-tools 36.0.0 are not installed.' >&2
+            exit 1
+          }
+          test -s "$sdk_root/licenses/android-sdk-license" || {
+            echo 'Accepted Android SDK license record is missing: licenses/android-sdk-license.' >&2
+            exit 1
+          }
+          "$sdkmanager" --list_installed | grep -E 'platforms;android-36|build-tools;36\.0\.0'
       - name: Set up pinned Flutter and resolve dependencies for compiled-language analysis
         if: matrix.language == 'java-kotlin' || matrix.language == 'swift'
         shell: bash
