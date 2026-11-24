@@ -774,6 +774,20 @@
       ],
       "endpoint": "https://globalfolksongbook.com/",
       "reason": "Publisher page indexes international traditional songs by region and language and links external score sources. Documentation-only discovery on 2026-11-17; no song documents, API requests or extraction canaries were retrieved. Catalog size, structured data access, stable arrangement identity, lyrics and chord availability, provenance, jurisdiction-specific rights and attribution remain unverified. Defer pending documented application use, compatible adapter and two independent end-to-end extraction canaries; no provider activation."
+    },
+    {
+      "id": "max-hunter-collection",
+      "name": "Max Hunter Folk Song Collection",
+      "firstSeen": "2026-11-24",
+      "lastChecked": "2026-11-24",
+      "status": "deferred",
+      "documentation": [
+        "https://maxhunter.missouristate.edu/",
+        "https://maxhunter.missouristate.edu/restrictions.htm",
+        "https://maxhunter.missouristate.edu/indexsongtitle.aspx"
+      ],
+      "endpoint": "https://maxhunter.missouristate.edu/",
+      "reason": "Missouri State describes nearly 1,600 field-collected Ozark songs, searchable by title, singer or catalog number, with transcribed lyrics and source performer details. The university provides access for educational and research purposes and says rights must be assessed per item and necessary permissions obtained for distribution or reproduction. No general app-use license, documented machine API, native identity mapping, attribution implementation, or independent repository canaries have been established. Defer integration pending access/rights clarification, identity and overlap review, and two independently verified live extraction canaries. Indexed detail pages are not proof of supported automated access."
     }
   ]
 }
