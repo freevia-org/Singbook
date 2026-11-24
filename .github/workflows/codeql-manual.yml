@@ -34,7 +34,7 @@ jobs:
             build-mode: none
           - language: java-kotlin
             runner: singbook-i5-linux
-            build-mode: none
+            build-mode: manual
           - language: python
             runner: singbook-i5-linux
             build-mode: none
@@ -57,8 +57,8 @@ jobs:
           set -euo pipefail
           test -n "${JAVA_HOME:-}"
           java -version
-      - name: Prepare Flutter macOS workspace for Swift analysis
-        if: matrix.language == 'swift'
+      - name: Set up pinned Flutter and resolve dependencies for compiled-language analysis
+        if: matrix.language == 'java-kotlin' || matrix.language == 'swift'
         shell: bash
         run: |
           set -euo pipefail
@@ -71,6 +71,21 @@ jobs:
           bash "$setup_script" -n "$FLUTTER_VERSION" -a "$RUNNER_ARCH" stable
           flutter --version
           flutter pub get --enforce-lockfile --no-example
+      - name: Verify Flutter Android project preparation
+        if: matrix.language == 'java-kotlin'
+        run: |
+          set -euo pipefail
+          test -n "${JAVA_HOME:-}"
+          java -version
+          flutter build apk --debug --config-only --no-pub
+          test -f .dart_tool/package_config.json
+          test -f android/local.properties
+          test -f android/app/build.gradle.kts
+      - name: Prepare Flutter macOS workspace for Swift analysis
+        if: matrix.language == 'swift'
+        shell: bash
+        run: |
+          set -euo pipefail
           version="$(awk -F': *' '/^version:/ {print $2}' pubspec.yaml)"
           [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+\+[0-9]+$ ]]
           flutter build macos --release --build-number="${version##*+}" --config-only --no-pub
@@ -84,6 +99,10 @@ jobs:
         with:
           languages: ${{ matrix.language }}
           build-mode: ${{ matrix.build-mode }}
+      - name: Build Android debug app under CodeQL tracing
+        if: matrix.language == 'java-kotlin'
+        timeout-minutes: 45
+        run: flutter build apk --debug --no-pub
       - name: Perform CodeQL analysis
         uses: github/codeql-action/analyze@v4
         timeout-minutes: 120
