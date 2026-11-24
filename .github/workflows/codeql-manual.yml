@@ -2,6 +2,15 @@ name: Manual CodeQL security scan
 
 on:
   workflow_dispatch:
+    inputs:
+      runner_pool:
+        description: Runner pool for this manual CodeQL scan
+        type: choice
+        required: true
+        default: local
+        options:
+          - local
+          - hosted
 
 permissions:
   contents: read
@@ -16,30 +25,35 @@ env:
 jobs:
   analyze:
     name: Analyze (${{ matrix.language }})
-    # CodeQL executes checked-out source on persistent Linux and macOS runners.
-    # Only analyze trusted default-branch code on those machines.
-    if: github.ref == 'refs/heads/main'
-    runs-on: ${{ matrix.runner }}
-    timeout-minutes: ${{ matrix.runner == 'singbook-i5-linux' && 180 || 120 }}
+    # Persistent local runners only analyze main; hosted runners are an explicit
+    # manual fallback for validating the ref selected in workflow_dispatch.
+    if: inputs.runner_pool == 'hosted' || github.ref == 'refs/heads/main'
+    runs-on: ${{ inputs.runner_pool == 'hosted' && matrix.hosted_runner || matrix.local_runner }}
+    timeout-minutes: ${{ matrix.language == 'java-kotlin' && 180 || 120 }}
     strategy:
       fail-fast: false
       max-parallel: 1
       matrix:
         include:
           - language: actions
-            runner: singbook-i5-linux
+            local_runner: singbook-i5-linux
+            hosted_runner: ubuntu-24.04
             build-mode: none
           - language: c-cpp
-            runner: singbook-i5-linux
+            local_runner: singbook-i5-linux
+            hosted_runner: ubuntu-24.04
             build-mode: none
           - language: java-kotlin
-            runner: singbook-i5-linux
+            local_runner: singbook-i5-linux
+            hosted_runner: ubuntu-24.04
             build-mode: manual
           - language: python
-            runner: singbook-i5-linux
+            local_runner: singbook-i5-linux
+            hosted_runner: ubuntu-24.04
             build-mode: none
           - language: swift
-            runner: singbook-macmini
+            local_runner: singbook-macmini
+            hosted_runner: macos-15
             build-mode: autobuild
     steps:
       - name: Checkout repository
