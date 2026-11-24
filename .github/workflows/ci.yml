@@ -216,7 +216,8 @@ jobs:
             artifacts/windows/*/*.zip
             artifacts/windows/*/manifest.json
           if-no-files-found: error
-          retention-days: 90
+          # CI handoff window; durable releases remain in GitHub Releases/the stores.
+          retention-days: 14
 
   windows-native-smoke:
     name: Windows portable and native smoke
