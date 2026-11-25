@@ -774,6 +774,19 @@
       ],
       "endpoint": "https://globalfolksongbook.com/",
       "reason": "Publisher page indexes international traditional songs by region and language and links external score sources. Documentation-only discovery on 2026-11-17; no song documents, API requests or extraction canaries were retrieved. Catalog size, structured data access, stable arrangement identity, lyrics and chord availability, provenance, jurisdiction-specific rights and attribution remain unverified. Defer pending documented application use, compatible adapter and two independent end-to-end extraction canaries; no provider activation."
+    },
+    {
+      "id": "pesna",
+      "name": "Pesna.org Macedonian Folk Songs",
+      "firstSeen": "2026-11-22",
+      "lastChecked": "2026-11-22",
+      "status": "deferred",
+      "documentation": [
+        "https://pesna.org/faqs",
+        "https://pesna.org/translator/1"
+      ],
+      "endpoint": "https://pesna.org/",
+      "reason": "2026-11-22 documentation-only discovery: Macedonian traditional lyrics and credited translations offer regional/language coverage; overlap with existing folk catalogs is unmeasured. Publisher FAQ claims public-domain folk lyrics/melodies and Creative Commons Attribution but also limits commercial exploitation/resale and invokes fair use. Translations have individual credits; audio recordings remain copyrighted. These mixed statements do not establish unambiguous persistent app storage/export rights. No public API, stable extraction identity, compatible adapter or two independent live canaries qualified. Defer pending clarified permitted access, per-work/translation rights and attribution. No song/audio download, credential request or provider activation."
     }
   ]
 }
