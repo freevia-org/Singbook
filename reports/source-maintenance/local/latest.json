@@ -1,11 +1,10 @@
 {
   "schemaVersion": 1,
   "catalogRevision": 23,
-  "measuredAt": "2026-11-24T07:08:07.981896Z",
+  "measuredAt": "2026-11-25T07:02:27.906966Z",
   "offline": false,
   "summary": {
-    "identity_mismatch": 2,
-    "healthy": 22,
+    "healthy": 24,
     "coverage_gap": 1,
     "import_only": 1,
     "unavailable": 2,
@@ -17,21 +16,43 @@
     {
       "id": "genius",
       "name": "Genius",
-      "status": "identity_mismatch",
+      "status": "healthy",
       "coverage": {
-        "status": "partial",
-        "verifiedCapabilities": [],
-        "unverifiedCapabilities": [
+        "status": "complete",
+        "verifiedCapabilities": [
           "catalog",
           "lyrics",
           "metadata"
-        ]
+        ],
+        "unverifiedCapabilities": []
       },
       "probes": [
         {
           "id": "wonderwall-oasis",
-          "status": "identity_mismatch",
-          "reason": "expected_candidate_not_found"
+          "status": "healthy",
+          "candidateId": "76654",
+          "providerId": "genius",
+          "bodyCharacters": 1549,
+          "metadataFields": [
+            "album",
+            "artworkUrl",
+            "credits",
+            "language",
+            "mediaLinks",
+            "recordingLocation",
+            "releaseDate",
+            "releaseDateDisplay",
+            "year"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "lyrics",
+            "metadata"
+          ],
+          "timingTrackCount": 0,
+          "timingGranularities": [],
+          "timingRawRetained": false,
+          "hasChords": false
         }
       ]
     },
@@ -199,21 +220,38 @@
     {
       "id": "lyricsovh",
       "name": "Lyrics.ovh",
-      "status": "identity_mismatch",
+      "status": "healthy",
       "coverage": {
-        "status": "partial",
-        "verifiedCapabilities": [],
-        "unverifiedCapabilities": [
+        "status": "complete",
+        "verifiedCapabilities": [
           "catalog",
           "lyrics",
           "metadata"
-        ]
+        ],
+        "unverifiedCapabilities": []
       },
       "probes": [
         {
           "id": "wonderwall-oasis-studio",
-          "status": "identity_mismatch",
-          "reason": "expected_candidate_not_found"
+          "status": "healthy",
+          "candidateId": "sha256:2e8f5013dc7756eb",
+          "providerId": "lyricsovh",
+          "bodyCharacters": 1307,
+          "metadataFields": [
+            "album",
+            "artworkUrl",
+            "duration",
+            "mediaLinks"
+          ],
+          "verifiedCapabilities": [
+            "catalog",
+            "lyrics",
+            "metadata"
+          ],
+          "timingTrackCount": 0,
+          "timingGranularities": [],
+          "timingRawRetained": false,
+          "hasChords": false
         }
       ]
     },
@@ -1892,17 +1930,17 @@
         "databaseLag": {}
       },
       "api.genius.com": {
-        "requests": 1,
+        "requests": 2,
         "statuses": {
-          "200": 1
+          "200": 2
         },
         "retryAfterSeconds": {},
         "databaseLag": {}
       },
       "api.lyrics.ovh": {
-        "requests": 1,
+        "requests": 2,
         "statuses": {
-          "200": 1
+          "200": 2
         },
         "retryAfterSeconds": {},
         "databaseLag": {}
@@ -1935,6 +1973,14 @@
         "requests": 2,
         "statuses": {
           "200": 2
+        },
+        "retryAfterSeconds": {},
+        "databaseLag": {}
+      },
+      "genius.com": {
+        "requests": 1,
+        "statuses": {
+          "200": 1
         },
         "retryAfterSeconds": {},
         "databaseLag": {}
@@ -2116,7 +2162,7 @@
   "catalogPath": "config/source-catalog-v10.json",
   "catalogChannel": 10,
   "catalogSha256": "a61377c845601888f22a8abf0f43a66ace1a61a85b6f627cd709e9f376b28dce",
-  "runtime": "windows-flutter-bundled-dart",
+  "runtime": "windows-flutter-bundled-dart-C-drive-isolated-checkout",
   "production": true,
   "execution": {
     "fullSuiteInvocations": 1,
@@ -2127,25 +2173,25 @@
     "dedicatedGeniusMaintenanceCredential": true,
     "userLibraryAccessed": false,
     "offlineStructuralCheck": "passed: compiled registry and v10 catalog match",
-    "separateFileImportPhase": "passed: two host canaries; native picker untested",
-    "selectedSourceRechecks": "Chordie: one recheck after changed empty search result; separate diagnostic report"
+    "separateFileImportPhase": "passed: two host canaries; native picker untested"
   },
   "comparisonEvidence": {
-    "previousLocalMeasuredAt": "2026-11-23T07:07:35.656648Z",
+    "previousLocalMeasuredAt": "2026-11-24T07:08:07.981896Z",
     "previousLocalSummary": {
+      "identity_mismatch": 2,
       "healthy": 22,
       "coverage_gap": 1,
       "import_only": 1,
-      "partial_coverage": 2,
-      "transient_error": 2,
+      "unavailable": 2,
       "retired": 1,
-      "unavailable": 1,
+      "partial_coverage": 1,
       "disabled": 2
     },
-    "latestCloudMeasuredAt": "2026-11-23T07:09:24.137586Z",
+    "latestCloudMeasuredAt": "2026-11-24T07:09:38.324602Z",
     "latestCloudSummary": {
-      "transient_error": 6,
+      "transient_error": 5,
       "healthy": 19,
+      "identity_mismatch": 1,
       "coverage_gap": 1,
       "import_only": 1,
       "retired": 1,
@@ -2156,18 +2202,11 @@
   },
   "roadblocks": [
     {
-      "affected": "Genius and Lyrics.ovh",
-      "reason": "Expected candidates absent from search; both APIs returned HTTP 200",
-      "tried": "Scheduled probes; these intermittent identity mismatches were observed in earlier runs",
-      "resolved": false,
-      "action": "Monitor and investigate identity without substituting recordings"
-    },
-    {
       "affected": "Chordie",
       "reason": "Search yielded no results despite HTTP 200",
-      "tried": "Scheduled probe and one selected recheck after a changed outcome; both empty",
+      "tried": "Scheduled probe; reused November 24 selected recheck with same outcome",
       "resolved": false,
-      "action": "Investigate upstream search or response changes; no retirement"
+      "action": "Investigate upstream search; no retirement"
     },
     {
       "affected": "Better Lyrics",
@@ -2178,7 +2217,7 @@
     },
     {
       "affected": "LyricsPlus",
-      "reason": "Billie Jean unavailable while Creep passed; HTTP 200",
+      "reason": "Billie Jean unavailable while Creep passed",
       "tried": "Scheduled two canaries",
       "resolved": false,
       "action": "Monitor upstream availability"
@@ -2217,6 +2256,13 @@
       "tried": "Scheduled bounded retry passed",
       "resolved": true,
       "action": "None"
+    },
+    {
+      "affected": "Windows E drive",
+      "reason": "E drive full; original repository fetch could not write Git objects",
+      "tried": "Attempted deletion of own two disposable build caches was blocked by execution policy; cloned clean public main and ran validation on C drive",
+      "resolved": false,
+      "action": "Free space on E drive so ordinary maintenance and other work can run; no data was removed"
     }
   ]
 }
