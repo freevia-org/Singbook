@@ -2263,6 +2263,13 @@
       "tried": "Attempted deletion of own two disposable build caches was blocked by execution policy; cloned clean public main and ran validation on C drive",
       "resolved": false,
       "action": "Free space on E drive so ordinary maintenance and other work can run; no data was removed"
+    },
+    {
+      "affected": "SB Integration handoff",
+      "reason": "Remote environment offline",
+      "tried": "Two handoff attempts to authorized successor chat",
+      "resolved": false,
+      "action": "Retry when remote environment is online; PR and reports are published for review"
     }
   ]
 }
