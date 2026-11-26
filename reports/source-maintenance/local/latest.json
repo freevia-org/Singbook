@@ -2244,6 +2244,13 @@
       "tried": "Current line probe passed; prior four word-timing provider canaries passed",
       "resolved": false,
       "action": "Verify word timing in installed app on a device"
+    },
+    {
+      "affected": "SB Integration handoff",
+      "reason": "Remote environment offline",
+      "tried": "Retried authorized successor chat, including November 25 handoff",
+      "resolved": false,
+      "action": "Retry when remote environment is online; reports and PR remain available"
     }
   ]
 }
