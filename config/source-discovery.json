@@ -774,6 +774,18 @@
       ],
       "endpoint": "https://globalfolksongbook.com/",
       "reason": "Publisher page indexes international traditional songs by region and language and links external score sources. Documentation-only discovery on 2026-11-17; no song documents, API requests or extraction canaries were retrieved. Catalog size, structured data access, stable arrangement identity, lyrics and chord availability, provenance, jurisdiction-specific rights and attribution remain unverified. Defer pending documented application use, compatible adapter and two independent end-to-end extraction canaries; no provider activation."
+    },
+    {
+      "id": "cdcat",
+      "name": "CDCat",
+      "firstSeen": "2026-11-27",
+      "lastChecked": "2026-11-27",
+      "status": "deferred",
+      "documentation": [
+        "https://cdcat.net/docs/api?lang=en"
+      ],
+      "endpoint": "https://api.cdcat.net/v1",
+      "reason": "Publisher documents a beta read-only JSON API for music catalog search, albums, artists and lyrics, without signup or API key. Catalog data is described as CC BY-SA 4.0 with attribution, but publisher explicitly excludes lyrics and artwork from that license and limits those to reference and identification. Public documentation specifies request pacing, identifying User-Agent and rate limits; changing API fields and merged IDs need handling. Defer lyrics integration pending clear permission for intended app use; assess a metadata-only candidate separately for attribution/share-alike, recording identity, overlap and two independent live extraction canaries. Documentation reviewed, but no API canaries or app qualification performed."
     }
   ]
 }
