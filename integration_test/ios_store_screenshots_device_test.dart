@@ -86,6 +86,20 @@ void main() {
       await tester.tap(find.text(titles.first));
       await tester.pumpAndSettle();
       await captureIosCheckpoint('store_02_reader');
+      final keyPicker = find.byKey(const ValueKey('pitch-key-dropdown'));
+      expect(keyPicker, findsOneWidget);
+      await tester.tap(keyPicker);
+      await tester.pumpAndSettle();
+      final dMajor = find.byKey(const ValueKey('transpose-pitch-2'));
+      expect(dMajor, findsOneWidget);
+      await captureIosCheckpoint('store_02a_key_picker');
+      await tester.tap(dMajor);
+      await tester.pumpAndSettle();
+      expect(
+        find.descendant(of: keyPicker, matching: find.text('D')),
+        findsOneWidget,
+      );
+      await captureIosCheckpoint('store_02b_transposed');
       await app.setSetting('themeMode', 'dark');
       await tester.pumpAndSettle();
       await captureIosCheckpoint('store_03_reader_dark');
@@ -96,6 +110,12 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Morning Rehearsal'), findsOneWidget);
       await captureIosCheckpoint('store_04_setlists');
+      await tester.tap(find.text('Morning Rehearsal'));
+      await tester.pumpAndSettle();
+      for (var i = 0; i < titles.length; i++) {
+        expect(find.byKey(ValueKey('store-entry-$i')), findsOneWidget);
+      }
+      await captureIosCheckpoint('store_04a_setlist_detail');
       expect(tester.takeException(), isNull);
     },
     skip: !Platform.isIOS,

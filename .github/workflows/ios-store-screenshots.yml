@@ -1,0 +1,302 @@
+name: iOS store screenshot capture (draft PR)
+
+# This workflow is intentionally scoped to the screenshot draft branch. It uses
+# disposable simulators and uploads evidence only; it never publishes to Apple.
+on:
+  workflow_dispatch:
+    inputs:
+      run_preflight:
+        description: Check the disposable iOS simulator runtime only
+        required: true
+        default: false
+        type: boolean
+      run_capture:
+        description: Run the disposable iOS screenshot capture
+        required: true
+        default: false
+        type: boolean
+      candidate_source_sha:
+        description: Full Git SHA of the selected screenshot candidate (capture only)
+        required: false
+        type: string
+      candidate_version:
+        description: Exact pubspec version and build, for example 0.2.32+46 (capture only)
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: singbook-ios-store-capture-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  preflight:
+    # This intentionally exercises only one new disposable simulator. It does
+    # not build the app or alter any existing simulator or App Store record.
+    if: inputs.run_preflight == true
+    runs-on: singbook-macmini
+    timeout-minutes: 12
+    steps:
+      - name: Check iOS runtime and boot a disposable iPhone twice
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import subprocess
+
+          def simctl(*args, timeout=30):
+              command = ["xcrun", "simctl", *args]
+              result = subprocess.run(
+                  command, capture_output=True, text=True, timeout=timeout,
+              )
+              print(f"{' '.join(command)}: exit {result.returncode}", flush=True)
+              output = result.stdout + result.stderr
+              if "Data Migration Failed" in output:
+                  raise RuntimeError("Disposable simulator data migration failed")
+              if result.returncode:
+                  raise RuntimeError(output[-2000:])
+              return result.stdout
+
+          runtimes = json.loads(simctl("list", "runtimes", "--json"))["runtimes"]
+          runtime = next((item for item in runtimes if item.get("isAvailable")
+                          and item.get("version") == "27.0"
+                          and "iOS" in item["identifier"]), None)
+          if runtime is None:
+              raise SystemExit("iOS 27.0 runtime is unavailable")
+          # This was the call that hung in the first capture run.
+          simctl("list", "devices", "--json")
+          types = json.loads(simctl("list", "devicetypes", "--json"))["devicetypes"]
+          device_type = next((item for item in types
+                              if item["name"].startswith("iPhone 17 Pro Max")), None)
+          if device_type is None:
+              raise SystemExit("iPhone 17 Pro Max simulator type is unavailable")
+          identifier = None
+          try:
+              identifier = simctl(
+                  "create", f"SingbookPreflight-{os.environ['GITHUB_RUN_ID']}",
+                  device_type["identifier"], runtime["identifier"], timeout=60,
+              ).strip()
+              for attempt in (1, 2):
+                  simctl("boot", identifier, timeout=60)
+                  simctl("bootstatus", identifier, "-b", timeout=180)
+                  devices = json.loads(simctl("list", "devices", "--json"))["devices"]
+                  device = next((item for group in devices.values()
+                                 for item in group if item["udid"] == identifier), None)
+                  if not device or not device.get("isAvailable") or device["state"] != "Booted":
+                      raise RuntimeError(f"Disposable boot {attempt} incomplete: {device}")
+                  print(f"Disposable boot {attempt} passed", flush=True)
+                  simctl("shutdown", identifier, timeout=60)
+          finally:
+              if identifier:
+                  for command in ("shutdown", "delete"):
+                      try:
+                          simctl(command, identifier, timeout=30)
+                      except (RuntimeError, subprocess.TimeoutExpired) as error:
+                          print(f"Cleanup of disposable {identifier}: {error}", flush=True)
+          PY
+  capture:
+    # A later branch push can intentionally rerun the job after the Mac
+    # simulator runtime is healthy. Ordinary PR edits never take the runner.
+    if: inputs.run_capture == true
+    runs-on: singbook-macmini
+    timeout-minutes: 70
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Require the selected source and version before capture
+        shell: bash
+        env:
+          EXPECTED_SOURCE_SHA: ${{ inputs.candidate_source_sha }}
+          EXPECTED_VERSION: ${{ inputs.candidate_version }}
+        run: |
+          python3 - <<'PY'
+          import os
+          from pathlib import Path
+          import re
+          import subprocess
+
+          expected_sha = os.environ["EXPECTED_SOURCE_SHA"].strip().lower()
+          expected_version = os.environ["EXPECTED_VERSION"].strip()
+          if not re.fullmatch(r"[0-9a-f]{40}", expected_sha):
+              raise SystemExit("Capture requires the selected candidate's full 40-character Git SHA")
+          if not re.fullmatch(r"\d+\.\d+\.\d+\+\d+", expected_version):
+              raise SystemExit("Capture requires an exact version+build, such as 0.2.32+46")
+          actual_sha = subprocess.check_output(
+              ["git", "rev-parse", "HEAD"], text=True,
+          ).strip().lower()
+          match = re.search(
+              r"^version:\s*(\S+)", Path("pubspec.yaml").read_text(), re.MULTILINE,
+          )
+          if not match:
+              raise SystemExit("pubspec.yaml has no version")
+          actual_version = match.group(1)
+          if (actual_sha, actual_version) != (expected_sha, expected_version):
+              raise SystemExit(
+                  "Selected candidate does not match checked-out source: "
+                  f"expected {expected_sha} {expected_version}, "
+                  f"found {actual_sha} {actual_version}"
+              )
+          print(f"Capture source gate passed: {actual_sha} {actual_version}")
+          PY
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.44.8"
+          channel: stable
+          cache: true
+      - name: Prepare Flutter sources
+        run: |
+          flutter pub get --enforce-lockfile
+          flutter gen-l10n
+      - name: Create dedicated, disposable simulators
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import subprocess
+
+          def simctl(*args):
+              return subprocess.check_output(
+                  ["xcrun", "simctl", *args], text=True
+              ).strip()
+
+          runtimes = json.loads(simctl("list", "runtimes", "--json"))["runtimes"]
+          available = [
+              item for item in runtimes
+              if item.get("isAvailable")
+              and item["identifier"].startswith("com.apple.CoreSimulator.SimRuntime.iOS-")
+          ]
+          if not available:
+              raise SystemExit("No available iOS simulator runtime")
+          runtime = max(
+              available,
+              key=lambda item: tuple(int(part) for part in item["version"].split(".")),
+          )
+          types = json.loads(simctl("list", "devicetypes", "--json"))["devicetypes"]
+          targets = {
+              "IPHONE_UUID": "iPhone 17 Pro Max",
+              "IPAD_UUID": "iPad Air 13",
+          }
+          selected = {}
+          for variable, prefix in targets.items():
+              device_type = next(
+                  (item for item in types if item["name"].startswith(prefix)), None
+              )
+              if device_type is None:
+                  raise SystemExit(f"Required simulator device type unavailable: {prefix}")
+              name = f"SingbookStore-{os.environ['GITHUB_RUN_ID']}-{variable}"
+              identifier = simctl(
+                  "create", name, device_type["identifier"], runtime["identifier"]
+              )
+              selected[variable] = identifier
+              with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as env:
+                  env.write(f"{variable}={identifier}\n")
+          with open("simulator-selection.json", "w", encoding="utf-8") as output:
+              json.dump({"runtime": runtime, "devices": selected}, output, indent=2)
+          PY
+      - name: Capture iPhone app workflows
+        shell: bash
+        run: |
+          xcrun simctl boot "$IPHONE_UUID"
+          xcrun simctl bootstatus "$IPHONE_UUID" -b
+          python3 scripts/run-ios-e2e.py \
+            --device "$IPHONE_UUID" \
+            --output "artifacts/ios-store-iphone-${GITHUB_RUN_ID}" \
+            integration_test/ios_store_screenshots_device_test.dart
+          xcrun simctl shutdown "$IPHONE_UUID"
+      - name: Capture iPad app workflows
+        shell: bash
+        run: |
+          xcrun simctl boot "$IPAD_UUID"
+          xcrun simctl bootstatus "$IPAD_UUID" -b
+          python3 scripts/run-ios-e2e.py \
+            --device "$IPAD_UUID" \
+            --output "artifacts/ios-store-ipad-${GITHUB_RUN_ID}" \
+            integration_test/ios_store_screenshots_device_test.dart
+          xcrun simctl shutdown "$IPAD_UUID"
+      - name: Require all seven captures on both devices
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import os
+          from pathlib import Path
+
+          checkpoints = {
+              "store_01_library",
+              "store_02_reader",
+              "store_02a_key_picker",
+              "store_02b_transposed",
+              "store_03_reader_dark",
+              "store_04_setlists",
+              "store_04a_setlist_detail",
+          }
+          for platform in ("iphone", "ipad"):
+              folder = Path(f"artifacts/ios-store-{platform}-{os.environ['GITHUB_RUN_ID']}")
+              actual = {
+                  path.stem.removeprefix("ios_store_screenshots_device_test_")
+                  for path in folder.glob("ios_store_screenshots_device_test_*.png")
+              }
+              if actual != checkpoints:
+                  raise SystemExit(
+                      f"{platform} capture mismatch: missing={sorted(checkpoints - actual)} "
+                      f"unexpected={sorted(actual - checkpoints)}"
+                  )
+          PY
+      - name: Record image provenance
+        if: always()
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+          import struct
+
+          images = []
+          for path in sorted(Path("artifacts").rglob("*.png")):
+              data = path.read_bytes()
+              if data[:8] != b"\x89PNG\r\n\x1a\n":
+                  raise SystemExit(f"Invalid PNG: {path}")
+              width, height = struct.unpack(">II", data[16:24])
+              images.append({
+                  "file": str(path),
+                  "width": width,
+                  "height": height,
+                  "sha256": hashlib.sha256(data).hexdigest(),
+              })
+          Path("capture-manifest.json").write_text(json.dumps({
+              "source_sha": os.environ["GITHUB_SHA"],
+              "source_version": next(
+                  line.removeprefix("version: ").strip()
+                  for line in Path("pubspec.yaml").read_text().splitlines()
+                  if line.startswith("version: ")
+              ),
+              "images": images,
+          }, indent=2), encoding="utf-8")
+          PY
+      - name: Upload capture evidence for visual review
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: singbook-ios-store-simulator-captures-${{ github.run_id }}
+          path: |
+            artifacts/ios-store-*/
+            simulator-selection.json
+            capture-manifest.json
+          retention-days: 7
+          if-no-files-found: error
+      - name: Remove only the simulators created by this job
+        if: always()
+        shell: bash
+        run: |
+          for device in "$IPHONE_UUID" "$IPAD_UUID"; do
+            if [ -n "$device" ]; then
+              xcrun simctl shutdown "$device" || true
+              xcrun simctl delete "$device" || true
+            fi
+          done
