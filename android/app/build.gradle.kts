@@ -23,7 +23,7 @@ private fun playVersionCode(versionName: String, buildNumber: Int): Int {
 dependencies {
     // Used by the Google Drive mobile Picker authorization flow. The user
     // explicitly grants one visible folder with the narrow drive.file scope.
-    implementation("com.google.android.gms:play-services-auth:21.6.0")
+    implementation("com.google.android.gms:play-services-auth:22.0.0")
 }
 
 // Opt-in workaround for deterministic fixture E2E builds under AGP 9.
