@@ -22,9 +22,11 @@ String _bundle(int channel) => File(_catalogPath(channel)).readAsStringSync();
 List<LyricsProvider> _providers(ProviderTransport transport) => [
   ...createCoreProviders(transport: transport),
   // Simulate the historical channel9 compiled registry.
-  ...createExtraProviders(
-    transport: transport,
-  ).where((p) => p.definition.id != 'acousticbrainz'),
+  ...createExtraProviders(transport: transport).where(
+    (p) =>
+        p.definition.id != 'acousticbrainz' &&
+        p.definition.id != 'wikibooksliederbuch',
+  ),
 ];
 
 SourceCatalogRuntime _runtime(
@@ -90,12 +92,12 @@ void main() {
         containsAll(['identityScope', 'artistCreditRole', 'composer']),
       );
     }
-    expect(SourceCatalogClient.bundledAsset, 'config/source-catalog-v10.json');
-    expect(SourceCatalogClient.cacheKey, 'sourceCatalog:v10');
+    expect(SourceCatalogClient.bundledAsset, 'config/source-catalog-v11.json');
+    expect(SourceCatalogClient.cacheKey, 'sourceCatalog:v11');
     expect(SourceCatalogClient.channel8CacheKey, 'sourceCatalog:v8');
     expect(
       SourceCatalogClient.defaultEndpoint,
-      endsWith('/source-catalog-v10.json'),
+      endsWith('/source-catalog-v11.json'),
     );
     expect(
       File('pubspec.yaml').readAsStringSync(),

@@ -10,7 +10,7 @@ import '../provider.dart';
 import 'common.dart';
 
 /// Individual, revision-attributed song sheets from the German Wikibooks book.
-/// This source-only proposal is deliberately absent from the compiled registry.
+/// The runtime catalog controls availability of this bounded song-sheet adapter.
 class WikibooksLiederbuchProvider implements LyricsProvider {
   WikibooksLiederbuchProvider(this.transport, {DateTime Function()? clock})
     : _clock = clock ?? DateTime.now;
@@ -356,6 +356,11 @@ String? _songTitle(Object? value) {
   if (value is! String || value.length > 400 || !value.startsWith('Liederbuch/')) return null;
   if (RegExp(r'[\x00-\x1f\x7f#\[\]{}<>|]').hasMatch(value)) return null;
   final title = value.substring('Liederbuch/'.length).trim();
+  // Navigation and template helpers also live in this book's mainspace.
+  // Classify the observed utility titles without fetching every search hit.
+  const utilityTitles = {'inhalt', 'hilfe', 'lieder nach akkorden'};
+  final folded = _category(title).toLowerCase();
+  if (utilityTitles.contains(folded) || folded.startsWith('vorlage:')) return null;
   return title.isEmpty || title.length > 300 ? null : title;
 }
 
