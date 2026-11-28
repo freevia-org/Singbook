@@ -4,6 +4,8 @@ import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:crypto/crypto.dart';
+import 'package:flutter/foundation.dart'
+    show debugDefaultTargetPlatformOverride;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -555,6 +557,45 @@ void main() {
     tester.view.resetPhysicalSize();
     tester.view.resetViewInsets();
   }, skip: skip);
+
+  testWidgets('Windows reader fills the available window width', (
+    tester,
+  ) async {
+    await _loadFonts();
+    final (fixture, controller) = (await tester.runAsync(() async {
+      final fixture = _Fixture();
+      return (fixture, AppControllerAdapter(fixture.app));
+    }))!;
+    final brightness = ValueNotifier(Brightness.light);
+    final locale = ValueNotifier(const Locale('en'));
+    addTearDown(controller.dispose);
+    addTearDown(fixture.app.dispose);
+    addTearDown(brightness.dispose);
+    addTearDown(locale.dispose);
+    addTearDown(() {
+      debugDefaultTargetPlatformOverride = null;
+      tester.view.resetDevicePixelRatio();
+      tester.view.resetPhysicalSize();
+    });
+
+    debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(1920, 1080);
+    await tester.runAsync(() => controller.openSong(fixture.song.id));
+    await _pumpShell(
+      tester,
+      controller,
+      boundaryKey: GlobalKey(),
+      brightness: brightness,
+      locale: locale,
+    );
+
+    final frame = find.byKey(const ValueKey('tablet-content-frame'));
+    final frameRect = tester.getRect(frame);
+    expect(frameRect.left, closeTo(0, 1));
+    expect(frameRect.width, closeTo(1920, 1));
+    expect(tester.takeException(), isNull);
+  });
 }
 
 Future<void> _loadFonts() async {
